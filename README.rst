@@ -1,6 +1,6 @@
 
-future: [experimental] support Python 2 with fewer warts
-========================================================
+future: support Python 2 with fewer warts
+=========================================
 
 The ``future`` module helps run Python 3.x-compatible code under Python 2.
 
@@ -10,21 +10,22 @@ alongside a Python 2 stack of dependencies.
 
 It is designed to be used as follows:
 
+::
     from __future__ import division, absolute_import, print_function
     from future import common_iterators, disable_obsolete_builtins, super
-
-	# Then Python 3-compatible code, e.g.
-	for i in range(10**9):
-	    pass
-
-	class verbose_list(list):
-		def append(self, item):
-			print('Adding an item')
-			return super().append(item)    # new simpler super() function
-	
-	# These raise NotImplementedErrors:
-	# apply(), cmp(), coerce(), xrange(), etc.
-	
+    
+    # Then Python 3-compatible code, e.g.
+    for i in range(10**9):
+        pass
+    
+    class verbose_list(list):
+        def append(self, item):
+            print('Adding an item')
+            return super().append(item)    # new simpler super() function
+    
+    # These raise NotImplementedErrors:
+    # apply(), cmp(), coerce(), xrange(), etc.
+    
 
 FAQ
 ---
@@ -64,8 +65,8 @@ A. python-modernize is great, and this project is designed to complement it.
 
 Q. What is the relationship between this project and six?
 
-A. 'future' is a higher-level interface that builds on the six module. They
-share the same goal of supporting codebases that work on both Python 2 and
+A. ``future`` is a higher-level interface that builds on the ``six`` module.
+They share the same goal of supporting codebases that work on both Python 2 and
 Python 3 without modification. They differ in the interface they offer, the
 Python versions they target, and the amount of magic in the implementation.
 
@@ -73,21 +74,23 @@ Six is a set of wrappers, so codebases that use it are sometimes standard
 Python 3 code, sometimes Python 2 code, and sometimes six-specific interfaces.
 
 Here is a simple example of code compatible with both Python 2 and Python 3
-using six:
+using ``six``:
 
+::
     from six.moves import xrange
     for i in xrange(10**8):    # invalid Python 3 code
         pass
 
-Here is the corresponding example using the 'future' module:
+Here is the corresponding example using the ``future`` module:
 
+::
     from future import common_iterators
     for i in range(10**8):     # standard Python 3
         pass
 
 Note that the former introduces warty Python 2 cruft into a Python 3 codebase
 in order to offer Python 2 support. The latter example is standard Python 3
-code.
+code, with an import line that does nothing on Python 3.
 
 Another difference is version support: ``future`` supports only Python 2.6,
 Python 2.7, and Python 3.3+. In contrast, six is designed to support versions
