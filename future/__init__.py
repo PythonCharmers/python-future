@@ -93,5 +93,5 @@ __version__ = "%d.%d.%d%s" % (__ver_major__,__ver_minor__,__ver_patch__,__ver_su
 
 VERSION = __version__
 
-__all__ = ['remove_obsolete_builtins', 'common_iterators']
+__all__ = ['disable_obsolete_builtins', 'common_iterators']
 
