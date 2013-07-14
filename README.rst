@@ -58,8 +58,9 @@ FAQ
     into a more modern idiom: a common subset of Python 3 and Python 2 that
     should run under either platform.
 
-    This code is designed to go further in allowing code authors to use Python 3
-    idioms in their Python 2 code.
+    ``future`` goes further in allowing the output of ``python-modernize`` or
+    hand-written Python 3 code to run with less work and and less
+    backward-compatible cruft on Python 2.
 
 
 :Q: What is the relationship between this project and ``six``?
