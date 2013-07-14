@@ -1,6 +1,6 @@
 
-future: experimental support for easy per-module Python 3 migration
-===================================================================
+future: [experimental] support Python 2 with fewer warts
+========================================================
 
 The ``future`` module helps run Python 3.x-compatible code under Python 2.
 

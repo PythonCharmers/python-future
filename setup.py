@@ -9,7 +9,7 @@ import future
 NAME = "future"
 PACKAGES = ["future"]
 VERSION = future.__version__
-DESCRIPTION = "experimental black-magic scary easy Python 3 migration"
+DESCRIPTION = "[experimental] support Python 2 with fewer warts"
 LONG_DESC = future.__doc__
 AUTHOR = "Ed Schofield"
 AUTHOR_EMAIL = "ed@pythoncharmers.com"
