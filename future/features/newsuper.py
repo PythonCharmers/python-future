@@ -32,11 +32,10 @@ Excerpts from Ryan's docstring:
 
 import sys
 import inspect
-import __builtin__
 
 import six
 
-_builtin_super = __builtin__.super
+_builtin_super = super
 _SENTINEL = object()
 
 def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):

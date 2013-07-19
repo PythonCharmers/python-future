@@ -18,9 +18,6 @@ to bring in the new module names from the Python 3 standard library.
 
 from __future__ import division, absolute_import, print_function
 
-from future.newsuper import super
-
-
 __ver_major__ = 0
 __ver_minor__ = 0
 __ver_patch__ = 1
@@ -28,6 +25,5 @@ __ver_sub__ = ''
 __version__ = "%d.%d.%d%s" % (__ver_major__,__ver_minor__,__ver_patch__,__ver_sub__)
 VERSION = __version__
 
-__all__ = ['disable_obsolete_builtins', 'common_iterators', 'str_is_unicode',
-           'super']
+__all__ = ['disable_obsolete_builtins', 'common_iterators', 'str_is_unicode']
 
