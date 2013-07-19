@@ -39,19 +39,19 @@ OBSOLETE_BUILTINS = ['apply', 'cmp', 'coerce', 'execfile', 'file',
                      'raw_input', 'long', 'unicode', 'xrange',
                      'StandardError']
 
+
 def disabled_function(name):
     '''
     Returns a function that cannot be called
     '''
     def disabled(*args, **kwargs):
-        raise NotImplementedError('obsolete Python 2 builtin {} is disabled'.format(name))
+        raise NameError('obsolete Python 2 builtin {} is disabled'.format(name))
     return disabled
+
 
 if not six.PY3:
     caller = inspect.currentframe().f_back
     
     for fname in OBSOLETE_BUILTINS:
-        def disabled(*args, **kwargs):
-            raise NotImplementedError('obsolete Python 2 builtin {} is disabled'.format(fname))
         caller.f_globals.__setitem__(fname, disabled_function(fname))
 

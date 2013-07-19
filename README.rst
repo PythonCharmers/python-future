@@ -22,8 +22,8 @@ It is designed to be used as follows:::
             print('Adding an item')
             return super().append(item)    # new simpler super() function
     
-    # These raise NotImplementedErrors:
-    # apply(), cmp(), coerce(), xrange(), etc.
+    # These raise NameErrors:
+    # apply(), cmp(), coerce(), reduce(), xrange(), etc.
     
 
 FAQ
