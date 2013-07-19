@@ -62,25 +62,10 @@ Here is the corresponding example using the 'future' module:
 
 Note that the latter example is standard Python 3 code, plus a one-line import.
 
-Another difference is version support: 'future' supports only Python 2.6,
-Python 2.7, and Python 3.3+. In contrast, six is designed to support versions
-of Python prior to 2.6 and Python 3.0-3.2. Some of the interfaces provided by six (like the next() function) are not needed.
-
-Consider another example:
-    
-    from six.moves import ...
-    
-
-Q. Is the goal for 'future' to backport more features of the standard library from Python 3.3+ to Python 2.6/2.7?
-
-A. No. The initial goal is to support a subset of Python 3 rather than all of Python 3. This is mainly because of constraints on developer time, rather than ideological reasons. We wouldn't say No to pull requests.
-
-
-Q. Can you support feature XYZ from the standard library in Python 3.3+ on Python 2.x?
-
-A. Maybe. Our initial goal is to provide support for a subset of Python 3 code
-on Python 2, to facilitate Python 3 adoption. Feel free to contribute code and
-pull requests for further features.
+Another difference is version support: 'future' supports only Python 2.7 and
+Python 3.3+. In contrast, six is designed to support versions of Python prior
+to 2.7 and Python 3.0-3.2. Some of the interfaces provided by six (like the
+next() function) are not needed.
 """
 
 from __future__ import division, absolute_import, print_function
