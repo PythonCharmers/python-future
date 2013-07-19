@@ -21,6 +21,13 @@ And then, for example:
     for i in range(10**11)[:10]:
         pass
 
+and:
+
+    class VerboseList(list):
+        def append(self, item):
+            print('Adding an item')
+            super().append(item)    	# new simpler super() function
+
 range() is a custom class that backports the slicing behaviour from Python 3
 (from the xrange module by Dan Crosta).
 """

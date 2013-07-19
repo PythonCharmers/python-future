@@ -3,7 +3,7 @@ This module provides a super() function in Python 2 that mimics the behaviour
 of super() in Python 3. It is designed to be used as follows:
 
     from __future__ import division, absolute_import, print_function
-    from future import super
+    from future.features import super
 
 And then, for example:
 
@@ -33,7 +33,6 @@ Excerpts from Ryan's docstring:
 import sys
 import inspect
 
-import six
 
 _builtin_super = super
 _SENTINEL = object()
