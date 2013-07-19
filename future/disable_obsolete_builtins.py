@@ -13,8 +13,8 @@ called.
 
 The following functions are disabled:
 
-    apply, cmp, coerce, execfile, file, raw_input,
-    long, unicode, xrange
+    apply, cmp, coerce, execfile, file, long,
+    raw_input, reduce, reload, unicode, xrange
 
 and this exception class:
 
@@ -35,8 +35,8 @@ import inspect
 
 from . import six
 
-OBSOLETE_BUILTINS = ['apply', 'cmp', 'coerce', 'execfile', 'file',
-                     'raw_input', 'long', 'unicode', 'xrange',
+OBSOLETE_BUILTINS = ['apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
+                     'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
                      'StandardError']
 
 
