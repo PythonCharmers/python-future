@@ -34,7 +34,8 @@ from __future__ import unicode_literals
 
 import inspect
 
-from . import six
+import six
+
 
 if not six.PY3:
     caller = inspect.currentframe().f_back

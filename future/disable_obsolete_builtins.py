@@ -33,7 +33,7 @@ from __future__ import division, absolute_import, print_function
 
 import inspect
 
-from . import six
+import six
 
 OBSOLETE_BUILTINS = ['apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
                      'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
