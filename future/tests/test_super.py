@@ -2,7 +2,7 @@
 Tests for the new super() function syntax
 '''
 from __future__ import absolute_import, print_function
-from future import super
+from future.features import super
 
 import unittest
 
