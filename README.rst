@@ -11,7 +11,7 @@ alongside a Python 2 stack of dependencies.
 It is designed to be used as follows:::
 
     from __future__ import division, absolute_import, print_function
-    from future import common_iterators, disable_obsolete_builtins, super
+    from future import common_iterators, super, disable_obsolete_builtins
     
     # Then Python 3-compatible code, e.g.
     for i in range(10**9):
@@ -20,7 +20,7 @@ It is designed to be used as follows:::
     class verbose_list(list):
         def append(self, item):
             print('Adding an item')
-            return super().append(item)    # new simpler super() function
+            super().append(item)    	# new simpler super() function
     
     # These raise NameErrors:
     # apply(), cmp(), coerce(), reduce(), xrange(), etc.
@@ -66,9 +66,10 @@ FAQ
 :Q: What is the relationship between this project and ``six``?
 
 :A: ``future`` is a higher-level interface that builds on the ``six`` module.
-    They share the same goal of supporting codebases that work on both Python 2 and
-    Python 3 without modification. They differ in the interface they offer, the
-    Python versions they target, and the amount of magic in the implementation.
+	They share the same goal of supporting codebases that work on both Python 2
+	and Python 3 without modification. They differ in the interface they offer,
+	the Python versions they target, and the amount of magic in the
+	implementation.
     
     Codebases that use it are sometimes standard Python 3 code, sometimes
     Python 2 code, and sometimes six-specific wrapper interfaces.
@@ -86,27 +87,27 @@ FAQ
         for i in range(10**8):     # standard Python 3
             pass
     
-    Note that the former introduces warty Python 2 cruft into a Python 3 codebase
-    in order to offer Python 2 support. The latter example is standard Python 3
-    code, with an import line that has no effect on Python 3.
+	Note that the former introduces warty Python 2 cruft into a Python 3
+	codebase in order to offer Python 2 support. The latter example is standard
+	Python 3 code, with an import line that has no effect on Python 3.
     
-    Another difference is version support: ``future`` supports only Python 2.6,
-    Python 2.7, and Python 3.3+. In contrast, six is designed to support versions
-    of Python prior to 2.6 and Python 3.0-3.2. Some of the interfaces provided by
-    six (like the next() function) are superseded by features provided in Python
-    2.6 and Python 2.7, such as ``from __future__ import print_function``.
+    Another difference is version support: ``future`` supports only Python 2.7
+	and Python 3.3+. In contrast, six is designed to support versions of Python
+	prior to 2.7 and Python 3.0-3.2. Some of the interfaces provided by six
+	(like the ``next()`` function and ``from __future__ import
+	print_function``) are superseded by features provided in Python 2.7.
     
-    Another difference is that the implementation of ``future`` is more magical
-    (i.e. evil). It does scary, ugly things so your code doesn't have to.
+	Another difference is that the implementation of ``future`` is more
+	magical.
 
 
 :Q: How did the original need for this arise?
 
 :A: In teaching Python to newbies, we faced a dilemma: teach them Python 3,
-    which was future-proof but not as useful today because of weaker 3rd-party
-    package support, or teach them Python 2, which was more useful today but would
-    require them to unlearn various habits soon. We searched for ways to avoid
-    polluting the world with more deprecated code.
+	which was future-proof but not as useful today because of weaker 3rd-party
+	package support, or teach them Python 2, which was more useful today but
+	would require them to unlearn various habits soon. We searched for ways to
+	avoid polluting the world with more deprecated code.
 
 
 :Q: Do you support Pypy and/or Jython?
