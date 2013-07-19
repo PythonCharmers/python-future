@@ -7,7 +7,7 @@ of super() in Python 3. It is designed to be used as follows:
 
 And then, for example:
 
-    class verbose_list(list):
+    class VerboseList(list):
         def append(self, item):
             print('Adding an item')
             super().append(item)    	# new simpler super() function
