@@ -100,15 +100,6 @@ FAQ
     (i.e. evil). It does scary, ugly things so your code doesn't have to.
 
 
-:Q: Can you support feature XYZ from the standard library in Python 3.3+ on
-    Python 2.x?
-
-:A: Probably not. Our goal is to make it as easy as possible to support both
-    platforms using standard Python 3 code, in order to facilitate Python 3
-    adoption. Our goal is not to reimplement shiny new features from Python 3 in
-    Python 2. That may be a worthwhile goal, but it belongs in a separate project.
-
-
 :Q: How did the original need for this arise?
 
 :A: In teaching Python to newbies, we faced a dilemma: teach them Python 3,
