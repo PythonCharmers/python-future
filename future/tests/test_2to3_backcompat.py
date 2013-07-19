@@ -4,6 +4,10 @@ immediately under Python with the future module using:
 
     from future import *
 
+It contains tests that perform a scripted porting process using 2to3
+(and in the future also python-modernize). It then tests whether the resulting
+Python 2/3 code (python-modernize) or Python 3 code (from 2to3) is able to run
+under Python 2 using the relevant ``future`` module imports.
 """
 
 from __future__ import print_function, absolute_import
