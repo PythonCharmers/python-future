@@ -11,7 +11,7 @@ alongside a Python 2 stack of dependencies.
 It is designed to be used as follows:::
 
     from __future__ import division, absolute_import, print_function
-    from future import common_iterators, super, disable_obsolete_builtins
+    from future import common_iterators, disable_obsolete_builtins
     
     # Then Python 3-compatible code, e.g.
     for i in range(10**9):
@@ -24,7 +24,37 @@ It is designed to be used as follows:::
     
     # These raise NameErrors:
     # apply(), cmp(), coerce(), reduce(), xrange(), etc.
+
+
+Other modules include:::
     
+    from __future__ import unicode_literals
+	from future import str_is_unicode
+    
+	# Which restores this identity, normally valid on Py3 and Py2, which
+	# unicode_literals breaks:
+    assert str('blah') is 'blah'
+
+
+``future`` also contains a ``features`` module with backports of some extra
+features from Python 3.x that are not essential to the porting effort, such
+as these:::
+
+    from future.features import range, super
+    
+	# New range object with slicing support
+    for i in range(10**11)[:10]:
+        pass
+    
+	# New simpler super() function:
+    class VerboseList(list):
+        def append(self, item):
+            print('Adding an item')
+            super().append(item)
+
+(These features are derived from Ryan Kelly's magicsuper module and Dan
+Crosta's xrange module.)
+
 
 FAQ
 ---
