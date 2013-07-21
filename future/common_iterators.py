@@ -30,12 +30,12 @@ The other iterators are from the itertools module on Python 2.
 from __future__ import division, absolute_import, print_function
 
 import inspect
-import six
+from . import six
 
 _oldrange, _oldmap, _oldzip, _oldfilter = range, map, zip, filter
 
-from six.moves import xrange as range
-from six.moves import map, zip, filter
+from .six.moves import xrange as range
+from .six.moves import map, zip, filter
 
 
 if not six.PY3:

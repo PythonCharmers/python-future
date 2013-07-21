@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 
 import inspect
 
-import six
+from . import six
 
 
 if not six.PY3:
