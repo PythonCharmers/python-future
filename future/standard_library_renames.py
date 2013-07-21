@@ -32,6 +32,8 @@ import inspect
 import importlib
 import sys
 import warnings
+import logging
+import imp
 
 from . import six
 
@@ -64,10 +66,6 @@ mapping = {thing.mod: thing.name for thing in six._moved_attributes \
 
 	
 
-import logging
-import imp
-import sys
- 
 class WarnOnImport(object):
     def __init__(self, *args):
         self.module_names = args
@@ -88,9 +86,9 @@ class WarnOnImport(object):
         logging.warning("Imported deprecated module %s", name)
         return module
  
+
 sys.meta_path = [WarnOnImport('getopt', 'optparse', # etc.
                                  )]
-
 
 
 if not six.PY3:

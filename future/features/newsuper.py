@@ -32,7 +32,7 @@ Excerpts from Ryan's docstring:
 '''
 
 import sys
-import inspect
+# import inspect
 
 
 _builtin_super = super
@@ -52,7 +52,7 @@ def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
         try:
             # Get the function's first positional argument.
             type_or_obj = f.f_locals[f.f_code.co_varnames[0]]
-        except (IndexError,KeyError,):
+        except (IndexError, KeyError,):
             raise RuntimeError('super() used in a function with no args')
         
         try:
@@ -71,7 +71,7 @@ def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
         for typ in mro:
             #  Find the class that owns the currently-executing method.
             for meth in typ.__dict__.itervalues():
-                if not isinstance(meth,type(super)):
+                if not isinstance(meth, type(super)):
                     continue
                 if meth.func_code is f.f_code:
                     break   # Aha!  Found you.
@@ -83,14 +83,14 @@ def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
     
     #  Dispatch to builtin super().
     if type_or_obj is not _SENTINEL:
-        return _builtin_super(typ,type_or_obj)
+        return _builtin_super(typ, type_or_obj)
     return _builtin_super(typ)
 
 
-def superm(*args,**kwds):
+def superm(*args, **kwds):
     f = sys._getframe(1)
     nm = f.f_code.co_name
-    return getattr(super(framedepth=2),nm)(*args,**kwds)
+    return getattr(super(framedepth=2),nm)(*args, **kwds)
     
 
 # __builtin__.super = super
