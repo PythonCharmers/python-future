@@ -9,7 +9,7 @@ And then, for example:
     for i in range(10**10):
         pass
 
-    for (a, b) in zip(range(10**10), range(-10**10, 0, -1)):
+    for (a, b) in zip(range(10**10), range(-10**10, 0)):
         pass
 
 Note that this is standard Python 3 code, plus some imports that do
