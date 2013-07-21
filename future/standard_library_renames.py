@@ -1,6 +1,7 @@
 """
 Python 3 reorganized the standard library (PEP 3108). This module exposes
-several standard library modules to Python 2 under their new Python 3 names.
+several standard library modules to Python 2 under their new Python 3
+names.
 
 It is designed to be used as follows:
 
@@ -98,7 +99,7 @@ if not six.PY3:
         try:
             module = importlib.import_module(oldname, package=None)
         except ImportError as e:
-            # Expected to fail:
+            # Expected to fail (on non-Windows ...)
             if not oldname == '_winreg':
                 warnings.warn('Could not import module ' + oldname)
         else:
@@ -109,4 +110,4 @@ if not six.PY3:
     caller = inspect.currentframe().f_back
     # caller.f_globals[newname] = oldname
 
-print(len(sys.modules))
+# print(len(sys.modules))

@@ -1,7 +1,8 @@
 """
 This module redefines str on Python 2.x to be the unicode type.
 
-It is designed to be used together with the unicode_literals import as follows:
+It is designed to be used together with the unicode_literals import as
+follows:
 
     from __future__ import unicode_literals
     from future import str_is_unicode
@@ -23,7 +24,8 @@ the same expression
 returns False.
 
 This module is designed to be imported together with unicode_literals on
-Python 2 to bring the meaning of str() back into alignment with unprefixed
+Python 2 to bring the meaning of str() back into alignment with
+unprefixed
 string literals.
 
 Note that str() will then call the __unicode__ method on objects in

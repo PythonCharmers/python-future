@@ -12,8 +12,8 @@ And then, for example:
     for (a, b) in zip(range(10**10), range(-10**10, 0)):
         pass
 
-Note that this is standard Python 3 code, plus some imports that do nothing
-on Python 3.
+Note that this is standard Python 3 code, plus some imports that do
+nothing on Python 3.
 
 The iterators this brings in are:
 - range
@@ -21,10 +21,14 @@ The iterators this brings in are:
 - map
 - zip
 
-range is equivalent to xrange on Python 2. (See future.features.range for a
-backported version of Python 3's range iterator with slicing support etc.)
+range is equivalent to xrange on Python 2 by default. As an alternative,
+there is a pure Python backport of Python 3's range iterator available
+with slicing support. To use it, add:
 
-The other iterators are from the itertools module on Python 2.
+    from future.features import range
+
+The other iterators (filter, map, zip) are from the itertools module on
+Python 2.
 """
 
 from __future__ import division, absolute_import, print_function

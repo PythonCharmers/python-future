@@ -1,15 +1,15 @@
 """
-This disables builtin functions (and one exception class) which are removed
-from Python 3.3.
+This disables builtin functions (and one exception class) which are
+removed from Python 3.3.
 
 This module is designed to be used like this:
 
     from future import disable_obsolete_builtins
 
 We don't hack __builtin__, which is very fragile because it contaminates
-imported modules too. Instead, we just create new global functions with the
-same names as the obsolete builtins from Python 2 which raise exceptions when
-called.
+imported modules too. Instead, we just create new global functions with
+the same names as the obsolete builtins from Python 2 which raise
+exceptions when called.
 
 The following functions are disabled:
 
@@ -20,8 +20,8 @@ and this exception class:
 
     StandardError
 
-(Note that callable() is not among them; this was reintroduced into Python
-3.2.)
+(Note that callable() is not among them; this was reintroduced into
+Python 3.2.)
 
 Also to do:
 - Fix round()

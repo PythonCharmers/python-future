@@ -3,18 +3,19 @@ Nearly identical to xrange.py, by Dan Crosta, from
 
     https://github.com/dcrosta/xrange.git
 
-This is included here in the ``future`` package rather than pointed to as a
-dependency because there is no package for ``xrange`` on PyPI. It is also
-tweaked to apear like a regular Python 3 ``range`` object rather than a Python
-2 xrange.
+This is included here in the ``future`` package rather than pointed to as
+a dependency because there is no package for ``xrange`` on PyPI. It is
+also tweaked to apear like a regular Python 3 ``range`` object rather
+than a Python 2 xrange.
 
 From Dan Crosta's README:
 
-    "A pure-Python implementation of Python 2.7's xrange built-in, with some
-    features backported from the Python 3.x range built-in (which replaced
-    xrange) in that version."
+    "A pure-Python implementation of Python 2.7's xrange built-in, with
+    some features backported from the Python 3.x range built-in (which
+    replaced xrange) in that version."
 
-    Read more at https://late.am/post/2012/06/18/what-the-heck-is-an-xrange
+    Read more at
+        https://late.am/post/2012/06/18/what-the-heck-is-an-xrange
 """
 
 from math import ceil
@@ -22,9 +23,10 @@ from collections import Sequence, Iterator
 
 
 class range(Sequence):
-    """Pure-Python backport of Python 3's range object.  See `the CPython
-    documentation <http://docs.python.org/py3k/library/functions.html#range>`_
-    for details.
+    """
+    Pure-Python backport of Python 3's range object.  See `the CPython
+    documentation for details:
+        <http://docs.python.org/py3k/library/functions.html#range>`_
     """
 
     def __init__(self, *args):

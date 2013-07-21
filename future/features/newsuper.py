@@ -1,6 +1,6 @@
 '''
-This module provides a super() function in Python 2 that mimics the behaviour
-of super() in Python 3. It is designed to be used as follows:
+This module provides a super() function in Python 2 that mimics the
+behaviour of super() in Python 3. It is designed to be used as follows:
 
     from __future__ import division, absolute_import, print_function
     from future.features import super
@@ -14,20 +14,21 @@ And then, for example:
 
 Importing this module on Python 3 has no effect.
 
-This is based on (i.e. almost identical to) Ryan Kelly's magicsuper module
-here:
+This is based on (i.e. almost identical to) Ryan Kelly's magicsuper
+module here:
+
     https://github.com/rfk/magicsuper.git
 
 Excerpts from Ryan's docstring:
 
-  "Of course, you can still explicitly pass in the arguments if you want to do
-  something strange.  Sometimes you really do want that, e.g. to skip over
-  some classes in the method resolution order.
+  "Of course, you can still explicitly pass in the arguments if you want
+  to do something strange.  Sometimes you really do want that, e.g. to
+  skip over some classes in the method resolution order.
   
-  "How does it work?  By inspecting the calling frame to determine the function
-  object being executed and the object on which it's being called, and then
-  walking the object's __mro__ chain to find out where that function was
-  defined.  Yuck, but it seems to work..."
+  "How does it work?  By inspecting the calling frame to determine the
+  function object being executed and the object on which it's being
+  called, and then walking the object's __mro__ chain to find out where
+  that function was defined.  Yuck, but it seems to work..."
 '''
 
 import sys
