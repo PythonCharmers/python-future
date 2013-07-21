@@ -7,7 +7,7 @@ from distutils.core import setup
 import future
 
 NAME = "future"
-PACKAGES = ["future"]
+PACKAGES = ["future", "future.features", "future.tests"]
 VERSION = future.__version__
 DESCRIPTION = "[experimental] support Python 2 with fewer warts"
 LONG_DESC = future.__doc__
