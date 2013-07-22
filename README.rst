@@ -60,6 +60,28 @@ FAQ
 ---
 
 
+:Q: Why use this approach?
+
+:A: Here are some quotes:
+
+- "Django’s developers have found that attempting to write Python 3 code that’s
+  compatible with Python 2 is much more rewarding than the opposite."
+  from https://docs.djangoproject.com/en/dev/topics/python3/
+
+- "Thanks to Python 3 being more strict about things than Python 2 (e.g., bytes
+  vs. strings), the source translation [from Python 3 to 2] can be easier and
+  more straightforward than from Python 2 to 3. Plus it gives you more direct
+  experience developing in Python 3 which, since it is the future of Python, is
+  a good thing long-term."
+  from the official guide "Porting Python 2 Code to Python 3" by Brett Cannon:
+  http://docs.python.org/2/howto/pyporting.html
+
+- "Developer energy should be reserved for addressing real technical
+  difficulties associated with the Python 3 transition (like distinguishing
+  their 8-bit text strings from their binary data). They shouldn't be punished
+  with additional code changes (even automated ones) ..."
+  also PEP 414: from http://www.python.org/dev/peps/pep-0414/
+
 :Q: Does it work?
 
 :A: Probably not.
