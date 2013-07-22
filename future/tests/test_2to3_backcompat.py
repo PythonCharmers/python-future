@@ -58,6 +58,7 @@ class Test2to3Simple(unittest.TestCase):
         '''
         self.simple_convert_and_check(code, fixers=['imports'])
     
+    @unittest.skip('Skipping 2to3 checking machinery')  # known to fail now
     def simple_convert_and_check(self, code, fixers=['all']):
         """
         Tests a complete conversion of this simple piece of code from the docs
@@ -70,14 +71,14 @@ class Test2to3Simple(unittest.TestCase):
             f.write('from __future__ import print_function, absolute_import\n')
             # f.write('from future import *\n')
             f.write(textwrap.dedent(code))
-        if False:  # known to fail right now ...
-            output = check_output(['2to3', 'mytestscript.py', '-x',
-                                  'future', '-w'],
-                                  stderr=STDOUT)
-            print(output)
-            output2 = check_output(['python2', 'mytestscript.py'])
-            print(output2)
+        output = check_output(['2to3', 'mytestscript.py', '-x',
+                              'future', '-w'],
+                              stderr=STDOUT)
+        print(output)
+        output2 = check_output(['python2', 'mytestscript.py'])
+        print(output2)
 
+    @unittest.skip('new non-eval input() not yet implemented')
     def test_raw_input(self, interpreter='python2'):
         """
         Passes in a string to the waiting input()
@@ -99,7 +100,7 @@ class Test2to3Simple(unittest.TestCase):
         (stdout, stderr) = p1.communicate('Ed')
         print(stdout)
         print(stderr)
-        # self.assertEqual(stdout, "What's your name?\nHello, Ed!\n") # known to fail: input() on Python 2 does an extra eval(). FIXME
+        self.assertEqual(stdout, "What's your name?\nHello, Ed!\n") # known to fail: input() on Python 2 does an extra eval(). FIXME
 
         
 if __name__ == '__main__':
