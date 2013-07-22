@@ -29,9 +29,9 @@ class TestStandardLibraryRenames(unittest.TestCase):
 
     def test_queue(self):
         import queue
-        heap = ['thing', 'another thing']
-        queue.heapq.heapify(heap)
-        self.assertEqual(heap, ['another thing', 'thing'])
+        q = queue.Queue()
+        q.put('thing')
+        self.assertFalse(q.empty())
 
     # 'markupbase': '_markupbase',
 
