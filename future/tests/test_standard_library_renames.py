@@ -41,8 +41,10 @@ class TestStandardLibraryRenames(unittest.TestCase):
     def test_socketserver(self):
         import socketserver
 
+    @unittest.skip("Test only works if the python-tk package is installed")
     def test_tkinter(self):
         import tkinter
+
 
     # '_winreg': 'winreg',
 
