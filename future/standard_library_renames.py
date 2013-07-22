@@ -49,6 +49,9 @@ import sys
 import logging
 import imp
 
+from . import six
+
+
 # A subset of six.moves:
 RENAMES = {
            # 'anydbm': 'dbm',   # causes infinite import loop 
@@ -56,7 +59,7 @@ RENAMES = {
            'ConfigParser': 'configparser',
            'copy_reg': 'copyreg',
            'cPickle': 'pickle',
-           'cProfile': 'profile',
+           # 'cProfile': 'profile',: included in Python 3.3
            'cStringIO': 'io',
            'markupbase': '_markupbase',
            'Queue': 'queue',
@@ -128,5 +131,6 @@ class RenameImport(object):
         return module
  
 
-sys.meta_path = [RenameImport(RENAMES)]
+if not six.PY3:
+    sys.meta_path = [RenameImport(RENAMES)]
 
