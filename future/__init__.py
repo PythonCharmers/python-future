@@ -64,8 +64,8 @@ The above * import is equivalent to::
     from future.str_is_unicode import str, python_2_unicode_compatible
 
 
-See the docstrings for each of these modules for more info:
-
+See the docstrings for each of these modules for more info::
+    
 - future.standard_library_renames
 - future.common_iterators
 - future.features
@@ -78,9 +78,10 @@ Credits
 :Author: Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
-
-The super() and range() functions are derived from Ryan Kelly's
-magicsuper module and Dan Crosta's xrange module.
+:Others: The ``super()`` and ``range()`` functions are derived from Ryan Kelly's
+         ``magicsuper`` module and Dan Crosta's ``xrange`` module. The
+         ``python_2_unicode_compatible decorator`` is from
+         ``django.utils.encoding``
 
 
 FAQ
