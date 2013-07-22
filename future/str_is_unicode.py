@@ -60,7 +60,6 @@ the Chinese name of Confucius:::
 
 from __future__ import unicode_literals
 
-import __builtin__
 import inspect
 import imp
 import logging
