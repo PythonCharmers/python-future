@@ -24,7 +24,7 @@ class TestStandardLibraryRenames(unittest.TestCase):
     def test_io(self):
         from io import StringIO
         s = StringIO('test')
-        for method in ['next', 'read', 'seek', 'close']:
+        for method in ['tell', 'read', 'seek', 'close', 'flush']:
             self.assertTrue(hasattr(s, method))
 
     def test_queue(self):
