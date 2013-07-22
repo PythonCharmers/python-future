@@ -30,7 +30,11 @@ and:
             super().append(item)    	# new simpler super() function
 
 range() is a custom class that backports the slicing behaviour from
-Python 3 (from the xrange module by Dan Crosta).
+Python 3 (from the xrange module by Dan Crosta). super() is based on Ryan
+Kelly's magicsuper module. See the docstrings for the
+``future.features.newsuper`` and ``future.features.newrange`` modules for
+more details.
+
 """
 
 from __future__ import division, absolute_import, print_function

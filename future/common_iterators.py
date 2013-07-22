@@ -2,7 +2,7 @@
 This module is designed to be used as follows:
 
     from __future__ import division, absolute_import, print_function
-    from future import common_iterators
+    from future.common_iterators import *
 
 And then, for example:
 
@@ -36,15 +36,9 @@ from __future__ import division, absolute_import, print_function
 import inspect
 from . import six
 
-_oldrange, _oldmap, _oldzip, _oldfilter = range, map, zip, filter
-
-from .six.moves import xrange as range
-from .six.moves import map, zip, filter
-
-
 if not six.PY3:
-    caller = inspect.currentframe().f_back
-    caller.f_globals.update(range=range, map=map, zip=zip, filter=filter)
-    caller.f_globals.update(_oldrange=_oldrange, _oldmap=_oldmap,
-                            _oldzip=_oldzip, _oldfilter=_oldfilter)
+    _oldrange, _oldmap, _oldzip, _oldfilter = range, map, zip, filter
+    
+    from .six.moves import xrange as range
+    from .six.moves import map, zip, filter
 

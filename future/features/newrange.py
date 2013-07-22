@@ -5,7 +5,7 @@ Nearly identical to xrange.py, by Dan Crosta, from
 
 This is included here in the ``future`` package rather than pointed to as
 a dependency because there is no package for ``xrange`` on PyPI. It is
-also tweaked to apear like a regular Python 3 ``range`` object rather
+also tweaked to appear like a regular Python 3 ``range`` object rather
 than a Python 2 xrange.
 
 From Dan Crosta's README:
@@ -143,6 +143,7 @@ class range(Sequence):
         """Return an iterator which enumerates the elements of the
         sequence this range represents."""
         return rangeiterator(self)
+
 
 class rangeiterator(Iterator):
     """An iterator for an :class:`range`.

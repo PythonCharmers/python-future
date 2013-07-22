@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from future import common_iterators
+from future.common_iterators import *
 
 import unittest
 

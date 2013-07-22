@@ -36,9 +36,9 @@ import sys
 
 from future import six
 
+_builtin_super = super
 
 if not six.PY3:
-    _builtin_super = super
     _SENTINEL = object()
     
     def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):

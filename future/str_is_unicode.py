@@ -7,7 +7,9 @@ It is designed to be used together with the unicode_literals import as
 follows:
 
     from __future__ import unicode_literals
-    from future import str_is_unicode
+    from future.str_is_unicode import *
+
+See below for the explicit form of this * import.
 
 On Python 3.x and normally on Python 2.x, this expression:
 
@@ -35,9 +37,9 @@ decorator called python_2_unicode_compatible (borrowed from
 django.utils.encoding) which defines __unicode__ and __str__ methods
 under Python 2. To support Python 2 and 3 with a single code base, simply
 define a __str__ method returning text and apply the
-python_2_unicode_compatible decorator to the class like this:::
+python_2_unicode_compatible decorator to the class like this (explicit form):::
 
-    from future import str_is_unicode
+    from future.str_is_unicode import str, python_2_unicode_compatible
 
     @python_2_unicode_compatible
     class MyClass(object):
@@ -48,7 +50,7 @@ python_2_unicode_compatible decorator to the class like this:::
 
 Then this is True on both Python 3 and 2:::
 
-    str(a) == bytes(a).decode('utf-8')
+    str(a) == bytes(a, encoding='utf-8').decode('utf-8')
 
 and, on a Unicode-enabled terminal with the right fonts, these both print
 the Chinese name of Confucius:::
@@ -59,10 +61,6 @@ the Chinese name of Confucius:::
 """
 
 from __future__ import unicode_literals
-
-import inspect
-import imp
-import logging
 
 from . import six
 
@@ -82,8 +80,13 @@ def python_2_unicode_compatible(klass):
         klass.__str__ = lambda self: self.__unicode__().encode('utf-8')
     return klass
 
-
 if not six.PY3:
-    caller = inspect.currentframe().f_back
-    caller.f_globals['str'] = unicode
+    str = unicode
+    def bytes(obj, **kwargs):
+        """
+        Extension of the bytes() function to support the encoding kwarg from
+        Py3.
+        """
+        if 'encoding' in kwargs:
+            return obj.encode(kwargs['encoding'])
 
