@@ -24,4 +24,5 @@ class TestSuper(unittest.TestCase):
         self.assertTrue(isinstance(l, list))
 
 
-unittest.main()
+if __name__ == '__main__':
+    unittest.main()

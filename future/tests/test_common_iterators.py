@@ -31,4 +31,5 @@ class TestIterators(unittest.TestCase):
         self.assertNotEqual(type(filter(is_odd, a)), list)
         self.assertEqual(list(filter(is_odd, a)), [1, 3, 5, 7, 9])
 
-unittest.main()
+if __name__ == '__main__':
+    unittest.main()

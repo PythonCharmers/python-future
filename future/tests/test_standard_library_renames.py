@@ -51,4 +51,5 @@ class TestStandardLibraryRenames(unittest.TestCase):
         self.assertTrue(hasattr(builtins, 'tuple'))
 
 
-unittest.main()
+if __name__ == '__main__':
+    unittest.main()

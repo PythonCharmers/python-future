@@ -39,4 +39,5 @@ class TestStrIsUnicode(unittest.TestCase):
         assert str(a) == str(b)
 
 
-unittest.main()
+if __name__ == '__main__':
+    unittest.main()
