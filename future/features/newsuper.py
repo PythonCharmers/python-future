@@ -70,7 +70,7 @@ def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
         #       http://psung.blogspot.com/2007/12/for-else-in-python.html
         for typ in mro:
             #  Find the class that owns the currently-executing method.
-            for meth in typ.__dict__.itervalues():
+            for meth in typ.__dict__.values():
                 if not isinstance(meth, type(super)):
                     continue
                 if meth.func_code is f.f_code:
