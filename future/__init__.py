@@ -54,8 +54,8 @@ reorganization (PEP 3108)::
 
 and other modules renamed for Python 3.
 
-The above * import is equivalent to:
-
+The above * import is equivalent to::
+    
     from future.common_iterators import zip, map, filter
     from future.features import range, super
     from future.disable_obsolete_builtins import (apply, cmp, coerce,
@@ -66,17 +66,21 @@ The above * import is equivalent to:
 
 See the docstrings for each of these modules for more info:
 
-    future.standard_library_renames
-    future.common_iterators
-    future.features
-    future.disable_obsolete_builtins
-    future.str_as_unicode
+- future.standard_library_renames
+- future.common_iterators
+- future.features
+- future.disable_obsolete_builtins
+- future.str_as_unicode
 
 
 Credits
 -------
-(The super() and range() functions are derived from Ryan Kelly's
-magicsuper module and Dan Crosta's xrange module.)
+:Author: Ed Schofield
+:Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
+          Ltd, Singapore. http://pythoncharmers.com
+
+The super() and range() functions are derived from Ryan Kelly's
+magicsuper module and Dan Crosta's xrange module.
 
 
 FAQ
@@ -190,7 +194,7 @@ Other compatibility tools
 
 :Q: What is the relationship between this project and ``six``?
 
-:A: ``future`` is a higher-level interface that builds on the ``six``
+:A: ``future`` is a higher-level interface that incorporates the ``six``
     module.  They share the same goal of supporting codebases that work
     on both Python 2 and Python 3 without modification. They differ in
     the interface they offer, the Python versions they target, and the
@@ -252,9 +256,14 @@ Other compatibility tools
     versions.
 
 
-:Q: Do you support Pypy and/or Jython?
+:Q: Do you support Pypy?
 
-:A: Not sure. This would be nice. Pull requests, please!
+:A: Yes, except for the standard_library_renames feature (currently).
+    Feedback and pull requests are welcome!
+
+:Q: Do you support IronPython and/or Jython?
+
+:A: Not sure. This would be nice.
 
 
 :Q: Can I help?
