@@ -32,14 +32,15 @@ class TestStrIsUnicode(unittest.TestCase):
             assert hasattr(a, '__unicode__')
         print(str(a))
 
-        # Manual equivalent without the decorator:
-        class B(object):
-            def __unicode__(self):
-                return u'Unicode string: \u5b54\u5b50'
-            def __str__(self):
-                return unicode(self).encode('utf-8')
-        b = B()
-        assert str(a) == str(b)
+        # Manual equivalent on Py2 without the decorator:
+        if not six.PY3:
+            class B(object):
+                def __unicode__(self):
+                    return u'Unicode string: \u5b54\u5b50'
+                def __str__(self):
+                    return unicode(self).encode('utf-8')
+            b = B()
+            assert str(a) == str(b)
 
 
 if __name__ == '__main__':

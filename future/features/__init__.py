@@ -39,7 +39,14 @@ more details.
 
 from __future__ import division, absolute_import, print_function
 
-from future.features.newrange import range
-from future.features.newsuper import super
+from future import six
+
+if not six.PY3:
+    from future.features.newrange import range
+    from future.features.newsuper import super
+else:
+    import builtins
+    range = builtins.range
+    super = builtins.super
 
 __all__ = ['range', 'super']
