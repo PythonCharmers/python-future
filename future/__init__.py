@@ -98,7 +98,7 @@ Credits
 
 FAQ
 ---
-See http://github.com/edschofield/python-future#faq.
+See https://github.com/edschofield/python-future#faq.
 
 """
 
