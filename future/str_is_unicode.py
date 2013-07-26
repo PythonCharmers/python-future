@@ -50,10 +50,10 @@ python_2_unicode_compatible decorator to the class like this (explicit form):::
 
 Then this is True on both Python 3 and 2:::
 
-    str(a) == bytes(a, encoding='utf-8').decode('utf-8')
+    str(a) == a.encode('utf-8').decode('utf-8')
 
 and, on a Unicode-enabled terminal with the right fonts, these both print
-the Chinese name of Confucius:::
+the Chinese characters for Confucius:::
 
     print(a)
     print(str(a))
@@ -80,13 +80,10 @@ def python_2_unicode_compatible(klass):
         klass.__str__ = lambda self: self.__unicode__().encode('utf-8')
     return klass
 
+
 if not six.PY3:
     str = unicode
-    def bytes(obj, **kwargs):
-        """
-        Extension of the bytes() function to support the encoding kwarg from
-        Py3.
-        """
-        if 'encoding' in kwargs:
-            return obj.encode(kwargs['encoding'])
-
+else:
+    import builtins
+    str = builtins.str
+    __all__ = []
