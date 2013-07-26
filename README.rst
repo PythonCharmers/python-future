@@ -68,13 +68,11 @@ If you prefer explicit imports, the explicit equivalent of the ``from
 future import *`` line above is::
     
     from future.common_iterators import zip, map, filter
-    from future.features import range, super
+    from future.modified_builtins import (range, super, round, input)
     from future.disable_obsolete_builtins import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
             xrange, StandardError)
-    from future.modified_builtins import round, input
-    from future.str_is_unicode import str, python_2_unicode_compatible
-
+    from future.str_is_unicode import str
 
 See the docstrings for each of these modules for more info::
     
