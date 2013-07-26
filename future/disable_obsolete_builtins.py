@@ -36,11 +36,10 @@ This exception class is also disabled:
 
 from __future__ import division, absolute_import, print_function
 
-import inspect
-
 from future import six
 
-OBSOLETE_BUILTINS = ['apply', 'cmp', 'coerce', 'execfile', 'file',
+
+OBSOLETE_BUILTINS = ['apply', 'chr', 'cmp', 'coerce', 'execfile', 'file',
                      'input', 'long', 'raw_input', 'reduce', 'reload',
                      'unicode', 'xrange', 'StandardError']
 
@@ -59,9 +58,8 @@ def disabled_function(name):
 
 
 if not six.PY3:
-    # caller = inspect.currentframe().f_back
-    
     for fname in OBSOLETE_BUILTINS:
-        # caller.f_globals.__setitem__(fname, disabled_function(fname))
         locals()[fname] = disabled_function(fname)
-
+    __all__ = OBSOLETE_BUILTINS
+else:
+    __all__ = []
