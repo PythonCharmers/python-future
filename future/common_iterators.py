@@ -35,12 +35,15 @@ module on Python 2 (but not Python 3).
 
 from __future__ import division, absolute_import, print_function
 
-import inspect
 from . import six
 
 if not six.PY3:
     _oldrange, _oldmap, _oldzip, _oldfilter = range, map, zip, filter
+
+from .six.moves import xrange as range
+from .six.moves import map, zip, filter
+
+if six.PY3:
+    __all__ = []
     
-    from .six.moves import xrange as range
-    from .six.moves import map, zip, filter
 
