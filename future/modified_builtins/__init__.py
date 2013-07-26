@@ -1,23 +1,20 @@
 """
-This module contains backports of non-essential functionality from Python
-3 to Python 2 -- i.e. where there is a simple and perfectly viable
-cross-platform way to express the same idea.
+This module contains backports of new or changed functionality from
+Python 3 to Python 2.
 
 For example:
 - a Python 2 backport of the range iterator from Py3 with slicing
   support.
 - the magic zero-argument super() function
-
-Importing these features is only necessary if the Python 3 code uses
-these features and the developers would prefer not to use the
-backward-compatible interfaces for some reason.
+- the new round() behaviour
 
 It is used as follows:
 
     from __future__ import division, absolute_import, print_function
-    from future.features import range, super
+    from future.modified_builtins import (range, super, round, input)
 
-And then, for example:
+to bring in the new semantics for these functions from Python 3. And
+then, for example:
 
     for i in range(10**11)[:10]:
         pass
@@ -29,11 +26,44 @@ and:
             print('Adding an item')
             super().append(item)    	# new simpler super() function
 
-range() is a custom class that backports the slicing behaviour from
-Python 3 (from the xrange module by Dan Crosta). super() is based on Ryan
-Kelly's magicsuper module. See the docstrings for the
-``future.features.newsuper`` and ``future.features.newrange`` modules for
+Notes
+=====
+
+range()
+-------
+range is a custom class that backports the slicing behaviour from
+Python 3 (from the xrange module by Dan Crosta). See the
+docstring for more details.
+
+
+super()
+-------
+super() is based on Ryan Kelly's magicsuper module. See the docstring for
 more details.
+
+
+input()
+-------
+Like the new safe input() function from Python 3 (without eval()), except
+that it returns bytes. Equivalent to Python 2's raw_input().
+
+By default, the old Python 2 input() is **removed** from __builtin__ for
+safety (because it may otherwise lead to shell injection on Python 2 if
+used accidentally after forgetting to import the replacement for some
+reason.
+
+To restore it, you can retrieve it yourself from __builtin__._old_input.
+
+round()
+-------
+Python 3 modifies the behaviour of round() to use "Banker's Rounding".
+See http://stackoverflow.com/a/10825998. See the docstring for more
+details.
+
+
+TODO:
+-----
+- Check int() ??
 
 """
 
@@ -41,12 +71,28 @@ from __future__ import division, absolute_import, print_function
 
 from future import six
 
-if not six.PY3:
-    from future.features.newrange import range
-    from future.features.newsuper import super
-else:
+if six.PY3:
     import builtins
     range = builtins.range
     super = builtins.super
+    round = builtins.round
+    input = builtins.input
+    __all__ = []
+else:
+    from .newsuper import super
+    from .newrange import range
+    from .newround import round
 
-__all__ = ['range', 'super']
+    # Python 2's input() is unsafe and MUST not be able to be used
+    # accidentally by someone who forgets to import it but expects Python
+    # 3 semantics. So we delete it from __builtin__. We keep a copy
+    # though:
+    import __builtin__
+    __builtin__._oldinput = __builtin__.input
+    delattr(__builtin__, 'input')
+
+    # New one with Py3 semantics:
+    __builtin__.input = six.moves.input
+    input = six.moves.input
+
+    __all__ = ['range', 'super', 'round', 'input']
