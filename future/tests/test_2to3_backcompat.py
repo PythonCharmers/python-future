@@ -20,7 +20,7 @@ from subprocess import Popen, PIPE, check_output, STDOUT
 class Test2to3Simple(unittest.TestCase):
     def test_range_slice(self):
         code = '''
-        from future.features import range
+        from future.modified_builtins import range
         for i in range(10**11)[:10]:
             pass
         '''
@@ -31,7 +31,7 @@ class Test2to3Simple(unittest.TestCase):
         Ensure the old method of calling super() still works.
         """
         code = '''
-        from future.features import super
+        from future.modified_builtins import super
         class VerboseList(list):
             def append(self, item):
                 print 'Adding an item'
@@ -78,10 +78,10 @@ class Test2to3Simple(unittest.TestCase):
         output2 = check_output(['python2', 'mytestscript.py'])
         print(output2)
 
-    @unittest.skip('new non-eval input() not yet implemented')
+    # @unittest.skip('new non-eval input() not yet implemented')
     def test_raw_input(self, interpreter='python2'):
         """
-        Passes in a string to the waiting input()
+        Passes in a string to the waiting input() after 2to3 conversion
         """
         code = '''
         from future import *
@@ -97,10 +97,10 @@ class Test2to3Simple(unittest.TestCase):
                               stderr=STDOUT)
         # print(output)
         p1 = Popen([interpreter, 'mytestscript.py'], stdout=PIPE, stdin=PIPE)
-        (stdout, stderr) = p1.communicate('Ed')
+        (stdout, stderr) = p1.communicate(b'Ed')
         print(stdout)
         print(stderr)
-        self.assertEqual(stdout, "What's your name?\nHello, Ed!\n") # known to fail: input() on Python 2 does an extra eval(). FIXME
+        self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")
 
         
 if __name__ == '__main__':

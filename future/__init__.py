@@ -15,17 +15,23 @@ It is designed to be used as follows::
     from __future__ import (division, absolute_import, print_function,
                             unicode_literals)
     from future import *
-
+    
 followed by clean Python 3 code (with a few restrictions) that can run
-unchanged on Python 2.7 or Python 3.3. For example::
+unchanged on Python 2.7.
 
-    # New range object with slicing support
+On Python 3, the ``from future import *`` line has no effect (i.e. no
+namespace pollution.) On Python 2 it shadows builtins to provide the
+Python 3 semantics. (See below for the explicit import form.)
+
+For example::
+
+    # New iterable range object with slicing support
     for i in range(10**11)[:10]:
         pass
     
     # Other common iterators: map, reduce, zip
-    iter = zip(range(3), ['a', 'b', 'c'])
-    assert iter != list(iter)
+    my_iter = zip(range(3), ['a', 'b', 'c'])
+    assert my_iter != list(my_iter)
     
     # New simpler super() function:
     class VerboseList(list):
@@ -39,25 +45,31 @@ unchanged on Python 2.7 or Python 3.3. For example::
     # This identity is restored. This is normally valid on Py3 and Py2, but
     # 'from __future__ import unicode_literals' breaks it on Py2:
     assert isinstance('happy', str)
-    
-See below for more explicit forms of the import line.
-    
-Another feature offered is support for the standard library
-reorganization (PEP 3108)::
-    
+
+    # The round() function behaves as it does in Python 3, using "Banker's
+    # Rounding" to the nearest even last digit:
+    assert round(0.1250, 2) == 0.12
+
+    # input() is now safe (no eval()):
+    name = input('What is your name?\n')
+    print('Hello ' + name)
+
+``future`` also supports the standard library reorganization (PEP 3108)
+via import hooks, allowing standard library modules to be accessed under
+their Python 3 names and locations::
+
     from future import standard_library_renames
-    
+
     import socketserver
     import queue
     import configparser
-    # etc.
+    # and other moved modules
 
-and other modules renamed for Python 3.
-
-The above * import is equivalent to::
+If you prefer explicit imports, the explicit equivalent of the ``from
+future import *`` line above is::
     
     from future.common_iterators import zip, map, filter
-    from future.features import range, super
+    from future.modified_builtins import (range, super, round, input)
     from future.disable_obsolete_builtins import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
             xrange, StandardError)
@@ -68,7 +80,7 @@ See the docstrings for each of these modules for more info::
     
 - future.standard_library_renames
 - future.common_iterators
-- future.features
+- future.modified_builtins
 - future.disable_obsolete_builtins
 - future.str_as_unicode
 
@@ -126,9 +138,17 @@ FAQ
 
 :Q: Why is there a need for this?
 
-:A: To reduce cruft in single-source codebases that support both Python 2
-    and 3.
+:A: "Python 2 is the next COBOL." - Alex Gaynor, at PyCon AU 2013
 
+    Python 3.3 is a better language and better set of standard libraries
+    than Python 2.x in almost every way.
+
+    ``future`` helps you to take advantage of the cleaner syntax and
+    semantics of Python 3 code today while still supporting Python 2.
+    
+    The goal is to encourage writing future-proof code while still
+    supporting the platform of today.
+    
 
 Other compatibility tools
 -------------------------
@@ -174,25 +194,6 @@ Other compatibility tools
     http://www.youtube.com/watch?v=xNZ4OVO2Z_E.)
 
 
-:Q: What is the relationship between this project and ``python-modernize``?
-
-:A: ``python-modernize`` is great, and this project is designed to
-    complement it.  For a project wishing to migrate to Python 3,
-    python-modernize is useful for starting the process of cleaning up
-    legacy code idioms which would cause SyntaxErrors on Python 3. The
-    output of ``python-modernize`` should hopefully be a valid common
-    subset of Python 3 and Python 2 that should run under either
-    platform.
-
-    However, the output of ``python-modernize`` is not clean Python 3
-    code; it requires that code contain various backward-compatibility
-    warts and a runtime dependency on the six module.
-    
-    ``future`` goes further in allowing either the output of
-    ``python-modernize`` or hand-written Python 3 code to run with less
-    work and and less backward-compatible cruft on Python 2.
-
-
 :Q: What is the relationship between this project and ``six``?
 
 :A: ``future`` is a higher-level interface that incorporates the ``six``
@@ -201,26 +202,43 @@ Other compatibility tools
     the interface they offer, the Python versions they target, and the
     extent of the support they offer for new Python 3 features.
     
-    Codebases that use ``six`` are sometimes standard Python 3 code,
-    sometimes Python 2 code, and sometimes neither (``six``-specific
-    wrapper interfaces).
+    Although ``six`` is a remarkable achievement -- making it possible to
+    write a single-source codebase that runs on both Python 2 and Python
+    3 -- codebases that use ``six`` directly tend to be mixtures of
+    Python 2 code, Python 3 code, and ``six``-specific wrapper
+    interfaces. In practice it often looks like this::
     
-    Here is a simple example of code compatible with both Python 2 and
-    Python 3 using ``six``::
+        from sklearn.externals.six.moves import (cStringIO as StringIO,
+                                                 xrange)
+
+        for i, (k, v) in enumerate(sorted(six.iteritems(params))):
+            # ...
+
+        if six.PY3:
+            exec(open('setup.py').read(), {'__name__'='__main__'})
+        else:
+            execfile('setup.py', {'__name__'='__main__'})
     
-        from six.moves import xrange
-        for i in xrange(10**10):    # non-standard Python 3 code
+        for i in xrange(10**10):        # non-standard Python 3
             pass
     
-    Here is the corresponding example using the ``future`` module::
+
+    This is crufty and non-standard Python 3 code that puts a maintenance
+    burden on the code to support Python 2 indefinitely.
+
+    Here is the equivalent code using the ``future`` module::
     
-        from future.features import range
+        from future import standard_library_renames, range
+
+        for i, (k, v) in enumerate(sorted(params.items())):
+            # ...
+
+        exec(open('setup.py').read(), {'__name__'='__main__'})
+    
         for i in range(10**10):     # standard Python 3
             pass
     
-    Note that the former introduces the obsolete xrange() back into the
-    codebase in order to offer backward compatibility for Python 2. The
-    latter example is standard Python 3 code, with an import line that
+    This is standard Python 3 code, with an import line that
     has no effect on Python 3.
     
     Another difference is version support: ``future`` supports only
@@ -230,10 +248,25 @@ Other compatibility tools
     functions) are superseded by features introduced in Python 2.6 or
     2.7.
 
-    The final difference is that ``future`` offers some backported features
+    The final difference is in scope: ``future`` offers more backported features
     from Python 3, including the improved no-argument super() function,
-    and the new range object (with slicing support). More backported
-    features will be added in the future.
+    the new range object (with slicing support), rounding behaviour, etc.
+    More backported features will be added in the future. This should
+    reduce the burden on every project to roll its own py3k compatibility
+    wrapper module.
+
+:Q: What is the relationship between this project and ``python-modernize``?
+
+:A: For a project wishing to migrate to Python 3, python-modernize is
+    very useful for starting the process of cleaning up legacy code
+    idioms which would cause SyntaxErrors on Python 3. The output of
+    ``python-modernize`` should hopefully be a valid common subset of
+    Python 3 and Python 2 that should run under either platform.
+
+    Currently, python-modernize produces code with a run-time dependency
+    on ``six`` (see above). We will aim to provide an alternative set of
+    fixes for ``python-modernize`` to produce cleaner Python 3 code using
+    ``future`` as an alternative depencency to ``six``.
 
 
 :Q: How did the original need for this arise?
@@ -254,7 +287,7 @@ Other compatibility tools
     for at least the next 5 years, one of the promised benefits of Python
     3 -- cleaner code with fewer of Python 2's warts -- was difficult to
     realise before in practice in a single codebase that supported both
-    versions.
+    platforms.
 
 
 :Q: Do you support Pypy?
@@ -271,23 +304,35 @@ Other compatibility tools
 
 :A: Yes, we welcome bug reports, tests, and pull requests.
 
+
 """
 
 from __future__ import (division, absolute_import, print_function)
 
-from future.common_iterators import *
-from future.features import *
-from future.disable_obsolete_builtins import *
-from future.str_is_unicode import *
+from future import six
 
+if not six.PY3:
+    from future.common_iterators import (filter, map, zip)
+    from future.disable_obsolete_builtins import (apply, cmp, coerce,
+            execfile, file, long, raw_input, reduce, reload, unicode,
+            xrange, StandardError)
+    from future.modified_builtins import (round, input, range, super)
+    from future.str_is_unicode import str  # not python_2_unicode_compatible
+    
+    # Only shadow builtins on Py2; no new names
+    __all__ = ['filter', 'map', 'zip', 'apply', 'cmp', 'coerce', 'execfile',
+               'file', 'long', 'raw_input', 'reduce', 'reload', 'unicode',
+               'xrange', 'StandardError', 'round', 'input', 'range', 'super',
+               'str']
+
+else:
+    # No namespace pollution on Py3
+    __all__ = []
 
 __ver_major__ = 0
-__ver_minor__ = 1
+__ver_minor__ = 2
 __ver_patch__ = 0
 __ver_sub__ = ''
 __version__ = "%d.%d.%d%s" % (__ver_major__,__ver_minor__,__ver_patch__,__ver_sub__)
-VERSION = __version__
 
-# __all__ = ['disable_obsolete_builtins', 'common_iterators', 'str_is_unicode',
-#            'standard_library_renames', 'features']
 

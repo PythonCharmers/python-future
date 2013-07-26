@@ -15,7 +15,7 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 NAME = "future"
-PACKAGES = ["future", "future.features", "future.tests"]
+PACKAGES = ["future", "future.modified_builtins", "future.tests"]
 PACKAGE_DATA = {'': ['README.rst', 'LICENSE']}
 REQUIRES = []
 VERSION = future.__version__

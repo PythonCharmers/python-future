@@ -13,31 +13,36 @@ exceptions when called.
 
 The following functions are disabled:
 
-    apply, cmp, coerce, execfile, file, long,
+    apply, cmp, coerce, execfile, file, input, long,
     raw_input, reduce, reload, unicode, xrange
 
-and this exception class:
+Note that both input() and raw_input() are disabled. Although input()
+exists as a builtin in Python 3, the Python 2 input() builtin is unsafe
+to use because it can lead to shell injection. Therefore we shadow it by
+default, in case someone forgets to import our replacement input()
+somehow and expects Python 3 semantics.
+
+Fortunately, input() seems to be seldom used in the wild in Python 2, so
+we could probably even delete it from __builtin__... TODO: test this.
+
+(Note that callable() is not among the functions disabled; this was
+reintroduced into Python 3.2.)
+
+This exception class is also disabled:
 
     StandardError
 
-(Note that callable() is not among them; this was reintroduced into
-Python 3.2.)
-
-Also to do:
-- Fix round()
-- Fix input()
-- Fix int()
 """
 
 from __future__ import division, absolute_import, print_function
 
 import inspect
 
-from . import six
+from future import six
 
-OBSOLETE_BUILTINS = ['apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
-                     'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
-                     'StandardError']
+OBSOLETE_BUILTINS = ['apply', 'cmp', 'coerce', 'execfile', 'file',
+                     'input', 'long', 'raw_input', 'reduce', 'reload',
+                     'unicode', 'xrange', 'StandardError']
 
 
 def disabled_function(name):
@@ -54,8 +59,9 @@ def disabled_function(name):
 
 
 if not six.PY3:
-    caller = inspect.currentframe().f_back
+    # caller = inspect.currentframe().f_back
     
     for fname in OBSOLETE_BUILTINS:
-        caller.f_globals.__setitem__(fname, disabled_function(fname))
+        # caller.f_globals.__setitem__(fname, disabled_function(fname))
+        locals()[fname] = disabled_function(fname)
 

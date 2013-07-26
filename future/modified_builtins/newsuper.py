@@ -3,7 +3,7 @@ This module provides a super() function in Python 2 that mimics the
 behaviour of super() in Python 3. It is designed to be used as follows:
 
     from __future__ import division, absolute_import, print_function
-    from future.features import super
+    from future.modified_builtins import super
 
 And then, for example:
 
