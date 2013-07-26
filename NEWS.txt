@@ -1,0 +1,8 @@
+v0.2.0: - features module renamed to modified_builtins
+        - new functions added: round(), input()
+		- no more namespace pollution as a policy:
+		      from future import *
+		  should have no effect on Python 3. On Python 2, it only shadows the
+		  builtins; it doesn't introduce any new names.
+		- end-to-end tests with Python 2 code and 2to3 now work:
+  		  test_2to3_backcompat.py

@@ -16,7 +16,7 @@ if sys.argv[-1] == 'publish':
 
 NAME = "future"
 PACKAGES = ["future", "future.modified_builtins", "future.tests"]
-PACKAGE_DATA = {'': ['README.rst', 'LICENSE']}
+PACKAGE_DATA = {'': ['README.rst', 'LICENSE', 'NEWS.txt']}
 REQUIRES = []
 VERSION = future.__version__
 DESCRIPTION = "[experimental] support Python 2 with fewer warts"
