@@ -23,7 +23,7 @@ On Python 3, the ``from future import *`` line has no effect (i.e. no
 namespace pollution.) On Python 2 it shadows builtins to provide the
 Python 3 semantics. (See below for the explicit import form.)
 
-For example::
+After the imports, this code runs identically on Python 3 and 2::
 
     # New iterable range object with slicing support
     for i in range(10**11)[:10]:
@@ -92,8 +92,8 @@ Credits
           Ltd, Singapore. http://pythoncharmers.com
 :Others: The ``super()`` and ``range()`` functions are derived from Ryan Kelly's
          ``magicsuper`` module and Dan Crosta's ``xrange`` module. The
-         ``python_2_unicode_compatible decorator`` is from
-         ``django.utils.encoding``
+         ``python_2_unicode_compatible`` decorator is from
+         ``django.utils.encoding``.
 
 
 FAQ
