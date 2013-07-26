@@ -12,15 +12,26 @@ And then these imports work:
     import builtins
     import configparser
     import copyreg
-    import io
     import _markupbase
     import queue
     import reprlib
     import socketserver
     import tkinter
     import winreg (on Windows only)
+    import _thread
+    import _dummythread
+    import _markupbase
 
 The modules are still available under their old names on Python 2.
+
+This is a cleaner alternative to this idiom (see
+http://docs.pythonsprints.com/python3_porting/py-porting.html):
+
+    try:
+        import queue
+    except ImportError:
+        import Queue as queue
+
 
 We don't currently support these, but would like to:
 
@@ -60,7 +71,8 @@ RENAMES = {
            'copy_reg': 'copyreg',
            'cPickle': 'pickle',
            # 'cProfile': 'profile',: included in Python 3.3
-           'cStringIO': 'io',
+           # 'cStringIO': 'io',  # there's a new io module in Python 2.6
+           # that provides StringIO and BytesIO.
            'markupbase': '_markupbase',
            'Queue': 'queue',
            'repr': 'reprlib',
@@ -68,6 +80,10 @@ RENAMES = {
            'Tkinter': 'tkinter',
            '_winreg': 'winreg',
            '__builtin__': 'builtins',
+           'thread': '_thread',
+           'dummy_thread': '_dummy_thread',
+           'markupbase': '_markupbase',
+
           }
 
 
