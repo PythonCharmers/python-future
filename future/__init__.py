@@ -106,13 +106,14 @@ from __future__ import (division, absolute_import, print_function)
 
 from future import six
 
+from future.common_iterators import (filter, map, zip)
+from future.modified_builtins import (round, input, range, super)
+from future.str_is_unicode import str  # not python_2_unicode_compatible
+
 if not six.PY3:
-    from future.common_iterators import (filter, map, zip)
     from future.disable_obsolete_builtins import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
             xrange, StandardError)
-    from future.modified_builtins import (round, input, range, super)
-    from future.str_is_unicode import str  # not python_2_unicode_compatible
     
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 'apply', 'cmp', 'coerce', 'execfile',
