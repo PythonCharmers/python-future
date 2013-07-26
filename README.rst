@@ -1,5 +1,5 @@
-future: support Python 2 with fewer warts
-=========================================
+future: clean single-source support for Python 3 and 2
+======================================================
 
 The ``future`` module helps run Python 3.x-compatible code under Python 2
 with minimal code cruft.
