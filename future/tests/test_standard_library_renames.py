@@ -58,7 +58,7 @@ class TestStandardLibraryRenames(unittest.TestCase):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    @unittest.expectedFailure
+    @unittest.skip("skipping in case there's no net connection")
     def test_urllib_request(self):
         import urllib.request
         from pprint import pprint
@@ -73,7 +73,7 @@ class TestStandardLibraryRenames(unittest.TestCase):
         URL = 'http://pypi.python.org/test_url/spaces oh no/'
         assertEqual(urllib.parse.quote(URL.format(package)), 'http%3A//pypi.python.org/test_url/spaces%20oh%20no/')
 
-    @unittest.expectedFailure
+    @unittest.expectedFailure     # currently fails on Py2
     def test_sys_intern(self):
         """
         intern() has been moved to the sys module.
