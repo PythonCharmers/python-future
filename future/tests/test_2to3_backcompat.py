@@ -22,7 +22,7 @@ from subprocess import Popen, PIPE, check_output, STDOUT
 
 class Test2to3Simple(unittest.TestCase):
     def setUp(self):
-        self.interpreters = ['python2', 'python3']
+        self.interpreters = ['python', 'python3']
 
     def test_xrange(self):
         code = '''
