@@ -79,8 +79,8 @@ if six.PY3:
     input = builtins.input
     __all__ = []
 else:
-    from .newsuper import super
     from .newrange import range
+    from .newsuper import super
     from .newround import round
 
     # Python 2's input() is unsafe and MUST not be able to be used

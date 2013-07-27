@@ -69,6 +69,7 @@ If you prefer explicit imports, the explicit equivalent of the ``from
 future import *`` line above is::
     
     from future.common_iterators import zip, map, filter
+    from future.builtins import ascii, oct, hex, chr, int
     from future.modified_builtins import (range, super, round, input)
     from future.disable_obsolete_builtins import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
@@ -80,6 +81,7 @@ See the docstrings for each of these modules for more info::
     
 - future.standard_library_renames
 - future.common_iterators
+- future.builtins
 - future.modified_builtins
 - future.disable_obsolete_builtins
 - future.str_as_unicode
@@ -107,8 +109,12 @@ from __future__ import (division, absolute_import, print_function)
 from future import six
 
 from future.common_iterators import (filter, map, zip)
+from future.builtins import (ascii, oct, hex, chr, int)
 from future.modified_builtins import (round, input, range, super)
-from future.str_is_unicode import str  # not python_2_unicode_compatible
+from future.str_is_unicode import str  
+
+# We don't import the python_2_unicode_compatible decorator; only names
+# that shadow the builtins on Py2.
 
 if not six.PY3:
     from future.disable_obsolete_builtins import (apply, cmp, coerce,
@@ -116,9 +122,12 @@ if not six.PY3:
             xrange, StandardError)
     
     # Only shadow builtins on Py2; no new names
-    __all__ = ['filter', 'map', 'zip', 'apply', 'cmp', 'coerce', 'execfile',
-               'file', 'long', 'raw_input', 'reduce', 'reload', 'unicode',
-               'xrange', 'StandardError', 'round', 'input', 'range', 'super',
+    __all__ = ['filter', 'map', 'zip', 
+               'ascii', 'oct', 'hex', 'chr', 'int',
+               'apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
+               'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
+               'StandardError',
+               'round', 'input', 'range', 'super',
                'str']
 
 else:
