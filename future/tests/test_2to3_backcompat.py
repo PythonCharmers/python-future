@@ -22,7 +22,7 @@ from subprocess import Popen, PIPE, check_output, STDOUT
 
 class Test2to3Simple(unittest.TestCase):
     def setUp(self):
-        self.interpreters = ['python', 'python3']
+        self.interpreter = 'python'
 
     def test_xrange(self):
         code = '''
@@ -91,9 +91,8 @@ class Test2to3Simple(unittest.TestCase):
             f.write('from future import standard_library_renames\n')
             f.write(newsource)
 
-        for interpreter in self.interpreters:
-            output2 = check_output([interpreter, 'mytestscript.py'])
-            # print(output2)
+        output2 = check_output([self.interpreter, 'mytestscript.py'])
+        print(output2)
 
     @unittest.skip('not implemented yet')
     def test_download_pypi_package_and_test(self, package_name='future'):
@@ -133,13 +132,12 @@ class Test2to3Simple(unittest.TestCase):
         output = check_output(['2to3', 'mytestscript.py', '-w'],
                               stderr=STDOUT)
         # print(output)
-        for interpreter in self.interpreters:
-            p1 = Popen([interpreter, 'mytestscript.py'],
-                       stdout=PIPE, stdin=PIPE)
-            (stdout, stderr) = p1.communicate(b'Ed')
-            print(stdout)
-            #print(stderr)
-            self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")
+        p1 = Popen([self.interpreter, 'mytestscript.py'],
+                   stdout=PIPE, stdin=PIPE)
+        (stdout, stderr) = p1.communicate(b'Ed')
+        print(stdout)
+        #print(stderr)
+        self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")
 
         
 if __name__ == '__main__':
