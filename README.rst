@@ -122,9 +122,9 @@ Limitations
 Python 3 code that causes SyntaxErrors on Python 2 is not handled by the
 ``futurize`` script (except for ``print_function``). This includes:
 
-- Function arguments in Py3.3 like this: 
-    def f(a, b, *, c='blah', d='blah'):
-        ...
+- Function arguments in Py3.3 like this::
+    ``def f(a, b, *, c='blah', d='blah'):``
+        ``pass``
 
 - ``yield ... from`` syntax for generators in Py3.3
 
@@ -138,12 +138,14 @@ Python 3 code that causes SyntaxErrors on Python 2 is not handled by the
   handling the complexity of the renames. These modules are:
   ``urllib``, ``html``, ``http``.
 
-- class MyClass:
-      ...
+- ``class MyClass:``
+      ``...``
+
   should be changed back to:
   
-  class MyClass(object):
-      ....
+  ``class MyClass(object):``
+      ``...``
+
   to get new-style classes; otherwise weird breakage when e.g. calling
   super() may occur.
 
@@ -227,7 +229,7 @@ Other compatibility tools
 
     The example at the top of the 2to3 docs
     (http://docs.python.org/2/library/2to3.html) illustrates this point.
-    After transformation, ``example.py`` looks like this:
+    After transformation, ``example.py`` looks like this::
 
         def greet(name):
             print("Hello, {0}!".format(name))
@@ -322,17 +324,14 @@ Other compatibility tools
 
 :Q: What is the relationship between this project and ``python-modernize``?
 
-:A: For a project wishing to migrate to Python 3, python-modernize is
-    very useful for starting the process of cleaning up legacy code
-    idioms which would cause SyntaxErrors on Python 3. The output of
-    ``python-modernize`` should hopefully be a valid common subset of
-    Python 3 and Python 2 that should run under either platform.
+:A: ``python-modernize`` converts legacy code into what is (hopefully) a
+    common subset of Python 2 and 3, with ``six`` as a run-time dependency. 
 
-    Currently, python-modernize produces code with a run-time dependency
-    on ``six`` (see above). We will aim to provide an alternative set of
-    fixes for ``python-modernize`` to produce cleaner Python 3 code using
-    ``future`` as an alternative depencency to ``six``.
-
+	``python-future`` contains a ``futurize.py`` script that is similar
+	to ``modernize.py`` in intent and design (based on ``2to3``). The
+	difference is that ``futurize`` produces code that is
+	source-compatible with Py2 and Py3 by using ``future`` package
+	imports, rather than ``six``.
 
 :Q: How did the original need for this arise?
 
@@ -367,6 +366,6 @@ Other compatibility tools
 
 :Q: Can I help?
 
-:A: Yes, we welcome bug reports, tests, and pull requests.
+:A: Yes please :) I welcome bug reports, tests, and pull requests.
 
 
