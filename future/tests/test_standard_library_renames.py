@@ -67,6 +67,26 @@ class TestStandardLibraryRenames(unittest.TestCase):
         r = urllib.request.urlopen(URL.format(package))
         pprint(r.read().decode('utf-8'))
 
+    def test_html_import(self):
+        import html
+        import html.entities
+        import html.parser
+
+    def test_http_import(self):
+        import http
+        import http.server
+        import http.client
+        import http.cookies
+        import http.cookiejar
+
+    def test_urllib_imports(self):
+        import urllib
+        import urllib.parse
+        import urllib.request
+        import urllib.robotparser
+        import urllib.error
+        import urllib.response
+
     @unittest.expectedFailure
     def test_urllib_parse(self):
         import urllib.parse
