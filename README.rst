@@ -89,6 +89,46 @@ See the docstrings for each of these modules for more info::
 - future.str_as_unicode
 
 
+Automatic conversion
+====================
+
+There is a script included called ``futurize.py`` to aid in making either
+Python 2 code or Python 3 code compatible with both platforms using the
+``future`` module. It is based on 2to3 and inspired by Armin Ronacher's
+``modernize.py``.
+
+For Python 2 code (the default), it runs the code through all the
+appropriate 2to3 fixers to turn it into valid Python 3 code, and then
+adds ``__future__`` and ``future`` package imports so that (hopefully)
+the resulting code runs on Python 3 as well.
+
+For Python 3 code (with ``--from3``), it merely adds ``__future__`` and
+``future`` imports to the top of each module so that (with luck) the code
+will run automatically on Python 2 as well.
+
+
+Limitations
+-----------
+Python 3 code that causes SyntaxErrors on Python 2 is not handled by the
+``futurize`` script (except for ``print_function``). This includes:
+
+- Function arguments in Py3.3 like this: 
+    def f(a, b, *, c='blah', d='blah'):
+        ...
+
+- ``yield ... from`` syntax for generators in Py3.3
+
+- ``raise ... from`` syntax for exceptions. (This is simple to fix
+  manually by creating a temporary variable.)
+
+- And any code that requires standard library features from Python 3 that
+  are not available in the modules of the same names in Python 2.
+  A couple of significantly refactored modules have been backported,
+  however, since this was an easier process using ``future`` than
+  handling the complexity of the renames. These modules are:
+  ``urllib``, ``html``, ``http``.
+
+
 Credits
 -------
 :Author:  Ed Schofield
