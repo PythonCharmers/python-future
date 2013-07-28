@@ -24,7 +24,7 @@ namespace pollution.) On Python 2 it shadows builtins to provide the
 Python 3 semantics. (See below for the explicit import form.)
 
 After the imports, this code runs identically on Python 3 and 2::
-
+    
     # New iterable range object with slicing support
     for i in range(10**11)[:10]:
         pass
@@ -45,25 +45,27 @@ After the imports, this code runs identically on Python 3 and 2::
     # This identity is restored. This is normally valid on Py3 and Py2, but
     # 'from __future__ import unicode_literals' breaks it on Py2:
     assert isinstance('happy', str)
-
+    
     # The round() function behaves as it does in Python 3, using "Banker's
     # Rounding" to the nearest even last digit:
     assert round(0.1250, 2) == 0.12
-
+    
     # input() is now safe (no eval()):
-    name = input('What is your name?\n')
+    name = input('What is your name? ')
     print('Hello ' + name)
+
 
 ``future`` also supports the standard library reorganization (PEP 3108)
 via import hooks, allowing standard library modules to be accessed under
 their Python 3 names and locations::
-
+    
     from future import standard_library_renames
-
+    
     import socketserver
     import queue
     import configparser
     # and other moved modules
+
 
 If you prefer explicit imports, the explicit equivalent of the ``from
 future import *`` line above is::
@@ -76,9 +78,10 @@ future import *`` line above is::
             xrange, StandardError)
     from future.str_is_unicode import str
 
+But please note that the API is still evolving rapidly.
 
 See the docstrings for each of these modules for more info::
-    
+
 - future.standard_library_renames
 - future.common_iterators
 - future.builtins
@@ -89,13 +92,15 @@ See the docstrings for each of these modules for more info::
 
 Credits
 -------
-:Author: Ed Schofield
+:Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
-:Others: The ``super()`` and ``range()`` functions are derived from Ryan Kelly's
-         ``magicsuper`` module and Dan Crosta's ``xrange`` module. The
-         ``python_2_unicode_compatible`` decorator is from
-         ``django.utils.encoding``.
+:Others:  The ``super()`` and ``range()`` functions are derived from Ryan
+          Kelly's ``magicsuper`` module and Dan Crosta's ``xrange``
+          module. The ``python_2_unicode_compatible`` decorator is from
+          ``django.utils.encoding``. The fix_metaclass 2to3 fixer (from
+          Armin Ronacher's python-modernize) was authored by Jack
+          Diederich and Daniel Neuhaeuser.
 
 
 FAQ
