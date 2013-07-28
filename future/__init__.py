@@ -19,7 +19,7 @@ It is designed to be used as follows::
 followed by clean Python 3 code (with a few restrictions) that can run
 unchanged on Python 2.7.
 
-On Python 3, the ``from future import *`` line has no effect (i.e. no
+On Python 3, the ``from future import *`` line has no effect (i.e. zero
 namespace pollution.) On Python 2 it shadows builtins to provide the
 Python 3 semantics. (See below for the explicit import form.)
 
@@ -66,7 +66,21 @@ their Python 3 names and locations::
     import configparser
     # and other moved modules
 
+It also includes experimental backports for three stdlib packages from Py3
+that were heavily refactored versus Py2::
+    
+    import urllib, urllib.parse, urllib.request, urllib.error
+    import http, http.server, http.client, http.cookies, http.cookiejar
+    import html, html.entities, html.parser
 
+Backporting all three packages took about 1 hour using ``future`` itself.
+*Warning*: at least ``http.client`` doesn't pass tests yet, since it
+depends on a Py3.2+ stdlib feature (``ssl.SSLContext``) that is not
+available in Py2.
+
+
+Explicit imports
+----------------
 If you prefer explicit imports, the explicit equivalent of the ``from
 future import *`` line above is::
     
@@ -98,9 +112,15 @@ Credits
 :Others:  The ``super()`` and ``range()`` functions are derived from Ryan
           Kelly's ``magicsuper`` module and Dan Crosta's ``xrange``
           module. The ``python_2_unicode_compatible`` decorator is from
-          ``django.utils.encoding``. The fix_metaclass 2to3 fixer (from
-          Armin Ronacher's python-modernize) was authored by Jack
-          Diederich and Daniel Neuhaeuser.
+          ``django.utils.encoding``. The ``fix_metaclass`` 2to3 fixer
+          (from Armin Ronacher's ``python-modernize``) was authored by
+          Jack Diederich and Daniel Neuhaeuser.
+
+
+Licensing
+---------
+Copyright 2013 Python Charmers Pty Ltd, Australia.
+The software is distributed under an MIT licence. See LICENSE.txt.
 
 
 FAQ
