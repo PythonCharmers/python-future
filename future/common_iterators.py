@@ -17,20 +17,20 @@ nothing on Python 3.
 
 The iterators this brings in are::
 
-- range
-- filter
-- map
-- zip
+- ``range``
+- ``filter``
+- ``map``
+- ``zip``
 
-range is equivalent to xrange on Python 2 by default. As an alternative,
-there is a pure Python backport of Python 3's range iterator available
-with slicing support. To use it, add::
+``range`` is equivalent to ``xrange`` on Python 2 when imported from this
+module. As an alternative, there is a pure Python backport of Python 3's
+``range`` iterator available with slicing support. To use it, import it with::
 
     from future.modified_builtins import range
 
-The other iterators (filter, map, zip) are from the itertools module on
-Python 2. Note that these are also available in the ``future_builtins``
-module on Python 2 (but not Python 3).
+The other iterators (``filter``, ``map``, ``zip``) are from the ``itertools``
+module on Python 2. Note that these are also available in the
+``future_builtins`` module on Python 2 (but not Python 3).
 """
 
 from __future__ import division, absolute_import, print_function

@@ -1,13 +1,15 @@
 """
-A module that brings in (backports of) the new and modified Python 3
+A module that brings in equivalents of the new and modified Python 3
 builtins into Py2. Has no effect on Py3.
 
 The builtin functions are:
 
-- ascii
-- hex
-- oct
-- input (equivalent to raw_input on Py2)
+- ``ascii``
+- ``hex``
+- ``oct``
+- ``input`` (equivalent to ``raw_input`` on Py2)
+- ``chr`` (equivalent to ``unichr`` on Py2)
+- ``int`` (equivalent to ``long`` on Py2)
 
 More will be added soon ...
 

@@ -3,11 +3,11 @@ Python 3 reorganized the standard library (PEP 3108). This module exposes
 several standard library modules to Python 2 under their new Python 3
 names.
 
-It is designed to be used as follows:
+It is designed to be used as follows::
 
     from future import standard_library_renames
 
-And then these imports work:
+And then these imports work::
 
     import builtins
     import configparser
@@ -21,11 +21,19 @@ And then these imports work:
     import _thread
     import _dummythread
     import _markupbase
+    import http.cookies
+    import http.cookiejar
+    import http.server
+    import http.client
+    import urllib.request
+    import urllib.parse
+    import urllib.error
+    import urllib.robotparser
 
 The modules are still available under their old names on Python 2.
 
 This is a cleaner alternative to this idiom (see
-http://docs.pythonsprints.com/python3_porting/py-porting.html):
+http://docs.pythonsprints.com/python3_porting/py-porting.html)::
 
     try:
         import queue
@@ -33,21 +41,12 @@ http://docs.pythonsprints.com/python3_porting/py-porting.html):
         import Queue as queue
 
 
-We don't currently support these, but would like to:
+We don't currently support these, but would like to::
 
     import pickle (should bring in cPickle on Python 2)
-    import http.cookies
-    import http.cookiejar
-    import http.server
-    import http.client
     import dbm
     import dbm.dumb
     import dbm.gnu
-    import urllib.request
-    import urllib.parse
-    import urllib.error
-    import xmlrpc.client
-    import urllib.robotparser
     import test.support
     import xmlrpc.client
 
@@ -72,7 +71,7 @@ RENAMES = {
            'cPickle': 'pickle',
            # 'cProfile': 'profile',: included in Python 3.3
            # 'cStringIO': 'io',  # there's a new io module in Python 2.6
-           # that provides StringIO and BytesIO.
+                                 # that provides StringIO and BytesIO
            'markupbase': '_markupbase',
            'Queue': 'queue',
            'repr': 'reprlib',
