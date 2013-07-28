@@ -63,7 +63,7 @@ import imp
 from . import six
 
 
-# A subset of six.moves:
+# Old to new
 RENAMES = {
            # 'anydbm': 'dbm',   # causes infinite import loop 
            # 'whichdb': 'dbm',  # causes infinite import loop 
@@ -83,7 +83,9 @@ RENAMES = {
            'thread': '_thread',
            'dummy_thread': '_dummy_thread',
            'markupbase': '_markupbase',
-
+           'future.http': 'http',
+           'future.urllib': 'urllib',
+           'future.html': 'html',
           }
 
 
@@ -122,7 +124,6 @@ class RenameImport(object):
  
     def find_module(self, fullname, path=None):
         if fullname in set(self.old_to_new) | set(self.new_to_old):
-            self.path = path
             return self
         return None
  
@@ -130,22 +131,27 @@ class RenameImport(object):
         if name in sys.modules:
             return sys.modules[name]
         if name in self.new_to_old:
-            # New name
-            oldname = self.new_to_old[name]
-            module_info = imp.find_module(oldname, self.path)
-            module = imp.load_module(oldname, *module_info)
-        elif name in self.old_to_new:
-            # Old name. Import with warning.
-            module_info = imp.find_module(name, self.path)
-            module = imp.load_module(name, *module_info)
-            logging.warning("Imported deprecated module %s", name)
-        else: 
-            # Something else
-            module_info = imp.find_module(name, self.path)
-            module = imp.load_module(name, *module_info)
+            # New name. Look up the corresponding old (Py2) name:
+            name = self.new_to_old[name]
+        module = self._find_and_load_module(name)
         sys.modules[name] = module
         return module
  
+    def _find_and_load_module(self, name, path=None):
+        """
+        Finds and loads it. But if there's a . in the name, handles it
+        properly.
+        """
+        bits = name.split('.')
+        while len(bits) > 1:
+            # Treat the first bit as a package
+            packagename = bits.pop(0)
+            package = self._find_and_load_module(packagename)
+            path = package.__path__
+        name = bits[0]
+        module_info = imp.find_module(name, path)
+        return imp.load_module(name, *module_info)
+
 
 if not six.PY3:
     sys.meta_path = [RenameImport(RENAMES)]
