@@ -724,7 +724,7 @@ class HTTPResponse(io.RawIOBase):
     def getcode(self):
         return self.status
 
-class HTTPConnection:
+class HTTPConnection(object):
 
     _http_vsn = 11
     _http_vsn_str = 'HTTP/1.1'
@@ -1173,8 +1173,12 @@ else:
         def __init__(self, host, port=None, key_file=None, cert_file=None,
                      strict=_strict_sentinel, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
                      source_address=None, context=None, check_hostname=None):
+            # FIXME: why is this needed?
+            # magicsuper = globals()['super']
+            # del globals()['super']
             super(HTTPSConnection, self).__init__(host, port, strict, timeout,
                                                   source_address)
+            # globals()['super'] = magicsuper
             self.key_file = key_file
             self.cert_file = cert_file
             if context is None:

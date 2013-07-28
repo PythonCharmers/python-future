@@ -65,6 +65,16 @@ their Python 3 names and locations::
     import configparser
     # and other moved modules
 
+It also includes complete backports for three stdlib packages from Py3.3
+that were heavily refactored versus Py2.7::
+    
+    import urllib, urllib.parse, urllib.request, urllib.error
+    import http, http.server, http.client, http.cookies, http.cookiejar
+    import html, html.entities, html.parser
+
+Backporting all three packages took about 1 hour using ``future``
+itself. (However, at least http.client depends on a Py3.2+ stdlib feature
+(ssl.SSLContext, so it doesn't work yet.)
 
 If you prefer explicit imports, the explicit equivalent of the ``from
 future import *`` line above is::
@@ -127,6 +137,15 @@ Python 3 code that causes SyntaxErrors on Python 2 is not handled by the
   however, since this was an easier process using ``future`` than
   handling the complexity of the renames. These modules are:
   ``urllib``, ``html``, ``http``.
+
+- class MyClass:
+      ...
+  should be changed back to:
+  
+  class MyClass(object):
+      ....
+  to get new-style classes; otherwise weird breakage when e.g. calling
+  super() may occur.
 
 
 Credits
