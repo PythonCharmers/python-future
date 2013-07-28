@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 For the ``future`` package.
 
