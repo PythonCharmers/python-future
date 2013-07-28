@@ -104,6 +104,14 @@ See the docstrings for each of these modules for more info::
 - future.str_as_unicode
 
 
+Automatic conversion
+--------------------
+An experimental script called ``futurize.py`` is included to aid in
+making either Python 2 code or Python 3 code compatible with both
+platforms using the ``future`` module. See
+https://github.com/edschofield/python-future#automatic-conversion.
+
+
 Credits
 -------
 :Author:  Ed Schofield
