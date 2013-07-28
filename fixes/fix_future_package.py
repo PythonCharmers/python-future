@@ -10,7 +10,7 @@ Use like this to port Python 2 code:
 Or, to make existing Python 3 code compatible with Python 2 using the
 ``future`` package:
 
-  $ 2to3 -fix fix_future_package --verbose
+  $ 2to3 --fix future_package --verbose mypython3script.py
 
 Adds these import lines:
 
