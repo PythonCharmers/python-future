@@ -158,9 +158,9 @@ Credits
 :Others:  The ``super()`` and ``range()`` functions are derived from Ryan
           Kelly's ``magicsuper`` module and Dan Crosta's ``xrange``
           module. The ``python_2_unicode_compatible`` decorator is from
-          ``django.utils.encoding``. The fix_metaclass 2to3 fixer (from
-          Armin Ronacher's python-modernize) was authored by Jack
-          Diederich and Daniel Neuhaeuser.
+		  ``django.utils.encoding``. The ``fix_metaclass`` 2to3 fixer
+		  (from Armin Ronacher's ``python-modernize``) was authored by
+		  Jack Diederich and Daniel Neuhaeuser.
 
 
 FAQ
