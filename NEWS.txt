@@ -1,3 +1,13 @@
+v0.3.0:
+  * generalize import hooks to allow dotted imports
+  * add backports of urllib, html, http from Py3.3 stdlib using ``future``
+  * add ``futurize`` script for automatically turning Py2 or Py3 modules into
+    cross-platform Py3 modules
+
+v0.2.2.1:
+  * small bug fixes to get tests passing on travis-ci.org
+v0.2.1:
+  * small bug fixes
 v0.2.0:
   * features module renamed to modified_builtins
   * new functions added: round(), input()
