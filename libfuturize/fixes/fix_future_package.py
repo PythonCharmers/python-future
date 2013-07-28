@@ -1,10 +1,16 @@
 """
 For the ``future`` package.
 
-Use:
+Use like this to port Python 2 code:
+
   $ python modernize.py --print-function --future-unicode --no-six \
                         --fix=libmodernize.fixes.fix_future_package \
                         mypython2script.py
+
+Or, to make existing Python 3 code compatible with Python 2 using the
+``future`` package:
+
+  $ 2to3 --fix future_package --verbose mypython3script.py
 
 Adds these import lines:
 
@@ -68,10 +74,11 @@ def is_future_import_stmt(node):
 
 
 def touch_import_top(package, name, node):
-    """ Works like `does_tree_import` but adds an import statement at the top
-        if it was not imported (but after any __future__ imports).
+    """Works like `does_tree_import` but adds an import statement at the
+    top if it was not imported (but after any __future__ imports).
         
-        Based on lib2to3.fixer_util.touch_import() """
+    Based on lib2to3.fixer_util.touch_import()
+    """
 
     root = find_root(node)
 
