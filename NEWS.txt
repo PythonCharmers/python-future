@@ -3,6 +3,8 @@ v0.3.0:
   * add backports of urllib, html, http from Py3.3 stdlib using ``future``
   * add ``futurize`` script for automatically turning Py2 or Py3 modules into
     cross-platform Py3 modules
+  * rename future.standard_library_renames to future.standard_library. (No
+    longer just renames, but backports too.)
 
 v0.2.2.1:
   * small bug fixes to get tests passing on travis-ci.org
