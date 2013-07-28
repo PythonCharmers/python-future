@@ -66,7 +66,7 @@ def main(args=None):
     parser.add_option("-n", "--nobackups", action="store_true", default=False,
                       help="Don't write backups for modified files.")
     parser.add_option("--from3", action="store_true", default=False,
-                      help="Assume the code is already Python 3 and just"
+                      help="Assume the code is already Python 3 and just "
                            "requires ``__future__`` and ``future`` imports.")
 
     fixer_pkg = 'libfuturize.fixes'
