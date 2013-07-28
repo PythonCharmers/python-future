@@ -15,17 +15,22 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 NAME = "future"
-PACKAGES = ["future", "future.modified_builtins", "future.tests"]
-PACKAGE_DATA = {'': ['README.rst', 'LICENSE', 'NEWS.txt']}
+PACKAGES = ["future",
+            "future.modified_builtins",
+            "future.tests",
+            "future.urllib",
+            "future.html",
+            "future.http"]
+PACKAGE_DATA = {'': ['README.rst', 'LICENSE', 'NEWS.txt', 'futurize.py']}
 REQUIRES = []
 VERSION = future.__version__
-DESCRIPTION = "[experimental] support Python 2 with fewer warts"
+DESCRIPTION = "Clean single-source support for Python 3 and 2"
 LONG_DESC = future.__doc__
 AUTHOR = "Ed Schofield"
 AUTHOR_EMAIL = "ed@pythoncharmers.com"
 URL="http://github.com/edschofield/python-future"
 LICENSE = "MIT"
-KEYWORDS = "future python3 migration backport"
+KEYWORDS = "future python3 migration backport six 2to3 futurize modernize"
 CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 2.7",
