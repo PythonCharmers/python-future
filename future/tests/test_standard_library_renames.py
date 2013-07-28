@@ -1,9 +1,9 @@
 """
-Tests for the future.standard_library_renames module
+Tests for the future.standard_library module
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
-from future import standard_library_renames, six
+from future import standard_library
 
 import unittest
 
@@ -98,7 +98,7 @@ class TestStandardLibraryRenames(unittest.TestCase):
         """
         intern() has been moved to the sys module.
         """
-        from future import standard_library_renames
+        from future import standard_library
         from sys import intern
         intern('mystring')
         self.assertTrue(True)

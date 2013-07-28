@@ -27,6 +27,11 @@ parsing quirks from older RFCs are retained. The testcases in
 test_urlparse.py provides a good indicator of parsing behavior.
 """
 
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+from future import *
+from future import standard_library
+
 import re
 import sys
 import collections

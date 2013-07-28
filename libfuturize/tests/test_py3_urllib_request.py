@@ -13,7 +13,6 @@ import pprint
 # r = requests.get(URL.format(package))
 # pprint.pprint(r.json())
 
-from future import standard_library_renames
 import urllib.request
 r = urllib.request.urlopen(URL.format(package_name))
 pprint.pprint(r.read())

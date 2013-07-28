@@ -18,7 +18,7 @@ Adds these import lines:
     from __future__ import division
     from __future__ import print_function
     from __future__ import unicode_literals
-    import future.standard_library_renames
+    from future import standard_library
     from future import *
     # other imports here
 
@@ -46,7 +46,8 @@ class FixFuturePackage(BaseFix):
     
     def transform(self, node, results):
         touch_import_top(u'future', u'*', node)
-        touch_import_top(None, u'future.standard_library', node)
+        touch_import_top(u'future', u'standard_library', node)
+        # touch_import_top(None, u'future.standard_library', node)
         touch_import_top(u'__future__', u'unicode_literals', node)
         touch_import_top(u'__future__', u'print_function', node)
         touch_import_top(u'__future__', u'division', node)

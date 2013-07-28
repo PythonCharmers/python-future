@@ -5,7 +5,7 @@ names.
 
 It is designed to be used as follows::
 
-    from future import standard_library_renames
+    from future import standard_library
 
 And then these imports work::
 
@@ -17,7 +17,7 @@ And then these imports work::
     import reprlib
     import socketserver
     import tkinter
-    import winreg (on Windows only)
+    import winreg    # on Windows only
     import _thread
     import _dummythread
     import _markupbase

@@ -88,7 +88,7 @@ class Test2to3Simple(unittest.TestCase):
         with open('mytestscript.py', 'w') as f:
             f.write('from __future__ import print_function, absolute_import, division, unicode_literals\n')
             f.write('from future import *\n')
-            f.write('from future import standard_library_renames\n')
+            f.write('from future import standard_library\n')
             f.write(newsource)
 
         output2 = check_output([self.interpreter, 'mytestscript.py'])
@@ -98,7 +98,7 @@ class Test2to3Simple(unittest.TestCase):
     def test_download_pypi_package_and_test(self, package_name='future'):
         URL = 'http://pypi.python.org/pypi/{}/json'
         
-        from future import standard_library_renames
+        from future import standard_library
         import requests
         r = requests.get(URL.format(package_name))
         pprint.pprint(r.json())

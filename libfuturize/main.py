@@ -21,11 +21,13 @@ which just adds these import lines:
     from __future__ import division
     from __future__ import print_function
     from __future__ import unicode_literals
-    import future.standard_library_renames
     from future import *
+    import future.standard_library
     # other imports here
 
 to invoke the 3rd-party ``future`` package to provide Py2 compatibility.
+
+TODO: run futurize over this module!!
 """
 
 import sys

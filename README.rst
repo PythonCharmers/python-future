@@ -58,7 +58,7 @@ After the imports, this code runs identically on Python 3 and 2::
 via import hooks, allowing standard library modules to be accessed under
 their Python 3 names and locations::
     
-    from future import standard_library_renames
+    from future import standard_library
     
     import socketserver
     import queue
@@ -95,7 +95,7 @@ But please note that the API is still evolving rapidly.
 
 See the docstrings for each of these modules for more info::
 
-- future.standard_library_renames
+- future.standard_library
 - future.common_iterators
 - future.builtins
 - future.modified_builtins
@@ -305,7 +305,7 @@ Other compatibility tools
 
     Here is the equivalent code using the ``future`` module::
     
-        from future import standard_library_renames, range
+        from future import standard_library, range
 
         for i, (k, v) in enumerate(sorted(params.items())):
             # ...
@@ -367,7 +367,7 @@ Other compatibility tools
 
 :Q: Do you support Pypy?
 
-:A: Yes, except for the standard_library_renames feature (currently).
+:A: Yes, except for the standard_library feature (currently).
     Feedback and pull requests are welcome!
 
 :Q: Do you support IronPython and/or Jython?

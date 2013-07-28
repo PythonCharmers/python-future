@@ -67,9 +67,10 @@ urllib.request.install_opener(opener)
 f = urllib.request.urlopen('http://www.python.org/')
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 from future import *
-from future import standard_library_renames
+from future import standard_library
 
 # XXX issues:
 # If an authentication error handler that tries to perform

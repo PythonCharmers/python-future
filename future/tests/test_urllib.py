@@ -1,8 +1,10 @@
 """Regresssion tests for urllib. Verbatim from Py3.3, but with these two
 import lines:"""
 
+# Disabled for now. Backport isn't working yet ...
+
 # from __future__ import absolute_import, unicode_literals, print_function
-# from future import standard_library_renames, six
+# from future import standard_library
 # 
 # 
 # import urllib.parse

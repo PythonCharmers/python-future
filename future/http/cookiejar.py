@@ -28,7 +28,7 @@ http://wwwsearch.sf.net/):
 from __future__ import (print_function, absolute_import,
                         division, unicode_literals)
 from future import *
-from future import standard_library_renames
+from future import standard_library
 
 __all__ = ['Cookie', 'CookieJar', 'CookiePolicy', 'DefaultCookiePolicy',
            'FileCookieJar', 'LWPCookieJar', 'LoadError', 'MozillaCookieJar']
