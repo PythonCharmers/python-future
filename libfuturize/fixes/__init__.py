@@ -4,7 +4,7 @@ from lib2to3 import refactor
 
 lib2to3_fix_names = set([
     'lib2to3.fixes.fix_apply',
-    'lib2to3.fixes.fix_basestr',
+    'lib2to3.fixes.fix_basestring',
     # 'lib2to3.fixes.fix_buffer',
     # 'lib2to3.fixes.fix_callable',
     'lib2to3.fixes.fix_dict',
@@ -51,13 +51,13 @@ lib2to3_fix_names = set([
     'lib2to3.fixes.fix_urllib',
     'lib2to3.fixes.fix_ws_comma',
     'lib2to3.fixes.fix_xrange',
-    'lib2to3.fixes.fix_xreadlines'
-    'lib2to3.fixes.fix_zip'
+    'lib2to3.fixes.fix_xreadlines',
+    'lib2to3.fixes.fix_zip',
 ])
 
 future_package_fix_names = set([
-    'libfuturize.fixes.fix_future_package'
-    'libfuturize.fixes.fix_metaclass'
-    # 'libfuturize.fixes.fix_print'
-    # 'libfuturize.fixes.fix_'
+    'libfuturize.fixes.fix_future_package',
+    'libfuturize.fixes.fix_metaclass',
+    # 'libfuturize.fixes.fix_print',
+    # 'libfuturize.fixes.fix_',
     ])

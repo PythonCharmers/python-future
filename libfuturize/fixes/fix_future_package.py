@@ -45,13 +45,13 @@ class FixFuturePackage(BaseFix):
         # return False
     
     def transform(self, node, results):
-        touch_import_top(u'__future__', u'absolute_import', node)
-        touch_import_top(u'__future__', u'division', node)
-        touch_import_top(u'__future__', u'print_function', node)
-        touch_import_top(u'__future__', u'unicode_literals', node)
-        # add_future(node, u'unicode_literals')
         touch_import_top(u'future', u'*', node)
         touch_import_top(None, u'future.standard_library', node)
+        touch_import_top(u'__future__', u'unicode_literals', node)
+        touch_import_top(u'__future__', u'print_function', node)
+        touch_import_top(u'__future__', u'division', node)
+        touch_import_top(u'__future__', u'absolute_import', node)
+        # add_future(node, u'unicode_literals')
        
 def is_import_from(node):
     """Returns true if the node is a statement "from ... import ..."
@@ -75,7 +75,9 @@ def is_future_import_stmt(node):
 
 def touch_import_top(package, name, node):
     """Works like `does_tree_import` but adds an import statement at the
-    top if it was not imported (but after any __future__ imports).
+    top if it was not imported.
+
+    Calling this multiple times adds them in reverse order.
         
     Based on lib2to3.fixer_util.touch_import()
     """
@@ -85,14 +87,13 @@ def touch_import_top(package, name, node):
     if does_tree_import(package, name, root):
         return
 
-    # try to find the first import, and insert above that, unless it's a
-    # __future__ import
+    # try to find the first import, and insert above that
     insert_pos = offset = 0
     for idx, node in enumerate(root.children):
         if not is_import_stmt(node):
             continue
-        elif is_future_import_stmt(node):
-            continue
+        # elif is_future_import_stmt(node):
+        #     continue
         insert_pos = idx + offset
         break
 

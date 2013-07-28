@@ -6,15 +6,16 @@ compatible while using the ``future`` package.
 
 Use like this to port Python 2 code:
 
-  $ python futurize.py --print-function --future-unicode --no-six \
-                       --fix=future_package mypython2script.py
+  $ python futurize.py --verbose mypython2script.py
+
+and try to auto-backport it by adding ``future`` module imports.
 
 Or, to make existing Python 3 code compatible with Python 2 using the
 ``future`` package:
 
-  $ python futurize.py --fix=future_package --verbose mypython3script.py
+  $ python futurize.py --from3 --verbose mypython3script.py
 
-Adds these import lines:
+which just adds these import lines:
 
     from __future__ import absolute_import
     from __future__ import division
@@ -24,8 +25,7 @@ Adds these import lines:
     from future import *
     # other imports here
 
-to invoke the 3rd-party ``future`` package to provide Py2 compatibility
-for the output of 2to3.
+to invoke the 3rd-party ``future`` package to provide Py2 compatibility.
 """
 
 import sys
@@ -35,10 +35,7 @@ import optparse
 from lib2to3.main import main, warn, StdoutRefactoringTool
 from lib2to3 import refactor
 
-# sys.exit(main("future.fixes"))
-
-from libfuturize.fixes import (lib2to3_fix_names, six_fix_names,
-                               future_package_fix_names)
+from libfuturize.fixes import (lib2to3_fix_names, future_package_fix_names)
 
 
 def main(args=None):
@@ -68,15 +65,9 @@ def main(args=None):
                       help="Write back modified files")
     parser.add_option("-n", "--nobackups", action="store_true", default=False,
                       help="Don't write backups for modified files.")
-    parser.add_option("--compat-unicode", action="store_true", default=False,
-                      help="Leave u'' and b'' prefixes unchanged (requires "
-                           "Python 3.3 and higher).")
-    parser.add_option("--future-unicode", action="store_true", default=False,
-                      help="Use 'from __future__ import unicode_literals'"
-                           "instead of the u'' and b'' prefixes"
-                           "(only useful for Python 2.6+).")
-    parser.add_option("--no-six", action="store_true", default=False,
-                      help="Exclude fixes that depend on the six package")
+    parser.add_option("--from3", action="store_true", default=False,
+                      help="Assume the code is already Python 3 and just"
+                           "requires ``__future__`` and ``future`` imports.")
 
     fixer_pkg = 'libfuturize.fixes'
     avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
@@ -116,29 +107,22 @@ def main(args=None):
     # Initialize the refactoring tool
     unwanted_fixes = set(options.nofix)
 
-    # Remove unicode fixers depending on command line options
-    if options.compat_unicode:
-        unwanted_fixes.add('libfuturize.fixes.fix_unicode')
-        unwanted_fixes.add('libfuturize.fixes.fix_unicode_future')
-    elif options.future_unicode:
-        unwanted_fixes.add('libfuturize.fixes.fix_unicode')
-    else:
-        unwanted_fixes.add('libfuturize.fixes.fix_unicode_future')
-
-    if options.no_six:
-        unwanted_fixes.update(six_fix_names)
+    # Remove all fixes except one if the input is already Py3
     explicit = set()
-    if options.fix:
-        all_present = False
-        for fix in options.fix:
-            if fix == "all":
-                all_present = True
-            else:
-                explicit.add(fix)
-        requested = avail_fixes.union(explicit) if all_present else explicit
+    if options.from3:
+        fixer_names = {'libfuturize.fixes.fix_future_package'}
     else:
-        requested = avail_fixes.union(explicit)
-    fixer_names = requested.difference(unwanted_fixes)
+        if options.fix:
+            all_present = False
+            for fix in options.fix:
+                if fix == "all":
+                    all_present = True
+                else:
+                    explicit.add(fix)
+            requested = avail_fixes.union(explicit) if all_present else explicit
+        else:
+            requested = avail_fixes.union(explicit)
+        fixer_names = requested.difference(unwanted_fixes)
     rt = StdoutRefactoringTool(sorted(fixer_names), flags, sorted(explicit),
                                options.nobackups, not options.no_diffs)
 
