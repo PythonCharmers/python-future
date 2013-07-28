@@ -158,9 +158,9 @@ Credits
 :Others:  The ``super()`` and ``range()`` functions are derived from Ryan
           Kelly's ``magicsuper`` module and Dan Crosta's ``xrange``
           module. The ``python_2_unicode_compatible`` decorator is from
-		  ``django.utils.encoding``. The ``fix_metaclass`` 2to3 fixer
-		  (from Armin Ronacher's ``python-modernize``) was authored by
-		  Jack Diederich and Daniel Neuhaeuser.
+          ``django.utils.encoding``. The ``fix_metaclass`` 2to3 fixer
+          (from Armin Ronacher's ``python-modernize``) was authored by
+          Jack Diederich and Daniel Neuhaeuser.
 
 
 FAQ
@@ -327,11 +327,11 @@ Other compatibility tools
 :A: ``python-modernize`` converts legacy code into what is (hopefully) a
     common subset of Python 2 and 3, with ``six`` as a run-time dependency. 
 
-	``python-future`` contains a ``futurize.py`` script that is similar
-	to ``modernize.py`` in intent and design (based on ``2to3``). The
-	difference is that ``futurize`` produces code that is
-	source-compatible with Py2 and Py3 by using ``future`` package
-	imports, rather than ``six``.
+    ``python-future`` contains a ``futurize.py`` script that is similar
+    to ``modernize.py`` in intent and design (based on ``2to3``). The
+    difference is that ``futurize`` produces code that is
+    source-compatible with Py2 and Py3 by using ``future`` package
+    imports, rather than ``six``.
 
 :Q: How did the original need for this arise?
 
