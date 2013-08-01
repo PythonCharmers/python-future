@@ -5,8 +5,8 @@ from lib2to3 import refactor
 lib2to3_fix_names = set([
     'lib2to3.fixes.fix_apply',
     'lib2to3.fixes.fix_basestring',
-    # 'lib2to3.fixes.fix_buffer',
-    # 'lib2to3.fixes.fix_callable',
+    # 'lib2to3.fixes.fix_buffer',  # perhaps not safe. Test this.
+    # 'lib2to3.fixes.fix_callable',# not needed in Py3.2+
     'lib2to3.fixes.fix_dict',
     'lib2to3.fixes.fix_except',
     'lib2to3.fixes.fix_exec',
@@ -18,7 +18,7 @@ lib2to3_fix_names = set([
     'lib2to3.fixes.fix_getcwdu',
     'lib2to3.fixes.fix_has_key',
     'lib2to3.fixes.fix_idioms',
-    'lib2to3.fixes.fix_import',
+    'lib2to3.fixes.fix_import',    # use together with absolute_import from __future__
     'lib2to3.fixes.fix_imports',
     'lib2to3.fixes.fix_input',
     'lib2to3.fixes.fix_intern',
@@ -27,13 +27,13 @@ lib2to3_fix_names = set([
     'lib2to3.fixes.fix_itertools_imports',
     'lib2to3.fixes.fix_long',
     'lib2to3.fixes.fix_map',
-    # 'lib2to3.fixes.fix_metaclass',
+    # 'lib2to3.fixes.fix_metaclass', # causes SyntaxError in Py2! Use the one from ``six`` instead
     'lib2to3.fixes.fix_methodattrs',
     'lib2to3.fixes.fix_ne',
     'lib2to3.fixes.fix_next',
     'lib2to3.fixes.fix_nonzero',
     'lib2to3.fixes.fix_numliterals',
-    # 'lib2to3.fixes.fix_operator',  - what is this?
+    'lib2to3.fixes.fix_operator',   # we will need support for this by e.g. extending the Py2 operator module to provide those functions in Py3
     'lib2to3.fixes.fix_paren',
     'lib2to3.fixes.fix_print',
     'lib2to3.fixes.fix_raise',
@@ -58,6 +58,4 @@ lib2to3_fix_names = set([
 future_package_fix_names = set([
     'libfuturize.fixes.fix_future_package',
     'libfuturize.fixes.fix_metaclass',
-    # 'libfuturize.fixes.fix_print',
-    # 'libfuturize.fixes.fix_',
     ])
