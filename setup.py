@@ -17,10 +17,7 @@ if sys.argv[-1] == 'publish':
 NAME = "future"
 PACKAGES = ["future",
             "future.modified_builtins",
-            "future.tests",
-            "future.urllib",
-            "future.html",
-            "future.http"]
+            "future.tests"]
 PACKAGE_DATA = {'': ['README.rst', 'LICENSE', 'NEWS.txt', 'futurize.py']}
 REQUIRES = []
 VERSION = future.__version__

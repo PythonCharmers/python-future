@@ -5,10 +5,25 @@ Tests for the future.standard_library module
 from __future__ import absolute_import, unicode_literals, print_function
 from future import standard_library
 
+import sys
 import unittest
+
+from future.standard_library import RENAMES
 
 
 class TestStandardLibraryRenames(unittest.TestCase):
+    def test_all(self):
+        """
+        Tests whether all of the old imports in RENAMES are accessible
+        under their new names.
+        """
+        for (oldname, newname) in RENAMES.items():
+            if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
+                continue
+            oldmod = __import__(oldname)
+            newmod = __import__(newname)
+            self.assertEqual(oldmod, newmod)
+
     def test_configparser(self):
         import configparser
     
@@ -39,8 +54,6 @@ class TestStandardLibraryRenames(unittest.TestCase):
         q.put('thing')
         self.assertFalse(q.empty())
 
-    # 'markupbase': '_markupbase',
-
     def test_reprlib(self):
         import reprlib
 
@@ -51,14 +64,12 @@ class TestStandardLibraryRenames(unittest.TestCase):
     def test_tkinter(self):
         import tkinter
 
-
-    # '_winreg': 'winreg',
-
     def test_builtins(self):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    @unittest.skip("skipping in case there's no net connection")
+    # @unittest.skip("skipping in case there's no net connection")
+    @unittest.expectedFailure
     def test_urllib_request(self):
         import urllib.request
         from pprint import pprint
@@ -67,11 +78,13 @@ class TestStandardLibraryRenames(unittest.TestCase):
         r = urllib.request.urlopen(URL.format(package))
         pprint(r.read().decode('utf-8'))
 
+    @unittest.expectedFailure
     def test_html_import(self):
         import html
         import html.entities
         import html.parser
 
+    @unittest.expectedFailure
     def test_http_import(self):
         import http
         import http.server
@@ -79,6 +92,7 @@ class TestStandardLibraryRenames(unittest.TestCase):
         import http.cookies
         import http.cookiejar
 
+    @unittest.expectedFailure
     def test_urllib_imports(self):
         import urllib
         import urllib.parse
