@@ -4,6 +4,7 @@ Tests for the future.standard_library module
 
 from __future__ import absolute_import, unicode_literals, print_function
 from future import standard_library
+from future import six
 
 import sys
 import unittest
@@ -12,6 +13,8 @@ from future.standard_library import RENAMES
 
 
 class TestStandardLibraryRenames(unittest.TestCase):
+
+    @unittest.skipIf(six.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
         """
         Tests whether all of the old imports in RENAMES are accessible
