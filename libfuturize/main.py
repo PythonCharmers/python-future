@@ -1,8 +1,8 @@
 """
 For the ``future`` package.
 
-Like modernize.py, but it spits out code that *should* be Py2 and Py3
-compatible while using the ``future`` package.
+Like Armin Ronacher's modernize.py, but it spits out code that *should*
+be Py2 and Py3 compatible while using the ``future`` package.
 
 Use like this to port Python 2 code:
 
@@ -27,8 +27,10 @@ which just adds these import lines:
 
 to invoke the 3rd-party ``future`` package to provide Py2 compatibility.
 
-TODO: run futurize over this module!!
 """
+from __future__ import (absolute_import, print_function, unicode_literals)
+from future import *
+import future.standard_library
 
 import sys
 import logging
@@ -37,7 +39,8 @@ import optparse
 from lib2to3.main import main, warn, StdoutRefactoringTool
 from lib2to3 import refactor
 
-from libfuturize.fixes import (lib2to3_fix_names, future_package_fix_names)
+from libfuturize.fixes2 import (lib2to3_fix_names, libfuturize_2fix_names)
+from libfuturize.fixes3 import libfuturize_3fix_names
 
 
 def main(args=None):
@@ -71,33 +74,39 @@ def main(args=None):
                       help="Assume the code is already Python 3 and just "
                            "requires ``__future__`` and ``future`` imports.")
 
-    fixer_pkg = 'libfuturize.fixes'
-    avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
-    avail_fixes.update(lib2to3_fix_names)
-    avail_fixes.update(future_package_fix_names)
-
     # Parse command line arguments
     refactor_stdin = False
     flags = {}
     options, args = parser.parse_args(args)
+    if options.from3:
+        fixer_pkg = 'libfuturize.fixes3'
+        avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
+        avail_fixes.update(libfuturize_3fix_names)
+    else:
+        fixer_pkg = 'libfuturize.fixes2'
+        avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
+        avail_fixes.update(lib2to3_fix_names)
+        avail_fixes.update(libfuturize_2fix_names)
+
     if not options.write and options.no_diffs:
         warn("not writing files and not printing diffs; that's not very useful")
     if not options.write and options.nobackups:
         parser.error("Can't use -n without -w")
     if options.list_fixes:
-        print "Available transformations for the -f/--fix option:"
+        print("Available transformations for the -f/--fix option:")
         for fixname in sorted(avail_fixes):
-            print fixname
+            print(fixname)
         if not args:
             return 0
     if not args:
-        print >> sys.stderr, "At least one file or directory argument required."
-        print >> sys.stderr, "Use --help to show usage."
+        print("At least one file or directory argument required.",
+              file=sys.stderr)
+        print("Use --help to show usage.", file=sys.stderr)
         return 2
     if "-" in args:
         refactor_stdin = True
         if options.write:
-            print >> sys.stderr, "Can't write to stdin."
+            print("Can't write to stdin.", file=sys.stderr)
             return 2
     if options.print_function:
         flags["print_function"] = True
@@ -111,20 +120,17 @@ def main(args=None):
 
     # Remove all fixes except one if the input is already Py3
     explicit = set()
-    if options.from3:
-        fixer_names = {'libfuturize.fixes.fix_future_package'}
+    if options.fix:
+        all_present = False
+        for fix in options.fix:
+            if fix == "all":
+                all_present = True
+            else:
+                explicit.add(fix)
+        requested = avail_fixes.union(explicit) if all_present else explicit
     else:
-        if options.fix:
-            all_present = False
-            for fix in options.fix:
-                if fix == "all":
-                    all_present = True
-                else:
-                    explicit.add(fix)
-            requested = avail_fixes.union(explicit) if all_present else explicit
-        else:
-            requested = avail_fixes.union(explicit)
-        fixer_names = requested.difference(unwanted_fixes)
+        requested = avail_fixes.union(explicit)
+    fixer_names = requested.difference(unwanted_fixes)
     rt = StdoutRefactoringTool(sorted(fixer_names), flags, sorted(explicit),
                                options.nobackups, not options.no_diffs)
 
@@ -138,8 +144,8 @@ def main(args=None):
                             options.processes)
             except refactor.MultiprocessingUnsupported:
                 assert options.processes > 1
-                print >> sys.stderr, "Sorry, -j isn't " \
-                    "supported on this platform."
+                print("Sorry, -j isn't " \
+                      "supported on this platform.", file=sys.stderr)
                 return 1
         rt.summarize()
 

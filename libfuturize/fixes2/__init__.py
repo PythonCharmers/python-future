@@ -55,7 +55,7 @@ lib2to3_fix_names = set([
     'lib2to3.fixes.fix_zip',
 ])
 
-future_package_fix_names = set([
-    'libfuturize.fixes.fix_future_package',
-    'libfuturize.fixes.fix_metaclass',
+libfuturize_2fix_names = set([
+    'libfuturize.fixes2.fix_future_package',
+    'libfuturize.fixes2.fix_metaclass',
     ])
