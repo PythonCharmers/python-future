@@ -9,6 +9,8 @@ from future import six
 
 import unittest
 
+TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
+
 
 class TestStrIsUnicode(unittest.TestCase):
     def test_str(self):
