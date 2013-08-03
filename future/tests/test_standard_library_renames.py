@@ -7,12 +7,17 @@ from future import standard_library
 from future import six
 
 import sys
+import textwrap
 import unittest
+from subprocess import check_output
 
-from future.standard_library import RENAMES
+from future.standard_library import RENAMES, REPLACED_MODULES
 
 
 class TestStandardLibraryRenames(unittest.TestCase):
+
+    def setUp(self):
+        self.interpreter = 'python'
 
     @unittest.skipIf(six.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
@@ -23,9 +28,33 @@ class TestStandardLibraryRenames(unittest.TestCase):
         for (oldname, newname) in RENAMES.items():
             if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
                 continue
+            if newname in REPLACED_MODULES:
+                # Skip this check for e.g. the stdlib's ``test`` module,
+                # which we have replaced completely.
+                continue
             oldmod = __import__(oldname)
             newmod = __import__(newname)
-            self.assertEqual(oldmod, newmod)
+            if '.' not in oldname:
+                self.assertEqual(oldmod, newmod)
+
+    def test_import_from_module(self):
+        """
+        Tests whether e.g. "import socketserver" succeeds in a module imported by another module.
+        """
+        code1 = '''
+                from future import standard_library
+                import importme2
+                '''
+        code2 = '''
+                import socketserver
+                print('Import succeeded!')
+                '''
+        with open('importme1.py', 'w') as f:
+            f.write(textwrap.dedent(code1))
+        with open('importme2.py', 'w') as f:
+            f.write(textwrap.dedent(code2))
+        output = check_output([self.interpreter, 'importme1.py'])
+        print(output)
 
     def test_configparser(self):
         import configparser

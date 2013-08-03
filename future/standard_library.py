@@ -164,6 +164,10 @@ RENAMES = {
            'future.backports.urllib': 'urllib',
           }
 
+REPLACED_MODULES = {'test', 'urllib', 'pickle'}  # add dbm when we support it
+# These are entirely new to Python 2.7, so they cause no potential clashes
+#   xmlrpc, tkinter, http, html
+
 
 class WarnOnImport(object):
     def __init__(self, *args):
