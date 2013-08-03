@@ -20,6 +20,7 @@ And then these imports work::
     import _thread
     import _dummythread
     import _markupbase
+    import test.support
 
 The modules are still available under their old names on Python 2.
 
@@ -38,7 +39,6 @@ We don't currently support these, but would like to::
     import dbm
     import dbm.dumb
     import dbm.gnu
-    import test.support
     import xmlrpc.client
     import collections.abc  # on Py33
     import http.cookies
@@ -60,7 +60,15 @@ from us:
 
 This module only supports Python 2.7 and Python 3.1+.
 
+Old things that can perhaps be fixed for people:
+  string.uppercase -> string.ascii_uppercase   # works on either Py2.7 or Py3+
 
+Others we should handle:
+  itertools.ifilterfalse -> itertools.filterfalse
+  intern(s) -> sys.intern(s)
+  buffer -> memoryview?
+  sys.maxint was renamed to sys.maxsize in Python3
+  unittest2 -> unittest
 """
 
 from __future__ import absolute_import, print_function
@@ -139,7 +147,7 @@ RENAMES = {
            # 'BaseHTTPServer': 'http.server',
            # 'SimpleHTTPServer': 'http.server',
            # 'CGIHTTPServer': 'http.server',
-           #'test.test_support': 'test.support',
+           'future.backports.test': 'test',  # primarily for renaming test_support to support
            # 'commands': 'subprocess',
            # 'UserString' : 'collections',
            # 'UserList' : 'collections',
@@ -151,6 +159,9 @@ RENAMES = {
            # 'future.backports_33.xmlrpc': 'xmlrpc',
            # 'future.backports_33.test': 'test',
            # 'abc': 'collections.abc',   # for Py33
+           'future.backports.html': 'html',
+           'future.backports.http': 'http',
+           'future.backports.urllib': 'urllib',
           }
 
 
