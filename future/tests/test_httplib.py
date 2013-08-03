@@ -273,15 +273,16 @@ class BasicTest(TestCase):
             self.fail("Did not expect response from HEAD request")
 
     def test_send_file(self):
-        expected = b'GET /foo HTTP/1.1\r\nHost: example.com\r\n' \
-                   b'Accept-Encoding: identity\r\nContent-Length:'
+        expected = (b'GET /foo HTTP/1.1\r\nHost: example.com\r\n'
+                    b'Accept-Encoding: identity\r\nContent-Length:')
 
-        body = open(__file__, 'rb')
-        conn = client.HTTPConnection('example.com')
-        sock = FakeSocket(body)
-        conn.sock = sock
-        conn.request('GET', '/foo', body)
-        self.assertTrue(sock.data.startswith(expected))
+        with open(__file__, 'rb') as body:
+            conn = client.HTTPConnection('example.com')
+            sock = FakeSocket(body)
+            conn.sock = sock
+            conn.request('GET', '/foo', body)
+            self.assertTrue(sock.data.startswith(expected), '%r != %r' %
+                    (sock.data[:len(expected)], expected))
 
     def test_send(self):
         expected = b'this is a test this is only a test'
