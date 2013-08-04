@@ -12,15 +12,17 @@ And then these imports work::
     import builtins
     import configparser
     import copyreg
-    import _markupbase
     import queue
     import reprlib
     import socketserver
     import winreg    # on Windows only
+    import test.support
+    import html, html.parser, html.entites
+    import http, http.client, http.server, http.cookies, http.cookiejar
     import _thread
     import _dummythread
     import _markupbase
-    import test.support
+    
 
 The modules are still available under their old names on Python 2.
 
@@ -41,10 +43,6 @@ We don't currently support these, but would like to::
     import dbm.gnu
     import xmlrpc.client
     import collections.abc  # on Py33
-    import http.cookies
-    import http.cookiejar
-    import http.server
-    import http.client
     import urllib.request
     import urllib.parse
     import urllib.error
@@ -153,11 +151,6 @@ RENAMES = {
            # 'UserList' : 'collections',
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
-           # 'future.backports_31.http': 'http',
-           # 'future.backports_33.urllib': 'urllib',
-           # 'future.backports_33.html': 'html',
-           # 'future.backports_33.xmlrpc': 'xmlrpc',
-           # 'future.backports_33.test': 'test',
            # 'abc': 'collections.abc',   # for Py33
            'future.backports.html': 'html',
            'future.backports.http': 'http',
