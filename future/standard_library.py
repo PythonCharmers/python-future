@@ -21,6 +21,8 @@ And then these imports work::
     import http, http.client, http.server, http.cookies, http.cookiejar
     import _thread
     import _dummythread
+    import html, html.parser, html.entites
+    import http, http.client, http.server, http.cookies, http.cookiejar
     import _markupbase
     
 
@@ -124,7 +126,6 @@ RENAMES = {
            # 'Tix': 'tkinter.tix',
            # 'ttk': 'tkinter.ttk',
            # 'Tkinter': 'tkinter',
-           'markupbase': '_markupbase',
            '_winreg': 'winreg',
            'thread': '_thread',
            'dummy_thread': '_dummy_thread',
@@ -154,6 +155,7 @@ RENAMES = {
            'future.backports.html': 'html',
            'future.backports.http': 'http',
            # 'future.backports.urllib': 'newurllib',
+           'future.backports._markupbase': '_markupbase',
           }
 
 REPLACED_MODULES = {'test', 'urllib', 'pickle'}  # add dbm when we support it
