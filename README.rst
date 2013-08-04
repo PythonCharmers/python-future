@@ -63,19 +63,18 @@ their Python 3 names and locations::
     import socketserver
     import queue
     import configparser
-    # and other moved modules
+    import test.support
+    from collections import UserList
+    # and other moved modules and definitions
 
 It also includes experimental backports for three stdlib packages from Py3
 that were heavily refactored versus Py2::
     
-    import urllib, urllib.parse, urllib.request, urllib.error
-    import http, http.server, http.client, http.cookies, http.cookiejar
     import html, html.entities, html.parser
+    import http, http.server, http.client, http.cookies, http.cookiejar
+    import urllib, urllib.parse, urllib.request, urllib.error
 
-Backporting all three packages took about 1 hour using ``future`` itself.
-*Warning*: at least ``http.client`` doesn't pass tests yet, since it
-depends on a Py3.2+ stdlib feature (``ssl.SSLContext``) that is not
-available in Py2.
+*Warning*: currently only html.* and http.client pass their test suites.
 
 
 Explicit imports
@@ -84,7 +83,7 @@ If you prefer explicit imports, the explicit equivalent of the ``from
 future import *`` line above is::
     
     from future.common_iterators import zip, map, filter
-    from future.builtins import ascii, oct, hex, chr, int
+    from future.builtins import ascii, oct, hex, chr
     from future.modified_builtins import (range, super, round, input)
     from future.disable_obsolete_builtins import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
@@ -123,8 +122,9 @@ will run automatically on Python 2 as well.
 
 Limitations
 -----------
-Python 3 code that causes SyntaxErrors on Python 2 is not handled by the
-``futurize`` script (except for ``print_function``). This includes:
+Python 3 code that causes SyntaxErrors on Python 2 is not currently
+handled by the ``futurize`` script (except for ``print_function``). This
+includes:
 
 - Function arguments in Py3.3 like this::
     ``def f(a, b, *, c='blah', d='blah'):``
@@ -135,12 +135,8 @@ Python 3 code that causes SyntaxErrors on Python 2 is not handled by the
 - ``raise ... from`` syntax for exceptions. (This is simple to fix
   manually by creating a temporary variable.)
 
-- And any code that requires standard library features from Python 3 that
-  are not available in the modules of the same names in Python 2.
-  A couple of significantly refactored modules have been backported,
-  however, since this was an easier process using ``future`` than
-  handling the complexity of the renames. These modules are:
-  ``urllib``, ``html``, ``http``.
+- And any code that requires new standard library features from Python 3
+  that weren't present under Python 2.
 
 - ``class MyClass:``
       ``...``
@@ -151,7 +147,7 @@ Python 3 code that causes SyntaxErrors on Python 2 is not handled by the
       ``...``
 
   to get new-style classes; otherwise weird breakage when e.g. calling
-  super() may occur.
+  super() may occur. Currently futurize.py doesn't do this automatically.
 
 
 Credits

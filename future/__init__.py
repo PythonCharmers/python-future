@@ -64,19 +64,18 @@ their Python 3 names and locations::
     import socketserver
     import queue
     import configparser
-    # and other moved modules
+    import test.support
+    from collections import UserList
+    # and other moved modules and definitions
 
 It also includes experimental backports for three stdlib packages from Py3
 that were heavily refactored versus Py2::
     
-    import urllib, urllib.parse, urllib.request, urllib.error
-    import http, http.server, http.client, http.cookies, http.cookiejar
     import html, html.entities, html.parser
+    import http, http.server, http.client, http.cookies, http.cookiejar
+    import urllib, urllib.parse, urllib.request, urllib.error
 
-Backporting all three packages took about 1 hour using ``future`` itself.
-*Warning*: at least ``http.client`` doesn't pass tests yet, since it
-depends on a Py3.2+ stdlib feature (``ssl.SSLContext``) that is not
-available in Py2.
+*Warning*: currently only html.* and http.client pass their test suites.
 
 
 Explicit imports
@@ -85,7 +84,7 @@ If you prefer explicit imports, the explicit equivalent of the ``from
 future import *`` line above is::
     
     from future.common_iterators import zip, map, filter
-    from future.builtins import ascii, oct, hex, chr, int
+    from future.builtins import ascii, oct, hex, chr
     from future.modified_builtins import (range, super, round, input)
     from future.disable_obsolete_builtins import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
