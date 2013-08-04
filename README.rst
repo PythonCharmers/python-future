@@ -65,16 +65,20 @@ their Python 3 names and locations::
     import configparser
     import test.support
     from collections import UserList
+    from itertools import filterfalse
     # and other moved modules and definitions
 
-It also includes experimental backports for three stdlib packages from Py3
-that were heavily refactored versus Py2::
+It also includes backports for three stdlib packages from Py3 that were
+heavily refactored versus Py2::
     
     import html, html.entities, html.parser
-    import http, http.server, http.client, http.cookies, http.cookiejar
-    import urllib, urllib.parse, urllib.request, urllib.error
+    import http, http.client
 
-*Warning*: currently only html.* and http.client pass their test suites.
+These currently are not supported, but we may support them in the
+future::
+    
+    import http.server, http.cookies, http.cookiejar
+    import urllib, urllib.parse, urllib.request, urllib.error
 
 
 Explicit imports
