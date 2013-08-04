@@ -69,7 +69,7 @@ their Python 3 names and locations::
     from itertools import filterfalse
     # and other moved modules and definitions
 
-It also includes backports for three stdlib packages from Py3 that were
+It also includes backports for these stdlib packages from Py3 that were
 heavily refactored versus Py2::
     
     import html, html.entities, html.parser
