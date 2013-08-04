@@ -37,6 +37,55 @@ class TestStandardLibraryRenames(unittest.TestCase):
             if '.' not in oldname:
                 self.assertEqual(oldmod, newmod)
 
+    def test_old_urllib_import(self):
+        """
+        Tests whether an imported module can import the old urllib package.
+        """
+        code1 = '''
+                from future import standard_library
+                import module_importing_old_urllib
+                '''
+        code2 = '''
+                import urllib
+                assert 'urlopen' in dir(urllib)
+                print('Import succeeded!')
+                '''
+        with open('runme.py', 'w') as f:
+            f.write(textwrap.dedent(code1))
+        with open('module_importing_old_urllib.py', 'w') as f:
+            f.write(textwrap.dedent(code2))
+        output = check_output([self.interpreter, 'runme.py'])
+        print(output)
+        self.assertTrue(True)
+
+    def test_sys_intern(self):
+        """
+        Py2's builtin intern() has been moved to the sys module. Tests whether sys.intern is
+        available.
+        """
+        from sys import intern
+        if six.PY3:
+            self.assertEqual(intern('hello'), 'hello')
+        else:
+            # intern() requires byte-strings on Py2:
+            self.assertEqual(intern(b'hello'), b'hello')
+
+    def test_sys_maxsize(self):
+        """
+        Tests whether sys.maxsize is available.
+        """
+        from sys import maxsize
+        print(maxsize)
+        self.assertTrue(maxsize > 0)
+
+    def test_itertools_filterfalse(self):
+        """
+        Tests whether itertools.filterfalse is available
+        """
+        from itertools import filterfalse
+        not_div_by_3 = filterfalse(lambda x: x % 3 == 0, range(8))
+        self.assertEqual(list(not_div_by_3), [1, 2, 4, 5, 7])
+
     def test_import_from_module(self):
         """
         Tests whether e.g. "import socketserver" succeeds in a module imported by another module.
@@ -140,16 +189,6 @@ class TestStandardLibraryRenames(unittest.TestCase):
         import urllib.parse
         URL = 'http://pypi.python.org/test_url/spaces oh no/'
         self.assertEqual(urllib.parse.quote(URL.format(package)), 'http%3A//pypi.python.org/test_url/spaces%20oh%20no/')
-
-    @unittest.expectedFailure     # currently fails on Py2
-    def test_sys_intern(self):
-        """
-        intern() has been moved to the sys module.
-        """
-        from future import standard_library
-        from sys import intern
-        intern('mystring')
-        self.assertTrue(True)
 
     def test_underscore_prefixed_modules(self):
         import _thread

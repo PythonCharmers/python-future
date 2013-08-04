@@ -56,17 +56,19 @@ from us:
     StringIO.StringIO -> io.StringIO
     Bytes.BytesIO -> io.BytesIO
 
-This module only supports Python 2.7 and Python 3.1+.
-
-Old things that can perhaps be fixed for people:
+Old things that can perhaps be fixed for people by futurize.py:
   string.uppercase -> string.ascii_uppercase   # works on either Py2.7 or Py3+
+  sys.maxint -> sys.maxsize
 
-Others we should handle:
+Other renames/moves we handle:
   itertools.ifilterfalse -> itertools.filterfalse
   intern(s) -> sys.intern(s)
+
+TODO: Check out these:
+  unittest2 -> unittest?
   buffer -> memoryview?
-  sys.maxint was renamed to sys.maxsize in Python3
-  unittest2 -> unittest
+
+This module only supports Python 2.7 and Python 3.1+.
 """
 
 from __future__ import absolute_import, print_function
@@ -151,7 +153,7 @@ RENAMES = {
            # 'abc': 'collections.abc',   # for Py33
            'future.backports.html': 'html',
            'future.backports.http': 'http',
-           'future.backports.urllib': 'urllib',
+           # 'future.backports.urllib': 'newurllib',
           }
 
 REPLACED_MODULES = {'test', 'urllib', 'pickle'}  # add dbm when we support it
@@ -230,6 +232,65 @@ class RenameImport(object):
 MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('collections', 'UserDict', 'UserDict', 'UserDict'),
          ('collections', 'UserString','UserString', 'UserString'),
+         ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
+         ('sys', 'intern','__builtin__', 'intern'),
+         # urllib._urlopener	urllib.request
+         # urllib.ContentTooShortError	urllib.error
+         # urllib.FancyURLOpener	urllib.request
+         # urllib.pathname2url	urllib.request
+         # urllib.quote	urllib.parse
+         # urllib.quote_plus	urllib.parse
+         # urllib.splitattr	urllib.parse
+         # urllib.splithost	urllib.parse
+         # urllib.splitnport	urllib.parse
+         # urllib.splitpasswd	urllib.parse
+         # urllib.splitport	urllib.parse
+         # urllib.splitquery	urllib.parse
+         # urllib.splittag	urllib.parse
+         # urllib.splittype	urllib.parse
+         # urllib.splituser	urllib.parse
+         # urllib.splitvalue	urllib.parse
+         # urllib.unquote	urllib.parse
+         # urllib.unquote_plus	urllib.parse
+         # urllib.urlcleanup	urllib.request
+         # urllib.urlencode	urllib.parse
+         # urllib.urlopen	urllib.request
+         # urllib.URLOpener	urllib.request
+         # urllib.urlretrieve	urllib.request
+         # urllib2.AbstractBasicAuthHandler	urllib.request
+         # urllib2.AbstractDigestAuthHandler	urllib.request
+         # urllib2.BaseHandler	urllib.request
+         # urllib2.build_opener	urllib.request
+         # urllib2.CacheFTPHandler	urllib.request
+         # urllib2.FileHandler	urllib.request
+         # urllib2.FTPHandler	urllib.request
+         # urllib2.HTTPBasicAuthHandler	urllib.request
+         # urllib2.HTTPCookieProcessor	urllib.request
+         # urllib2.HTTPDefaultErrorHandler	urllib.request
+         # urllib2.HTTPDigestAuthHandler	urllib.request
+         # urllib2.HTTPError	urllib.request
+         # urllib2.HTTPHandler	urllib.request
+         # urllib2.HTTPPasswordMgr	urllib.request
+         # urllib2.HTTPPasswordMgrWithDefaultRealm	urllib.request
+         # urllib2.HTTPRedirectHandler	urllib.request
+         # urllib2.HTTPSHandler	urllib.request
+         # urllib2.install_opener	urllib.request
+         # urllib2.OpenerDirector	urllib.request
+         # urllib2.ProxyBasicAuthHandler	urllib.request
+         # urllib2.ProxyDigestAuthHandler	urllib.request
+         # urllib2.ProxyHandler	urllib.request
+         # urllib2.Request	urllib.request
+         # urllib2.UnknownHandler	urllib.request
+         # urllib2.URLError	urllib.request
+         # urllib2.urlopen	urllib.request
+         # urlparse.parse_qs	urllib.parse
+         # urlparse.parse_qsl	urllib.parse
+         # urlparse.urldefrag	urllib.parse
+         # urlparse.urljoin	urllib.parse
+         # urlparse.urlparse	urllib.parse
+         # urlparse.urlsplit	urllib.parse
+         # urlparse.urlunparse	urllib.parse
+         # urlparse.urlunsplit	urllib.parse
         ]
 
 if not six.PY3:
