@@ -164,6 +164,15 @@ class TestStandardLibraryRenames(unittest.TestCase):
         import functools
         self.assertEqual(functools.reduce(lambda x, y: x+y, range(1, 6)), 15)
 
+    def test_collections_userstuff(self):
+        """
+        UserDict, UserList, and UserString have been moved to the collections
+        module.
+        """
+        from collections import UserDict
+        from collections import UserList
+        from collections import UserString
+
     def test_reload(self):
         """
         reload has been moved to the imp module

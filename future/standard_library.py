@@ -90,7 +90,6 @@ from . import six
 #   xmlrpc
 
 # These modules need names from elsewhere being added to them:
-#   collections: should provide UserList and UserString
 #   subprocess: should provide getoutput and other fns from commands
 #               module but these fns are missing: getstatus, mk2arg,
 #               mkarg
@@ -147,8 +146,6 @@ RENAMES = {
            # 'CGIHTTPServer': 'http.server',
            'future.backports.test': 'test',  # primarily for renaming test_support to support
            # 'commands': 'subprocess',
-           # 'UserString' : 'collections',
-           # 'UserList' : 'collections',
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
            # 'abc': 'collections.abc',   # for Py33
@@ -229,7 +226,18 @@ class RenameImport(object):
         module_info = imp.find_module(name, path)
         return imp.load_module(name, *module_info)
 
+# (New module name, new object name, old module name, old object name)
+MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
+         ('collections', 'UserDict', 'UserDict', 'UserDict'),
+         ('collections', 'UserString','UserString', 'UserString'),
+        ]
 
 if not six.PY3:
+    for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
+        newmod = __import__(newmodname)
+        oldmod = __import__(oldmodname)
+        obj = getattr(oldmod, oldobjname)
+        setattr(newmod, newobjname, obj)
+
     sys.meta_path = [RenameImport(RENAMES)]
 
