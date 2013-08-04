@@ -729,7 +729,7 @@ def runtest(test, verbose, quiet,
 # There are a few things we can save and restore to mitigate this, and
 # the following context manager handles this task.
 
-class saved_test_environment:
+class saved_test_environment(object):
     """Save bits of the test environment and restore them at block exit.
 
         with saved_test_environment(testname, verbose, quiet):
@@ -1459,7 +1459,7 @@ _expectations['freebsd6'] = _expectations['freebsd4']
 _expectations['freebsd7'] = _expectations['freebsd4']
 _expectations['freebsd8'] = _expectations['freebsd4']
 
-class _ExpectedSkips:
+class _ExpectedSkips(object):
     def __init__(self):
         import os.path
         from test import test_timeout

@@ -1374,7 +1374,7 @@ def set_memlimit(limit):
         raise ValueError('Memory limit %r too low to be useful' % (limit,))
     max_memuse = memlimit
 
-class _MemoryWatchdog:
+class _MemoryWatchdog(object):
     """An object which periodically watches the process' memory consumption
     and prints it out.
     """
@@ -1467,7 +1467,7 @@ def bigaddrspacetest(f):
 #=======================================================================
 # unittest integration.
 
-class BasicTestRunner:
+class BasicTestRunner(object):
     def run(self, test):
         result = unittest.TestResult()
         test(result)

@@ -704,7 +704,7 @@ def is_third_party(request):
         return False
 
 
-class Cookie:
+class Cookie(object):
     """HTTP Cookie.
 
     This class represents both Netscape and RFC 2965 cookies.
@@ -802,7 +802,7 @@ class Cookie:
         return "Cookie(%s)" % ", ".join(args)
 
 
-class CookiePolicy:
+class CookiePolicy(object):
     """Defines which cookies get accepted from and returned to server.
 
     May also modify cookies, though this is probably a bad idea.
@@ -1196,9 +1196,9 @@ def deepvalues(mapping):
 
 # Used as second parameter to dict.get() method, to distinguish absent
 # dict key from one with a None value.
-class Absent: pass
+class Absent(object): pass
 
-class CookieJar:
+class CookieJar(object):
     """Collection of HTTP cookies.
 
     You may not need to know about this class: try

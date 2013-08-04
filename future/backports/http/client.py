@@ -329,7 +329,7 @@ class HTTPMessage(mimetools.Message):
                     self.status = self.status + '; bad seek'
                 break
 
-class HTTPResponse:
+class HTTPResponse(object):
 
     # strict: If true, raise BadStatusLine if the status line can't be
     # parsed as a valid HTTP/1.0 or 1.1 status line.  By default it is
@@ -684,7 +684,7 @@ class HTTPResponse:
         return self.msg.items()
 
 
-class HTTPConnection:
+class HTTPConnection(object):
 
     _http_vsn = 11
     _http_vsn_str = 'HTTP/1.1'
