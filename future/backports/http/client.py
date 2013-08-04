@@ -72,6 +72,7 @@ Req-started-unread-response    _CS_REQ_STARTED    <response_class>
 Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 """
 
+import collections
 from array import array
 import os
 import socket
@@ -790,8 +791,14 @@ class HTTPConnection:
             self.__response = None
         self.__state = _CS_IDLE
 
+    # Stricter send() method backported from Py3.3. Avoids UnicodeDecodeErrors
+    # on Py2
     def send(self, data):
-        """Send `data' to the server."""
+        """Send `data' to the server.
+        ``data`` can be a string object, a bytes object, an array object, a
+        file-like object that supports a .read() method, or an iterable object.
+        """
+
         if self.sock is None:
             if self.auto_open:
                 self.connect()
@@ -801,14 +808,62 @@ class HTTPConnection:
         if self.debuglevel > 0:
             print "send:", repr(data)
         blocksize = 8192
-        if hasattr(data,'read') and not isinstance(data, array):
-            if self.debuglevel > 0: print "sendIng a read()able"
-            datablock = data.read(blocksize)
-            while datablock:
-                self.sock.sendall(datablock)
+        # The read() method of array.array in Py2 is a red herring;
+        # it is a deprecated redirector to array.fromfile that takes two args,
+        # not one. So we can't use it.
+        if hasattr(data, "read") and not isinstance(data, array):
+            if self.debuglevel > 0:
+                print "sendIng a read()able"
+            encode = False
+            try:
+                mode = data.mode
+            except AttributeError:
+                # io.BytesIO and other file-like objects don't have a `mode`
+                # attribute.
+                pass
+            else:
+                if "b" not in mode:
+                    encode = True
+                    if self.debuglevel > 0:
+                        print "encoding file using iso-8859-1"
+            while 1:
                 datablock = data.read(blocksize)
-        else:
+                if not datablock:
+                    break
+                if encode:
+                    datablock = datablock.encode("iso-8859-1")
+                self.sock.sendall(datablock)
+
+        try:
             self.sock.sendall(data)
+        except (TypeError, UnicodeDecodeError):
+            if isinstance(data, collections.Iterable):
+                for d in data:
+                    self.sock.sendall(d)
+            else:
+                raise TypeError("data should be a bytes-like object "
+                                "or an iterable, got %r" % type(data))
+
+    # Original send() method:
+    # def send(self, data):
+    #     """Send `data' to the server."""
+    #     if self.sock is None:
+    #         if self.auto_open:
+    #             self.connect()
+    #         else:
+    #             raise NotConnected()
+
+    #     if self.debuglevel > 0:
+    #         print "send:", repr(data)
+    #     blocksize = 8192
+    #     if hasattr(data,'read') and not isinstance(data, array):
+    #         if self.debuglevel > 0: print "sendIng a read()able"
+    #         datablock = data.read(blocksize)
+    #         while datablock:
+    #             self.sock.sendall(datablock)
+    #             datablock = data.read(blocksize)
+    #     else:
+    #         self.sock.sendall(data)
 
     def _output(self, s):
         """Add a line of output to the current request buffer.
@@ -823,8 +878,8 @@ class HTTPConnection:
         Appends an extra \\r\\n to the buffer.
         A message_body may be specified, to be appended to the request.
         """
-        self._buffer.extend(("", ""))
-        msg = "\r\n".join(self._buffer)
+        self._buffer.extend((b"", b""))
+        msg = b"\r\n".join(self._buffer)
         del self._buffer[:]
         # If msg and message_body are sent in a single send() call,
         # it will avoid performance problems caused by the interaction

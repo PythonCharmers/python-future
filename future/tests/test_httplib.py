@@ -33,10 +33,28 @@ class FakeSocket(object):
         self.data = b''
 
     def sendall(self, data):
+        olddata = self.data
+        assert isinstance(olddata, bytes)
         if six.PY3:
             self.data += data
         else:
-            self.data += ''.join(data)
+            if isinstance(data, str):  # i.e. unicode
+                newdata = data.encode('ascii')
+            elif isinstance(data, bytes):
+                newdata = data
+            elif isinstance(data, array.array):
+                newdata = data.tostring()
+            else:
+                try:
+                    newdata = b''.join(chr(d) for d in data)
+                    assert isinstance(newdata, bytes)
+                except (AssertionError, TypeError) as e:
+                    raise TypeError('Cannot convert data to bytes')
+            self.data += newdata
+        # if six.PY3:
+        #     self.data += data
+        # else:
+        #     self.data += b''.join(data)
 
     def makefile(self, mode, bufsize=None):
         if mode != 'r' and mode != 'rb':
@@ -276,6 +294,7 @@ class BasicTest(TestCase):
         expected = (b'GET /foo HTTP/1.1\r\nHost: example.com\r\n'
                     b'Accept-Encoding: identity\r\nContent-Length:')
 
+        # __file__ will usually be the .pyc, i.e. binary data
         with open(__file__, 'rb') as body:
             conn = client.HTTPConnection('example.com')
             sock = FakeSocket(body)
@@ -295,7 +314,7 @@ class BasicTest(TestCase):
         if six.PY3:
             mydata = array.array('b', expected)
         else:
-            mydata = array.array(b'c', expected)
+            mydata = array.array(b'b', expected)
         conn.send(mydata)
         self.assertEqual(expected, sock.data)
         sock.data = b''
@@ -544,7 +563,7 @@ class HTTPSTest(TestCase):
 
 def test_main(verbose=None):
     support.run_unittest(HeaderTests, OfflineTest, BasicTest, TimeoutTest,
-                         HTTPSTimeoutTest, SourceAddressTest)
+                         HTTPSTest, SourceAddressTest)
 
 if __name__ == '__main__':
     test_main()
