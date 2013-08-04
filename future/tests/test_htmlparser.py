@@ -2,16 +2,21 @@
 """
 Tests for the html.parser functions.
 
-Adapted for the python-future module from the Python 3.3 standard library tests.
+Adapted for the python-future module from the Python 3.3 standard library
+tests.
 """
 
-from __future__ import unicode_literals
+from __future__ import (absolute_import, print_function, unicode_literals)
 from future import standard_library
 from future import *
 
-import html.parser
+from test import support
 import pprint
 import unittest
+import sys
+
+import html.parser
+print(html.parser.__doc__, file=sys.stderr)
 
 
 class EventCollector(html.parser.HTMLParser):
@@ -110,8 +115,8 @@ class TestCaseBase(unittest.TestCase):
 class HTMLParserStrictTestCase(TestCaseBase):
 
     def get_collector(self):
-        # with support.check_warnings(("", DeprecationWarning), quite=False):
-        return EventCollector(strict=True)
+        with support.check_warnings(("", DeprecationWarning), quiet=False):
+            return EventCollector(strict=True)
 
     def test_processing_instruction_only(self):
         self._run_check("<?processing instruction>", [
@@ -608,8 +613,8 @@ class HTMLParserTolerantTestCase(HTMLParserStrictTestCase):
 class AttributesStrictTestCase(TestCaseBase):
 
     def get_collector(self):
-        # with support.check_warnings(("", DeprecationWarning), quite=False):
-        return EventCollector(strict=True)
+        with support.check_warnings(("", DeprecationWarning), quiet=False):
+            return EventCollector(strict=True)
 
     def test_attr_syntax(self):
         output = [
@@ -746,7 +751,11 @@ class AttributesTolerantTestCase(AttributesStrictTestCase):
                           [("href", "http://www.example.org/\">;")]),
                          ("data", "spam"), ("endtag", "a")])
 
+def test_main():
+    support.run_unittest(HTMLParserStrictTestCase, HTMLParserTolerantTestCase,
+                         AttributesStrictTestCase, AttributesTolerantTestCase)
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    test_main()
