@@ -37,6 +37,7 @@ class TestStandardLibraryRenames(unittest.TestCase):
             if '.' not in oldname:
                 self.assertEqual(oldmod, newmod)
 
+    @unittest.skipIf(six.PY3, 'not testing for old urllib on Py3')
     def test_old_urllib_import(self):
         """
         Tests whether an imported module can import the old urllib package.
