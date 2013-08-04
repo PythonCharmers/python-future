@@ -17,8 +17,23 @@ if sys.argv[-1] == 'publish':
 NAME = "future"
 PACKAGES = ["future",
             "future.modified_builtins",
-            "future.tests"]
-PACKAGE_DATA = {'': ['README.rst', 'LICENSE', 'NEWS.txt', 'futurize.py']}
+            "future.tests",
+            "future.backports",
+            "future.backports.html",
+            "future.backports.http",
+            "future.backports.test",
+            "libfuturize",
+            "libfuturize.fixes2",
+            "libfuturize.fixes3",
+            "libfuturize.tests"]
+PACKAGE_DATA = {'': [
+                     'README.rst',
+                     'LICENSE',
+                     'NEWS.txt',
+                     'futurize.py',
+                     'discover_tests.py',
+                     'useful_links.txt',
+                     'check_rst.sh']}
 REQUIRES = []
 VERSION = future.__version__
 DESCRIPTION = "Clean single-source support for Python 3 and 2"
