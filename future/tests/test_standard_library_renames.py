@@ -110,11 +110,11 @@ class TestStandardLibraryRenames(unittest.TestCase):
         r = urllib.request.urlopen(URL.format(package))
         pprint(r.read().decode('utf-8'))
 
-    @unittest.expectedFailure
     def test_html_import(self):
         import html
         import html.entities
         import html.parser
+        self.assertTrue(True)
 
     @unittest.expectedFailure
     def test_http_import(self):
@@ -123,6 +123,7 @@ class TestStandardLibraryRenames(unittest.TestCase):
         import http.client
         import http.cookies
         import http.cookiejar
+        self.assertTrue(True)
 
     @unittest.expectedFailure
     def test_urllib_imports(self):
@@ -132,12 +133,13 @@ class TestStandardLibraryRenames(unittest.TestCase):
         import urllib.robotparser
         import urllib.error
         import urllib.response
+        self.assertTrue(True)
 
     @unittest.expectedFailure
     def test_urllib_parse(self):
         import urllib.parse
         URL = 'http://pypi.python.org/test_url/spaces oh no/'
-        assertEqual(urllib.parse.quote(URL.format(package)), 'http%3A//pypi.python.org/test_url/spaces%20oh%20no/')
+        self.assertEqual(urllib.parse.quote(URL.format(package)), 'http%3A//pypi.python.org/test_url/spaces%20oh%20no/')
 
     @unittest.expectedFailure     # currently fails on Py2
     def test_sys_intern(self):
