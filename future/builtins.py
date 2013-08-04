@@ -20,7 +20,11 @@ from . import six
 if not six.PY3:
     from future_builtins import ascii, oct, hex
     from __builtin__ import unichr as chr
-    from __builtin__ import long as int   # is this safe?!
+    # Was:
+    # from __builtin__ import long as int
+    # Was this safe? Probably not: it makes isinstance(1, int) == False
+    # Stick to this:
+    from __builtin__ import int
     __all__ = ['ascii', 'oct', 'hex', 'input', 'chr', 'int']
 else:
     import builtins
