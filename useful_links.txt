@@ -13,3 +13,5 @@ http://washort.twistedmatrix.com/2010/11/unicode-in-python-and-how-to-prevent-it
 http://docs.python.org/release/3.0.1/whatsnew/3.0.html
 https://pypi.python.org/pypi/unicode-nazi
 http://www.rmi.net/~lutz/strings30.html
+
+"Porting your code to Python 3": Alexandre Vassalotti: peadrop.com/slides/mp5.pdf
