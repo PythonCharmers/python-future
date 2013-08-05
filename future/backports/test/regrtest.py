@@ -152,6 +152,8 @@ example, to run all the tests except for the bsddb tests, give the
 option '-uall,-bsddb'.
 """
 
+from __future__ import print_function
+
 import StringIO
 import getopt
 import json
@@ -221,8 +223,8 @@ TEMPDIR = os.path.abspath(tempfile.gettempdir())
 
 
 def usage(code, msg=''):
-    print __doc__
-    if msg: print msg
+    print(__doc__)
+    if msg: print(msg)
     sys.exit(code)
 
 
@@ -263,7 +265,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
              'use=', 'threshold=', 'trace', 'coverdir=', 'nocoverdir',
              'runleaks', 'huntrleaks=', 'memlimit=', 'randseed=',
              'multiprocess=', 'slaveargs=', 'forever', 'header'])
-    except getopt.error, msg:
+    except getopt.error as msg:
         usage(2, msg)
 
     # Defaults
@@ -311,7 +313,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
         elif o in ('-R', '--huntrleaks'):
             huntrleaks = a.split(':')
             if len(huntrleaks) not in (2, 3):
-                print a, huntrleaks
+                print(a, huntrleaks)
                 usage(2, '-R takes 2 or 3 colon-separated arguments')
             if not huntrleaks[0]:
                 huntrleaks[0] = 5
@@ -352,14 +354,14 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
             args, kwargs = json.loads(a)
             try:
                 result = runtest(*args, **kwargs)
-            except BaseException, e:
+            except BaseException as e:
                 result = INTERRUPTED, e.__class__.__name__
-            print   # Force a newline (just in case)
-            print json.dumps(result)
+            print()   # Force a newline (just in case)
+            print(json.dumps(result))
             sys.exit(0)
         else:
-            print >>sys.stderr, ("No handler for option {}.  Please "
-                "report this as a bug at http://bugs.python.org.").format(o)
+            print(("No handler for option {}.  Please "
+                "report this as a bug at http://bugs.python.org.").format(o), file=sys.stderr)
             sys.exit(1)
     if single and fromfile:
         usage(2, "-s and -f don't go together!")
@@ -379,7 +381,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
         try:
             import gc
         except ImportError:
-            print 'No GC available, disabling findleaks.'
+            print('No GC available, disabling findleaks.')
             findleaks = False
         else:
             # Uncomment the line below to report garbage that is not
@@ -423,12 +425,12 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
     # For a partial run, we do not need to clutter the output.
     if verbose or header or not (quiet or single or tests or args):
         # Print basic platform information
-        print "==", platform.python_implementation(), \
-                    " ".join(sys.version.split())
-        print "==  ", platform.platform(aliased=True), \
-                      "%s-endian" % sys.byteorder
-        print "==  ", os.getcwd()
-        print "Testing with flags:", sys.flags
+        print("==", platform.python_implementation(), \
+                    " ".join(sys.version.split()))
+        print("==  ", platform.platform(aliased=True), \
+                      "%s-endian" % sys.byteorder)
+        print("==  ", os.getcwd())
+        print("Testing with flags:", sys.flags)
 
     alltests = findtests(testdir, stdtests, nottests)
     selected = tests or args or alltests
@@ -440,7 +442,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
             next_single_test = None
     if randomize:
         random.seed(random_seed)
-        print "Using random seed", random_seed
+        print("Using random seed", random_seed)
         random.shuffle(selected)
     if trace:
         import trace
@@ -482,7 +484,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
         try:
             from threading import Thread
         except ImportError:
-            print "Multiprocess option requires thread support"
+            print("Multiprocess option requires thread support")
             sys.exit(2)
         from Queue import Queue
         from subprocess import Popen, PIPE
@@ -538,9 +540,9 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
                     finished += 1
                     continue
                 if stdout:
-                    print stdout
+                    print(stdout)
                 if stderr:
-                    print >>sys.stderr, stderr
+                    print(stderr, file=sys.stderr)
                 sys.stdout.flush()
                 sys.stderr.flush()
                 if result[0] == INTERRUPTED:
@@ -555,7 +557,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
     else:
         for test in tests:
             if not quiet:
-                print test
+                print(test)
                 sys.stdout.flush()
             if trace:
                 # If we're tracing code coverage, then we don't exit with status
@@ -567,7 +569,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
                     result = runtest(test, verbose, quiet, huntrleaks)
                     accumulate_result(test, result)
                     if verbose3 and result[0] == FAILED:
-                        print "Re-running test %r in verbose mode" % test
+                        print("Re-running test %r in verbose mode" % test)
                         runtest(test, True, quiet, huntrleaks)
                 except KeyboardInterrupt:
                     interrupted = True
@@ -577,8 +579,8 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
             if findleaks:
                 gc.collect()
                 if gc.garbage:
-                    print "Warning: test created", len(gc.garbage),
-                    print "uncollectable object(s)."
+                    print("Warning: test created", len(gc.garbage), end=' ')
+                    print("uncollectable object(s).")
                     # move the uncollectable objects somewhere so we don't see
                     # them again
                     found_garbage.extend(gc.garbage)
@@ -590,31 +592,31 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
 
     if interrupted:
         # print a newline after ^C
-        print
-        print "Test suite interrupted by signal SIGINT."
+        print()
+        print("Test suite interrupted by signal SIGINT.")
         omitted = set(selected) - set(good) - set(bad) - set(skipped)
-        print count(len(omitted), "test"), "omitted:"
+        print(count(len(omitted), "test"), "omitted:")
         printlist(omitted)
     if good and not quiet:
         if not bad and not skipped and not interrupted and len(good) > 1:
-            print "All",
-        print count(len(good), "test"), "OK."
+            print("All", end=' ')
+        print(count(len(good), "test"), "OK.")
     if print_slow:
         test_times.sort(reverse=True)
-        print "10 slowest tests:"
+        print("10 slowest tests:")
         for time, test in test_times[:10]:
-            print "%s: %.1fs" % (test, time)
+            print("%s: %.1fs" % (test, time))
     if bad:
         bad = set(bad) - set(environment_changed)
         if bad:
-            print count(len(bad), "test"), "failed:"
+            print(count(len(bad), "test"), "failed:")
             printlist(bad)
         if environment_changed:
-            print "{} altered the execution environment:".format(
-                count(len(environment_changed), "test"))
+            print("{} altered the execution environment:".format(
+                count(len(environment_changed), "test")))
             printlist(environment_changed)
     if skipped and not quiet:
-        print count(len(skipped), "test"), "skipped:"
+        print(count(len(skipped), "test"), "skipped:")
         printlist(skipped)
 
         e = _ExpectedSkips()
@@ -622,26 +624,26 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
         if e.isvalid():
             surprise = set(skipped) - e.getexpected() - set(resource_denieds)
             if surprise:
-                print count(len(surprise), "skip"), \
-                      "unexpected on", plat + ":"
+                print(count(len(surprise), "skip"), \
+                      "unexpected on", plat + ":")
                 printlist(surprise)
             else:
-                print "Those skips are all expected on", plat + "."
+                print("Those skips are all expected on", plat + ".")
         else:
-            print "Ask someone to teach regrtest.py about which tests are"
-            print "expected to get skipped on", plat + "."
+            print("Ask someone to teach regrtest.py about which tests are")
+            print("expected to get skipped on", plat + ".")
 
     if verbose2 and bad:
-        print "Re-running failed tests in verbose mode"
+        print("Re-running failed tests in verbose mode")
         for test in bad:
-            print "Re-running test %r in verbose mode" % test
+            print("Re-running test %r in verbose mode" % test)
             sys.stdout.flush()
             try:
                 test_support.verbose = True
                 ok = runtest(test, True, quiet, huntrleaks)
             except KeyboardInterrupt:
                 # print a newline separate from the ^C
-                print
+                print()
                 break
             except:
                 raise
@@ -852,13 +854,13 @@ class saved_test_environment(object):
                 self.changed = True
                 restore(original)
                 if not self.quiet:
-                    print >>sys.stderr, (
+                    print((
                           "Warning -- {} was modified by {}".format(
-                                                 name, self.testname))
+                                                 name, self.testname)), file=sys.stderr)
                     if self.verbose > 1:
-                        print >>sys.stderr, (
+                        print((
                               "  Before: {}\n  After:  {} ".format(
-                                                  original, current))
+                                                  original, current)), file=sys.stderr)
             # XXX (ncoghlan): for most resources (e.g. sys.path) identity
             # matters at least as much as value. For others (e.g. cwd),
             # identity is irrelevant. Should we add a mechanism to check
@@ -901,25 +903,25 @@ def runtest_inner(test, verbose, quiet, huntrleaks=False):
                 test_time = time.time() - start_time
         finally:
             sys.stdout = save_stdout
-    except test_support.ResourceDenied, msg:
+    except test_support.ResourceDenied as msg:
         if not quiet:
-            print test, "skipped --", msg
+            print(test, "skipped --", msg)
             sys.stdout.flush()
         return RESOURCE_DENIED, test_time
-    except unittest.SkipTest, msg:
+    except unittest.SkipTest as msg:
         if not quiet:
-            print test, "skipped --", msg
+            print(test, "skipped --", msg)
             sys.stdout.flush()
         return SKIPPED, test_time
     except KeyboardInterrupt:
         raise
-    except test_support.TestFailed, msg:
-        print >>sys.stderr, "test", test, "failed --", msg
+    except test_support.TestFailed as msg:
+        print("test", test, "failed --", msg, file=sys.stderr)
         sys.stderr.flush()
         return FAILED, test_time
     except:
         type, value = sys.exc_info()[:2]
-        print >>sys.stderr, "test", test, "crashed --", str(type) + ":", value
+        print("test", test, "crashed --", str(type) + ":", value, file=sys.stderr)
         sys.stderr.flush()
         if verbose:
             traceback.print_exc(file=sys.stderr)
@@ -936,10 +938,10 @@ def runtest_inner(test, verbose, quiet, huntrleaks=False):
         output = capture_stdout.getvalue()
         if not output:
             return PASSED, test_time
-        print "test", test, "produced unexpected output:"
-        print "*" * 70
-        print output
-        print "*" * 70
+        print("test", test, "produced unexpected output:")
+        print("*" * 70)
+        print(output)
+        print("*" * 70)
         sys.stdout.flush()
         return FAILED, test_time
 
@@ -971,16 +973,16 @@ def cleanup_test_droppings(testname, verbose):
                               "directory nor file" % name)
 
         if verbose:
-            print "%r left behind %s %r" % (testname, kind, name)
+            print("%r left behind %s %r" % (testname, kind, name))
         try:
             # if we have chmod, fix possible permissions problems
             # that might prevent cleanup
             if (hasattr(os, 'chmod')):
                 os.chmod(name, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
             nuker(name)
-        except Exception, msg:
-            print >> sys.stderr, ("%r left behind %s %r and it couldn't be "
-                "removed: %s" % (testname, kind, name, msg))
+        except Exception as msg:
+            print(("%r left behind %s %r and it couldn't be "
+                "removed: %s" % (testname, kind, name, msg)), file=sys.stderr)
 
 def dash_R(the_module, test, indirect_test, huntrleaks):
     """Run a test multiple times, looking for reference leaks.
@@ -1025,8 +1027,8 @@ def dash_R(the_module, test, indirect_test, huntrleaks):
     nwarmup, ntracked, fname = huntrleaks
     fname = os.path.join(test_support.SAVEDCWD, fname)
     repcount = nwarmup + ntracked
-    print >> sys.stderr, "beginning", repcount, "repetitions"
-    print >> sys.stderr, ("1234567890"*(repcount//10 + 1))[:repcount]
+    print("beginning", repcount, "repetitions", file=sys.stderr)
+    print(("1234567890"*(repcount//10 + 1))[:repcount], file=sys.stderr)
     dash_R_cleanup(fs, ps, pic, zdc, abcs)
     for i in range(repcount):
         rc_before = sys.gettotalrefcount()
@@ -1036,12 +1038,12 @@ def dash_R(the_module, test, indirect_test, huntrleaks):
         rc_after = sys.gettotalrefcount()
         if i >= nwarmup:
             deltas.append(rc_after - rc_before)
-    print >> sys.stderr
+    print(file=sys.stderr)
     if any(deltas):
         msg = '%s leaked %s references, sum=%s' % (test, deltas, sum(deltas))
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
         with open(fname, "a") as refrep:
-            print >> refrep, msg
+            print(msg, file=refrep)
             refrep.flush()
         return True
     return False
@@ -1134,8 +1136,8 @@ def printlist(x, width=70, indent=4):
     from textwrap import fill
     blanks = ' ' * indent
     # Print the sorted list: 'x' may be a '--random' list or a set()
-    print fill(' '.join(str(elt) for elt in sorted(x)), width,
-               initial_indent=blanks, subsequent_indent=blanks)
+    print(fill(' '.join(str(elt) for elt in sorted(x)), width,
+               initial_indent=blanks, subsequent_indent=blanks))
 
 # Map sys.platform to a string containing the basenames of tests
 # expected to be skipped on that platform.
@@ -1478,7 +1480,7 @@ class _ExpectedSkips(object):
             if test_timeout.skip_expected:
                 self.expected.add('test_timeout')
 
-            if sys.maxint == 9223372036854775807L:
+            if sys.maxint == 9223372036854775807:
                 self.expected.add('test_imageop')
 
             if sys.platform != "darwin":
