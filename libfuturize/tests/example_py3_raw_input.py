@@ -1,8 +1,8 @@
 """
 Example Python 3 code
 
-Does libfuturize handle this, or does it add an evil eval() to the input()
-call?
+Does libfuturize --from3 handle this, or does it add an evil eval() to the
+input() call?
 
 It should also add 'from __future__ import print_function'
 """
