@@ -1,21 +1,26 @@
 """
-For the ``future`` package.
+python-futurize: automatic 2to(2&3) conversion using ``python-future``
+======================================================================
 
-Like Armin Ronacher's modernize.py, but it spits out code that *should*
-be Py2 and Py3 compatible while using the ``future`` package.
+Like Armin Ronacher's modernize.py, but it attempts to produce clean
+standard Python 3 code that runs on both Py2 and Py3 using the ``future``
+package.
 
-Use like this to port Python 2 code:
+Use like this:
 
-  $ python futurize.py --verbose mypython2script.py
+  $ python-futurize --verbose mypython2script.py
 
-and try to auto-backport it by adding ``future`` module imports.
+This will attempt to port the code to standard Py3 code that also
+provides Py2 compatibility with the help of the right imports from
+``future``. To write the changes to disk, use the -w flag.
 
-Or, to make existing Python 3 code compatible with Python 2 using the
-``future`` package:
+Or, to make existing Python 3 code compatible with both Python 2 and 3
+using the ``future`` package:
 
-  $ python futurize.py --from3 --verbose mypython3script.py
+  $ python-futurize --from3 --verbose mypython3script.py
 
-which just adds these import lines:
+which removes any Py3-only syntax (e.g. new metaclasses) and adds these
+import lines:
 
     from __future__ import absolute_import
     from __future__ import division
@@ -23,11 +28,8 @@ which just adds these import lines:
     from __future__ import unicode_literals
     from future import *
     import future.standard_library
-    # other imports here
-
-to invoke the 3rd-party ``future`` package to provide Py2 compatibility.
-
 """
+
 from __future__ import (absolute_import, print_function, unicode_literals)
 from future import *
 import future.standard_library

@@ -109,26 +109,27 @@ See the docstrings for each of these modules for more info::
 Automatic conversion
 ====================
 
-There is a script included called ``futurize.py`` to aid in making either
-Python 2 code or Python 3 code compatible with both platforms using the
-``future`` module. It is based on 2to3 and inspired by Armin Ronacher's
-``modernize.py``.
+There is a script included called ``python-futurize`` to aid in making
+either Python 2 code or Python 3 code compatible with both platforms
+using the ``future`` module. It is based on 2to3 and inspired by Armin
+Ronacher's ``python-modernize``.
 
 For Python 2 code (the default), it runs the code through all the
 appropriate 2to3 fixers to turn it into valid Python 3 code, and then
 adds ``__future__`` and ``future`` package imports so that (hopefully)
 the resulting code runs on Python 3 as well.
 
-For Python 3 code (with ``--from3``), it merely adds ``__future__`` and
-``future`` imports to the top of each module so that (with luck) the code
-will run automatically on Python 2 as well.
+For Python 3 code (with ``--from3``), it fixes Py3-only syntax (e.g.
+metaclasses) and adds ``__future__`` and ``future`` imports to the top of
+each module so that (with luck) the code will run automatically on Python
+2 as well.
 
 
 Limitations
 -----------
 Python 3 code that causes SyntaxErrors on Python 2 is not currently
-handled by the ``futurize`` script (except for ``print_function``). This
-includes:
+handled by the ``python-futurize`` script (except for
+``print_function``). This includes:
 
 - Function arguments in Py3.3 like this::
     ``def f(a, b, *, c='blah', d='blah'):``
@@ -151,7 +152,8 @@ includes:
       ``...``
 
   to get new-style classes; otherwise weird breakage when e.g. calling
-  super() may occur. Currently futurize.py doesn't do this automatically.
+  super() may occur. Currently ``python-futurize`` doesn't do this
+  automatically.
 
 
 Credits
@@ -333,14 +335,21 @@ Other compatibility tools
 
 :Q: What is the relationship between this project and ``python-modernize``?
 
-:A: ``python-modernize`` converts legacy code into what is (hopefully) a
-    common subset of Python 2 and 3, with ``six`` as a run-time dependency. 
+:A: ``python-future`` contains, in addition to the ``future``
+    compatibility layer, a ``python-futurize`` script that is similar to
+    ``python-modernize.py`` in intent and design (based on ``2to3``).
+    
+    ``python-modernize`` converts legacy code into a common subset of
+    Python 2 and 3, with ``six`` as a run-time dependency. 
 
-    ``python-future`` contains a ``futurize.py`` script that is similar
-    to ``modernize.py`` in intent and design (based on ``2to3``). The
-    difference is that ``futurize`` produces code that is
-    source-compatible with Py2 and Py3 by using ``future`` package
-    imports, rather than ``six``.
+    Similarly, ``python-futurize`` converts legacy Py2 code (or
+    incompatible Py3-only code) into a common subset of Python 2 and 3,
+    with ``future`` as a run-time dependency.    
+
+    Because ``future`` is more comprehensive than ``six`` in providing
+    backported Py3 behaviours, the resulting code should require less
+    additional manual porting effort to handle renamed modules and
+    modified builtins.
 
 :Q: How did the original need for this arise?
 
