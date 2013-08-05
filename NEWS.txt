@@ -1,3 +1,14 @@
+v0.3.3:
+  * Add python-futurize console script
+  * Add itertools.filterfalse
+  * Remove docs about unfinished backports (urllib etc.)
+  * Remove old Py2 syntax in some files that breaks py3 setup.py install
+v0.3.2:
+  * Add test.support module
+  * Add UserList, UserString, UserDict classes to collections module
+  * Remove int -> long
+  * Add backported _markupbase.py etc. with new-style classes to fix travis-ci build problems
+  * Add working html and http.client backports
 v0.3.0:
   * generalize import hooks to allow dotted imports
   * add backports of urllib, html, http from Py3.3 stdlib using ``future``
