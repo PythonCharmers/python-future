@@ -65,7 +65,7 @@ their Python 3 names and locations::
     import configparser
     import test.support
     from collections import UserList
-    from itertools import filterfalse
+    from itertools import filterfalse, zip_longest
     # and other moved modules and definitions
 
 It also includes backports for these stdlib packages from Py3 that were
@@ -116,13 +116,11 @@ Ronacher's ``python-modernize``.
 
 For Python 2 code (the default), it runs the code through all the
 appropriate 2to3 fixers to turn it into valid Python 3 code, and then
-adds ``__future__`` and ``future`` package imports so that (hopefully)
-the resulting code runs on Python 3 as well.
-
-For Python 3 code (with ``--from3``), it fixes Py3-only syntax (e.g.
-metaclasses) and adds ``__future__`` and ``future`` imports to the top of
-each module so that (with luck) the code will run automatically on Python
-2 as well.
+adds ``__future__`` and ``future`` package imports. For Python 3 code
+(with ``--from3``), it fixes Py3-only syntax (e.g.  metaclasses) and adds
+``__future__`` and ``future`` imports to the top of each module. In both
+cases, the result should be relatively clean Py3-style code semantics
+that (hopefully) runs unchanged on both Python 2 and Python 3.
 
 
 Limitations

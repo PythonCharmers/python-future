@@ -81,11 +81,21 @@ class TestStandardLibraryRenames(unittest.TestCase):
 
     def test_itertools_filterfalse(self):
         """
-        Tests whether itertools.filterfalse is available
+        Tests whether itertools.filterfalse is available.
         """
         from itertools import filterfalse
         not_div_by_3 = filterfalse(lambda x: x % 3 == 0, range(8))
         self.assertEqual(list(not_div_by_3), [1, 2, 4, 5, 7])
+
+    def test_itertools_zip_longest(self):
+        """
+        Tests whether itertools.zip_longest is available.
+        """
+        from itertools import zip_longest
+        a = (1, 2)
+        b = [2, 4, 6]
+        self.assertEqual(list(zip_longest(a, b)),
+                         [(1, 2), (2, 4), (None, 6)])
 
     def test_import_from_module(self):
         """

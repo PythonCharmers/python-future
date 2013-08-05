@@ -64,6 +64,7 @@ Old things that can perhaps be fixed for people by futurize.py:
 
 Other renames/moves we handle:
   itertools.ifilterfalse -> itertools.filterfalse
+  itertools.izip_longest -> itertools.zip_longest
   intern(s) -> sys.intern(s)
 
 TODO: Check out these:
@@ -235,6 +236,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('collections', 'UserDict', 'UserDict', 'UserDict'),
          ('collections', 'UserString','UserString', 'UserString'),
          ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
+         ('itertools', 'zip_longest','itertools', 'izip_longest'),
          ('sys', 'intern','__builtin__', 'intern'),
          # urllib._urlopener	urllib.request
          # urllib.ContentTooShortError	urllib.error

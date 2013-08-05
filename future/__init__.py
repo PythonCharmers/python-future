@@ -66,7 +66,7 @@ their Python 3 names and locations::
     import configparser
     import test.support
     from collections import UserList
-    from itertools import filterfalse
+    from itertools import filterfalse, zip_longest
     # and other moved modules and definitions
 
 It also includes backports for these stdlib packages from Py3 that were
