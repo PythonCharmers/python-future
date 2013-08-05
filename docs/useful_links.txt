@@ -1,0 +1,18 @@
+Other docs to read about porting to Py3:
+
+http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python/
+http://python3porting.com/noconv.html
+http://techspot.zzzeek.org/2011/01/24/zzzeek-s-guide-to-python-3-porting/
+http://dabeaz.blogspot.com.au/2011/01/porting-py65-and-my-superboard-to.html
+http://wolfprojects.altervista.org/talks/unicode-and-python-3/
+
+http://lucumr.pocoo.org/2011/12/7/thoughts-on-python3/
+
+http://python3porting.com/fixers.html
+http://washort.twistedmatrix.com/2010/11/unicode-in-python-and-how-to-prevent-it.html
+http://docs.python.org/release/3.0.1/whatsnew/3.0.html
+https://pypi.python.org/pypi/unicode-nazi
+http://www.rmi.net/~lutz/strings30.html
+
+"Porting your code to Python 3": Alexandre Vassalotti: peadrop.com/slides/mp5.pdf
+http://www.wefearchange.org/2012/01/python-3-porting-fun-redux.html
