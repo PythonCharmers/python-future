@@ -7,17 +7,19 @@ from future import standard_library
 from future import six
 
 import sys
-import textwrap
 import unittest
-from subprocess import check_output
+import tempfile
+import os
 
 from future.standard_library import RENAMES, REPLACED_MODULES
+from future.tests.base import CodeHandler
 
 
-class TestStandardLibraryRenames(unittest.TestCase):
+class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
 
     def setUp(self):
         self.interpreter = 'python'
+        self.tempdir = tempfile.mkdtemp() + os.path.sep
 
     @unittest.skipIf(six.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
@@ -46,23 +48,21 @@ class TestStandardLibraryRenames(unittest.TestCase):
                 from future import standard_library
                 import module_importing_old_urllib
                 '''
+        self._write_test_script(code1, 'runme.py')
         code2 = '''
                 import urllib
                 assert 'urlopen' in dir(urllib)
                 print('Import succeeded!')
                 '''
-        with open('runme.py', 'w') as f:
-            f.write(textwrap.dedent(code1))
-        with open('module_importing_old_urllib.py', 'w') as f:
-            f.write(textwrap.dedent(code2))
-        output = check_output([self.interpreter, 'runme.py'])
+        self._write_test_script(code2, 'module_importing_old_urllib.py')
+        output = self._run_test_script('runme.py')
         print(output)
         self.assertTrue(True)
 
     def test_sys_intern(self):
         """
-        Py2's builtin intern() has been moved to the sys module. Tests whether sys.intern is
-        available.
+        Py2's builtin intern() has been moved to the sys module. Tests
+        whether sys.intern is available.
         """
         from sys import intern
         if six.PY3:
@@ -99,7 +99,8 @@ class TestStandardLibraryRenames(unittest.TestCase):
 
     def test_import_from_module(self):
         """
-        Tests whether e.g. "import socketserver" succeeds in a module imported by another module.
+        Tests whether e.g. "import socketserver" succeeds in a module
+        imported by another module.
         """
         code1 = '''
                 from future import standard_library
@@ -109,11 +110,9 @@ class TestStandardLibraryRenames(unittest.TestCase):
                 import socketserver
                 print('Import succeeded!')
                 '''
-        with open('importme1.py', 'w') as f:
-            f.write(textwrap.dedent(code1))
-        with open('importme2.py', 'w') as f:
-            f.write(textwrap.dedent(code2))
-        output = check_output([self.interpreter, 'importme1.py'])
+        self._write_test_script(code1, 'importme1.py')
+        self._write_test_script(code2, 'importme2.py')
+        output = self._run_test_script('importme1.py')
         print(output)
 
     def test_configparser(self):
@@ -174,16 +173,17 @@ class TestStandardLibraryRenames(unittest.TestCase):
         import html
         import html.entities
         import html.parser
+
+    def test_http_client_import(self):
+        import http.client
         self.assertTrue(True)
 
     @unittest.expectedFailure
-    def test_http_import(self):
+    def test_http_imports(self):
         import http
         import http.server
-        import http.client
         import http.cookies
         import http.cookiejar
-        self.assertTrue(True)
 
     @unittest.expectedFailure
     def test_urllib_imports(self):
@@ -216,8 +216,8 @@ class TestStandardLibraryRenames(unittest.TestCase):
 
     def test_collections_userstuff(self):
         """
-        UserDict, UserList, and UserString have been moved to the collections
-        module.
+        UserDict, UserList, and UserString have been moved to the
+        collections module.
         """
         from collections import UserDict
         from collections import UserList
@@ -231,6 +231,5 @@ class TestStandardLibraryRenames(unittest.TestCase):
         imp.reload(imp)
         self.assertTrue(True)
 
-        
 if __name__ == '__main__':
     unittest.main()

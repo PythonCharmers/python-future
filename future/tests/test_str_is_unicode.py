@@ -22,7 +22,7 @@ class TestStrIsUnicode(unittest.TestCase):
         self.assertEqual(str(a), a.encode('utf-8').decode('utf-8'))
 
     @unittest.expectedFailure  # on Python 2
-    def test_bytes(self):
+    def test_bytes_encoding_arg(self):
         """
         The bytes class has changed in Python 3 to accept an
         additional argument in the constructor: encoding.

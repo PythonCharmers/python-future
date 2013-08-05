@@ -16,12 +16,14 @@ from __future__ import print_function, absolute_import
 import unittest
 import textwrap
 import pprint
-from subprocess import Popen, PIPE, check_output, STDOUT
+from subprocess import Popen, PIPE
 import tempfile
 import os
 
+from future.tests.base import CodeHandler
 
-class Test2to3Simple(unittest.TestCase):
+
+class Test2to3Simple(CodeHandler, unittest.TestCase):
     def setUp(self):
         self.interpreter = 'python'
         self.tempdir = tempfile.mkdtemp() + os.path.sep
@@ -108,31 +110,6 @@ class Test2to3Simple(unittest.TestCase):
         # r = urllib.request.urlopen(URL.format(package_name))
         # pprint.pprint(r.read()) 
 
-    def _write_test_script(self, code):
-        """
-        Dedents the given code (a multiline string) and writes it out to
-        a file in a temporary folder like /tmp/tmpUDCn7x/mytestscript.py.
-        """
-        with open(self.tempdir + 'mytestscript.py', 'w') as f:
-            f.write(textwrap.dedent(code))
-
-    def _read_test_script(self):
-        with open(self.tempdir + 'mytestscript.py') as f:
-            newsource = f.read()
-        return newsource
-
-    def _futurize_test_script(self):
-        output = check_output(['python-futurize',
-                               '-w',
-                               self.tempdir + 'mytestscript.py'],
-                              stderr=STDOUT)
-        print(output)
-        return output
-
-    def _run_test_script(self):
-        return check_output([self.interpreter,
-                             self.tempdir + 'mytestscript.py'])
- 
     def test_raw_input(self):
         """
         Passes in a string to the waiting input() after python-futurize
