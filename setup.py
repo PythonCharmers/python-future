@@ -65,6 +65,11 @@ setup(name=NAME,
       long_description=LONG_DESC,
       license=LICENSE,
       keywords=KEYWORDS,
+      entry_points={
+          'console_scripts': [
+              'python-futurize = libfuturize.main:main'
+          ]
+      },
       packages=PACKAGES,
       package_data=PACKAGE_DATA,
       include_package_data=True,
