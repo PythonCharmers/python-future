@@ -5,11 +5,10 @@ with the future module using:
 
     from future import *
 
-It contains tests that perform a scripted porting process using 2to3.
-(and in the future also python-modernize). It then tests whether the
-resulting Python 2/3 code (python-modernize) or Python 3 code (from 2to3)
-is able to run under Python 2 using the relevant ``future`` module
-imports.
+It contains tests that perform a scripted porting process using
+python-futurize. It then tests whether the resulting Python 2/3 code
+is indeed able to run under Python 3 and under Python 2 using the
+relevant ``future`` module imports.
 """
 
 from __future__ import print_function, absolute_import
@@ -18,11 +17,14 @@ import unittest
 import textwrap
 import pprint
 from subprocess import Popen, PIPE, check_output, STDOUT
+import tempfile
+import os
 
 
 class Test2to3Simple(unittest.TestCase):
     def setUp(self):
         self.interpreter = 'python'
+        self.tempdir = tempfile.mkdtemp() + os.path.sep
 
     def test_xrange(self):
         code = '''
@@ -32,8 +34,11 @@ class Test2to3Simple(unittest.TestCase):
         self.simple_convert_and_check(code)
 
     def test_range_slice(self):
+        """
+        This should run on Py2 without a MemoryError
+        """
         code = '''
-        for i in range(10**11)[:10]:
+        for i in range(10**15)[:10]:
             pass
         '''
         self.simple_convert_and_check(code)
@@ -48,7 +53,7 @@ class Test2to3Simple(unittest.TestCase):
                 print 'Adding an item'
                 super(VerboseList, self).append(item)
         '''
-        self.simple_convert_and_check(code, fixers=['print'])
+        self.simple_convert_and_check(code)
 
     def test_apply(self):
         code = '''
@@ -57,7 +62,7 @@ class Test2to3Simple(unittest.TestCase):
         
         assert apply(addup, (10,20)) == 30
         '''
-        self.simple_convert_and_check(code, fixers=['apply'])
+        self.simple_convert_and_check(code)
     
     def test_renamed_modules(self):
         code = '''
@@ -66,9 +71,9 @@ class Test2to3Simple(unittest.TestCase):
         import cPickle
         import cStringIO
         '''
-        self.simple_convert_and_check(code, fixers=['imports'])
+        self.simple_convert_and_check(code)
     
-    def simple_convert_and_check(self, code, fixers=['all']):
+    def simple_convert_and_check(self, code):
         """
         Tests a complete conversion of this simple piece of code from the
         docs here:
@@ -77,21 +82,9 @@ class Test2to3Simple(unittest.TestCase):
         automatically run under Python 2 with the future module.
         """
         # Translate the clean source file, then add our imports
-        with open('mytestscript.py', 'w') as f:
-            f.write(textwrap.dedent(code))
-        output = check_output(['2to3', 'mytestscript.py', '-w', '-f'] + fixers,
-                              stderr=STDOUT)
-        # print(output)
-        # Read the translated file and add our imports
-        with open('mytestscript.py') as f:
-            newsource = f.read()
-        with open('mytestscript.py', 'w') as f:
-            f.write('from __future__ import print_function, absolute_import, division, unicode_literals\n')
-            f.write('from future import *\n')
-            f.write('from future import standard_library\n')
-            f.write(newsource)
-
-        output2 = check_output([self.interpreter, 'mytestscript.py'])
+        self._write_test_script(code)
+        self._futurize_test_script()
+        output2 = self._run_test_script()
         print(output2)
 
     @unittest.skip('not implemented yet')
@@ -115,11 +108,37 @@ class Test2to3Simple(unittest.TestCase):
         # r = urllib.request.urlopen(URL.format(package_name))
         # pprint.pprint(r.read()) 
 
+    def _write_test_script(self, code):
+        """
+        Dedents the given code (a multiline string) and writes it out to
+        a file in a temporary folder like /tmp/tmpUDCn7x/mytestscript.py.
+        """
+        with open(self.tempdir + 'mytestscript.py', 'w') as f:
+            f.write(textwrap.dedent(code))
+
+    def _read_test_script(self):
+        with open(self.tempdir + 'mytestscript.py') as f:
+            newsource = f.read()
+        return newsource
+
+    def _futurize_test_script(self):
+        output = check_output(['python-futurize',
+                               '-w',
+                               self.tempdir + 'mytestscript.py'],
+                              stderr=STDOUT)
+        print(output)
+        return output
+
+    def _run_test_script(self):
+        return check_output([self.interpreter,
+                             self.tempdir + 'mytestscript.py'])
+ 
     def test_raw_input(self):
         """
-        Passes in a string to the waiting input() after 2to3 conversion
+        Passes in a string to the waiting input() after python-futurize
+        conversion.
         """
-        code = '''
+        py2code = '''
         from future import *
         def greet(name):
             print "Hello, {0}!".format(name)
@@ -127,12 +146,11 @@ class Test2to3Simple(unittest.TestCase):
         name = raw_input()
         greet(name)
         '''
-        with open('mytestscript.py', 'w') as f:
-            f.write(textwrap.dedent(code))
-        output = check_output(['2to3', 'mytestscript.py', '-w'],
-                              stderr=STDOUT)
+        self._write_test_script(py2code)
+        output = self._futurize_test_script()
         # print(output)
-        p1 = Popen([self.interpreter, 'mytestscript.py'],
+
+        p1 = Popen([self.interpreter, self.tempdir + 'mytestscript.py'],
                    stdout=PIPE, stdin=PIPE)
         (stdout, stderr) = p1.communicate(b'Ed')
         print(stdout)
