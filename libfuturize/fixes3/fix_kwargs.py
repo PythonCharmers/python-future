@@ -6,7 +6,8 @@ This fixer is rather sensitive to incorrect py3k syntax.
 # Note: "relevant" parameters are parameters following the first STAR in the list.
 
 from lib2to3 import fixer_base
-from ..fixer_util import token, indentation, suitify, String, Newline, Comma, DoubleStar, Name
+from lib2to3.fixer_util import token, String, Newline, Comma, Name
+from libfuturize.fixer_util import indentation, suitify, DoubleStar
 
 _assign_template = u"%(name)s = %(kwargs)s['%(name)s']; del %(kwargs)s['%(name)s']"
 _if_template = u"if '%(name)s' in %(kwargs)s: %(assign)s"

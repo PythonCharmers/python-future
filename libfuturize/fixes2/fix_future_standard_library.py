@@ -1,28 +1,11 @@
 """
 For the ``future`` package.
 
-Use like this to port Python 2 code:
+Adds this import line:
 
-  $ python modernize.py --print-function --future-unicode --no-six \
-                        --fix=libmodernize.fixes.fix_future_package \
-                        mypython2script.py
-
-Or, to make existing Python 3 code compatible with Python 2 using the
-``future`` package:
-
-  $ 2to3 --fix future_package --verbose mypython3script.py
-
-Adds these import lines:
-
-    from __future__ import absolute_import
-    from __future__ import division
-    from __future__ import print_function
-    from __future__ import unicode_literals
     from future import standard_library
-    from future import *
-    # other imports here
 
-to invoke the 3rd-party ``future`` package to provide Py2 compatibility for the output of 2to3.
+after any __future__ imports but before any other imports.
 """
 
 from lib2to3.fixer_base import BaseFix
@@ -34,7 +17,7 @@ from lib2to3.pygram import python_symbols as syms
 from lib2to3.pgen2 import token
 
        
-class FixFuturePackage(BaseFix):
+class FixFutureStandardLibrary(BaseFix):
 
     def match(self, node):
         if node.type == syms.file_input:
@@ -45,14 +28,8 @@ class FixFuturePackage(BaseFix):
         # return False
     
     def transform(self, node, results):
-        touch_import_top(u'future', u'*', node)
+        # TODO: add a blank line between any __future__ imports and this?
         touch_import_top(u'future', u'standard_library', node)
-        # touch_import_top(None, u'future.standard_library', node)
-        touch_import_top(u'__future__', u'unicode_literals', node)
-        touch_import_top(u'__future__', u'print_function', node)
-        touch_import_top(u'__future__', u'division', node)
-        touch_import_top(u'__future__', u'absolute_import', node)
-        # add_future(node, u'unicode_literals')
        
 def is_import_from(node):
     """Returns true if the node is a statement "from ... import ..."
@@ -76,7 +53,7 @@ def is_future_import_stmt(node):
 
 def touch_import_top(package, name, node):
     """Works like `does_tree_import` but adds an import statement at the
-    top if it was not imported.
+    top if it was not imported (but below any __future__ imports).
 
     Calling this multiple times adds them in reverse order.
         
@@ -93,8 +70,8 @@ def touch_import_top(package, name, node):
     for idx, node in enumerate(root.children):
         if not is_import_stmt(node):
             continue
-        # elif is_future_import_stmt(node):
-        #     continue
+        elif is_future_import_stmt(node):
+            continue
         insert_pos = idx + offset
         break
 

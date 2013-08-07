@@ -18,7 +18,7 @@ lib2to3_fix_names = set([
     'lib2to3.fixes.fix_getcwdu',
     'lib2to3.fixes.fix_has_key',
     'lib2to3.fixes.fix_idioms',
-    'lib2to3.fixes.fix_import',    # use together with absolute_import from __future__
+    # 'lib2to3.fixes.fix_import',    # called by libfuturize.fixes2.fix_absolute_import
     'lib2to3.fixes.fix_imports',
     'lib2to3.fixes.fix_input',
     'lib2to3.fixes.fix_intern',
@@ -35,7 +35,6 @@ lib2to3_fix_names = set([
     'lib2to3.fixes.fix_numliterals',
     'lib2to3.fixes.fix_operator',   # we will need support for this by e.g. extending the Py2 operator module to provide those functions in Py3
     'lib2to3.fixes.fix_paren',
-    'lib2to3.fixes.fix_print',
     'lib2to3.fixes.fix_raise',
     'lib2to3.fixes.fix_raw_input',
     'lib2to3.fixes.fix_reduce',
@@ -56,6 +55,10 @@ lib2to3_fix_names = set([
 ])
 
 libfuturize_2fix_names = set([
-    'libfuturize.fixes2.fix_future_package',
+    'libfuturize.fixes2.fix_absolute_import',
+    'libfuturize.fixes2.fix_print_with_import',
+    'libfuturize.fixes2.fix_division',
+    'libfuturize.fixes2.fix_future_builtins',
+    'libfuturize.fixes2.fix_future_standard_library',
     'libfuturize.fixes2.fix_metaclass',
     ])

@@ -3,7 +3,9 @@ Fixer for "class Foo: ..." -> "class Foo(object): ..."
 """
 
 from lib2to3 import fixer_base
-from ..fixer_util import Node, Leaf, token, syms, LParen, RParen, Name
+from lib2to3.fixer_util import Node, Leaf, token, syms, LParen, RParen, Name
+# from lib2to3.fixer_util import Name, syms, Node, Leaf, Newline, find_root
+from lib2to3.pygram import token
 
 def insert_object(node, idx):
     node.insert_child(idx, RParen())

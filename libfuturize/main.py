@@ -84,6 +84,7 @@ def main(args=None):
         fixer_pkg = 'libfuturize.fixes3'
         avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
         avail_fixes.update(libfuturize_3fix_names)
+        flags["print_function"] = True
     else:
         fixer_pkg = 'libfuturize.fixes2'
         avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
@@ -118,7 +119,8 @@ def main(args=None):
     logging.basicConfig(format='%(name)s: %(message)s', level=level)
 
     # Initialize the refactoring tool
-    unwanted_fixes = set(options.nofix)
+    # unwanted_fixes = set(options.nofix)
+    unwanted_fixes = set(fixer_pkg + ".fix_" + fix for fix in options.nofix)
 
     # Remove all fixes except one if the input is already Py3
     explicit = set()
@@ -128,11 +130,13 @@ def main(args=None):
             if fix == "all":
                 all_present = True
             else:
-                explicit.add(fix)
+                explicit.add(fixer_pkg + ".fix_" + fix)
+                # explicit.add(fix)
         requested = avail_fixes.union(explicit) if all_present else explicit
     else:
         requested = avail_fixes.union(explicit)
     fixer_names = requested.difference(unwanted_fixes)
+    print(explicit)
     rt = StdoutRefactoringTool(sorted(fixer_names), flags, sorted(explicit),
                                options.nobackups, not options.no_diffs)
 

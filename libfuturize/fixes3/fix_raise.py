@@ -1,7 +1,7 @@
 u"""Fixer for 'raise E(V).with_traceback(T)' -> 'raise E, V, T'"""
 
 from lib2to3 import fixer_base
-from ..fixer_util import Comma, Node, Leaf, token, syms
+from lib2to3.fixer_util import Comma, Node, Leaf, token, syms
 
 class FixRaise(fixer_base.BaseFix):
 

@@ -6,7 +6,10 @@ for (a,)* *b (,c)* [,] in d: ...
 
 from lib2to3 import fixer_base
 from itertools import count
-from ..fixer_util import Assign, Comma, Call, Newline, Name, Number, indentation, suitify, commatize, token, syms, Node, Leaf
+from lib2to3.fixer_util import (Assign, Comma, Call, Newline, Name,
+                                Number, token, syms, Node, Leaf)
+from ..fixer_util import indentation, suitify, commatize
+# from ..fixer_util import Assign, Comma, Call, Newline, Name, Number, indentation, suitify, commatize, token, syms, Node, Leaf
 
 def assignment_source(num_pre, num_post, LISTNAME, ITERNAME):
     u"""
