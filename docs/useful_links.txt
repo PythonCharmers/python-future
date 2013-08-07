@@ -6,6 +6,7 @@ http://wiki.python.org/moin/Python2orPython3
 Other docs to read about porting to Py3:
 ----------------------------------------
 
+https://ep2013.europython.eu/media/conference/slides/python-3-the-next-generation-is-here-already.pdf
 http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python/
 Supporting both 2 and 3 without 2to3 conversion: http://python3porting.com/noconv.html
 http://python3porting.com/strategies.html
@@ -72,6 +73,7 @@ http://www.startcodon.com/wordpress/category/3to2/
 
 Unicode and bytes
 -----------------
+PEPs: 358, 3112, 3137, 3138
 http://python3porting.com/noconv.html#unicode-section
 Unicode literals u'...' back in Python 3.3: http://www.python.org/dev/peps/pep-0414/
 https://github.com/django/django/blob/master/django/utils/encoding.py
