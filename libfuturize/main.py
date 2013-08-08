@@ -82,12 +82,14 @@ def main(args=None):
     options, args = parser.parse_args(args)
     if options.from3:
         fixer_pkg = 'libfuturize.fixes3'
-        avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
-        avail_fixes.update(libfuturize_3fix_names)
+        # avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
+        # avail_fixes.update(libfuturize_3fix_names)
+        avail_fixes = libfuturize_3fix_names
         flags["print_function"] = True
     else:
         fixer_pkg = 'libfuturize.fixes2'
-        avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
+        # avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
+        avail_fixes = set()
         avail_fixes.update(lib2to3_fix_names)
         avail_fixes.update(libfuturize_2fix_names)
 
