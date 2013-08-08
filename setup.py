@@ -24,8 +24,7 @@ PACKAGES = ["future",
             "future.backports.test",
             "libfuturize",
             "libfuturize.fixes2",
-            "libfuturize.fixes3",
-            "libfuturize.tests"]
+            "libfuturize.fixes3"]
 PACKAGE_DATA = {'': [
                      'README.rst',
                      'LICENSE',
