@@ -177,13 +177,13 @@ is not currently handled by the ``python-futurize`` script. This includes:
   manually by creating a temporary variable.)
 
 
-Notes on ``futurize.py``
-----------------------------
-Ensure you are using new-style classes on Py2. Py3 doesn't require
-inheritance from ``object`` for this, but Py2 does. ``python-futurize
---from3`` adds this back in automatically, but ensure you do this too
-when writing your classes, otherwise weird breakage when e.g. calling
-super() may occur.
+Notes
+-----
+- Ensure you are using new-style classes on Py2. Py3 doesn't require
+  inheritance from ``object`` for this, but Py2 does. ``python-futurize
+  --from3`` adds this back in automatically, but ensure you do this too
+  when writing your classes, otherwise weird breakage when e.g. calling
+  ``super()`` may occur.
 
 
 Credits
