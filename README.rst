@@ -122,6 +122,29 @@ adds ``__future__`` and ``future`` package imports. For Python 3 code
 cases, the result should be relatively clean Py3-style code semantics
 that (hopefully) runs unchanged on both Python 2 and Python 3.
 
+Forwards: 2 to both
+--------------------
+For example, running ``python-futurize`` turns this Python 2 code::
+    
+    import ConfigParser
+
+    class Blah(object):
+        pass
+    print 'Hello',
+
+into this code which runs on both Py2 and Py3::
+    
+    from __future__ import print_function
+    from future import standard_library
+    import configparser
+
+    class Blah(object):
+        pass
+    print('Hello', end=' ')
+
+
+Backwards: 3 to both
+--------------------
 For example, running ``python-futurize --from3`` turns this Python 3 code::
     
     import configparser
@@ -139,8 +162,8 @@ into this code which runs on both Py2 and Py3::
     class Blah(object):
         pass
 
-Notice that it forces a new-style class on Python 2 and also imports the
-renamed stdlib module under its Py3 name.
+Notice that in both cases ``python-futurize`` forces a new-style class
+and imports the renamed stdlib module under its Py3 name.
 
 
 Limitations
