@@ -1,6 +1,7 @@
 v0.3.4:
   * Add itertools.zip_longest
-  * Update 2to3_backcompat tests to use python-futurize
+  * Update 2to3_backcompat tests to use futurize.py
+  * Improve libfuturize fixers: correct order of imports; add imports only when necessary (except absolute_import currently)
 v0.3.3:
   * Add python-futurize console script
   * Add itertools.filterfalse
