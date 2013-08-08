@@ -5,6 +5,8 @@ Fixer for complicated imports
 from lib2to3 import fixer_base
 from lib2to3.fixer_util import Name, String, FromImport, Newline, Comma
 from ..fixer_util import token, syms, Leaf, Node, Star, indentation, ImportAsName
+from libfuturize.fixer_util import touch_import_top
+
 
 TK_BASE_NAMES = (u'ACTIVE', u'ALL', u'ANCHOR', u'ARC',u'BASELINE', u'BEVEL', u'BOTH',
                  u'BOTTOM', u'BROWSE', u'BUTT', u'CASCADE', u'CENTER', u'CHAR',
@@ -127,6 +129,7 @@ name_import_rename = u"name_import_rename=dotted_as_name< %s 'as' renamed=any >"
 # helps match 'from http import server'
 from_import_rename = u"from_import_rename=import_from< 'from' %s 'import' (%s | import_as_name< %s 'as' renamed=any > | in_list=import_as_names< any* (%s | import_as_name< %s 'as' renamed=any >) any* >) >"
 
+
 def all_modules_subpattern():
     u"""
     Builds a pattern for all toplevel names
@@ -139,28 +142,6 @@ def all_modules_subpattern():
     ret += u" | ".join([simple_name % (mod[0]) for mod in names_dot_attrs if mod[1] == u"__init__"]) + u" )"
     return ret
 
-def all_candidates(name, attr, MAPPING=MAPPING):
-    u"""
-    Returns all candidate packages for the name.attr
-    """
-    dotted = name + u'.' + attr
-    assert dotted in MAPPING, u"No matching package found."
-    ret = MAPPING[dotted]
-    if attr == u'__init__':
-        return ret + (name,)
-    return ret
-
-def new_package(name, attr, using, MAPPING=MAPPING, PY2MODULES=PY2MODULES):
-    u"""
-    Returns which candidate package for name.attr provides using
-    """
-    for candidate in all_candidates(name, attr, MAPPING):
-        if using in PY2MODULES[candidate]:
-            break
-    else:
-        candidate = None
-
-    return candidate
 
 def build_import_pattern(mapping1, mapping2):
     u"""
@@ -183,15 +164,6 @@ def build_import_pattern(mapping1, mapping2):
         yield name_import_rename % (d_name)
         yield from_import_rename % (s_name, s_attr, s_attr, s_attr, s_attr)
 
-def name_import_replacement(name, attr):
-    children = [Name(u"import")]
-    for c in all_candidates(name.value, attr.value):
-        children.append(Name(c, prefix=u" "))
-        children.append(Comma())
-    children.pop()
-    replacement = Node(syms.import_name, children)
-    return replacement
-
 
 class FixImports2(fixer_base.BaseFix):
 
@@ -200,147 +172,5 @@ class FixImports2(fixer_base.BaseFix):
     PATTERN = u" | \n".join(build_import_pattern(MAPPING, PY2MODULES))
 
     def transform(self, node, results):
-        # The patterns dictate which of these names will be defined
-        name = results.get(u"name")
-        attr = results.get(u"attr")
-        if attr is None:
-            attr = Name(u"__init__")
-        using = results.get(u"using")
-        in_list = results.get(u"in_list")
-        imp_list = results.get(u"imp_list")
-        power = results.get(u"pow")
-        before = results.get(u"before")
-        after = results.get(u"after")
-        d_name = results.get(u"dotted_name")
-        # An import_stmt is always contained within a simple_stmt
-        simple_stmt = node.parent
-        # The parent is useful for adding new import_stmts
-        parent = simple_stmt.parent
-        idx = parent.children.index(simple_stmt)
-        if any((results.get(u"from_import_rename") is not None,
-                results.get(u"name_import_rename") is not None)): 
-            self.cannot_convert(node, reason=u"ambiguity: import binds a single name")
+        touch_import_top(u'future', u'standard_library', node)
 
-        elif using is None and not in_list:
-            # import urllib.request, single-name import
-            replacement = name_import_replacement(name, attr)
-            replacement.prefix = node.prefix
-            node.replace(replacement)
-
-        elif using is None:
-            # import ..., urllib.request, math, http.sever, ...
-            for d_name in imp_list:
-                if d_name.type == syms.dotted_name:
-                    name = d_name.children[0]
-                    attr = d_name.children[2]
-                elif d_name.type == token.NAME and d_name.value + u".__init__" in MAPPING:
-                    name = d_name
-                    attr = Name(u"__init__")
-                else:
-                    continue
-                if name.value + u"." + attr.value not in MAPPING:
-                    continue
-                candidates = all_candidates(name.value, attr.value)
-                children = [Name(u"import")]
-                for c in candidates:
-                    children.append(Name(c, prefix=u" "))
-                    children.append(Comma())
-                children.pop()
-                # Put in the new statement.
-                indent = indentation(simple_stmt)
-                next_stmt = Node(syms.simple_stmt, [Node(syms.import_name, children), Newline()])
-                parent.insert_child(idx+1, next_stmt)
-                parent.insert_child(idx+1, Leaf(token.INDENT, indent))
-                # Remove the old imported name
-                test_comma = d_name.next_sibling
-                if test_comma and test_comma.type == token.COMMA:
-                    test_comma.remove()
-                elif test_comma is None:
-                    test_comma = d_name.prev_sibling
-                    if test_comma and test_comma.type == token.COMMA:
-                        test_comma.remove()
-                d_name.remove()
-            if not in_list.children:
-                simple_stmt.remove()
-
-        elif in_list is not None:
-            ##########################################################
-            # "from urllib.request import urlopen, urlretrieve, ..." #
-            # Replace one import statement with potentially many.    #
-            ##########################################################
-            packages = dict([(n,[]) for n in all_candidates(name.value,
-                                                            attr.value)])
-            # Figure out what names need to be imported from what
-            # Add them to a dict to be parsed once we're completely done
-            for imported in using:
-                if imported.type == token.COMMA:
-                    continue
-                if imported.type == syms.import_as_name:
-                    test_name = imported.children[0].value
-                    if len(imported.children) > 2:
-                        # 'as' whatever
-                        rename = imported.children[2].value
-                    else:
-                        rename = None
-                elif imported.type == token.NAME:
-                    test_name = imported.value
-                    rename = None
-                pkg = new_package(name.value, attr.value, test_name)
-                packages[pkg].append((test_name, rename))
-
-            # Parse the dict to create new import statements to replace this one
-            imports = []
-            for new_pkg, names in packages.items():
-                if not names:
-                    # Didn't import anything from that package, move along
-                    continue
-                new_names = []
-                for test_name, rename in names:
-                    if rename is None:
-                        new_names.append(Name(test_name, prefix=u" "))
-                    else:
-                        new_names.append(ImportAsName(test_name, rename, prefix=u" "))
-                    new_names.append(Comma())
-                new_names.pop()
-                imports.append(FromImport(new_pkg, new_names))
-            # Replace this import statement with one of the others
-            replacement = imports.pop()
-            replacement.prefix = node.prefix
-            node.replace(replacement)
-            indent = indentation(simple_stmt)
-            # Add the remainder of the imports as new statements.
-            while imports:
-                next_stmt = Node(syms.simple_stmt, [imports.pop(), Newline()])
-                parent.insert_child(idx+1, next_stmt)
-                parent.insert_child(idx+1, Leaf(token.INDENT, indent))
-
-        elif using.type == token.STAR:
-            # from urllib.request import *
-            nodes = [FromImport(pkg, [Star(prefix=u" ")]) for pkg in
-                                        all_candidates(name.value, attr.value)]
-            replacement = nodes.pop()
-            replacement.prefix = node.prefix
-            node.replace(replacement)
-            indent = indentation(simple_stmt)
-            while nodes:
-                next_stmt = Node(syms.simple_stmt, [nodes.pop(), Newline()])
-                parent.insert_child(idx+1, next_stmt)
-                parent.insert_child(idx+1, Leaf(token.INDENT, indent))
-        elif power is not None:
-            # urllib.request.urlopen
-            # Replace it with urllib2.urlopen
-            pkg = new_package(name.value, attr.value, using.value)
-            # Remove the trailer node that contains attr.
-            if attr.parent:
-                attr.parent.remove()
-            name.replace(Name(pkg, prefix=name.prefix))
-
-        elif using.type == token.NAME:
-            # from urllib.request import urlopen
-            pkg = new_package(name.value, attr.value, using.value)
-            if attr.value == u"__init__" and pkg == name.value:
-                # Replacing "from abc import xyz" with "from abc import xyz"
-                # Just leave it alone so as not to mess with other fixers
-                return
-            else:
-                node.replace(FromImport(pkg, [using]))
