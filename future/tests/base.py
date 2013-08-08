@@ -22,13 +22,15 @@ class CodeHandler(object):
         return newsource
 
     def _futurize_test_script(self, filename='mytestscript.py'):
-        output = check_output(['python-futurize', '-w',
+        output = check_output(['python', 'futurize.py', '-w',
                                self.tempdir + filename],
                               stderr=STDOUT)
         print(output)
         return output
 
     def _run_test_script(self, filename='mytestscript.py'):
-        return check_output([self.interpreter, self.tempdir + filename])
+        env = {'PYTHONPATH': os.getcwd()}
+        return check_output([self.interpreter, self.tempdir + filename],
+                            env=env)
 
 

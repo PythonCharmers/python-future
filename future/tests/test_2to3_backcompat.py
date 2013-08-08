@@ -27,6 +27,7 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
     def setUp(self):
         self.interpreter = 'python'
         self.tempdir = tempfile.mkdtemp() + os.path.sep
+        self.env = {'PYTHONPATH': os.getcwd()}
 
     def test_xrange(self):
         code = '''
@@ -128,10 +129,10 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
         # print(output)
 
         p1 = Popen([self.interpreter, self.tempdir + 'mytestscript.py'],
-                   stdout=PIPE, stdin=PIPE)
+                   stdout=PIPE, stdin=PIPE, stderr=PIPE, env=self.env)
         (stdout, stderr) = p1.communicate(b'Ed')
         print(stdout)
-        #print(stderr)
+        print(stderr)
         self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")
 
         

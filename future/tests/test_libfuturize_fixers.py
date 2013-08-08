@@ -3,26 +3,70 @@
 Based on lib2to3/tests/test_fixers.py
 
 """
+# Support code for test_*.py files, from lib2to3/tests/support.py by Collin Winter:
 
 # Python imports
-import os
 import unittest
+import sys
+import os
+import os.path
+import re
 from itertools import chain
+from textwrap import dedent
 from operator import itemgetter
 
 # Local imports
 from lib2to3 import pygram, pytree, refactor, fixer_util
-from lib2to3.tests import support
+from lib2to3.pgen2 import driver
 
 
-class FixerTestCase(support.TestCase):
+test_dir = os.path.dirname(__file__)
+proj_dir = os.path.normpath(os.path.join(test_dir, ".."))
+# grammar_path = os.path.join(test_dir, "..", "Grammar.txt")
+# grammar = driver.load_grammar(grammar_path)
+# driver = driver.Driver(grammar, convert=pytree.convert)
+# 
+# def parse_string(string):
+#     return driver.parse_string(reformat(string), debug=True)
+
+def run_all_tests(test_mod=None, tests=None):
+    if tests is None:
+        tests = unittest.TestLoader().loadTestsFromModule(test_mod)
+    unittest.TextTestRunner(verbosity=2).run(tests)
+
+def reformat(string):
+    return dedent(string) + u"\n\n"
+
+def get_refactorer(fixer_pkg="lib2to3", fixers=None, options=None):
+    """
+    A convenience function for creating a RefactoringTool for tests.
+
+    fixers is a list of fixers for the RefactoringTool to use. By default
+    "lib2to3.fixes.*" is used. options is an optional dictionary of options to
+    be passed to the RefactoringTool.
+    """
+    if fixers is not None:
+        fixers = [fixer_pkg + ".fixes.fix_" + fix for fix in fixers]
+    else:
+        fixers = refactor.get_fixers_from_package(fixer_pkg + ".fixes")
+    options = options or {}
+    return refactor.RefactoringTool(fixers, options, explicit=True)
+
+def all_project_files():
+    for dirpath, dirnames, filenames in os.walk(proj_dir):
+        for filename in filenames:
+            if filename.endswith(".py"):
+                yield os.path.join(dirpath, filename)
+
+
+class FixerTestCase(unittest.TestCase):
 
     # Other test cases can subclass this class and replace "fixer_pkg" with
     # their own.
     def setUp(self, fix_list=None, fixer_pkg="libfuturize", options=None):
         if fix_list is None:
             fix_list = [self.fixer]
-        self.refactor = support.get_refactorer(fixer_pkg, fix_list, options)
+        self.refactor = get_refactorer(fixer_pkg, fix_list, options)
         self.fixer_log = []
         self.filename = u"<string>"
 
@@ -31,8 +75,8 @@ class FixerTestCase(support.TestCase):
             fixer.log = self.fixer_log
 
     def _check(self, before, after):
-        before = support.reformat(before)
-        after = support.reformat(after)
+        before = reformat(before)
+        after = reformat(after)
         tree = self.refactor.refactor_string(before, self.filename)
         self.assertEqual(after, unicode(tree))
         return tree
@@ -60,7 +104,7 @@ class FixerTestCase(support.TestCase):
     def assert_runs_after(self, *names):
         fixes = [self.fixer]
         fixes.extend(names)
-        r = support.get_refactorer("lib2to3", fixes)
+        r = get_refactorer("lib2to3", fixes)
         (pre, post) = r.get_fixers()
         n = "fix_" + self.fixer
         if post and post[-1].__class__.__module__.endswith(n):
