@@ -66,7 +66,7 @@ setup(name=NAME,
       keywords=KEYWORDS,
       entry_points={
           'console_scripts': [
-              'python-futurize = libfuturize.main:main'
+              'futurize = libfuturize.main:main'
           ]
       },
       packages=PACKAGES,

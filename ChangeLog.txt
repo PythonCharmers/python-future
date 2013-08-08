@@ -1,4 +1,5 @@
 v0.3.6:
+  * Rename ``python-futurize`` console script to ``futurize``
   * More improvements to "Py3 to both" conversion (futurize.py --from3)
 v0.3.5:
   * Fix broken package setup ("package directory 'libfuturize/tests' does not exist")

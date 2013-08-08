@@ -29,7 +29,7 @@ libfuturize_3fix_names = set([
                             # 'libfuturize.fixes3.fix_metaclass',  # write a custom handler for
                             # this
                             # 'libfuturize.fixes3.fix_methodattrs',  # __func__ and __self__ seem to be defined on Py2.7 already
-                            'libfuturize.fixes3.fix_newstyle',   # yes, we want this. Without new-style classes in Py2, super() will break etc.
+                            'libfuturize.fixes3.fix_newstyle',   # yes, we want this: explicit inheritance from object. Without new-style classes in Py2, super() will break etc.
                             # 'libfuturize.fixes3.fix_next',   # use a decorator for this
                             # 'libfuturize.fixes3.fix_numliterals',   # prob not
                             # 'libfuturize.fixes3.fix_open',   # huh?

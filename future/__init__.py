@@ -109,9 +109,9 @@ See the docstrings for each of these modules for more info::
 
 Automatic conversion
 --------------------
-An experimental script called ``python-futurize`` is included to aid in
-making either Python 2 code or Python 3 code compatible with both
-platforms using the ``future`` module. See
+A script called ``futurize`` is included to aid in making either Python 2
+code or Python 3 code compatible with both platforms using the ``future``
+module. See
 https://github.com/edschofield/python-future#automatic-conversion.
 
 

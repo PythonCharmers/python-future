@@ -1,5 +1,5 @@
 """
-python-futurize: automatic 2to(2&3) conversion using ``python-future``
+futurize: automatic conversion to clean 2&3 code using ``python-future``
 ======================================================================
 
 Like Armin Ronacher's modernize.py, but it attempts to produce clean
@@ -8,7 +8,7 @@ package.
 
 Use like this:
 
-  $ python-futurize --verbose mypython2script.py
+  $ futurize --verbose mypython2script.py
 
 This will attempt to port the code to standard Py3 code that also
 provides Py2 compatibility with the help of the right imports from
@@ -17,7 +17,7 @@ provides Py2 compatibility with the help of the right imports from
 Or, to make existing Python 3 code compatible with both Python 2 and 3
 using the ``future`` package:
 
-  $ python-futurize --from3 --verbose mypython3script.py
+  $ futurize --from3 --verbose mypython3script.py
 
 which removes any Py3-only syntax (e.g. new metaclasses) and adds these
 import lines:

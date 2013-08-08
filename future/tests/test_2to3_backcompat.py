@@ -1,14 +1,14 @@
 """
 This module contains snippets of Python 2 code (invalid Python 3) and
 tests for whether they can be passed to 2to3 and immediately under Python
-with the future module using:
-
+with the future module using::
+    
     from future import *
 
 It contains tests that perform a scripted porting process using
-python-futurize. It then tests whether the resulting Python 2/3 code
-is indeed able to run under Python 3 and under Python 2 using the
-relevant ``future`` module imports.
+``futurize``. It then tests whether the resulting Python 2/3 code is
+indeed able to run under Python 3 and under Python 2 using the relevant
+``future`` module imports.
 """
 
 from __future__ import print_function, absolute_import
@@ -113,7 +113,7 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
 
     def test_raw_input(self):
         """
-        Passes in a string to the waiting input() after python-futurize
+        Passes in a string to the waiting input() after futurize
         conversion.
         """
         py2code = '''

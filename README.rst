@@ -14,7 +14,7 @@ It is designed to be used as follows::
     from __future__ import (division, absolute_import, print_function,
                             unicode_literals)
     from future import *
-    
+
 followed by clean Python 3 code (with a few restrictions) that can run
 unchanged on Python 2.7.
 
@@ -109,22 +109,23 @@ See the docstrings for each of these modules for more info::
 Automatic conversion
 ====================
 
-There is a script included called ``python-futurize`` to aid in making
-either Python 2 code or Python 3 code compatible with both platforms
-using the ``future`` module. It is based on 2to3 and inspired by Armin
-Ronacher's ``python-modernize``.
+There is a script included called ``futurize`` to aid in making either
+Python 2 code or Python 3 code compatible with both platforms using the
+``future`` module. It is based on 2to3 and uses fixers from ``lib2to3``,
+``lib3to2``, and ``python-modernize``.
 
 For Python 2 code (the default), it runs the code through all the
 appropriate 2to3 fixers to turn it into valid Python 3 code, and then
 adds ``__future__`` and ``future`` package imports. For Python 3 code
-(with ``--from3``), it fixes Py3-only syntax (e.g.  metaclasses) and adds
-``__future__`` and ``future`` imports to the top of each module. In both
-cases, the result should be relatively clean Py3-style code semantics
-that (hopefully) runs unchanged on both Python 2 and Python 3.
+(with the ``--from3`` command-line option), it fixes Py3-only syntax
+(e.g.  metaclasses) and adds ``__future__`` and ``future`` imports to the
+top of each module. In both cases, the result should be relatively clean
+Py3-style code semantics that (hopefully) runs unchanged on both Python 2
+and Python 3.
 
 Forwards: 2 to both
 --------------------
-For example, running ``python-futurize`` turns this Python 2 code::
+For example, running ``futurize`` turns this Python 2 code::
     
     import ConfigParser
 
@@ -145,7 +146,7 @@ into this code which runs on both Py2 and Py3::
 
 Backwards: 3 to both
 --------------------
-For example, running ``python-futurize --from3`` turns this Python 3 code::
+For example, running ``futurize --from3`` turns this Python 3 code::
     
     import configparser
 
@@ -161,15 +162,20 @@ into this code which runs on both Py2 and Py3::
 
     class Blah(object):
         pass
+    print('Hello', end=None)
 
-Notice that in both cases ``python-futurize`` forces a new-style class
-and imports the renamed stdlib module under its Py3 name.
+Notice that in both cases ``futurize`` forces a new-style class and
+imports the renamed stdlib module under its Py3 name.
+
+It also handles the following Python 3 features:
+- keyword-only arguments
+- metaclasses (using ``future.six.with_metaclass``)
 
 
 Limitations
 -----------
 Some new Python 3.3 features that cause SyntaxErrors on earlier versions
-is not currently handled by the ``python-futurize`` script. This includes:
+is not currently handled by the ``futurize`` script. This includes:
 
 - ``yield ... from`` syntax for generators in Py3.3
 
@@ -180,7 +186,7 @@ is not currently handled by the ``python-futurize`` script. This includes:
 Notes
 -----
 - Ensure you are using new-style classes on Py2. Py3 doesn't require
-  inheritance from ``object`` for this, but Py2 does. ``python-futurize
+  inheritance from ``object`` for this, but Py2 does. ``futurize
   --from3`` adds this back in automatically, but ensure you do this too
   when writing your classes, otherwise weird breakage when e.g. calling
   ``super()`` may occur.
@@ -366,20 +372,18 @@ Other compatibility tools
 :Q: What is the relationship between this project and ``python-modernize``?
 
 :A: ``python-future`` contains, in addition to the ``future``
-    compatibility layer, a ``python-futurize`` script that is similar to
+    compatibility package, a ``futurize`` script that is similar to
     ``python-modernize.py`` in intent and design (based on ``2to3``).
     
-    ``python-modernize`` converts legacy code into a common subset of
-    Python 2 and 3, with ``six`` as a run-time dependency. 
+    Whereas ``python-modernize`` converts Py2 code into a common
+    subset of Python 2 and 3, with ``six`` as a run-time dependency,
+    ``futurize`` converts either Py2 or Py3 code into a common subset of
+    Python 2 and 3, with ``future`` as a run-time dependency.    
 
-    Similarly, ``python-futurize`` converts legacy Py2 code (or
-    incompatible Py3-only code) into a common subset of Python 2 and 3,
-    with ``future`` as a run-time dependency.    
-
-    Because ``future`` is more comprehensive than ``six`` in providing
-    backported Py3 behaviours, the resulting code should require less
-    additional manual porting effort to handle renamed modules and
-    modified builtins.
+    Because ``future`` incorporates ``six`` and also provides more
+    backported Py3 behaviours, the code resulting from ``futurize``
+    should be cleaner and require less additional manual porting effort
+    to handle renamed modules and modified builtins.
 
 :Q: How did the original need for this arise?
 
