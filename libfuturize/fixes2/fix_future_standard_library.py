@@ -10,8 +10,7 @@ after any __future__ imports but before any other imports.
 """
 
 from lib2to3.fixes.fix_imports import FixImports
-
-from libfuturize.fixer_util import check_future_import
+from libfuturize.fixer_util import touch_import_top
 
 
 class FixFutureStandardLibrary(FixImports):
