@@ -19,7 +19,8 @@ lib2to3_fix_names = set([
     'lib2to3.fixes.fix_has_key',
     'lib2to3.fixes.fix_idioms',
     # 'lib2to3.fixes.fix_import',    # called by libfuturize.fixes2.fix_absolute_import
-    'lib2to3.fixes.fix_imports',
+    # 'lib2to3.fixes.fix_imports',   # called by libfuturize.fixes2.fix_future_standard_library
+    # 'lib2to3.fixes.fix_imports2',  # we don't handle this yet (dbm)
     'lib2to3.fixes.fix_input',
     'lib2to3.fixes.fix_intern',
     'lib2to3.fixes.fix_isinstance',

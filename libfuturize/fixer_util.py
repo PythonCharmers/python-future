@@ -118,6 +118,7 @@ def NameImport(package, as_name=None, prefix=None):
 
 _compound_stmts = (syms.if_stmt, syms.while_stmt, syms.for_stmt, syms.try_stmt, syms.with_stmt)
 _import_stmts = (syms.import_name, syms.import_from)
+
 def import_binding_scope(node):
     u"""
     Generator yields all nodes for which a node (an import_stmt) has scope
@@ -236,6 +237,62 @@ def parse_args(arglist, scheme):
     return ret_mapping
 
 
+# def is_import_from(node):
+#     """Returns true if the node is a statement "from ... import ..."
+#     """
+#     return node.type == syms.import_from
+
+
+def is_import_stmt(node):
+    return (node.type == syms.simple_stmt and node.children and
+            is_import(node.children[0]))
+
+
+def touch_import_top(package, name, node):
+    """Works like `does_tree_import` but adds an import statement at the
+    top if it was not imported (but below any __future__ imports).
+
+    Calling this multiple times adds them in reverse order.
+        
+    Based on lib2to3.fixer_util.touch_import()
+    """
+
+    root = find_root(node)
+
+    if does_tree_import(package, name, root):
+        return
+
+    # try to find the first non-__future__ import, and insert above that
+    insert_pos = offset = 0
+    for idx, node in enumerate(root.children):
+        if not is_import_stmt(node):
+            continue
+        if check_future_import(node):
+            continue
+        insert_pos = idx + offset
+        break
+
+    # if there are no imports where we can insert, find the docstring.
+    # if that also fails, we stick to the beginning of the file
+    if insert_pos == 0:
+        for idx, node in enumerate(root.children):
+            if (node.type == syms.simple_stmt and node.children and
+               node.children[0].type == token.STRING):
+                insert_pos = idx + 1
+                break
+
+    if package is None:
+        import_ = Node(syms.import_name, [
+            Leaf(token.NAME, u"import"),
+            Leaf(token.NAME, name, prefix=u" ")
+        ])
+    else:
+        import_ = FromImport(package, [Leaf(token.NAME, name, prefix=u" ")])
+
+    children = [import_, Newline()]
+    root.insert_child(insert_pos, Node(syms.simple_stmt, children))
+
+
 ## The following functions are from python-modernize by Armin Ronacher:
 # (a little edited).
 
@@ -293,3 +350,4 @@ def add_future(node, symbol):
     import_ = FromImport('__future__', [Leaf(token.NAME, symbol, prefix=" ")])
     children = [import_, Newline()]
     root.insert_child(idx, Node(syms.simple_stmt, children))
+
