@@ -168,37 +168,26 @@ and imports the renamed stdlib module under its Py3 name.
 
 Limitations
 -----------
-Python 3 code that causes SyntaxErrors on Python 2 is not currently
-handled by the ``python-futurize`` script (except for
-``print_function``). This includes:
-
-- Function arguments in Py3.3 like this::
-    ``def f(a, b, *, c='blah', d='blah'):``
-        ``pass``
+Some new Python 3.3 features that cause SyntaxErrors on earlier versions
+is not currently handled by the ``python-futurize`` script. This includes:
 
 - ``yield ... from`` syntax for generators in Py3.3
 
 - ``raise ... from`` syntax for exceptions. (This is simple to fix
   manually by creating a temporary variable.)
 
-- And any code that requires new standard library features from Python 3
-  that weren't present under Python 2.
 
-- ``class MyClass:``
-      ``...``
-
-  should be changed back to:
-  
-  ``class MyClass(object):``
-      ``...``
-
-  to get new-style classes; otherwise weird breakage when e.g. calling
-  super() may occur. Currently ``python-futurize`` doesn't do this
-  automatically.
+Notes on ``futurize.py``
+----------------------------
+Ensure you are using new-style classes on Py2. Py3 doesn't require
+inheritance from ``object`` for this, but Py2 does. ``python-futurize
+--from3`` adds this back in automatically, but ensure you do this too
+when writing your classes, otherwise weird breakage when e.g. calling
+super() may occur.
 
 
 Credits
--------
+=======
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
@@ -426,5 +415,4 @@ Other compatibility tools
 :Q: Can I help?
 
 :A: Yes please :) I welcome bug reports, tests, and pull requests.
-
 
