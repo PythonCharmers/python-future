@@ -237,6 +237,7 @@ def parse_args(arglist, scheme):
 
 
 ## The following functions are from python-modernize by Armin Ronacher:
+# (a little edited).
 
 def check_future_import(node):
     """If this is a future import, return set of symbols that are imported,
@@ -247,7 +248,7 @@ def check_future_import(node):
     node = node.children[0]
     # now node is the import_from node
     if not (node.type == syms.import_from and
-            node.type == token.NAME and
+            # node.type == token.NAME and      # seems to break it
             node.children[1].value == u'__future__'):
         return set()
     node = node.children[3]
