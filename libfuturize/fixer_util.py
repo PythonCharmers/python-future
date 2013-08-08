@@ -308,7 +308,7 @@ def check_future_import(node):
         return set()
     node = node.children[3]
     # now node is the import_as_name[s]
-    print(python_grammar.number2symbol[node.type])
+    # print(python_grammar.number2symbol[node.type])  # breaks sometimes
     if node.type == syms.import_as_names:
         result = set()
         for n in node.children:
