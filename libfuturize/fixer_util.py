@@ -1,11 +1,11 @@
 """
-Utility functions from 3to2 and python-modernize, which in turn are based
-on 2to3.
+Utility functions from 2to3, 3to2 and python-modernize (and some home-grown
+ones).
 
 Licences:
+2to3: PSF License v2
 3to2: Apache Software License (from 3to2/setup.py)
 python-modernize licence: BSD (from python-modernize/LICENSE)
-2to3: 
 """
 
 from lib2to3.fixer_util import (FromImport, Newline,
@@ -13,9 +13,7 @@ from lib2to3.fixer_util import (FromImport, Newline,
 from lib2to3.pytree import Leaf, Node
 from lib2to3.pygram import python_symbols as syms, python_grammar
 # from lib2to3.pgen2 import token
-from lib2to3.pygram import token, python_symbols as syms
-from lib2to3.pytree import Leaf, Node
-# from lib2to3.fixer_util import *
+from lib2to3.pygram import token
 
 
 ## These functions are from 3to2 by Joe Amenta:
