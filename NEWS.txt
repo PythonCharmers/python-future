@@ -1,3 +1,5 @@
+v0.3.5:
+  * Fix broken package setup ("package directory 'libfuturize/tests' does not exist")
 v0.3.4:
   * Add itertools.zip_longest
   * Update 2to3_backcompat tests to use futurize.py
