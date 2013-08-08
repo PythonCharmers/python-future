@@ -28,7 +28,7 @@ PACKAGES = ["future",
 PACKAGE_DATA = {'': [
                      'README.rst',
                      'LICENSE',
-                     'NEWS.txt',
+                     'ChangeLog.txt',
                      'futurize.py',
                      'discover_tests.py',
                      'useful_links.txt',
