@@ -202,7 +202,7 @@ def isidentifier(s, dotted=False):
     '''
     if dotted:
         return all(isidentifier(a) for a in s.split('.'))
-    if utils.PY3:
+    if PY3:
         return s.isidentifier()
     else:
         import re
@@ -291,21 +291,21 @@ def implements_iterator(cls):
                 return next(self._iter).upper()
     
     '''
-    if utils.PY3:
+    if PY3:
         return cls
     else:
         cls.next = cls.__next__
         del cls.__next__
         return cls
 
-if utils.PY3:
+if PY3:
     get_next = lambda x: x.next
 else:
     get_next = lambda x: x.__next__
 
 
 def encode_filename(filename):
-    if utils.PY3:
+    if PY3:
         return filename
     else:
         if isinstance(filename, unicode):
