@@ -6,7 +6,7 @@ Tests for the future.str_is_unicode module
 from __future__ import absolute_import, unicode_literals, print_function
 from future.builtins.str_is_unicode import str
 from future.utils import python_2_unicode_compatible
-from future import six
+from future import utils
 
 import unittest
 
@@ -47,13 +47,13 @@ class TestStrIsUnicode(unittest.TestCase):
                 return my_unicode_str
         a = A()
         assert len(str(a)) == 18
-        if not six.PY3:
+        if not utils.PY3:
             assert hasattr(a, '__unicode__')
         self.assertEqual(str(a), my_unicode_str)
         self.assertTrue(isinstance(str(a).encode('utf-8'), bytes))
 
         # Manual equivalent on Py2 without the decorator:
-        if not six.PY3:
+        if not utils.PY3:
             class B(object):
                 def __unicode__(self):
                     return u'Unicode string: \u5b54\u5b50'

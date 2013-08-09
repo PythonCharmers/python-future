@@ -37,7 +37,7 @@ This exception class is also disabled:
 
 from __future__ import division, absolute_import, print_function
 
-from future import six
+from future import utils
 
 
 OBSOLETE_BUILTINS = ['apply', 'chr', 'cmp', 'coerce', 'execfile', 'file',
@@ -58,7 +58,7 @@ def disabled_function(name):
     return disabled
 
 
-if not six.PY3:
+if not utils.PY3:
     for fname in OBSOLETE_BUILTINS:
         locals()[fname] = disabled_function(fname)
     __all__ = OBSOLETE_BUILTINS

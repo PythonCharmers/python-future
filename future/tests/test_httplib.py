@@ -9,7 +9,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future import standard_library
 from future.builtins import *
-from future import six
+from future import utils
 
 from http import client
 import array
@@ -35,7 +35,7 @@ class FakeSocket(object):
     def sendall(self, data):
         olddata = self.data
         assert isinstance(olddata, bytes)
-        if six.PY3:
+        if utils.PY3:
             self.data += data
         else:
             if isinstance(data, str):  # i.e. unicode
@@ -51,7 +51,7 @@ class FakeSocket(object):
                 except (AssertionError, TypeError) as e:
                     raise TypeError('Cannot convert data to bytes')
             self.data += newdata
-        # if six.PY3:
+        # if utils.PY3:
         #     self.data += data
         # else:
         #     self.data += b''.join(data)
@@ -198,7 +198,7 @@ class BasicTest(TestCase):
 
     def test_bad_status_repr(self):
         exc = client.BadStatusLine('')
-        if not six.PY3:
+        if not utils.PY3:
             self.assertEqual(repr(exc), '''BadStatusLine("u\'\'",)''')
         else:
             self.assertEqual(repr(exc), '''BadStatusLine("\'\'",)''')
@@ -311,7 +311,7 @@ class BasicTest(TestCase):
         conn.send(expected)
         self.assertEqual(expected, sock.data)
         sock.data = b''
-        if six.PY3:
+        if utils.PY3:
             mydata = array.array('b', expected)
         else:
             mydata = array.array(b'b', expected)

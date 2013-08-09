@@ -153,10 +153,10 @@ See https://github.com/edschofield/python-future#faq.
 
 """
 
-from future import six
+from future import utils
 from future.builtins import *
 
-if not six.PY3:
+if not utils.PY3:
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
                'ascii', 'oct', 'hex', 'chr', 'int',

@@ -15,9 +15,9 @@ and:
 
 """
 
-from future import six
+from future import utils
 
-if not six.PY3:
+if not utils.PY3:
     from future_builtins import ascii, oct, hex
     from __builtin__ import unichr as chr
     # Was:
@@ -36,10 +36,7 @@ if not six.PY3:
     # __builtin__._oldinput = __builtin__.input
     # delattr(__builtin__, 'input')
 
-    # # New one with Py3 semantics:
-    # __builtin__.input = six.moves.input
-    
-    input = six.moves.input
+    input = raw_input
     
     __all__ = ['ascii', 'oct', 'hex', 'chr', 'int', 'input']
 

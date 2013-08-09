@@ -1,5 +1,5 @@
 # coding: utf-8
-"""Fixer for __metaclass__ = X -> (future.six.with_metaclass(X)) methods.
+"""Fixer for __metaclass__ = X -> (future.utils.with_metaclass(X)) methods.
 
    The various forms of classef (inherits nothing, inherits once, inherints
    many) don't parse the same in the CST so we look at ALL classes for
@@ -201,7 +201,8 @@ class FixMetaclass(fixer_base.BaseFix):
         else:
             raise ValueError("Unexpected class definition")
 
-        touch_import(None, u'future.six', node)
+        # Was: touch_import(None, u'future.utils', node)
+        touch_import(u'future.utils', u'with_metaclass', node)
 
         metaclass = last_metaclass.children[0].children[2].clone()
         metaclass.prefix = u''
@@ -232,7 +233,7 @@ class FixMetaclass(fixer_base.BaseFix):
             arguments.extend([Comma(), base])
 
         arglist.replace(Call(
-            Name(u'future.six.with_metaclass', prefix=arglist.prefix),
+            Name(u'with_metaclass', prefix=arglist.prefix),
             arguments
         ))
 

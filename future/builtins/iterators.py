@@ -22,14 +22,11 @@ The iterators this brings in are::
 - ``map``
 - ``zip``
 
-``range`` is equivalent to ``xrange`` on Python 2 when imported from this
-module. As an alternative, there is a pure Python backport of Python 3's
-``range`` iterator available with slicing support. To use it, import it with::
-
-    from future.builtins.backports import range
-
-The other iterators (``filter``, ``map``, ``zip``) are from the ``itertools``
-module on Python 2.
+On Python 2, ``range`` is a pure-Python backport of Python 3's ``range``
+iterator with slicing support. The other iterators (``filter``, ``map``,
+``zip``) are from the ``itertools`` module on Python 2. On Python 3 these
+are available in the module namespace but not exported for * imports via
+__all__ (zero no namespace pollution).
 
 Note that these are also available in the standard library
 ``future_builtins`` module on Python 2 -- but not Python 3, so using
@@ -38,15 +35,21 @@ the standard library version is not portable, nor anywhere near complete.
 
 from __future__ import division, absolute_import, print_function
 
-from future import six
+import itertools
+from future import utils
+from future.builtins.backports.newrange import range as newrange
 
-if not six.PY3:
-    _oldrange, _oldmap, _oldzip, _oldfilter = range, map, zip, filter
-
-from future.six.moves import xrange as range
-from future.six.moves import map, zip, filter
-
-if six.PY3:
+if not utils.PY3:
+    range = newrange
+    map = itertools.imap
+    zip = itertools.izip
+    filter = itertools.ifilter
+    __all__ = ['range', 'map', 'zip', 'filter']
+else:
+    import builtins
+    range = builtins.range
+    map = builtins.map
+    zip = builtins.zip
+    filter = builtins.filter
     __all__ = []
-    
 

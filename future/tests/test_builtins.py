@@ -5,7 +5,7 @@ the future module * imports.
 
 from __future__ import absolute_import, division
 from future.builtins import int      # not long
-from future import six
+from future import utils
 
 import unittest
 
@@ -17,7 +17,7 @@ class TestBuiltins(unittest.TestCase):
     @unittest.expectedFailure   # Py2's long doesn't inherit from int!
     def test_long(self):
         self.assertEqual(isinstance(10**100, int))
-        if not six.PY3:
+        if not utils.PY3:
             self.assertEqual(isinstance(long(1), int))
         # Note: the following is a SyntaxError on Py3:
         # self.assertEqual(isinstance(1L, int))

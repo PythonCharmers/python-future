@@ -14,7 +14,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import unittest
 import copy
 
-from future import six
+from future import utils
 
 original_locals = set(copy.copy(locals()))
 original_globals = set(copy.copy(globals()))
@@ -41,14 +41,14 @@ class TestImportStar(unittest.TestCase):
     avoid duplication. How?
     """
     def test_namespace_pollution_locals(self):
-        if six.PY3:
+        if utils.PY3:
             self.assertEqual(len(new_locals), 0,
                              'namespace pollution: {}'.format(new_locals))
         else:
             pass   # maybe check that no new symbols are introduced
 
     def test_namespace_pollution_globals(self):
-        if six.PY3:
+        if utils.PY3:
             self.assertEqual(len(new_globals), 0,
                              'namespace pollution: {}'.format(new_globals))
         else:

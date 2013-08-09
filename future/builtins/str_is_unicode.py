@@ -57,9 +57,9 @@ On Python 3, this decorator is a no-op.
 
 """
 
-from future import six
+from future import utils
 
-if not six.PY3:
+if not utils.PY3:
     str = unicode
 else:
     import builtins

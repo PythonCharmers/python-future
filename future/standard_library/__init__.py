@@ -93,7 +93,7 @@ import sys
 import logging
 import imp
 
-from future import six
+from future import utils
 
 # The modules that are defined under the same names on Py3 but with
 # different contents in a significant way (e.g. submodules) are:
@@ -313,7 +313,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
 _old_sys_meta_path = sys.meta_path
 
 def enable_hooks():
-    if six.PY3:
+    if utils.PY3:
         return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
         newmod = __import__(newmodname)
@@ -324,8 +324,8 @@ def enable_hooks():
     sys.meta_path = [RenameImport(RENAMES)]
 
 def disable_hooks():
-    if not six.PY3:
+    if not utils.PY3:
         sys.meta_path = _old_sys_meta_path
 
-if not six.PY3:
+if not utils.PY3:
     enable_hooks()

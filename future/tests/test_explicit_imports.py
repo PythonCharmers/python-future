@@ -12,7 +12,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import unittest
 import copy
 
-from future import six
+from future import utils
 
 class TestExplicitImports(unittest.TestCase):
     def test_py3_builtin_imports(self):
@@ -29,7 +29,7 @@ class TestExplicitImports(unittest.TestCase):
         """
         On Py2 these should import.
         """
-        if not six.PY3:
+        if not utils.PY3:
             from future.builtins import (apply,
                                          cmp,
                                          coerce,

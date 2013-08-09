@@ -34,11 +34,11 @@ Excerpts from Ryan's docstring:
 import sys
 # import inspect
 
-from future import six
+from future import utils
 
 _builtin_super = super
 
-if not six.PY3:
+if not utils.PY3:
     _SENTINEL = object()
     
     def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
@@ -94,10 +94,4 @@ if not six.PY3:
         f = sys._getframe(1)
         nm = f.f_code.co_name
         return getattr(super(framedepth=2),nm)(*args, **kwds)
-        
-    
-    # __builtin__.super = super
 
-# if not six.PY3:
-#     caller = inspect.currentframe().f_back
-#     caller.f_globals.update(super=super, _oldsuper=_builtin_super)

@@ -74,9 +74,9 @@ TODO:
 
 from __future__ import division, absolute_import, print_function
 
-from future import six
+from future import utils
 
-if six.PY3:
+if utils.PY3:
     import builtins
     range = builtins.range
     super = builtins.super

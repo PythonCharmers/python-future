@@ -4,7 +4,7 @@ Tests for the future.standard_library module
 
 from __future__ import absolute_import, unicode_literals, print_function
 from future import standard_library
-from future import six
+from future import utils
 
 import sys
 import unittest
@@ -21,7 +21,7 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
         self.interpreter = 'python'
         self.tempdir = tempfile.mkdtemp() + os.path.sep
 
-    @unittest.skipIf(six.PY3, 'generic import tests are for Py2 only')
+    @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
         """
         Tests whether all of the old imports in RENAMES are accessible
@@ -39,7 +39,7 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
             if '.' not in oldname:
                 self.assertEqual(oldmod, newmod)
 
-    @unittest.skipIf(six.PY3, 'not testing for old urllib on Py3')
+    @unittest.skipIf(utils.PY3, 'not testing for old urllib on Py3')
     def test_old_urllib_import(self):
         """
         Tests whether an imported module can import the old urllib package.
@@ -65,7 +65,7 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
         whether sys.intern is available.
         """
         from sys import intern
-        if six.PY3:
+        if utils.PY3:
             self.assertEqual(intern('hello'), 'hello')
         else:
             # intern() requires byte-strings on Py2:

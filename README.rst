@@ -179,7 +179,7 @@ imports the renamed stdlib module under its Py3 name.
 
 It also handles the following Python 3 features:
 - keyword-only arguments
-- metaclasses (using ``future.six.with_metaclass``)
+- metaclasses (using ``future.utils.with_metaclass``)
 
 
 Limitations
@@ -325,10 +325,11 @@ Other compatibility tools
 
 :A: ``future`` is a higher-level interface that incorporates the ``six``
     module.  They share the same goal of making it possible to write a
-    single-source codebase that works
-    on both Python 2 and Python 3 without modification. ``future`` offers
-    a cleaner interface that works with standard Python 3 code and
-    supports more new Python 3 features.
+    single-source codebase that works on both Python 2 and Python 3
+    without modification. ``future`` makes it easier to write standard
+    Python 3 code that is a cleaner interface that runs on both
+    platforms, and ``future`` provides a more complete set of support for
+    Python 3's features.
     
     Codebases that use ``six`` directly tend to be mixtures of
     Python 2 code, Python 3 code, and ``six``-specific wrapper
@@ -340,7 +341,7 @@ Other compatibility tools
         for i, (k, v) in enumerate(sorted(six.iteritems(params))):
             # ...
 
-        if six.PY3:
+        if utils.PY3:
             exec(open('setup.py').read(), {'__name__'='__main__'})
         else:
             execfile('setup.py', {'__name__'='__main__'})
@@ -368,19 +369,21 @@ Other compatibility tools
     has no effect on Python 3.
     
     Another difference is version support: ``future`` supports only
-    Python 2.7 and Python 3.2+. In contrast, six is designed to support
-    versions of Python prior to 2.7 and Python 3.0-3.1. Some of the
-    interfaces provided by six (like the ``next()`` and ``print_()``
-    functions) are superseded by features introduced in Python 2.6 or
-    2.7.
+    Python 2.7 and Python 3.2+. In contrast, ``six`` is designed to
+    support versions of Python prior to 2.7 and Python 3.0-3.1. Some of
+    the interfaces provided by ``six`` (like the ``next()`` and
+    ``print_()`` functions) are superseded by features introduced in
+    Python 2.6 or 2.7. However, ``future`` incorporates the ``six``
+    module as ``future.utils.six``.
 
     The final difference is in scope: ``future`` offers more backported
-    features from Python 3, including the improved no-argument super()
-    function, the new range object (with slicing support), rounding
-    behaviour, and some backported stdlib modules such as ``urllib``.
-    More backported features will be added in the future. This should
-    reduce the burden on every project to roll its own py3k compatibility
-    wrapper module.
+    features from Python 3, such as the improved no-argument
+    ``super()`` function, the new ``range`` object (with slicing
+    support), and rounding behaviour; ``future`` offers some backported
+    stdlib modules such as ``urllib``; and ``future`` includes a
+    set of other useful Py3k compatibility tools picked from other projects. 
+    This should reduce the burden on every project to roll its own py3k
+    compatibility wrapper module.
 
 :Q: What is the relationship between this project and ``python-modernize``?
 

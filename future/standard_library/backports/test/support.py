@@ -7,7 +7,7 @@ Backported for python-future from Python 3.3 test/support.py.
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 import future.standard_library
-from future import six
+from future import utils
 from future import *
 
 
@@ -995,7 +995,7 @@ class CleanImport(object):
         sys.modules.update(self.original_modules)
 
 ### Added for python-future:
-if six.PY3:
+if utils.PY3:
     import collections.abc
     mybase = collections.abc.MutableMapping
 else:

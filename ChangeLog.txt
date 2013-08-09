@@ -1,6 +1,8 @@
 v0.4.0:
   * Reorganize package: Move all builtins to future.builtins.*; move all stdlib things to future.standard_library.*
   * Rename ``python-futurize`` console script to ``futurize``
+  * Move future.six to future.utils.six and pull the most relevant
+    definitions to future.utils.
   * More improvements to "Py3 to both" conversion (futurize.py --from3)
 v0.3.5:
   * Fix broken package setup ("package directory 'libfuturize/tests' does not exist")
