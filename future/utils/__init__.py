@@ -61,7 +61,6 @@ On Python 3, this decorator is a no-op.
 from __future__ import unicode_literals
 
 import sys
-from future.utils import six
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
@@ -74,7 +73,7 @@ def python_2_unicode_compatible(cls):
     2. Under Python 3 it does nothing.
     
     To support Python 2 and 3 with a single code base, define a __str__
-    method returning text and apply this decorator to the class.
+    method returning unicode text and apply this decorator to the class.
 
     The implementation comes from django.utils.encoding.
     """
@@ -187,6 +186,9 @@ else:
 
 
 def isidentifier(s, dotted=False):
+    '''
+    A function equivalent to the str.isidentifier method on Py3
+    '''
     if dotted:
         return all(isidentifier(a) for a in s.split('.'))
     if utils.PY3:
@@ -246,52 +248,21 @@ def bind_method(cls, name, func):
         setattr(cls, name, func)
 
 
-if utils.PY3:
-    # Bring back the cmp function
-    cmp = lambda a, b: (a > b) - (a < b)
-    unicode = str
-else:
-    cmp = __builtin__.cmp
-    unicode = __builtin__.unicode
-
-
 def getexception():
     return sys.exc_info()[1]
 
 
-def execfile(filename, myglobals=None, mylocals=None):
-    if utils.PY3:
-        mylocals = mylocals if (mylocals is not None) else myglobals
-        exec_(compile(open(filename).read(), filename, 'exec'),
-              myglobals, mylocals)
-    else:
-        if sys.platform == 'win32':
-            # The rstrip() is necessary b/c trailing whitespace in
-            # files will cause an IndentationError in Python 2.6
-            # (this was fixed in 2.7). See IPython issue 1027.
-            scripttext = __builtin__.open(filename).read().rstrip() + '\n'
-            # compile converts unicode filename to str assuming
-            # ascii. Let's do the conversion before calling compile
-            if isinstance(filename, unicode):
-                filename = filename.encode(unicode, 'replace')
-            # else:
-            #     filename = filename
-            exec_(compile(scripttext, filename, 'exec') in glob, loc)
-        else:
-            if isinstance(filename, unicode):
-                filename = filename.encode(sys.getfilesystemencoding())
-            else:
-                filename = filename
-            __builtin__.execfile(filename, myglobals=myglobals,
-                                 mylocals=mylocals)
-
-if utils.PY3:
-    def reraise(tp, value, tb=None):
+def reraise(tp, value=None, tb=None):
+    """
+    Create a raise_ method that allows re-raising exceptions with the cls
+    value and traceback on Python2 & Python3.
+    """
+    if PY3:
         if value.__traceback__ is not tb:
             raise value.with_traceback(tb)
         raise value
-else:
-    exec('def reraise(tp, value, tb=None):\n raise tp, value, tb')
+    else:
+        exec('def reraise(tp, value=None, tb=None):\n raise tp, value, tb')
 
 
 def implements_iterator(cls):
@@ -319,6 +290,7 @@ if utils.PY3:
 else:
     get_next = lambda x: x.__next__
 
+
 def encode_filename(filename):
     if utils.PY3:
         return filename
@@ -333,6 +305,6 @@ __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'tobytes', 'str_to_bytes', 'bytes_to_str', 
            'lrange', 'lmap', 'lzip', 'lfilter',
            'isidentifier', 'iteritems', 'iterkeys', 'itervalues',
-           'bind_method', 'cmp', 'unicode', 'getexception',
-           'execfile', 'reraise', 'implements_iterator', 'get_next']
+           'bind_method', 'getexception',
+           'reraise', 'implements_iterator', 'get_next']
 
