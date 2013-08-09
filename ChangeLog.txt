@@ -1,4 +1,5 @@
 v0.4.0:
+  * Add various useful compatibility functions to future.utils
   * Reorganize package: Move all builtins to future.builtins.*; move all stdlib things to future.standard_library.*
   * Rename ``python-futurize`` console script to ``futurize``
   * Move future.six to future.utils.six and pull the most relevant
