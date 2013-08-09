@@ -113,11 +113,8 @@ But please note that the API is still evolving rapidly.
 See the docstrings for each of these modules for more info::
 
 - future.standard_library
-- future.builtins.iterators
-- future.builtins.misc
-- future.builtins.backports
-- future.builtins.disabled
-- future.builtins.str_is_unicode
+- future.builtins
+- future.utils
 
 
 Automatic conversion
@@ -136,9 +133,7 @@ Credits
 :Others:  - ``future`` incorporates the ``six`` module by Benjamin
             Peterson.
           - The ``futurize`` script uses ``lib2to3``, ``lib3to2``, and
-            the ``fix_metaclass`` 2to3 fixer by Jack Diederich and
-            Daniel Neuhaeuser (from Armin Ronacher's
-            ``python-modernize``).
+            parts of Armin Ronacher's ``python-modernize`` code.
           - The backported ``super()`` and ``range()`` functions are
             derived from Ryan Kelly's ``magicsuper`` module and Dan Crosta's
             ``xrange`` module.
