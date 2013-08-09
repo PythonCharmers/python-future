@@ -4,7 +4,8 @@ Tests for the future.str_is_unicode module
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
-from future.str_is_unicode import str, python_2_unicode_compatible
+from future.builtins.str_is_unicode import str
+from future.utils import python_2_unicode_compatible
 from future import six
 
 import unittest

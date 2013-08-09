@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from future.common_iterators import *
+from future.builtins.iterators import *
 
 import unittest
 

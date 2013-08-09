@@ -4,26 +4,27 @@ removed from Python 3.3.
 
 This module is designed to be used like this::
 
-    from future.disable_obsolete_builtins import *
+    from future.builtins.disabled import *
 
-We don't hack __builtin__, which is very fragile because it contaminates
-imported modules too. Instead, we just create new global functions with
-the same names as the obsolete builtins from Python 2 which raise
-exceptions when called.
-
-The following functions are disabled::
+This disables the following obsolete Py2 builtin functions::
 
     apply, cmp, coerce, execfile, file, input, long,
     raw_input, reduce, reload, unicode, xrange
 
+We don't hack __builtin__, which is very fragile because it contaminates
+imported modules too. Instead, we just create new functions with
+the same names as the obsolete builtins from Python 2 which raise
+NameError exceptions when called.
+
 Note that both ``input()`` and ``raw_input()`` are among the disabled
-functions (in this module). Although ``input()`` exists as a builtin in Python
-3, the Python 2 ``input()`` builtin is unsafe to use because it can lead to
-shell injection. Therefore we shadow it by default, in case someone forgets to
-import our replacement ``input()`` somehow and expects Python 3 semantics.
+functions (in this module). Although ``input()`` exists as a builtin in
+Python 3, the Python 2 ``input()`` builtin is unsafe to use because it
+can lead to shell injection. Therefore we shadow it by default, in case
+someone forgets to import our replacement ``input()`` somehow and expects
+Python 3 semantics.
 
-
-See the ``future.modified_builtins`` module for a working version of ``input`` with Python 3 semantics.
+See the ``future.builtins.backports`` module for a working version of
+``input`` with Python 3 semantics.
 
 (Note that callable() is not among the functions disabled; this was
 reintroduced into Python 3.2.)

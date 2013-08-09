@@ -11,7 +11,7 @@ For example:
 It is used as follows::
 
     from __future__ import division, absolute_import, print_function
-    from future.modified_builtins import (range, super, round, input)
+    from future.builtins.backports import range, super, round
 
 to bring in the new semantics for these functions from Python 3. And
 then, for example::
@@ -81,23 +81,10 @@ if six.PY3:
     range = builtins.range
     super = builtins.super
     round = builtins.round
-    input = builtins.input
     __all__ = []
 else:
     from .newrange import range
     from .newsuper import super
     from .newround import round
 
-    # Python 2's input() is unsafe and MUST not be able to be used
-    # accidentally by someone who forgets to import it but expects Python
-    # 3 semantics. So we delete it from __builtin__. We keep a copy
-    # though:
-    import __builtin__
-    __builtin__._oldinput = __builtin__.input
-    delattr(__builtin__, 'input')
-
-    # New one with Py3 semantics:
-    __builtin__.input = six.moves.input
-    input = six.moves.input
-
-    __all__ = ['range', 'super', 'round', 'input']
+    __all__ = ['range', 'super', 'round']

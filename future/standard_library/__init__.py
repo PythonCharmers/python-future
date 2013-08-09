@@ -7,7 +7,7 @@ It is designed to be used as follows::
 
     from future import standard_library
 
-And then these imports work::
+And then these normal Py3 imports work on both Py3 and Py2::
 
     import builtins
     import configparser
@@ -18,15 +18,24 @@ And then these imports work::
     import winreg    # on Windows only
     import test.support
     import html, html.parser, html.entites
-    import http, http.client, http.server, http.cookies, http.cookiejar
+    import http, http.client
     import _thread
     import _dummythread
-    import html, html.parser, html.entites
-    import http, http.client, http.server, http.cookies, http.cookiejar
     import _markupbase
-    
 
-The modules are still available under their old names on Python 2.
+    from itertools import filterfalse, zip_longest
+    from sys import intern
+    
+(The renamed modules and functions are still available under their old
+names on Python 2.)
+
+To turn off the import hooks, use::
+
+    standard_library.disable_hooks()
+
+and to turn it on again, use::
+
+    standard_library.enable_hooks()
 
 This is a cleaner alternative to this idiom (see
 http://docs.pythonsprints.com/python3_porting/py-porting.html)::
@@ -37,9 +46,11 @@ http://docs.pythonsprints.com/python3_porting/py-porting.html)::
         import Queue as queue
 
 
-We don't currently support these, but would like to::
+Limitations
+-----------
+We don't currently support these modules, but would like to::
 
-    import pickle     # should (optionally) bring in cPickle on Python 2
+    import http.server, http.cookies, http.cookiejar
     import dbm
     import dbm.dumb
     import dbm.gnu
@@ -50,28 +61,30 @@ We don't currently support these, but would like to::
     import urllib.error
     import urllib.robotparser
     import tkinter
+    import pickle     # should (optionally) bring in cPickle on Python 2
 
-These renames are already supported on Python 2.7 without any additional work
-from us:
+
+Notes
+-----
+This module only supports Python 2.7 and Python 3.1+.
+
+The following renames are already supported on Python 2.7 without any
+additional work from us::
+    
     reload() -> imp.reload()
     reduce() -> functools.reduce()
     StringIO.StringIO -> io.StringIO
     Bytes.BytesIO -> io.BytesIO
 
-Old things that can perhaps be fixed for people by futurize.py:
-  string.uppercase -> string.ascii_uppercase   # works on either Py2.7 or Py3+
-  sys.maxint -> sys.maxsize
+Old things that can perhaps be fixed for people by futurize.py::
 
-Other renames/moves we handle:
-  itertools.ifilterfalse -> itertools.filterfalse
-  itertools.izip_longest -> itertools.zip_longest
-  intern(s) -> sys.intern(s)
+  string.uppercase -> string.ascii_uppercase   # works on either Py2.7 or Py3+
+  sys.maxint -> sys.maxsize      # but this isn't identical
 
 TODO: Check out these:
   unittest2 -> unittest?
   buffer -> memoryview?
 
-This module only supports Python 2.7 and Python 3.1+.
 """
 
 from __future__ import absolute_import, print_function
@@ -80,7 +93,7 @@ import sys
 import logging
 import imp
 
-from . import six
+from future import six
 
 # The modules that are defined under the same names on Py3 but with
 # different contents in a significant way (e.g. submodules) are:
@@ -148,15 +161,15 @@ RENAMES = {
            # 'BaseHTTPServer': 'http.server',
            # 'SimpleHTTPServer': 'http.server',
            # 'CGIHTTPServer': 'http.server',
-           'future.backports.test': 'test',  # primarily for renaming test_support to support
+           'future.standard_library.backports.test': 'test',  # primarily for renaming test_support to support
            # 'commands': 'subprocess',
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
            # 'abc': 'collections.abc',   # for Py33
-           'future.backports.html': 'html',
-           'future.backports.http': 'http',
-           # 'future.backports.urllib': 'newurllib',
-           'future.backports._markupbase': '_markupbase',
+           'future.standard_library.backports.html': 'html',
+           'future.standard_library.backports.http': 'http',
+           # 'future.standard_library.backports.urllib': 'newurllib',
+           'future.standard_library.backports._markupbase': '_markupbase',
           }
 
 REPLACED_MODULES = {'test', 'urllib', 'pickle'}  # add dbm when we support it
@@ -297,7 +310,11 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          # urlparse.urlunsplit	urllib.parse
         ]
 
-if not six.PY3:
+_old_sys_meta_path = sys.meta_path
+
+def enable_hooks():
+    if six.PY3:
+        return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
         newmod = __import__(newmodname)
         oldmod = __import__(oldmodname)
@@ -306,3 +323,9 @@ if not six.PY3:
 
     sys.meta_path = [RenameImport(RENAMES)]
 
+def disable_hooks():
+    if not six.PY3:
+        sys.meta_path = _old_sys_meta_path
+
+if not six.PY3:
+    enable_hooks()

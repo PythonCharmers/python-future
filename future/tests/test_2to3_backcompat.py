@@ -3,7 +3,7 @@ This module contains snippets of Python 2 code (invalid Python 3) and
 tests for whether they can be passed to 2to3 and immediately under Python
 with the future module using::
     
-    from future import *
+    from future.builtins import *
 
 It contains tests that perform a scripted porting process using
 ``futurize``. It then tests whether the resulting Python 2/3 code is
@@ -117,7 +117,7 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
         conversion.
         """
         py2code = '''
-        from future import *
+        from future.builtins import *
         def greet(name):
             print "Hello, {0}!".format(name)
         print "What's your name?"

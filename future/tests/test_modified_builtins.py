@@ -1,11 +1,13 @@
 """
 Note that the Python 2.x round() function fails these tests. The Python 3.x
 round() function passes them, as should our custom round() function.
+
+Also tests input()
 """
 
 from __future__ import absolute_import, division
 
-from future.modified_builtins import round, input
+from future.builtins import round
 
 import textwrap
 from subprocess import Popen, PIPE, check_output, STDOUT
@@ -48,7 +50,7 @@ class TestIterators(unittest.TestCase):
         Passes in a string to the waiting input()
         """
         code = '''
-        from future.modified_builtins import input
+        from future.builtins import input
         def greet(name):
             print "Hello, {0}!".format(name)
         print "What's your name?"

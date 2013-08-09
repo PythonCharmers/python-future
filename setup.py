@@ -16,12 +16,15 @@ if sys.argv[-1] == 'publish':
 
 NAME = "future"
 PACKAGES = ["future",
-            "future.modified_builtins",
+            "future.builtins",
+            "future.builtins.backports",
             "future.tests",
-            "future.backports",
-            "future.backports.html",
-            "future.backports.http",
-            "future.backports.test",
+            "future.standard_library",
+            "future.standard_library.backports",
+            "future.standard_library.backports.html",
+            "future.standard_library.backports.http",
+            "future.standard_library.backports.test",
+            "future.utils",
             "libfuturize",
             "libfuturize.fixes2",
             "libfuturize.fixes3"]

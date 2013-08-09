@@ -14,19 +14,30 @@ It is designed to be used as follows::
 
     from __future__ import (division, absolute_import, print_function,
                             unicode_literals)
-    from future import *
+    from future import standard_library
+    from future.builtins import *
     
 followed by clean Python 3 code (with a few restrictions) that can run
 unchanged on Python 2.7.
 
-On Python 3, the ``from future import *`` line has no effect (i.e. zero
-namespace pollution.) On Python 2 it shadows builtins to provide the
-Python 3 semantics. (See below for the explicit import form.)
+On Python 3, ``from future import standard_library`` has no effect. On
+Python 2, it module installs import hooks to allow renamed and moved
+standard library modules to be imported from their new Py3 locations.
+
+Likewise, on Python 3, the ``from future.builtins import *`` line has no
+effect (i.e. zero namespace pollution.) On Python 2 it shadows builtins
+to provide their Python 3 semantics. (See below for the explicit import
+form.)
 
 After the imports, this code runs identically on Python 3 and 2::
     
+    # Support for renamed standard library modules (see below)
+    from http.client import HttpConnection
+    from itertools import filterfalse
+    from test import support
+
     # New iterable range object with slicing support
-    for i in range(10**11)[:10]:
+    for i in range(10**15)[:10]:
         pass
     
     # Other common iterators: map, reduce, zip
@@ -55,9 +66,11 @@ After the imports, this code runs identically on Python 3 and 2::
     print('Hello ' + name)
 
 
-``future`` also supports the standard library reorganization (PEP 3108)
-via import hooks, allowing standard library modules to be accessed under
-their Python 3 names and locations::
+Standard library reorganization
+-------------------------------
+``future`` supports the standard library reorganization (PEP 3108)
+via import hooks, allowing almost all moved standard library modules to be
+accessed under their Python 3 names and locations::
     
     from future import standard_library
     
@@ -85,30 +98,30 @@ future::
 Explicit imports
 ----------------
 If you prefer explicit imports, the explicit equivalent of the ``from
-future import *`` line above is::
+future.builtins import *`` line above is::
     
-    from future.common_iterators import zip, map, filter
-    from future.builtins import ascii, oct, hex, chr
-    from future.modified_builtins import (range, super, round, input)
-    from future.disable_obsolete_builtins import (apply, cmp, coerce,
+    from future.builtins.iterators import zip, map, filter
+    from future.builtins.misc import ascii, oct, hex, chr, input
+    from future.builtins.backports import range, super, round
+    from future.builtins.disabled import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
             xrange, StandardError)
-    from future.str_is_unicode import str
+    from future.builtins.str_is_unicode import str
 
 But please note that the API is still evolving rapidly.
 
 See the docstrings for each of these modules for more info::
 
 - future.standard_library
-- future.common_iterators
-- future.builtins
-- future.modified_builtins
-- future.disable_obsolete_builtins
-- future.str_as_unicode
+- future.builtins.iterators
+- future.builtins.misc
+- future.builtins.backports
+- future.builtins.disabled
+- future.builtins.str_is_unicode
 
 
 Automatic conversion
---------------------
+====================
 A script called ``futurize`` is included to aid in making either Python 2
 code or Python 3 code compatible with both platforms using the ``future``
 module. See
@@ -116,16 +129,21 @@ https://github.com/edschofield/python-future#automatic-conversion.
 
 
 Credits
--------
+=======
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
-:Others:  The ``super()`` and ``range()`` functions are derived from Ryan
-          Kelly's ``magicsuper`` module and Dan Crosta's ``xrange``
-          module. The ``python_2_unicode_compatible`` decorator is from
-          ``django.utils.encoding``. The ``fix_metaclass`` 2to3 fixer
-          (from Armin Ronacher's ``python-modernize``) was authored by
-          Jack Diederich and Daniel Neuhaeuser.
+:Others:  - ``future`` incorporates the ``six`` module by Benjamin
+            Peterson.
+          - The ``futurize`` script uses ``lib2to3``, ``lib3to2``, and
+            the ``fix_metaclass`` 2to3 fixer by Jack Diederich and
+            Daniel Neuhaeuser (from Armin Ronacher's
+            ``python-modernize``).
+          - The backported ``super()`` and ``range()`` functions are
+            derived from Ryan Kelly's ``magicsuper`` module and Dan Crosta's
+            ``xrange`` module.
+          - The ``python_2_unicode_compatible`` decorator is from
+            ``django.utils.encoding``.
 
 
 Licensing
@@ -135,28 +153,15 @@ The software is distributed under an MIT licence. See LICENSE.txt.
 
 
 FAQ
----
+===
 See https://github.com/edschofield/python-future#faq.
 
 """
 
-from __future__ import (division, absolute_import, print_function)
-
 from future import six
-
-from future.common_iterators import (filter, map, zip)
-from future.builtins import (ascii, oct, hex, chr, int)
-from future.modified_builtins import (round, input, range, super)
-from future.str_is_unicode import str  
-
-# We don't import the python_2_unicode_compatible decorator; only names
-# that shadow the builtins on Py2.
+from future.builtins import *
 
 if not six.PY3:
-    from future.disable_obsolete_builtins import (apply, cmp, coerce,
-            execfile, file, long, raw_input, reduce, reload, unicode,
-            xrange, StandardError)
-    
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
                'ascii', 'oct', 'hex', 'chr', 'int',

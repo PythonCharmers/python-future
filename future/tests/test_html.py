@@ -6,7 +6,6 @@ Adapted for the python-future module from the Python 3.3 standard library tests.
 
 from __future__ import unicode_literals
 from future import standard_library
-from future import *
 
 import html
 import unittest
