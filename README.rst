@@ -387,7 +387,9 @@ Other compatibility tools
             pass
     
     which is standard Python 3 code except for the ``execfile`` function,
-    which has no good backward-portable equivalent.
+    which does not exist in Python 3 and has no clean, simple
+    backward-portable equivalent because ``exec`` on Python 2 is a
+    statement.
 
     Another difference is version support: ``future`` supports only
     Python 2.7 and Python 3.3+. In contrast, ``six`` is designed to
