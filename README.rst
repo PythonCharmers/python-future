@@ -248,6 +248,11 @@ FAQ
   with additional code changes (even automated ones) ..."
   also PEP 414: from http://www.python.org/dev/peps/pep-0414/
 
+- "Duplication of effort is wasteful, and replacing the various
+  home-grown approaches with a standard feature usually ends up making
+  things more readable, and interoperable as well." -- Guido van Rossum,
+  from http://www.artima.com/weblogs/viewpost.jsp?thread=86641.
+
 
 :Q: Who is this for?
 
@@ -260,6 +265,10 @@ FAQ
 
     3. People with existing or new Python 3 codebases who wish to provide
        Python 2.7 support easily.
+
+    4. People who want to save time and reduce bugs with porting by not
+       having to write their own home-grown Python 2/3 compatibility
+       modules.
 
 
 :Q: Why is there a need for this?
@@ -280,7 +289,8 @@ FAQ
 Other compatibility tools
 -------------------------
 
-:Q: What is the relationship between this project and ``2to3``?
+:Q: What is the relationship between this project, ``2to3``, and
+    ``lib2to3``?
 
 :A: ``2to3`` is a powerful and flexible tool that can produce different
     styles of Python 3 code. It is, however, primarily designed for
@@ -298,23 +308,30 @@ Other compatibility tools
         greet(name)
 
     This is Python 3 code that, although syntactically valid on Python 2,
-    is actually semantically incorrect. On Python 2, it raises an
-    exception for most inputs; worse, it allows arbitrary code execution
-    by the user for specially crafted inputs.
+    is semantically incorrect. On Python 2, it raises an exception for
+    most inputs; worse, it allows arbitrary code execution by the user
+    for specially crafted inputs.
 
-    Almost every output of ``2to3`` will need modification to provide
-    backward compatibility with Python 2. ``future`` is designed for just
-    this purpose.
+    This is not an isolated example; almost every output of ``2to3`` will
+    need modification to provide backward compatibility with Python 2.
+    ``future`` is designed for just this purpose.
+
+    ``future`` contains a script called ``futurize`` that is based on
+    ``lib2to3`` and ``lib3to2`` and a select set of their fixers.
+    ``futurize`` is designed to turn Python 2 (or Python 3) code into
+    code that is compatible with both platforms.
 
 
 :Q: Can't I maintain a Python 2 codebase and use 2to3 to automatically
     convert to Python 3 in the setup script?
 
-:A: Yes, this is possible, but then your actual working codebase will be
-    stuck with only Python 2's features (and its warts) for as long as you
-    need to retain Python 2 compatibility. This may be at least 5 years
-    for many projects.
-
+:A: Yes, this is possible, and was originally the approach recommended by
+    Python's core developers, but has big drawbacks.
+    
+    First, your actual working codebase will be stuck with only Python
+    2's features (and its warts) for as long as you need to retain Python
+    2 compatibility. This may be at least 5 years for many projects.
+    
     This approach also carries the significant disadvantage that you
     cannot apply patches submitted by Python 3 users against the
     auto-generated Python 3 code. (See
@@ -323,13 +340,16 @@ Other compatibility tools
 
 :Q: What is the relationship between this project and ``six``?
 
-:A: ``future`` is a higher-level interface that incorporates the ``six``
-    module.  They share the same goal of making it possible to write a
+:A: ``future`` is a more comprehensive and higher-level interface that
+    subsumes the ``six`` module (available as ``future.utils.six``).
+    
+    They share the same goal of making it possible to write a
     single-source codebase that works on both Python 2 and Python 3
     without modification. ``future`` makes it easier to write standard
     Python 3 code that is a cleaner interface that runs on both
     platforms, and ``future`` provides a more complete set of support for
-    Python 3's features.
+    Python 3's features (and restores a few Py2 features removed from
+    Python 3).
     
     Codebases that use ``six`` directly tend to be mixtures of
     Python 2 code, Python 3 code, and ``six``-specific wrapper
@@ -349,27 +369,28 @@ Other compatibility tools
         for i in xrange(n):          # non-standard Python 3
             pass
     
-
     Such a mixture of interfaces puts a maintenance burden on the code to
     support both versions.
 
     Here is the equivalent code using the ``future`` module::
     
-        from future import standard_library, range
+        from future import standard_library
+        from future.builtins import range
+        from future.utils.frompy2 import execfile
 
         for i, (k, v) in enumerate(sorted(params.items())):
             # ...
 
-        exec(open('setup.py').read(), {'__name__'='__main__'})
+        execfile('setup.py', {'__name__'='__main__'})
         
-        for i in range(n):           # standard Python 3
+        for i in range(n):
             pass
     
-    This is standard Python 3 code, with an import line that
-    has no effect on Python 3.
-    
+    which is standard Python 3 code except for the ``execfile`` function,
+    which has no good backward-portable equivalent.
+
     Another difference is version support: ``future`` supports only
-    Python 2.7 and Python 3.2+. In contrast, ``six`` is designed to
+    Python 2.7 and Python 3.3+. In contrast, ``six`` is designed to
     support versions of Python prior to 2.7 and Python 3.0-3.1. Some of
     the interfaces provided by ``six`` (like the ``next()`` and
     ``print_()`` functions) are superseded by features introduced in
