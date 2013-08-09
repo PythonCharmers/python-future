@@ -85,6 +85,19 @@ def python_2_unicode_compatible(cls):
 
 def with_metaclass(meta, *bases):
     """
+    Function from jinja2/_compat.py. License: BSD.
+
+    Use it like this::
+        
+        class BaseForm(object):
+            pass
+        
+        class FormType(type):
+            pass
+        
+        class Form(with_metaclass(FormType, BaseForm)):
+            pass
+
     This requires a bit of explanation: the basic idea is to make a
     dummy metaclass for one level of class instantiation that replaces
     itself with the actual metaclass.  Because of internal type checks
@@ -94,8 +107,6 @@ def with_metaclass(meta, *bases):
     
     This has the advantage over six.with_metaclass of not introducing
     dummy classes into the final MRO.
-
-    From jinja2/_compat.py. License: BSD.
     """
     class metaclass(meta):
         __call__ = type.__call__
@@ -267,16 +278,18 @@ def reraise(tp, value=None, tb=None):
 
 def implements_iterator(cls):
     '''
+    From jinja2/_compat.py. License: BSD.
+
     Use as a decorator like this::
         
-        @implements_iterator
-        class MyIterable(object):
-            def __next__(self, ...):
-                ...
-            ...
-        myiter = MyIterable()
-
-    Then next(myiter) works properly on Py2 and Py3.
+        class UppercasingIterator(object):
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def __iter__(self):
+                return self
+            def __next__(self):
+                return next(self._iter).upper()
+    
     '''
     if utils.PY3:
         return cls
