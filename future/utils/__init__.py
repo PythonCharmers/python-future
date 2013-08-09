@@ -2,8 +2,9 @@
 A selection of cross-compatible functions for Python 2 and 3.
 
 These come from several sources:
-* six.py by Benjamin Peterson
+* Jinja2 (BSD licensed: see https://github.com/mitsuhiko/jinja2/blob/master/LICENSE
 * Pandas compatibility module pandas.compat
+* six.py by Benjamin Peterson
 * Django
 
 This exports useful functions for 2/3 compatible code that are not
@@ -17,12 +18,13 @@ builtins on Python 3:
     * string_types: basestring in Python 2, str in Python 3
 * bind_method: binds functions to classes
 
-Python 2.6 compatibility:
-* OrderedDict
-* Counter
-
-Other items:
-* OrderedDefaultDict
+* bchr(c):
+    Take an integer and make a 1-character byte string
+* bord(c)
+    Take the result of indexing on a byte string and make an integer
+* tobytes(s)
+    Take a text string, a byte string, or a sequence of characters taken
+    from a byte string, and make a byte string.
 
 This module also defines a simple decorator called
 ``python_2_unicode_compatible`` (from django.utils.encoding) which
@@ -59,11 +61,14 @@ On Python 3, this decorator is a no-op.
 from __future__ import unicode_literals
 
 import sys
+from future.utils import six
 
 PY3 = sys.version_info[0] == 3
+PY2 = sys.version_info[0] == 2
+PYPY = hasattr(sys, 'pypy_translation_info')
 
 
-def python_2_unicode_compatible(klass):
+def python_2_unicode_compatible(cls):
     """
     A decorator that defines __unicode__ and __str__ methods under Python
     2. Under Python 3 it does nothing.
@@ -74,27 +79,92 @@ def python_2_unicode_compatible(klass):
     The implementation comes from django.utils.encoding.
     """
     if not PY3:
-        klass.__unicode__ = klass.__str__
-        klass.__str__ = lambda self: self.__unicode__().encode('utf-8')
-    return klass
+        cls.__unicode__ = cls.__str__
+        cls.__str__ = lambda self: self.__unicode__().encode('utf-8')
+    return cls
 
-# Definitions from six.py follow:
 
-def with_metaclass(meta, base=object):
-    """Create a base class with a metaclass."""
-    return meta("NewBase", (base,), {})
+def with_metaclass(meta, *bases):
+    """
+    This requires a bit of explanation: the basic idea is to make a
+    dummy metaclass for one level of class instantiation that replaces
+    itself with the actual metaclass.  Because of internal type checks
+    we also need to make sure that we downgrade the custom metaclass
+    for one level to something closer to type (that's why __call__ and
+    __init__ comes back from type etc.).
+    
+    This has the advantage over six.with_metaclass of not introducing
+    dummy classes into the final MRO.
+
+    From jinja2/_compat.py. License: BSD.
+    """
+    class metaclass(meta):
+        __call__ = type.__call__
+        __init__ = type.__init__
+        def __new__(cls, name, this_bases, d):
+            if this_bases is None:
+                return type.__new__(cls, name, (), d)
+            return meta(name, bases, d)
+    return metaclass('temporary_class', None, {})
+
 
 # Definitions from pandas.compat follow:
 if PY3:
-    def isidentifier(s):
-        return s.isidentifier()
+    def bchr(s):
+        return bytes([s])
+    def bstr(s):
+        if isinstance(s, str):
+            return bytes(s, 'latin-1')
+        else:
+            return bytes(s)
+    def bord(s):
+        return s
+else:
+    # Python 2
+    def bchr(s):
+        return chr(s)
+    def bstr(s):
+        return str(s)
+    def bord(s):
+        return ord(s)
 
+if PY3:
+    def tobytes(s):
+        if isinstance(s, bytes):
+            return s
+        else:
+            if isinstance(s, str):
+                return s.encode('latin-1')
+            else:
+                return bytes(s)
+else:
+    # Python 2
+    def tobytes(s):
+        '''
+        Encodes to latin-1 (where the first 256 chars are the same as
+        ASCII.)
+        '''
+        if isinstance(s, unicode):
+            return s.encode('latin-1')
+        else:
+            return ''.join(s)
+
+if PY3:
     def str_to_bytes(s, encoding='ascii'):
         return s.encode(encoding)
 
     def bytes_to_str(b, encoding='utf-8'):
         return b.decode(encoding)
+else:
+    # Python 2
+    def str_to_bytes(s, encoding='ascii'):
+        return s
 
+    def bytes_to_str(b, encoding='ascii'):
+        return b
+
+
+if PY3:
     # list-producing versions of the major Python iterating functions
     def lrange(*args, **kwargs):
         return list(range(*args, **kwargs))
@@ -108,25 +178,23 @@ if PY3:
     def lfilter(*args, **kwargs):
         return list(filter(*args, **kwargs))
 else:
-    # Python 2
-    import re
-    _name_re = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*$")
-
-    def isidentifier(s, dotted=False):
-        return bool(_name_re.match(s))
-
-    def str_to_bytes(s, encoding='ascii'):
-        return s
-
-    def bytes_to_str(b, encoding='ascii'):
-        return b
-
     import __builtin__
     # Python 2-builtin ranges produce lists
     lrange = __builtin__.range
     lzip = __builtin__.zip
     lmap = __builtin__.map
     lfilter = __builtin__.filter
+
+
+def isidentifier(s, dotted=False):
+    if dotted:
+        return all(isidentifier(a) for a in s.split('.'))
+    if utils.PY3:
+        return s.isidentifier()
+    else:
+        import re
+        _name_re = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*$")
+        return bool(_name_re.match(s))
 
 
 def iteritems(obj, **kwargs):
@@ -167,7 +235,6 @@ def bind_method(cls, name, func):
     func : function
         function to be bound as method
 
-
     Returns
     -------
     None
@@ -178,4 +245,94 @@ def bind_method(cls, name, func):
     else:
         setattr(cls, name, func)
 
+
+if utils.PY3:
+    # Bring back the cmp function
+    cmp = lambda a, b: (a > b) - (a < b)
+    unicode = str
+else:
+    cmp = __builtin__.cmp
+    unicode = __builtin__.unicode
+
+
+def getexception():
+    return sys.exc_info()[1]
+
+
+def execfile(filename, myglobals=None, mylocals=None):
+    if utils.PY3:
+        mylocals = mylocals if (mylocals is not None) else myglobals
+        exec_(compile(open(filename).read(), filename, 'exec'),
+              myglobals, mylocals)
+    else:
+        if sys.platform == 'win32':
+            # The rstrip() is necessary b/c trailing whitespace in
+            # files will cause an IndentationError in Python 2.6
+            # (this was fixed in 2.7). See IPython issue 1027.
+            scripttext = __builtin__.open(filename).read().rstrip() + '\n'
+            # compile converts unicode filename to str assuming
+            # ascii. Let's do the conversion before calling compile
+            if isinstance(filename, unicode):
+                filename = filename.encode(unicode, 'replace')
+            # else:
+            #     filename = filename
+            exec_(compile(scripttext, filename, 'exec') in glob, loc)
+        else:
+            if isinstance(filename, unicode):
+                filename = filename.encode(sys.getfilesystemencoding())
+            else:
+                filename = filename
+            __builtin__.execfile(filename, myglobals=myglobals,
+                                 mylocals=mylocals)
+
+if utils.PY3:
+    def reraise(tp, value, tb=None):
+        if value.__traceback__ is not tb:
+            raise value.with_traceback(tb)
+        raise value
+else:
+    exec('def reraise(tp, value, tb=None):\n raise tp, value, tb')
+
+
+def implements_iterator(cls):
+    '''
+    Use as a decorator like this::
+        
+        @implements_iterator
+        class MyIterable(object):
+            def __next__(self, ...):
+                ...
+            ...
+        myiter = MyIterable()
+
+    Then next(myiter) works properly on Py2 and Py3.
+    '''
+    if utils.PY3:
+        return cls
+    else:
+        cls.next = cls.__next__
+        del cls.__next__
+        return cls
+
+if utils.PY3:
+    get_next = lambda x: x.next
+else:
+    get_next = lambda x: x.__next__
+
+def encode_filename(filename):
+    if utils.PY3:
+        return filename
+    else:
+        if isinstance(filename, unicode):
+            return filename.encode('utf-8')
+        return filename
+
+
+__all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
+           'with_metaclass', 'bchr', 'bstr', 'bord',
+           'tobytes', 'str_to_bytes', 'bytes_to_str', 
+           'lrange', 'lmap', 'lzip', 'lfilter',
+           'isidentifier', 'iteritems', 'iterkeys', 'itervalues',
+           'bind_method', 'cmp', 'unicode', 'getexception',
+           'execfile', 'reraise', 'implements_iterator', 'get_next']
 
