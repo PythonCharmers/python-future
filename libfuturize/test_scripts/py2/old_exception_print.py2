@@ -1,5 +1,5 @@
 """
-Oldish Py2 script. Check: can we automatically fix this?
+Test of whether futurize handles the old-style exception Syntax
 """
 def hello():
     try:

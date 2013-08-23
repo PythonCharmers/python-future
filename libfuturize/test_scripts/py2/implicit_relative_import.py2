@@ -1,0 +1,5 @@
+'''
+Tests whether implicit relative imports are turned into explicit ones.
+'''
+
+import xrange
