@@ -1,3 +1,6 @@
+v0.4.1:
+  * Add open() (from io module on Py2)
+  * Improve docs
 v0.4.0:
   * Add various useful compatibility functions to future.utils
   * Reorganize package: Move all builtins to future.builtins.*; move all stdlib things to future.standard_library.*

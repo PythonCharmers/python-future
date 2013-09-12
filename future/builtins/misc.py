@@ -9,6 +9,7 @@ The builtin functions are:
 - ``oct``
 - ``chr`` (equivalent to ``unichr`` on Py2)
 - ``input`` (equivalent to ``raw_input`` on Py2)
+- ``open`` (equivalent to io.open on Py2)
 
 and:
 - ``int`` (currently unchanged)
@@ -18,6 +19,7 @@ and:
 from future import utils
 
 if not utils.PY3:
+    from io import open
     from future_builtins import ascii, oct, hex
     from __builtin__ import unichr as chr
     # Was:
@@ -38,7 +40,7 @@ if not utils.PY3:
 
     input = raw_input
     
-    __all__ = ['ascii', 'oct', 'hex', 'chr', 'int', 'input']
+    __all__ = ['ascii', 'oct', 'hex', 'chr', 'int', 'input', 'open']
 
 else:
     import builtins
@@ -46,4 +48,5 @@ else:
     chr = builtins.chr
     int = builtins.int
     input = builtins.input
+    open = builtins.open
     __all__ = []

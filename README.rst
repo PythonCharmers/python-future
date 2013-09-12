@@ -11,26 +11,17 @@ yet been ported to Python 3.
 
 It is designed to be used as follows::
 
-    from __future__ import (division, absolute_import, print_function,
-                            unicode_literals)
+    from __future__ import (division, absolute_import,
+                            print_function, unicode_literals)
     from future import standard_library
     from future.builtins import *
     
 followed by clean Python 3 code (with a few restrictions) that can run
 unchanged on Python 2.7.
 
-On Python 3, ``from future import standard_library`` has no effect. On
-Python 2, it module installs import hooks to allow renamed and moved
-standard library modules to be imported from their new Py3 locations.
-
-Likewise, on Python 3, the ``from future.builtins import *`` line has no
-effect (i.e. zero namespace pollution.) On Python 2 it shadows builtins
-to provide their Python 3 semantics. (See below for the explicit import
-form.)
-
 After the imports, this code runs identically on Python 3 and 2::
     
-    # Support for renamed standard library modules (see below)
+    # Support for renamed standard library modules via import hooks
     from http.client import HttpConnection
     from itertools import filterfalse
     from test import support
@@ -60,16 +51,28 @@ After the imports, this code runs identically on Python 3 and 2::
     # Rounding" to the nearest even last digit:
     assert round(0.1250, 2) == 0.12
     
-    # input() is now safe (no eval()):
+    # input() replaces Py2's raw_input() (with no eval()):
     name = input('What is your name? ')
     print('Hello ' + name)
+
+
+On Python 3, the import lines have zero effect (and zero namespace
+pollution).
+
+On Python 2, ``from future import standard_library`` installs
+import hooks to allow renamed and moved standard library modules to be
+imported from their new Py3 locations.
+
+On Python 2, the ``from future.builtins import *`` line shadows builtins
+to provide their Python 3 semantics. (See below for the explicit import
+form.)
 
 
 Standard library reorganization
 -------------------------------
 ``future`` supports the standard library reorganization (PEP 3108)
 via import hooks, allowing almost all moved standard library modules to be
-accessed under their Python 3 names and locations::
+accessed under their Python 3 names and locations in Python 2::
     
     from future import standard_library
     
@@ -92,6 +95,51 @@ future::
     
     import http.server, http.cookies, http.cookiejar
     import urllib, urllib.parse, urllib.request, urllib.error
+
+
+Utilities
+---------
+``future`` also provides some useful functions and decorators in the
+to ease backward compatibility with Py2 in the ``future.utils`` module.
+These are a selection of the most useful functions from ``six`` and
+various home-grown Py2/3 compatibility modules from prominent Python
+projects (Jinja2, Pandas, Django).
+
+Examples::
+
+    # Functions like print() expect __str__ on Py2 to return a byte
+    string. This decorator maps the __str__ to __unicode__ on Py2 and
+    defines __str__ to encode it as utf-8:
+
+    from future.utils import python_2_unicode_compatible
+
+    @python_2_unicode_compatible
+    class MyClass(object):
+        def __str__(self):
+            return u'Unicode string: \u5b54\u5b50'
+    a = MyClass()
+
+    # These lines then both print the Chinese characters for Confucius:
+    print(a)
+
+
+    # Iterators on Py3 require a __next__() method, whereas on Py2 this
+    is called next(). This decorator allows Py3-style iterators to work
+    identically on Py2:
+
+    @implements_iterator
+    class Upper(object):
+        def __init__(self, iterable):
+            self._iter = iter(iterable)
+        def __next__(self):                 # note the Py3 interface
+            return next(self._iter).upper()
+        def __iter__(self):
+            return self
+
+    print(list(Upper('hello')))
+    # prints ['H', 'E', 'L', 'L', 'O']
+
+On Python 3 these decorators are no-ops.
 
 
 Explicit imports
@@ -147,6 +195,7 @@ into this code which runs on both Py2 and Py3::
     
     from __future__ import print_function
     from future import standard_library
+    
     import configparser
 
     class Blah(object):
@@ -156,7 +205,7 @@ into this code which runs on both Py2 and Py3::
 
 Backwards: 3 to both
 --------------------
-For example, running ``futurize --from3`` turns this Python 3 code::
+Running ``futurize --from3`` turns this Python 3 code::
     
     import configparser
 
@@ -168,6 +217,7 @@ into this code which runs on both Py2 and Py3::
     
     from __future__ import print_function
     from future import standard_library
+    
     import configparser
 
     class Blah(object):
@@ -178,28 +228,9 @@ Notice that in both cases ``futurize`` forces a new-style class and
 imports the renamed stdlib module under its Py3 name.
 
 It also handles the following Python 3 features:
+
 - keyword-only arguments
 - metaclasses (using ``future.utils.with_metaclass``)
-
-
-Limitations
------------
-Some new Python 3.3 features that cause SyntaxErrors on earlier versions
-is not currently handled by the ``futurize`` script. This includes:
-
-- ``yield ... from`` syntax for generators in Py3.3
-
-- ``raise ... from`` syntax for exceptions. (This is simple to fix
-  manually by creating a temporary variable.)
-
-
-Notes
------
-- Ensure you are using new-style classes on Py2. Py3 doesn't require
-  inheritance from ``object`` for this, but Py2 does. ``futurize
-  --from3`` adds this back in automatically, but ensure you do this too
-  when writing your classes, otherwise weird breakage when e.g. calling
-  ``super()`` may occur.
 
 
 Credits
@@ -245,7 +276,7 @@ FAQ
 - "Developer energy should be reserved for addressing real technical
   difficulties associated with the Python 3 transition (like distinguishing
   their 8-bit text strings from their binary data). They shouldn't be punished
-  with additional code changes (even automated ones) ..."
+  with additional code changes ..."
   also PEP 414: from http://www.python.org/dev/peps/pep-0414/
 
 - "Duplication of effort is wasteful, and replacing the various
@@ -285,6 +316,14 @@ FAQ
     facilitate writing future-proof code and give the Python community an
     easier upgrade path to Python 3.
     
+
+:Q: Are there any example of Python 2 packages ported to Python 3 using ``future`` and ``futurize``?
+
+:A: Yes, an example is the port of ``xlwt``, available here::
+``xlwt`` and ``iso8601``, available here::
+
+- https://github.com/python-excel/xlwt/pull/32
+
 
 Other compatibility tools
 -------------------------
