@@ -1,4 +1,5 @@
 *.py[cod]
+.ipynb_checkpoints
 
 # VIM swap files
 *.sw[po]
