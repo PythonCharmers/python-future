@@ -3,9 +3,13 @@ This tests whether
 
     from future import *
 
-works as expected. It should NOT introduce namespace pollution. On Python 3,
+and
+
+    from future.builtins import *
+
+work as expected. They should NOT introduce namespace pollution. On Python 3,
 this should have precisely no effect whatsoever. On Python 2, this should not
-introduce any new objects, merely shadow some of the builtins.
+introduce any new symbols, but merely shadow some of the builtins.
 
 """
 
@@ -20,6 +24,7 @@ original_locals = set(copy.copy(locals()))
 original_globals = set(copy.copy(globals()))
 new_names = {'original_locals', 'original_globals', 'new_names'}
 from future import *
+from future.builtins import *
 new_locals = set(copy.copy(locals())) - new_names - original_locals
 new_globals = set(copy.copy(globals())) - new_names - original_globals - \
               {'new_locals'}

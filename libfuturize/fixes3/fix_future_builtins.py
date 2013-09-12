@@ -3,7 +3,7 @@ For the ``future`` package.
 
 Adds this import line:
 
-    from future import *
+    from future.builtins import *
 
 after any other imports (in an initial block of them).
 """

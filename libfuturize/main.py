@@ -26,12 +26,12 @@ import lines:
     from __future__ import division
     from __future__ import print_function
     from __future__ import unicode_literals
-    from future import *
     import future.standard_library
+    from future.builtins import *
 """
 
 from __future__ import (absolute_import, print_function, unicode_literals)
-from future import *
+from future.builtins import *
 import future.standard_library
 
 import sys

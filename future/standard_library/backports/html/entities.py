@@ -6,7 +6,7 @@ Backported for python-future from Python 3.3
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future import standard_library
-from future import *
+from future.builtins import *
 
 
 # maps the HTML entity name to the Unicode codepoint

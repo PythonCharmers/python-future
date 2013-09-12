@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 import future.standard_library
 from future import utils
-from future import *
+from future.builtins import *
 
 
 # if __name__ != 'test.support':
