@@ -282,6 +282,7 @@ def implements_iterator(cls):
 
     Use as a decorator like this::
         
+        @implements_iterator
         class UppercasingIterator(object):
             def __init__(self, iterable):
                 self._iter = iter(iterable)

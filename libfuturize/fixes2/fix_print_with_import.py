@@ -1,7 +1,7 @@
 """
 For the ``future`` package.
 
-Turns any print statements into functions and a this import line:
+Turns any print statements into functions and adds this import line:
 
     from __future__ import print_function
 
