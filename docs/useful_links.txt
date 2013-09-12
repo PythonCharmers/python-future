@@ -6,6 +6,7 @@ http://wiki.python.org/moin/Python2orPython3
 Other docs to read about porting to Py3:
 ----------------------------------------
 
+https://github.com/nltk/nltk/blob/2and3/web/dev/python3porting.rst (particularly about doctests)
 https://ep2013.europython.eu/media/conference/slides/python-3-the-next-generation-is-here-already.pdf
 http://lucumr.pocoo.org/2011/1/22/forwards-compatible-python/
 Supporting both 2 and 3 without 2to3 conversion: http://python3porting.com/noconv.html
@@ -99,4 +100,12 @@ Other
 Type-checking decorators (maybe useful for implementing a Py3-like bytes
 object in Py2): http://wiki.python.org/moin/PythonDecoratorLibrary#Type_Enforcement_.28accepts.2Freturns.29
 Also: typecheck module on PyPI
+
+To categorize
+-------------
+
+https://pypi.python.org/pypi/awkwardduet/1.1a4
+https://github.com/campadrenalin/persei/blob/master/persei.py
+http://slideshare.net/dabeaz/mastering-python-3-io
+http://rmi.net/~lutz/strings30.html
 
