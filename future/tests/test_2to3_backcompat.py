@@ -14,7 +14,6 @@ indeed able to run under Python 3 and under Python 2 using the relevant
 from __future__ import print_function, absolute_import
 
 import unittest
-import textwrap
 import pprint
 from subprocess import Popen, PIPE
 import tempfile
