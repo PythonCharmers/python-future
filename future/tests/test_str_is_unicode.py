@@ -4,8 +4,7 @@ Tests for the future.str_is_unicode module
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
-from future.builtins.str_is_unicode import str
-from future.utils import python_2_unicode_compatible
+from future.builtins import *
 from future import utils
 
 import unittest
@@ -37,30 +36,9 @@ class TestStrIsUnicode(unittest.TestCase):
 
     def test_isinstance_bytes(self):
         self.assertEqual(isinstance(b'blah', bytes), True)
-
-    def test_python_2_unicode_compatible_decorator(self):
-        my_unicode_str = u'Unicode string: \u5b54\u5b50'
-        # With the decorator:
-        @python_2_unicode_compatible
-        class A(object):
-            def __str__(self):
-                return my_unicode_str
-        a = A()
-        assert len(str(a)) == 18
-        if not utils.PY3:
-            assert hasattr(a, '__unicode__')
-        self.assertEqual(str(a), my_unicode_str)
-        self.assertTrue(isinstance(str(a).encode('utf-8'), bytes))
-
-        # Manual equivalent on Py2 without the decorator:
-        if not utils.PY3:
-            class B(object):
-                def __unicode__(self):
-                    return u'Unicode string: \u5b54\u5b50'
-                def __str__(self):
-                    return unicode(self).encode('utf-8')
-            b = B()
-            assert str(a) == str(b)
+        # The next test ensures the bytes object hasn't been shadowed by
+        # something that breaks any isinstance checks like this in user code:
+        self.assertEqual(isinstance(u'blah'.encode('utf-8'), bytes), True)
 
 
 if __name__ == '__main__':

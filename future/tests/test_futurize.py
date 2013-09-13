@@ -1,14 +1,7 @@
 """
 This module contains snippets of Python 2 code (invalid Python 3) and
-tests for whether they can be passed to 2to3 and immediately under Python
-with the future module using::
-    
-    from future.builtins import *
-
-It contains tests that perform a scripted porting process using
-``futurize``. It then tests whether the resulting Python 2/3 code is
-indeed able to run under Python 3 and under Python 2 using the relevant
-``future`` module imports.
+tests for whether they can be passed to ``futurize`` and immediately
+run under both Python 2 again and Python 3.
 """
 
 from __future__ import print_function, absolute_import
@@ -22,9 +15,9 @@ import os
 from future.tests.base import CodeHandler
 
 
-class Test2to3Simple(CodeHandler, unittest.TestCase):
+class TestFuturizeSimple(CodeHandler, unittest.TestCase):
     def setUp(self):
-        self.interpreter = 'python'
+        self.interpreters = ('python', 'python3')
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         self.env = {'PYTHONPATH': os.getcwd()}
 
@@ -33,7 +26,7 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
         for i in xrange(10):
             pass
         '''
-        self.simple_convert_and_check(code)
+        self.simple_convert_and_run(code)
 
     def test_range_slice(self):
         """
@@ -43,7 +36,7 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
         for i in range(10**15)[:10]:
             pass
         '''
-        self.simple_convert_and_check(code)
+        self.simple_convert_and_run(code)
 
     def test_super(self):
         """
@@ -55,7 +48,7 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
                 print 'Adding an item'
                 super(VerboseList, self).append(item)
         '''
-        self.simple_convert_and_check(code)
+        self.simple_convert_and_run(code)
 
     def test_apply(self):
         code = '''
@@ -64,7 +57,7 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
         
         assert apply(addup, (10,20)) == 30
         '''
-        self.simple_convert_and_check(code)
+        self.simple_convert_and_run(code)
     
     def test_renamed_modules(self):
         code = '''
@@ -73,22 +66,8 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
         import cPickle
         import cStringIO
         '''
-        self.simple_convert_and_check(code)
+        self.simple_convert_and_run(code)
     
-    def simple_convert_and_check(self, code):
-        """
-        Tests a complete conversion of this simple piece of code from the
-        docs here:
-            http://docs.python.org/2/library/2to3.html
-        and whether 2to3 can be applied and then the resulting code be
-        automatically run under Python 2 with the future module.
-        """
-        # Translate the clean source file, then add our imports
-        self._write_test_script(code)
-        self._futurize_test_script()
-        output2 = self._run_test_script()
-        print(output2)
-
     @unittest.skip('not implemented yet')
     def test_download_pypi_package_and_test(self, package_name='future'):
         URL = 'http://pypi.python.org/pypi/{}/json'
@@ -114,6 +93,9 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
         """
         Passes in a string to the waiting input() after futurize
         conversion.
+
+        The code is the first snippet from these docs:
+            http://docs.python.org/2/library/2to3.html
         """
         py2code = '''
         from future.builtins import *
@@ -125,14 +107,28 @@ class Test2to3Simple(CodeHandler, unittest.TestCase):
         '''
         self._write_test_script(py2code)
         output = self._futurize_test_script()
-        # print(output)
 
-        p1 = Popen([self.interpreter, self.tempdir + 'mytestscript.py'],
-                   stdout=PIPE, stdin=PIPE, stderr=PIPE, env=self.env)
-        (stdout, stderr) = p1.communicate(b'Ed')
-        print(stdout)
-        print(stderr)
-        self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")
+        for interpreter in self.interpreters:
+            p1 = Popen([interpreter, self.tempdir + 'mytestscript.py'],
+                       stdout=PIPE, stdin=PIPE, stderr=PIPE, env=self.env)
+            (stdout, stderr) = p1.communicate(b'Ed')
+            # print(stdout)
+            # print(stderr)
+            self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")
+
+    def test_u_prefixes_are_not_stripped(self):
+        """
+        Tests to ensure that the u'' prefixes on unicode strings are not
+        removed by the futurize script.  Removing the prefixes on Py3.3+ is
+        unnecessary and loses some information -- namely, that the strings have
+        explicitly been marked as unicode, rather than just the futurize
+        script's guess (perhaps incorrect) that they should be unicode.
+        """
+        code = '''
+        s = u'Hello'
+        '''
+        newcode = self.simple_convert(code)
+        self.assertTrue("s = u'Hello'" in newcode)
 
         
 if __name__ == '__main__':
