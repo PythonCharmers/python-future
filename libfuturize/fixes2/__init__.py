@@ -47,7 +47,7 @@ lib2to3_fix_names = set([
     'lib2to3.fixes.fix_throw',
     'lib2to3.fixes.fix_tuple_params',
     'lib2to3.fixes.fix_types',
-    'lib2to3.fixes.fix_unicode',
+    # 'lib2to3.fixes.fix_unicode',  # strips off the u'' prefix, which removes a helpful source of information for disambiguating unicode/byte strings
     'lib2to3.fixes.fix_urllib',
     'lib2to3.fixes.fix_ws_comma',
     'lib2to3.fixes.fix_xrange',
@@ -62,4 +62,5 @@ libfuturize_2fix_names = set([
     'libfuturize.fixes2.fix_future_builtins',
     'libfuturize.fixes2.fix_future_standard_library',
     'libfuturize.fixes2.fix_metaclass',
+    'libfuturize.fixes2.fix_unicode_keep_u',
     ])
