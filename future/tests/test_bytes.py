@@ -8,8 +8,6 @@ from future.builtins import *
 from future.builtins.backports import cursedbytes
 from future import utils
 
-from future.builtins.backports import hopefullynothackedbytes
-
 import unittest
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'

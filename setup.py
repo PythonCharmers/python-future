@@ -18,6 +18,7 @@ NAME = "future"
 PACKAGES = ["future",
             "future.builtins",
             "future.builtins.backports",
+            "future.hacks",
             "future.tests",
             "future.standard_library",
             "future.standard_library.backports",
