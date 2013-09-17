@@ -210,26 +210,26 @@ def isidentifier(s, dotted=False):
         return bool(_name_re.match(s))
 
 
-def iteritems(obj, **kwargs):
+def viewitems(obj, **kwargs):
     """replacement for six's iteritems for Python2/3 compat
-       uses 'iteritems' if available and otherwise uses 'items'.
+       uses 'viewitems' if available and otherwise uses 'items'.
 
        Passes kwargs to method."""
-    func = getattr(obj, "iteritems", None)
+    func = getattr(obj, "viewitems", None)
     if not func:
         func = obj.items
     return func(**kwargs)
 
 
-def iterkeys(obj, **kwargs):
-    func = getattr(obj, "iterkeys", None)
+def viewkeys(obj, **kwargs):
+    func = getattr(obj, "viewkeys", None)
     if not func:
         func = obj.keys
     return func(**kwargs)
 
 
-def itervalues(obj, **kwargs):
-    func = getattr(obj, "itervalues", None)
+def viewvalues(obj, **kwargs):
+    func = getattr(obj, "viewvalues", None)
     if not func:
         func = obj.values
     return func(**kwargs)
