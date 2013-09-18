@@ -14,18 +14,19 @@ if not utils.PY3:
 
     oldrepr = get_dict(bytes)['__repr__']
 
+    # Not working:
     @hackclass(bytes, '__repr__')
-    def repr(self):
+    def myrepr(self):
         return b'b' + oldrepr(self)
 
-# print(repr(b''.fromhex('aa 0f')))
-# print(repr(bytes.fromhex('b3 2e')))
+print(repr(b''.fromhex('aa 0f')))
+print(repr(bytes.fromhex('b3 2e')))
 
 # import pdb
 # pdb.set_trace()
 
 # if not utils.PY3:
-#     def repr(self):
+#     def myrepr(self):
 #         return b'b' + self.__oldrepr__()
 #     get_dict(bytes)['__oldrepr__'] = get_dict(bytes)['__repr__']
 #     get_dict(bytes)['__repr__'] = repr
