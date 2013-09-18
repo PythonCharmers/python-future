@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tests for the hacks to the bytes object
+Tests for the backported bytes object
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
