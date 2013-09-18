@@ -26,11 +26,19 @@ After the imports, this code runs identically on Python 3 and 2::
     from itertools import filterfalse
     from test import support
 
+    # Backported Py3-like bytes object
+    b = bytes(b'ABCD')
+    assert list(b) == [65, 66, 67, 68]
+    assert repr(b) == "b'ABCD'"
+    # These raise TypeErrors:
+    # b + u'EFGH'
+    # bytes(b',').join([u'Fred', u'Bill'])
+
     # New iterable range object with slicing support
     for i in range(10**15)[:10]:
         pass
     
-    # Other common iterators: map, reduce, zip
+    # Other iterators: map, zip, filter
     my_iter = zip(range(3), ['a', 'b', 'c'])
     assert my_iter != list(my_iter)
     
@@ -43,12 +51,12 @@ After the imports, this code runs identically on Python 3 and 2::
     # These raise NameErrors:
     # apply(), cmp(), coerce(), reduce(), xrange(), etc.
     
-    # This identity is restored. This is normally valid on Py3 and Py2, but
-    # 'from __future__ import unicode_literals' breaks it on Py2:
+    # This identity is restored. This is normally valid on Py3 and Py2,
+    # but 'from __future__ import unicode_literals' breaks it on Py2:
     assert isinstance('happy', str)
     
-    # The round() function behaves as it does in Python 3, using "Banker's
-    # Rounding" to the nearest even last digit:
+    # The round() function behaves as it does in Python 3, using
+    # "Banker's Rounding" to the nearest even last digit:
     assert round(0.1250, 2) == 0.12
     
     # input() replaces Py2's raw_input() (with no eval()):
