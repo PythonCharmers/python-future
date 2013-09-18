@@ -11,7 +11,7 @@ yet been ported to Python 3.
 
 It is designed to be used as follows::
 
-    from __future__ import (division, absolute_import,
+    from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
     from future import standard_library
     from future.builtins import *
@@ -99,11 +99,11 @@ future::
 
 Utilities
 ---------
-``future`` also provides some useful functions and decorators in the
-to ease backward compatibility with Py2 in the ``future.utils`` module.
-These are a selection of the most useful functions from ``six`` and
-various home-grown Py2/3 compatibility modules from prominent Python
-projects (Jinja2, Pandas, Django).
+``future`` also provides some useful functions and decorators to ease backward
+compatibility with Py2 in the ``future.utils`` module. These are a selection
+of the most useful functions from ``six`` and various home-grown Py2/3
+compatibility modules from various Python projects, such as Jinja2, Pandas,
+IPython, and Django.
 
 Examples::
 
@@ -124,8 +124,8 @@ Examples::
 
 
     # Iterators on Py3 require a __next__() method, whereas on Py2 this
-    is called next(). This decorator allows Py3-style iterators to work
-    identically on Py2:
+    # is called next(). This decorator allows Py3-style iterators to work
+    # identically on Py2:
 
     @implements_iterator
     class Upper(object):
@@ -167,8 +167,8 @@ See the docstrings for each of these modules for more info::
 Automatic conversion
 ====================
 
-There is a script included called ``futurize`` to aid in making either
-Python 2 code or Python 3 code compatible with both platforms using the
+There is an experimental script included called ``futurize`` to aid in making
+either Python 2 code or Python 3 code compatible with both platforms using the
 ``future`` module. It is based on 2to3 and uses fixers from ``lib2to3``,
 ``lib3to2``, and ``python-modernize``.
 
@@ -317,12 +317,15 @@ FAQ
     easier upgrade path to Python 3.
     
 
-:Q: Are there any example of Python 2 packages ported to Python 3 using ``future`` and ``futurize``?
+:Q: Are there any example of Python 2 packages ported to Python 3 using
+``future`` and ``futurize``?
 
 :A: Yes, an example is the port of ``xlwt``, available here::
-``xlwt`` and ``iso8601``, available here::
 
 - https://github.com/python-excel/xlwt/pull/32
+
+The code also contains backports for several Py3 standard library modules
+under ``future/standard_library/backports/``.
 
 
 Other compatibility tools
@@ -336,9 +339,9 @@ Other compatibility tools
     one-way porting efforts, for projects that can leave behind Python 2
     support.
 
-    The example at the top of the 2to3 docs
-    (http://docs.python.org/2/library/2to3.html) illustrates this point.
-    After transformation, ``example.py`` looks like this::
+    The example at the top of the ``2to3`` docs
+    (http://docs.python.org/2/library/2to3.html) demonstrates this.
+    After transformation by ``2to3``, ``example.py`` looks like this::
 
         def greet(name):
             print("Hello, {0}!".format(name))
@@ -349,7 +352,8 @@ Other compatibility tools
     This is Python 3 code that, although syntactically valid on Python 2,
     is semantically incorrect. On Python 2, it raises an exception for
     most inputs; worse, it allows arbitrary code execution by the user
-    for specially crafted inputs.
+    for specially crafted inputs because of the ``eval()`` executed by Python
+    2's ``input()`` function.
 
     This is not an isolated example; almost every output of ``2to3`` will
     need modification to provide backward compatibility with Python 2.
@@ -365,10 +369,10 @@ Other compatibility tools
     convert to Python 3 in the setup script?
 
 :A: Yes, this is possible, and was originally the approach recommended by
-    Python's core developers, but has big drawbacks.
+    Python's core developers, but has some large drawbacks.
     
     First, your actual working codebase will be stuck with only Python
-    2's features (and its warts) for as long as you need to retain Python
+    2's features, and its warts, for as long as you need to retain Python
     2 compatibility. This may be at least 5 years for many projects.
     
     This approach also carries the significant disadvantage that you
@@ -384,11 +388,10 @@ Other compatibility tools
     
     They share the same goal of making it possible to write a
     single-source codebase that works on both Python 2 and Python 3
-    without modification. ``future`` makes it easier to write standard
-    Python 3 code that is a cleaner interface that runs on both
-    platforms, and ``future`` provides a more complete set of support for
-    Python 3's features (and restores a few Py2 features removed from
-    Python 3).
+    without modification. ``future`` provides a more complete set of support
+    for Python 3's features and a cleaner interface (supporting standard Py3
+    code). ``future`` also restores a few Py2 features that were removed from
+    Python 3.
     
     Codebases that use ``six`` directly tend to be mixtures of
     Python 2 code, Python 3 code, and ``six``-specific wrapper
@@ -472,9 +475,9 @@ Other compatibility tools
     unlearn various habits soon. We searched for ways to avoid polluting the
     world with more deprecated code, but didn't find a good way.
 
-    Also, in attempting to port ``scikit-learn`` to Python 3, I (Ed) was
-    dissatisfied with how much code cruft was necessary to introduce to
-    support Python 2 and 3 from a single codebase (the preferred porting
+    Also, in attempting to port packages such as ``scikit-learn`` to Python 3,
+    I (Ed) was dissatisfied with how much code cruft was necessary to introduce
+    to support Python 2 and 3 from a single codebase (the preferred porting
     option). 
     
     Since backward-compatibility with Python 2 may be necessary

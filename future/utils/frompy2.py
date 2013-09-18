@@ -1,5 +1,24 @@
 """
-A resurrection of old from Python 2 for both platforms.
+A resurrection of some old functions from Python 2. These should be used
+sparingly, to help with porting efforts, since code using them is no
+longer standard Python 3 code.
+
+We provide these builtin functions which have no equivalent on Py3:
+
+- cmp()
+- execfile()
+
+These aliases are also provided:
+
+- raw_input() <- input()
+- unicode() <- str()
+- unichr() <- chr()
+
+For reference, the following Py2 builtin functions are available from
+these standard locations on both Py2.6+ and Py3:
+
+- reduce() <- functools.reduce()
+- reload() <- imp.reload()
 
 """
 
@@ -11,10 +30,14 @@ from future.utils import PY3
 if PY3:
     # Bring back the cmp function
     cmp = lambda a, b: (a > b) - (a < b)
+    raw_input = input
     unicode = str
+    unichr = chr
 else:
     cmp = __builtin__.cmp
+    raw_input = __builtin__.raw_input
     unicode = __builtin__.unicode
+    unichr = __builtin__.unichr
 
 
 def execfile(filename, myglobals=None, mylocals=None):
@@ -43,8 +66,5 @@ def execfile(filename, myglobals=None, mylocals=None):
             __builtin__.execfile(filename, myglobals=myglobals,
                                  mylocals=mylocals)
 
-if PY3:
-    __all__ = []
-else:
-    __all__ = ['cmp', 'unicode', 'execfile']
 
+__all__ = ['cmp', 'raw_input', 'unichr', 'unicode', 'execfile']
