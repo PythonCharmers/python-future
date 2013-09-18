@@ -4,9 +4,7 @@ Tests for the hacks to the bytes object
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
-from future.builtins import *
-# from future.builtins.backports import cursedbytes
-from future.builtins.backports.newbytes import newbytes as bytes
+from future.builtins import bytes
 from future import utils
 
 import unittest
