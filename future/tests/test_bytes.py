@@ -189,5 +189,11 @@ class TestBytes(unittest.TestCase):
         with self.assertRaises(TypeError):
             u'A' in b
 
+    def test_bytes_index(self):
+        b = bytes(b'ABCD')
+        self.assertEqual(b.index(b'B', 1))
+        self.assertEqual(b.index(67, 2))
+
+
 if __name__ == '__main__':
     unittest.main()
