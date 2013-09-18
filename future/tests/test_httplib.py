@@ -34,27 +34,21 @@ class FakeSocket(object):
 
     def sendall(self, data):
         olddata = self.data
-        assert isinstance(olddata, bytes)
+        assert isinstance(olddata, type(b''))   # FIXME!
         if utils.PY3:
             self.data += data
         else:
             if isinstance(data, str):  # i.e. unicode
                 newdata = data.encode('ascii')
+            elif isinstance(data, type(b'')):   # FIXME!
+                newdata = bytes(data)
             elif isinstance(data, bytes):
                 newdata = data
             elif isinstance(data, array.array):
                 newdata = data.tostring()
             else:
-                try:
-                    newdata = b''.join(chr(d) for d in data)
-                    assert isinstance(newdata, bytes)
-                except (AssertionError, TypeError) as e:
-                    raise TypeError('Cannot convert data to bytes')
+                newdata = b''.join(chr(d) for d in data)
             self.data += newdata
-        # if utils.PY3:
-        #     self.data += data
-        # else:
-        #     self.data += b''.join(data)
 
     def makefile(self, mode, bufsize=None):
         if mode != 'r' and mode != 'rb':

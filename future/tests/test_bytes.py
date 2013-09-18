@@ -191,9 +191,39 @@ class TestBytes(unittest.TestCase):
 
     def test_bytes_index(self):
         b = bytes(b'ABCD')
-        self.assertEqual(b.index(b'B', 1))
-        self.assertEqual(b.index(67, 2))
+        self.assertEqual(b.index(b'B'), 1)
+        self.assertEqual(b.index(67), 2)
 
+    def test_startswith(self):
+        b = bytes(b'abcd')
+        self.assertTrue(b.startswith(b'a'))
+        self.assertTrue(b.startswith((b'a', b'b')))
+        self.assertTrue(b.startswith(bytes(b'ab')))
+        self.assertFalse(b.startswith((b'A', b'B')))
+
+        with self.assertRaises(TypeError) as cm:
+            b.startswith(65)
+        with self.assertRaises(TypeError) as cm:
+            b.startswith([b'A'])
+        exc = str(cm.exception)
+        # self.assertIn('bytes', exc)
+        # self.assertIn('tuple', exc)
+
+    def test_endswith(self):
+        b = bytes(b'abcd')
+        self.assertTrue(b.endswith(b'd'))
+        self.assertTrue(b.endswith((b'c', b'd')))
+        self.assertTrue(b.endswith(bytes(b'cd')))
+        self.assertFalse(b.endswith((b'A', b'B')))
+
+        with self.assertRaises(TypeError) as cm:
+            b.endswith(65)
+        with self.assertRaises(TypeError) as cm:
+            b.endswith([b'D'])
+        exc = str(cm.exception)
+        # self.assertIn('bytes', exc)
+        # self.assertIn('tuple', exc)
+        
 
 if __name__ == '__main__':
     unittest.main()

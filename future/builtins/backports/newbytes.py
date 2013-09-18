@@ -119,13 +119,21 @@ class newbytes(_builtin_bytes):
         
         if len(args) == 0:
             return super(newbytes, cls).__new__(cls)
-        elif isinstance(args[0], Iterable) and isinstance(args[0][0], int):
-            # It's a list of integers
-            value = b''.join([chr(x) for x in args[0]])
+        elif isinstance(args[0], _builtin_bytes):
+            value = args[0]
         elif isinstance(args[0], unicode):
             if 'encoding' not in kwargs:
                 raise TypeError('unicode string argument without an encoding')
             value = args[0].encode(**kwargs)
+        elif isinstance(args[0], Iterable):
+            if len(args[0]) == 0:
+                # What is this?
+                raise ValueError('unknown argument type')
+            elif len(args[0]) > 0 and isinstance(args[0][0], int):
+                # It's a list of integers
+                value = b''.join([chr(x) for x in args[0]])
+            else:
+                raise ValueError('item cannot be interpreted as an integer')
         elif isinstance(args[0], int):
             if args[0] < 0:
                 raise ValueError('negative count')
@@ -150,6 +158,8 @@ class newbytes(_builtin_bytes):
     def __contains__(self, key):
         if isinstance(key, int):
             newbyteskey = newbytes([key])
+        elif isinstance(key, newbytes):
+            newbyteskey = key
         else:
             newbyteskey = newbytes(key)
         return issubset(list(newbyteskey), list(self))
@@ -216,23 +226,31 @@ class newbytes(_builtin_bytes):
         return tuple(newbytes(part) for part in parts)
 
     @no_unicode(1)
-    def index(self, byte):
+    def index(self, sub, *args):
         '''
-        Returns index of byte in bytes.
-        Raises ValueError if byte is not in bytes and TypeError if can't be
-        converted bytes or its length is not 1.
+        Returns index of sub in bytes.
+        Raises ValueError if byte is not in bytes and TypeError if can't
+        be converted bytes or its length is not 1.
         '''
-        if not isinstance(byte, bytes):
+        if isinstance(sub, int):
+            if len(args) == 0:
+                start, end = 0, len(self)
+            elif len(args) == 1:
+                start = args[0]
+            elif len(args) == 2:
+                start, end = args
+            else:
+                raise TypeError('takes at most 3 arguments')
+            return list(self)[start:end].index(sub)
+        if not isinstance(sub, bytes):
             try:
-                byte = self.__class__(byte)
+                sub = self.__class__(sub)
             except (TypeError, ValueError):
-                raise TypeError("can't convert byte to bytes")
-        if len(byte) != 1:
-            raise TypeError('byte must be of length 1')
+                raise TypeError("can't convert sub to bytes")
         try:
-            return self._data.index(byte._data[0])
+            return super(newbytes, self).index(sub, *args)
         except ValueError:
-            raise ValueError('byte not in bytes')
+            raise ValueError('substring not found')
 
 # class bytes(_builtin_bytes):
 #     '''
