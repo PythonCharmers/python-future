@@ -220,7 +220,7 @@ if not utils.PY3:
                'apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
                'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
                'StandardError',
-               'round', 'input', 'range', 'super',
+               'bytes', 'round', 'input', 'range', 'super',
                'str']
 
 else:
