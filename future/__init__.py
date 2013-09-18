@@ -158,7 +158,7 @@ future.builtins import *`` line above is::
     
     from future.builtins.iterators import zip, map, filter
     from future.builtins.misc import ascii, oct, hex, chr, input
-    from future.builtins.backports import range, super, round
+    from future.builtins.backports import bytes, range, super, round
     from future.builtins.disabled import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
             xrange, StandardError)
