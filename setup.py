@@ -52,7 +52,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.3",
     "License :: OSI Approved",
     "License :: OSI Approved :: MIT License",
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
 ]
 
