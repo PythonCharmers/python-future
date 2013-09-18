@@ -21,6 +21,8 @@ From Dan Crosta's README:
 from math import ceil
 from collections import Sequence, Iterator
 
+from future.utils import PY3
+
 
 class range(Sequence):
     """
@@ -172,4 +174,10 @@ class rangeiterator(Iterator):
             raise StopIteration()
         return self._last
 
+if PY3:
+    import builtins
+    range = builtins.range
+    __all__ = []
+else:
+    __all__ = ['range']
 

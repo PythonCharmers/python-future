@@ -22,7 +22,7 @@ from collections import Iterable
 
 from future.utils import PY3
 
-_oldbytes = bytes
+_builtin_bytes = bytes
 
 
 def issubset(list1, list2):
@@ -96,7 +96,7 @@ def no_unicode(argnums=(1,)):
     return disallow_types(argnums, disallowed_types)
 
 
-class newbytes(_oldbytes):
+class newbytes(_builtin_bytes):
     """
     A backport of the Python 3 bytes object to Py2
     """
@@ -215,18 +215,26 @@ class newbytes(_oldbytes):
         parts = super(newbytes, self).rpartition(sep)
         return tuple(newbytes(part) for part in parts)
 
-    # def iterint(self):
-    #     for x in self:
-    #         yield ord(x)
+    @no_unicode(1)
+    def index(self, byte):
+        '''
+        Returns index of byte in bytes.
+        Raises ValueError if byte is not in bytes and TypeError if can't be
+        converted bytes or its length is not 1.
+        '''
+        if not isinstance(byte, bytes):
+            try:
+                byte = self.__class__(byte)
+            except (TypeError, ValueError):
+                raise TypeError("can't convert byte to bytes")
+        if len(byte) != 1:
+            raise TypeError('byte must be of length 1')
+        try:
+            return self._data.index(byte._data[0])
+        except ValueError:
+            raise ValueError('byte not in bytes')
 
-    # methods = ['split', 'rsplit', 'endswith', 'startswith', 'replace', 'find',
-    #            'rfind', 'join', '__add__', '__radd__', 'partition', 'rpartition',
-    #           ]
-
-    # return disallow_unicode_args(methods)
-
-
-# class bytes(_oldbytes):
+# class bytes(_builtin_bytes):
 #     '''
 #     This class stores bytes data in a similar way to the bytes object in Python
 #     3.x.
@@ -263,16 +271,16 @@ class newbytes(_oldbytes):
 #                 value = (value,)
 #             if not (hasattr(value, '__iter__') or hasattr(value, '__getitem__')):
 #                 raise TypeError('value must be iterable')
-#             if isinstance(value, _oldbytes):
+#             if isinstance(value, _builtin_bytes):
 #                 # this makes sure that iterating over value gives one byte at a time
 #                 # in python 2 and 3
-#                 if _oldbytes == str:
+#                 if _builtin_bytes == str:
 #                     # in python 2 iterating over bytes gives characters instead of integers
 #                     value = tuple(map(ord, value))
 #                 else:
 #                     # Only tuple-ify if not already tuple-ified by map above
 #                     value = tuple(value)
-#             elif _oldbytes==str and isinstance(value, unicode):
+#             elif _builtin_bytes==str and isinstance(value, unicode):
 #                 value = tuple(map(ord, value.encode('utf-8')))
 #             elif isinstance(value, str):
 #                 # only python3 strings here
@@ -375,7 +383,7 @@ class newbytes(_oldbytes):
 #         Returns the data as bytes() so that you can use it for methods that
 #         expect bytes. Don't use this for comparison!
 #         '''
-#         if _oldbytes == str:
+#         if _builtin_bytes == str:
 #             return _oldbytes().join(map(chr,self._data))
 #         return _oldbytes(self._data)
 # 
@@ -387,6 +395,11 @@ class newbytes(_oldbytes):
 #         return super(bytes, self).startswith(prefix, *vargs, **kwargs)
 
 
-__all__ = ['newbytes']
-import doctest
-doctest.testmod()
+if PY3:
+    import builtins
+    bytes = builtins.bytes
+    __all__ = []
+else:
+    bytes = newbytes
+    __all__ = ['bytes']
+

@@ -28,15 +28,16 @@ if not utils.PY3:
     # Stick to this:
     from __builtin__ import int
 
-    # The following seemed like a good idea, but was probably a bit
+    # The following seems like a good idea, but it may be a bit
     # paranoid and the implementation may be fragile:
-    # # Python 2's input() is unsafe and MUST not be able to be used
-    # # accidentally by someone who forgets to import it but expects Python
-    # # 3 semantics. So we delete it from __builtin__. We keep a copy
-    # # though:
-    # import __builtin__
-    # __builtin__._oldinput = __builtin__.input
-    # delattr(__builtin__, 'input')
+
+    # Python 2's input() is unsafe and MUST not be able to be used
+    # accidentally by someone who expects Python 3 semantics but forgets
+    # to import it on Python 2. So we delete it from __builtin__. We
+    # keep a copy though:
+    import __builtin__
+    __builtin__._oldinput = __builtin__.input
+    delattr(__builtin__, 'input')
 
     input = raw_input
     
