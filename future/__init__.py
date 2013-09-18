@@ -128,7 +128,7 @@ Examples::
             return u'Unicode string: \u5b54\u5b50'
     a = MyClass()
 
-    # These lines then both print the Chinese characters for Confucius:
+    # This then prints the Chinese characters for Confucius:
     print(a)
 
 
