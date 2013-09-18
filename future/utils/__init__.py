@@ -314,6 +314,11 @@ def encode_filename(filename):
         return filename
 
 
+def is_new_style(cls):
+    return hasattr(cls, '__class__') and ('__dict__' in dir(cls) 
+                                          or hasattr(cls, '__slots__'))
+
+
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'with_metaclass', 'bchr', 'bstr', 'bord',
            'tobytes', 'str_to_bytes', 'bytes_to_str', 
