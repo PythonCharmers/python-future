@@ -5,6 +5,8 @@ python:
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 # No dependencies currently:
 before_install:
+  - dpkg -S string_tests.py
+  - dpkg -S buffer_tests.py
   - sudo apt-get install -qq libpython2.7-testsuite libpython3.3-testsuite
 # install: pip install -r requirements.txt --use-mirrors
 # command to run tests, e.g. python setup.py test
