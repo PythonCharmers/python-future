@@ -151,7 +151,7 @@ class HeaderTests(TestCase):
         conn = client.HTTPConnection('example.com')
         conn.sock = FakeSocket(None)
         conn.putrequest('GET','/')
-        conn.putheader('Content-length',42)
+        conn.putheader('Content-length', 42)
         self.assertTrue(b'Content-length: 42' in conn._buffer)
 
     def test_ipv6host_header(self):
@@ -268,8 +268,7 @@ class BasicTest(TestCase):
         r = client.HTTPResponse(s)
         r.begin()
         cookies = r.getheader("Set-Cookie")
-        if cookies != hdr:
-            self.fail("multiple headers not combined properly")
+        self.assertEqual(cookies, hdr)
 
     def test_read_head(self):
         # Test that the library doesn't attempt to read any data
@@ -281,7 +280,7 @@ class BasicTest(TestCase):
             NoEOFStringIO)
         resp = client.HTTPResponse(sock, method="HEAD")
         resp.begin()
-        if resp.read():  #  != "":
+        if resp.read():
             self.fail("Did not expect response from HEAD request")
 
     def test_send_file(self):
