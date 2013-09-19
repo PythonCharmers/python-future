@@ -17,7 +17,7 @@ from future.tests.base import CodeHandler
 
 class TestFuturizeSimple(CodeHandler, unittest.TestCase):
     def setUp(self):
-        self.interpreters = ('python', 'python3')
+        self.interpreters = ['python']
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         self.env = {'PYTHONPATH': os.getcwd()}
 
