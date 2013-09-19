@@ -1,5 +1,8 @@
 r"""HTTP cookie handling for web clients.
 
+This is based on the Py3.3 ``http.cookiejar`` module and the Py2.7
+``cookielib`` module.
+
 This module has (now fairly distant) origins in Gisle Aas' Perl module
 HTTP::Cookies, from the libwww-perl library.
 
@@ -24,17 +27,25 @@ http://wwwsearch.sf.net/):
                MSIECookieJar
 
 """
+from __future__ import (absolute_import, division)  # , unicode_literals)
+from future import standard_library
+# from future.builtins import *
 
 __all__ = ['Cookie', 'CookieJar', 'CookiePolicy', 'DefaultCookiePolicy',
-           'FileCookieJar', 'LWPCookieJar', 'lwp_cookie_str', 'LoadError',
-           'MozillaCookieJar']
+           'FileCookieJar', 'LWPCookieJar', 'LoadError', 'MozillaCookieJar']
 
-import re, urlparse, copy, time, urllib
+import copy
+import datetime
+import re
+import time
+import urlparse, urllib
 try:
     import threading as _threading
 except ImportError:
     import dummy_threading as _threading
-import httplib  # only for the default HTTP port
+# Instead of this: import httplib
+# Import this new-style one:
+import http.client  # only for the default HTTP port
 from calendar import timegm
 
 debug = False   # set to True to enable debugging via the logging module
@@ -46,11 +57,11 @@ def _debug(*args):
     global logger
     if not logger:
         import logging
-        logger = logging.getLogger("cookielib")
+        logger = logging.getLogger("http.cookiejar")
     return logger.debug(*args)
 
 
-DEFAULT_HTTP_PORT = str(httplib.HTTP_PORT)
+DEFAULT_HTTP_PORT = str(http.client.HTTP_PORT)
 MISSING_FILENAME_TEXT = ("a filename was not supplied (nor was the CookieJar "
                          "instance initialised with one)")
 
@@ -58,11 +69,11 @@ def _warn_unhandled_exception():
     # There are a few catch-all except: statements in this module, for
     # catching input that's bad in unexpected ways.  Warn if any
     # exceptions are caught there.
-    import warnings, traceback, StringIO
-    f = StringIO.StringIO()
+    import io, warnings, traceback
+    f = io.StringIO()
     traceback.print_exc(None, f)
     msg = f.getvalue()
-    warnings.warn("cookielib bug!\n%s" % msg, stacklevel=2)
+    warnings.warn("http.cookiejar bug!\n%s" % msg, stacklevel=2)
 
 
 # Date/time conversion
@@ -95,10 +106,12 @@ def time2isoz(t=None):
     1994-11-24 08:49:37Z
 
     """
-    if t is None: t = time.time()
-    year, mon, mday, hour, min, sec = time.gmtime(t)[:6]
+    if t is None:
+        dt = datetime.datetime.utcnow()
+    else:
+        dt = datetime.datetime.utcfromtimestamp(t)
     return "%04d-%02d-%02d %02d:%02d:%02dZ" % (
-        year, mon, mday, hour, min, sec)
+        dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
 def time2netscape(t=None):
     """Return a string representing time in seconds since epoch, t.
@@ -111,10 +124,13 @@ def time2netscape(t=None):
     Wed, DD-Mon-YYYY HH:MM:SS GMT
 
     """
-    if t is None: t = time.time()
-    year, mon, mday, hour, min, sec, wday = time.gmtime(t)[:7]
+    if t is None:
+        dt = datetime.datetime.utcnow()
+    else:
+        dt = datetime.datetime.utcfromtimestamp(t)
     return "%s %02d-%s-%04d %02d:%02d:%02d GMT" % (
-        DAYS[wday], mday, MONTHS[mon-1], year, hour, min, sec)
+        DAYS[dt.weekday()], dt.day, MONTHS[dt.month-1],
+        dt.year, dt.hour, dt.minute, dt.second)
 
 
 UTC_ZONES = {"GMT": None, "UTC": None, "UT": None, "Z": None}
@@ -434,7 +450,7 @@ def join_header_words(lists):
         if attr: headers.append("; ".join(attr))
     return ", ".join(headers)
 
-def _strip_quotes(text):
+def strip_quotes(text):
     if text.startswith('"'):
         text = text[1:]
     if text.endswith('"'):
@@ -478,11 +494,11 @@ def parse_ns_headers(ns_headers):
                     k = lc
                 if k == "version":
                     # This is an RFC 2109 cookie.
-                    v = _strip_quotes(v)
+                    v = strip_quotes(v)
                     version_set = True
                 if k == "expires":
                     # convert expires date to seconds since epoch
-                    v = http2time(_strip_quotes(v))  # None if invalid
+                    v = http2time(strip_quotes(v))  # None if invalid
             pairs.append((k, v))
 
         if pairs:
@@ -587,7 +603,7 @@ def request_host(request):
 
     """
     url = request.get_full_url()
-    host = urlparse.urlparse(url)[1]
+    host = urllib.parse.urlparse(url)[1]
     if host == "":
         host = request.get_header("Host", "")
 
@@ -609,7 +625,7 @@ def eff_request_host(request):
 def request_path(request):
     """Path component of request-URI, as defined by RFC 2965."""
     url = request.get_full_url()
-    parts = urlparse.urlsplit(url)
+    parts = urllib.parse.urlsplit(url)
     path = escape_path(parts.path)
     if not path.startswith("/"):
         # fix bad RFC 2396 absoluteURI
@@ -1173,8 +1189,7 @@ class DefaultCookiePolicy(CookiePolicy):
 
 
 def vals_sorted_by_key(adict):
-    keys = adict.keys()
-    keys.sort()
+    keys = sorted(adict.keys())
     return map(adict.get, keys)
 
 def deepvalues(mapping):
@@ -1212,7 +1227,7 @@ class CookieJar(object):
     domain_re = re.compile(r"[^.]*")
     dots_re = re.compile(r"^\.+")
 
-    magic_re = r"^\#LWP-Cookies-(\d+\.\d+)"
+    magic_re = re.compile(r"^\#LWP-Cookies-(\d+\.\d+)")
 
     def __init__(self, policy=None):
         if policy is None:
@@ -1260,7 +1275,7 @@ class CookieJar(object):
 
         """
         # add cookies in order of most specific (ie. longest) path first
-        cookies.sort(key=lambda arg: len(arg.path), reverse=True)
+        cookies.sort(key=lambda a: len(a.path), reverse=True)
 
         version_set = False
 
@@ -1556,8 +1571,8 @@ class CookieJar(object):
         """Return sequence of Cookie objects extracted from response object."""
         # get cookie-attributes for RFC 2965 and Netscape protocols
         headers = response.info()
-        rfc2965_hdrs = headers.getheaders("Set-Cookie2")
-        ns_hdrs = headers.getheaders("Set-Cookie")
+        rfc2965_hdrs = headers.getheaders("Set-Cookie2")  # FIXME?
+        ns_hdrs = headers.getheaders("Set-Cookie")        # FIXME?
 
         rfc2965 = self._policy.rfc2965
         netscape = self._policy.netscape
