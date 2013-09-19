@@ -17,10 +17,24 @@ import functools
 import pickle
 import tempfile
 import unittest
-import test.support
-import test.string_tests
-import test.buffer_tests
 
+# Some Python installations (e.g. travis-ci.org Py2.7 and Py3.3) are
+# missing the Python test suite (and there's no Ubuntu 12.04 package to
+# install it), although a skeleton test package still exists with
+# a couple of modules like test.support. We probably don't want to
+# install standard library hooks ever on Py3, so the two imports below
+# will fail. In this case, just exit. No probem: on Py3 we don't redefine
+# bytes anyway.
+try:
+    import test.support
+    import test.string_tests
+    import test.buffer_tests
+except ImportError:
+    from future.utils import PY3
+    if PY3:
+        sys.exit(0)
+    else:
+        raise
 
 if sys.flags.bytes_warning:
     def check_bytes_warnings(func):
