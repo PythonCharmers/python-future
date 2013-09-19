@@ -159,15 +159,14 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    # @unittest.skip("skipping in case there's no net connection")
-    @unittest.expectedFailure
+    @unittest.skip("skipping in case there's no net connection")
     def test_urllib_request(self):
         import urllib.request
         from pprint import pprint
         URL = 'http://pypi.python.org/pypi/{}/json'
         package = 'future'
         r = urllib.request.urlopen(URL.format(package))
-        pprint(r.read().decode('utf-8'))
+        # pprint(r.read().decode('utf-8'))
 
     def test_html_import(self):
         import html
