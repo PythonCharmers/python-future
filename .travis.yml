@@ -3,11 +3,10 @@ python:
   - "3.3"
   - "2.7"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+# These packages only exist on Ubuntu 13.04 and newer:
+# before_install:
+#   - sudo apt-get install -qq libpython2.7-testsuite libpython3.3-testsuite
 # No dependencies currently:
-before_install:
-  - dpkg -S string_tests.py
-  - dpkg -S buffer_tests.py
-  - sudo apt-get install -qq libpython2.7-testsuite libpython3.3-testsuite
 # install: pip install -r requirements.txt --use-mirrors
 # command to run tests, e.g. python setup.py test
 script:  python setup.py test
