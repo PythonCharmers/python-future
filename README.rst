@@ -1,6 +1,11 @@
 future: clean single-source support for Python 3 and 2
 ======================================================
 
+
+.. image:: https://secure.travis-ci.org/edschofield/python-future.png?branch=master
+    :target: http://travis-ci.org/edschofield/python-future
+
+
 The ``future`` module helps run Python 3.x-compatible code under Python 2
 with minimal code cruft.
 
