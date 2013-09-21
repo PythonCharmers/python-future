@@ -258,7 +258,6 @@ class SimpleHTTPServerTestCase(BaseTestCase):
         if data:
             self.assertEqual(data, body)
 
-    @unittest.expectedFailure
     def test_get(self):
         #constructs the path relative to the root directory of the HTTPServer
         response = self.request(self.tempdir_name + '/test')

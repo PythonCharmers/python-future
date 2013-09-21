@@ -105,12 +105,15 @@ import socket # For gethostbyaddr()
 import socketserver
 import sys
 import time
+import copy
+import argparse
+
 # Not backported yet:
 # import urllib.parse
 # The old Py2 one instead:
 import urllib
-import copy
-import argparse
+# Also from 2.7:
+import cgi
 
 
 # Default error message template

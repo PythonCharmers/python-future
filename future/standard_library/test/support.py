@@ -37,9 +37,8 @@ import logging.handlers
 import struct
 import tempfile
 import _testcapi
-
 try:
-    import _thread, threading
+    import thread, threading
 except ImportError:
     _thread = None
     threading = None
@@ -1668,6 +1667,9 @@ def modules_cleanup(oldmodules):
     sys.modules.update(oldmodules)
 
 #=======================================================================
+# Py2.7 versions of threading_setup() and threading_cleanup() which don't refer
+# to threading._dangling (not available on Py2.7).
+
 # Threading support to prevent reporting refleaks when running regrtest.py -R
 
 # NOTE: we use thread._count() rather than threading.enumerate() (or the
@@ -1679,26 +1681,25 @@ def modules_cleanup(oldmodules):
 # at the end of a test run.
 
 def threading_setup():
-    # Disabled for python-future because threading._dangling does not exist
-    return 1, ()
-    # if _thread:
-    #     return _thread._count(), threading._dangling.copy()
-    # else:
-    #     return 1, ()
+    if thread:
+        return thread._count(),
+    else:
+        return 1,
 
-def threading_cleanup(*original_values):
-    return
-    # if not _thread:
-    #     return
-    # _MAX_COUNT = 10
-    # for count in range(_MAX_COUNT):
-    #     values = _thread._count(), threading._dangling
-    #     if values == original_values:
-    #         break
-    #     time.sleep(0.1)
-    #     gc_collect()
-    # # XXX print a warning in case of failure?
+def threading_cleanup(nb_threads):
+    if not thread:
+        return
 
+    _MAX_COUNT = 10
+    for count in range(_MAX_COUNT):
+        n = thread._count()
+        if n == nb_threads:
+            break
+        time.sleep(0.1)
+    # XXX print a warning in case of failure?
+
+
+#=======================================================================
 def reap_threads(func):
     """Use this function when threads are being used.  This will
     ensure that the threads are cleaned up even when the test fails.
