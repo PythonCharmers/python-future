@@ -5,4 +5,5 @@ include LICENSE.txt
 include ChangeLog.txt
 include docs/*.py
 include docs/*.txt
+include docs/*.rst
 
