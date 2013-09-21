@@ -97,12 +97,12 @@ It also includes backports for these stdlib packages from Py3 that were
 heavily refactored versus Py2::
     
     import html, html.entities, html.parser
-    import http, http.client
+    import http, http.client, http.server
 
 These currently are not supported, but we may support them in the
 future::
     
-    import http.server, http.cookies, http.cookiejar
+    import http.cookies, http.cookiejar
     import urllib, urllib.parse, urllib.request, urllib.error
 
 

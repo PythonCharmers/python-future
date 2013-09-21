@@ -31,7 +31,7 @@ After the imports, this code runs identically on Python 3 and 2::
     from itertools import filterfalse
     from test import support
 
-    # Backported Py3-like bytes object
+    # Backported Py3 bytes object
     b = bytes(b'ABCD')
     assert list(b) == [65, 66, 67, 68]
     assert repr(b) == "b'ABCD'"
@@ -101,12 +101,12 @@ It also includes backports for these stdlib packages from Py3 that were
 heavily refactored versus Py2::
     
     import html, html.entities, html.parser
-    import http, http.client
+    import http, http.client, http.server
 
 These currently are not supported, but we may support them in the
 future::
     
-    import http.server, http.cookies, http.cookiejar
+    import http.cookies, http.cookiejar
     import urllib, urllib.parse, urllib.request, urllib.error
 
 
@@ -159,6 +159,16 @@ Explicit imports
 ----------------
 If you prefer explicit imports, the explicit equivalent of the ``from
 future.builtins import *`` line above is::
+
+    from future.builtins import (zip, map, filter,
+    							 ascii, oct, hex, chr, input,
+                                 bytes, range, super, round,
+								 apply, cmp, coerce, execfile, file, long,
+								 raw_input, reduce, reload, unicode, xrange,
+								 str, StandardError)
+
+
+The internal API is currently as follows::
     
     from future.builtins.iterators import zip, map, filter
     from future.builtins.misc import ascii, oct, hex, chr, input
@@ -168,7 +178,7 @@ future.builtins import *`` line above is::
             xrange, StandardError)
     from future.builtins.str_is_unicode import str
 
-But please note that the API is still evolving rapidly.
+But please note that this internal API is still evolving rapidly.
 
 See the docstrings for each of these modules for more info::
 
@@ -258,8 +268,9 @@ Credits
           - The backported ``super()`` and ``range()`` functions are
             derived from Ryan Kelly's ``magicsuper`` module and Dan Crosta's
             ``xrange`` module.
-          - The ``python_2_unicode_compatible`` decorator is from
-            ``django.utils.encoding``.
+		  - The ``python_2_unicode_compatible`` decorator is from Django. The
+			``implements_iterator`` decorator is from a blog post by Armin
+			Ronacher.
 
 
 Licensing
@@ -308,9 +319,9 @@ FAQ
        module by module and feature by feature.
 
     3. People with existing or new Python 3 codebases who wish to provide
-       Python 2.7 support easily.
+       ongoing Python 2.7 support easily and with little maintenance burden.
 
-    4. People who want to save time and reduce bugs with porting by not
+    4. Package authors who want to reduce bugs with porting by not
        having to write their own home-grown Python 2/3 compatibility
        modules.
 
@@ -396,83 +407,43 @@ Other compatibility tools
 
 :Q: What is the relationship between this project and ``six``?
 
-:A: ``future`` is a more comprehensive and higher-level interface that
-    subsumes the ``six`` module (available as ``future.utils.six``).
-    
-    They share the same goal of making it possible to write a
-    single-source codebase that works on both Python 2 and Python 3
-    without modification. ``future`` provides a more complete set of support
-    for Python 3's features and a cleaner interface (supporting standard Py3
-    code). ``future`` also restores a few Py2 features that were removed from
-    Python 3.
-    
-    Codebases that use ``six`` directly tend to be mixtures of
-    Python 2 code, Python 3 code, and ``six``-specific wrapper
-    interfaces. In practice it sometimes looks like this::
-    
-        from sklearn.externals.six.moves import (cStringIO as StringIO,
-                                                 xrange)
+:A:	``future`` is a higher-level compatibility layer that incorporates Benjamin
+	Peterson's ``six`` module (available as ``future.utils.six``), as well as
+	additional backported functionality from Python 3.
+	
+    ``future`` and ``six`` share the same goal of making it possible to write a
+	single-source codebase that works on both Python 2 and Python 3.
+	``future`` has the further goal of allowing standard Py3 code to run with
+	almost no modification on both Py3 and Py2. It provides a more complete set
+	of support for Python 3's features, including backports of the Python 3
+	``bytes`` object (which is very different to Python 2's ``str`` object) and
+	several standard library modules.
 
-        for i, (k, v) in enumerate(sorted(six.iteritems(params))):
-            # ...
+	There is a difference in version support: ``future`` supports only Python
+	2.7 and Python 3.3+, whereas ``six`` supports all versions of Python from
+	2.4 onwards. Because of this, ``future`` is able to offer a cleaner
+	interface that leverages some important backward-compatibility features
+	introduced into Python 2.6 and 2.7. In comparison, code using ``six``
+	directly tends to be unidiomatic, with a mix of Py2, Py3 and
+	``six``-specific conventions, which carries a higher maintenance burden on
+	code than clean Python 3 code using ``future``.
 
-        if utils.PY3:
-            exec(open('setup.py').read(), {'__name__'='__main__'})
-        else:
-            execfile('setup.py', {'__name__'='__main__'})
-        
-        for i in xrange(n):          # non-standard Python 3
-            pass
-    
-    Such a mixture of interfaces puts a maintenance burden on the code to
-    support both versions.
-
-    Here is the equivalent code using the ``future`` module::
-    
-        from future import standard_library
-        from future.builtins import range
-        from future.utils.frompy2 import execfile
-
-        for i, (k, v) in enumerate(sorted(params.items())):
-            # ...
-
-        execfile('setup.py', {'__name__'='__main__'})
-        
-        for i in range(n):
-            pass
-    
-    which is standard Python 3 code except for the ``execfile`` function,
-    which does not exist in Python 3 and has no clean, simple
-    backward-portable equivalent because ``exec`` on Python 2 is a
-    statement.
-
-    Another difference is version support: ``future`` supports only
-    Python 2.7 and Python 3.3+. In contrast, ``six`` is designed to
-    support versions of Python prior to 2.7 and Python 3.0-3.1. Some of
-    the interfaces provided by ``six`` (like the ``next()`` and
-    ``print_()`` functions) are superseded by features introduced in
-    Python 2.6 or 2.7. However, ``future`` incorporates the ``six``
-    module as ``future.utils.six``.
-
-    The final difference is in scope: ``future`` offers more backported
-    features from Python 3, such as the improved no-argument
-    ``super()`` function, the new ``range`` object (with slicing
-    support), and rounding behaviour; ``future`` offers some backported
-    stdlib modules such as ``urllib``; and ``future`` includes a
-    set of other useful Py3k compatibility tools picked from other projects. 
-    This should reduce the burden on every project to roll its own py3k
-    compatibility wrapper module.
+	There is also a difference in scope: ``future`` offers a more complete set of backported
+	builtins and standard library modules, as well as various Py2/3 compatibility
+	tools picked from successful projects, which should hopefully reduce the
+	burden on every project to roll its own py3k compatibility wrapper module.
 
 :Q: What is the relationship between this project and ``python-modernize``?
 
 :A: ``python-future`` contains, in addition to the ``future``
     compatibility package, a ``futurize`` script that is similar to
-    ``python-modernize.py`` in intent and design (based on ``2to3``).
+	``python-modernize.py`` in intent and design. Both are based heavily on
+	``2to3``.
     
     Whereas ``python-modernize`` converts Py2 code into a common
     subset of Python 2 and 3, with ``six`` as a run-time dependency,
-    ``futurize`` converts either Py2 or Py3 code into a common subset of
-    Python 2 and 3, with ``future`` as a run-time dependency.    
+	``futurize`` converts either Py2 or Py3 code into (almost) standard Python
+	3 code, with ``future`` as a run-time dependency.    
 
     Because ``future`` incorporates ``six`` and also provides more
     backported Py3 behaviours, the code resulting from ``futurize``
