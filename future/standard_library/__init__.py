@@ -161,15 +161,15 @@ RENAMES = {
            # 'BaseHTTPServer': 'http.server',
            # 'SimpleHTTPServer': 'http.server',
            # 'CGIHTTPServer': 'http.server',
-           'future.standard_library.backports.test': 'test',  # primarily for renaming test_support to support
+           'future.standard_library.test': 'test',  # primarily for renaming test_support to support
            # 'commands': 'subprocess',
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
            # 'abc': 'collections.abc',   # for Py33
-           'future.standard_library.backports.html': 'html',
-           'future.standard_library.backports.http': 'http',
-           # 'future.standard_library.backports.urllib': 'newurllib',
-           'future.standard_library.backports._markupbase': '_markupbase',
+           'future.standard_library.html': 'html',
+           'future.standard_library.http': 'http',
+           # 'future.standard_library.urllib': 'newurllib',
+           'future.standard_library._markupbase': '_markupbase',
           }
 
 REPLACED_MODULES = {'test', 'urllib', 'pickle'}  # add dbm when we support it

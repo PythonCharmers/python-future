@@ -338,7 +338,7 @@ FAQ
 - https://github.com/python-excel/xlwt/pull/32
 
 The code also contains backports for several Py3 standard library modules
-under ``future/standard_library/backports/``.
+under ``future/standard_library/``.
 
 
 Other compatibility tools
