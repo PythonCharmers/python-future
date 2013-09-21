@@ -119,6 +119,8 @@ class newbytes(_builtin_bytes):
         
         if len(args) == 0:
             return super(newbytes, cls).__new__(cls)
+        elif isinstance(args[0], newbytes):
+            return args[0]
         elif isinstance(args[0], _builtin_bytes):
             value = args[0]
         elif isinstance(args[0], unicode):

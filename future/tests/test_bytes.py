@@ -52,6 +52,11 @@ class TestBytes(unittest.TestCase):
     def test_bytes_bytes(self):
         self.assertEqual(bytes(b'ABC'), b'ABC')
 
+    def test_bytes_is_bytes(self):
+        b = bytes(b'ABC')
+        self.assertTrue(bytes(b) is b)
+        self.assertEqual(repr(bytes(b)), "b'ABC'")
+
     def test_bytes_fromhex(self):
         self.assertEqual(bytes.fromhex('bb 0f'), b'\xbb\x0f')
         self.assertEqual(bytes.fromhex('1234'), b'\x124')
