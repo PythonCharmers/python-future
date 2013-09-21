@@ -1,6 +1,9 @@
 
-limitations of the ``future`` module
-=========================================
+limitations of the ``future`` module and differences between Py2 and Py3 that are not (yet) handled
+===================================================================================================
+
+- array.array.read() has been removed. This crops up in e.g. http.client
+- base64 module has no 'decodebytes'
 
 The following attributes on functions in Python 3 are not provided in Python
 2.7:
