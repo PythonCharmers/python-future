@@ -1,13 +1,9 @@
-r"""HTTP/1.1 client library
+"""HTTP/1.1 client library
 
-Refactored slightly from Python 2.7 httplib.py for python-future:
-* file renamed to http/client.py
-* These obsolete classes have been removed:
-   - HTTP
-   - HTTPS
-   - LineAndFileWrapper
-  and the FakeSocket function.
+From Python 3.3
 
+<intro stuff goes here>
+<other stuff, too>
 
 HTTPConnection goes through a number of "states", which define when a client
 may legally make another request or fetch the response for a particular
@@ -72,25 +68,22 @@ Req-started-unread-response    _CS_REQ_STARTED    <response_class>
 Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 """
 
-from __future__ import print_function
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+from future.builtins import *
 
-import collections
-from array import array
+import email.parser
+import email.message
+import io
 import os
 import socket
-from sys import py3kwarning
+import collections
+# Not yet backported:
+# from urllib.parse import urlsplit
+# Use the Py2.7 equivalent:
 from urlparse import urlsplit
+from array import array
 import warnings
-with warnings.catch_warnings():
-    if py3kwarning:
-        warnings.filterwarnings("ignore", ".*mimetools has been removed",
-                                DeprecationWarning)
-    import mimetools
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
 
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",
@@ -158,6 +151,9 @@ UNPROCESSABLE_ENTITY = 422
 LOCKED = 423
 FAILED_DEPENDENCY = 424
 UPGRADE_REQUIRED = 426
+PRECONDITION_REQUIRED = 428
+TOO_MANY_REQUESTS = 429
+REQUEST_HEADER_FIELDS_TOO_LARGE = 431
 
 # server error
 INTERNAL_SERVER_ERROR = 500
@@ -168,6 +164,7 @@ GATEWAY_TIMEOUT = 504
 HTTP_VERSION_NOT_SUPPORTED = 505
 INSUFFICIENT_STORAGE = 507
 NOT_EXTENDED = 510
+NETWORK_AUTHENTICATION_REQUIRED = 511
 
 # Mapping status codes to official W3C names
 responses = {
@@ -209,6 +206,9 @@ responses = {
     415: 'Unsupported Media Type',
     416: 'Requested Range Not Satisfiable',
     417: 'Expectation Failed',
+    428: 'Precondition Required',
+    429: 'Too Many Requests',
+    431: 'Request Header Fields Too Large',
 
     500: 'Internal Server Error',
     501: 'Not Implemented',
@@ -216,6 +216,7 @@ responses = {
     503: 'Service Unavailable',
     504: 'Gateway Timeout',
     505: 'HTTP Version Not Supported',
+    511: 'Network Authentication Required',
 }
 
 # maximal amount of data to read at one time in _safe_read
@@ -224,140 +225,98 @@ MAXAMOUNT = 1048576
 # maximal line length when calling readline().
 _MAXLINE = 65536
 
-class HTTPMessage(mimetools.Message):
+class HTTPMessage(email.message.Message, object):
+    # XXX The only usage of this method is in
+    # http.server.CGIHTTPRequestHandler.  Maybe move the code there so
+    # that it doesn't need to be part of the public API.  The API has
+    # never been defined so this could cause backwards compatibility
+    # issues.
 
-    def addheader(self, key, value):
-        """Add header for field key handling repeats."""
-        prev = self.dict.get(key)
-        if prev is None:
-            self.dict[key] = value
-        else:
-            combined = ", ".join((prev, value))
-            self.dict[key] = combined
+    def getallmatchingheaders(self, name):
+        """Find all header lines matching a given header name.
 
-    def addcontinue(self, key, more):
-        """Add more field data from a continuation line."""
-        prev = self.dict[key]
-        self.dict[key] = prev + "\n " + more
+        Look through the list of headers and find all lines matching a given
+        header name (and their continuation lines).  A list of the lines is
+        returned, without interpretation.  If the header does not occur, an
+        empty list is returned.  If the header occurs multiple times, all
+        occurrences are returned.  Case is not important in the header name.
 
-    def readheaders(self):
-        """Read header lines.
-
-        Read header lines up to the entirely blank line that terminates them.
-        The (normally blank) line that ends the headers is skipped, but not
-        included in the returned list.  If a non-header line ends the headers,
-        (which is an error), an attempt is made to backspace over it; it is
-        never included in the returned list.
-
-        The variable self.status is set to the empty string if all went well,
-        otherwise it is an error message.  The variable self.headers is a
-        completely uninterpreted list of lines contained in the header (so
-        printing them will reproduce the header exactly as it appears in the
-        file).
-
-        If multiple header fields with the same name occur, they are combined
-        according to the rules in RFC 2616 sec 4.2:
-
-        Appending each subsequent field-value to the first, each separated
-        by a comma. The order in which header fields with the same field-name
-        are received is significant to the interpretation of the combined
-        field value.
         """
-        # XXX The implementation overrides the readheaders() method of
-        # rfc822.Message.  The base class design isn't amenable to
-        # customized behavior here so the method here is a copy of the
-        # base class code with a few small changes.
+        name = name.lower() + ':'
+        n = len(name)
+        lst = []
+        hit = 0
+        for line in self.keys():
+            if line[:n].lower() == name:
+                hit = 1
+            elif not line[:1].isspace():
+                hit = 0
+            if hit:
+                lst.append(line)
+        return lst
 
-        self.dict = {}
-        self.unixfrom = ''
-        self.headers = hlist = []
-        self.status = ''
-        headerseen = ""
-        firstline = 1
-        startofline = unread = tell = None
-        if hasattr(self.fp, 'unread'):
-            unread = self.fp.unread
-        elif self.seekable:
-            tell = self.fp.tell
-        while True:
-            if tell:
-                try:
-                    startofline = tell()
-                except IOError:
-                    startofline = tell = None
-                    self.seekable = 0
-            line = self.fp.readline(_MAXLINE + 1)
-            if len(line) > _MAXLINE:
-                raise LineTooLong("header line")
-            if not line:
-                self.status = 'EOF in headers'
-                break
-            # Skip unix From name time lines
-            if firstline and line.startswith('From '):
-                self.unixfrom = self.unixfrom + line
-                continue
-            firstline = 0
-            if headerseen and line[0] in ' \t':
-                # XXX Not sure if continuation lines are handled properly
-                # for http and/or for repeating headers
-                # It's a continuation line.
-                hlist.append(line)
-                self.addcontinue(headerseen, line.strip())
-                continue
-            elif self.iscomment(line):
-                # It's a comment.  Ignore it.
-                continue
-            elif self.islast(line):
-                # Note! No pushback here!  The delimiter line gets eaten.
-                break
-            headerseen = self.isheader(line)
-            if headerseen:
-                # It's a legal header line, save it.
-                hlist.append(line)
-                self.addheader(headerseen, line[len(headerseen)+1:].strip())
-                continue
-            else:
-                # It's not a header line; throw it back and stop here.
-                if not self.dict:
-                    self.status = 'No headers'
-                else:
-                    self.status = 'Non-header line where header expected'
-                # Try to undo the read.
-                if unread:
-                    unread(line)
-                elif tell:
-                    self.fp.seek(startofline)
-                else:
-                    self.status = self.status + '; bad seek'
-                break
+def parse_headers(fp, _class=HTTPMessage):
+    """Parses only RFC2822 headers from a file pointer.
 
-class HTTPResponse(object):
+    email Parser wants to see strings rather than bytes.
+    But a TextIOWrapper around self.rfile would buffer too many bytes
+    from the stream, bytes which we later need to read as bytes.
+    So we read the correct bytes here, as bytes, for email Parser
+    to parse.
 
-    # strict: If true, raise BadStatusLine if the status line can't be
-    # parsed as a valid HTTP/1.0 or 1.1 status line.  By default it is
-    # false because it prevents clients from talking to HTTP/0.9
-    # servers.  Note that a response with a sufficiently corrupted
-    # status line will look like an HTTP/0.9 response.
+    """
+    headers = []
+    while True:
+        line = fp.readline(_MAXLINE + 1)
+        if len(line) > _MAXLINE:
+            raise LineTooLong("header line")
+        headers.append(line)
+        if line in (b'\r\n', b'\n', b''):
+            break
+    hstring = bytes(b'').join(headers).decode('iso-8859-1')
+                                          #  Try passing it as bytes to Py2.7 email.parser.parsestr
+                                          #  which expects a byte-string
+    try:
+        return email.parser.Parser(_class=_class).parsestr(hstring)
+    except UnicodeDecodeError:
+        import pdb
+        pdb.set_trace()
+        return email.parser.Parser(_class=_class).parsestr(hstring)
+
+_strict_sentinel = object()
+
+class HTTPResponse(io.RawIOBase, object):
 
     # See RFC 2616 sec 19.6 and RFC 1945 sec 6 for details.
 
-    def __init__(self, sock, debuglevel=0, strict=0, method=None, buffering=False):
-        if buffering:
-            # The caller won't be using any sock.recv() calls, so buffering
-            # is fine and recommended for performance.
-            self.fp = sock.makefile('rb')
-        else:
-            # The buffer size is specified as zero, because the headers of
-            # the response are read with readline().  If the reads were
-            # buffered the readline() calls could consume some of the
-            # response, which make be read via a recv() on the underlying
-            # socket.
-            self.fp = sock.makefile('rb', 0)
+    # The bytes from the socket object are iso-8859-1 strings.
+    # See RFC 2616 sec 2.2 which notes an exception for MIME-encoded
+    # text following RFC 2047.  The basic status line parsing only
+    # accepts iso-8859-1.
+
+    def __init__(self, sock, debuglevel=0, strict=_strict_sentinel, method=None, url=None):
+        # If the response includes a content-length header, we need to
+        # make sure that the client doesn't read more than the
+        # specified number of bytes.  If it does, it will block until
+        # the server times out and closes the connection.  This will
+        # happen if a self.fp.read() is done (without a size) whether
+        # self.fp is buffered or not.  So, no self.fp.read() by
+        # clients unless they know what they are doing.
+        self.fp = sock.makefile("rb")
         self.debuglevel = debuglevel
-        self.strict = strict
+        if strict is not _strict_sentinel:
+            warnings.warn("the 'strict' argument isn't supported anymore; "
+                "http.client now always assumes HTTP/1.x compliant servers.",
+                DeprecationWarning, 2)
         self._method = method
 
-        self.msg = None
+        # The HTTPResponse object is returned via urllib.  The clients
+        # of http and urllib expect different attributes for the
+        # headers.  headers is used here and supports urllib.  msg is
+        # provided as a backwards compatibility layer for http
+        # clients.
+
+        self.headers = self.msg = None
 
         # from the Status-Line of the response
         self.version = _UNKNOWN # HTTP-Version
@@ -370,10 +329,9 @@ class HTTPResponse(object):
         self.will_close = _UNKNOWN      # conn will close at end of response
 
     def _read_status(self):
-        # Initialize with Simple-Response defaults
-        line = self.fp.readline(_MAXLINE + 1)
+        line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
         if len(line) > _MAXLINE:
-            raise LineTooLong("header line")
+            raise LineTooLong("status line")
         if self.debuglevel > 0:
             print("reply:", repr(line))
         if not line:
@@ -381,23 +339,17 @@ class HTTPResponse(object):
             # sending a valid response.
             raise BadStatusLine(line)
         try:
-            [version, status, reason] = line.split(None, 2)
+            version, status, reason = line.split(None, 2)
         except ValueError:
             try:
-                [version, status] = line.split(None, 1)
+                version, status = line.split(None, 1)
                 reason = ""
             except ValueError:
-                # empty version will cause next test to fail and status
-                # will be treated as 0.9 response.
+                # empty version will cause next test to fail.
                 version = ""
-        if not version.startswith('HTTP/'):
-            if self.strict:
-                self.close()
-                raise BadStatusLine(line)
-            else:
-                # assume it's a Simple-Response from an 0.9 server
-                self.fp = LineAndFileWrapper(line, self.fp)
-                return "HTTP/0.9", 200, ""
+        if not version.startswith("HTTP/"):
+            self._close_conn()
+            raise BadStatusLine(line)
 
         # The status code is a three-digit number
         try:
@@ -409,7 +361,7 @@ class HTTPResponse(object):
         return version, status, reason
 
     def begin(self):
-        if self.msg is not None:
+        if self.headers is not None:
             # we've already started reading the response
             return
 
@@ -429,46 +381,40 @@ class HTTPResponse(object):
                 if self.debuglevel > 0:
                     print("header:", skip)
 
-        self.status = status
+        self.code = self.status = status
         self.reason = reason.strip()
-        if version == 'HTTP/1.0':
+        if version in ("HTTP/1.0", "HTTP/0.9"):
+            # Some servers might still return "0.9", treat it as 1.0 anyway
             self.version = 10
-        elif version.startswith('HTTP/1.'):
+        elif version.startswith("HTTP/1."):
             self.version = 11   # use HTTP/1.1 code for HTTP/1.x where x>=1
-        elif version == 'HTTP/0.9':
-            self.version = 9
         else:
             raise UnknownProtocol(version)
 
-        if self.version == 9:
-            self.length = None
-            self.chunked = 0
-            self.will_close = 1
-            self.msg = HTTPMessage(StringIO())
-            return
+        self.headers = self.msg = parse_headers(self.fp)
 
-        self.msg = HTTPMessage(self.fp, 0)
         if self.debuglevel > 0:
-            for hdr in self.msg.headers:
-                print("header:", hdr, end=' ')
-
-        # don't let the msg keep an fp
-        self.msg.fp = None
+            for hdr in self.headers:
+                print("header:", hdr, end=" ")
 
         # are we using the chunked-style of transfer encoding?
-        tr_enc = self.msg.getheader('transfer-encoding')
+        tr_enc = self.headers.get("transfer-encoding")
         if tr_enc and tr_enc.lower() == "chunked":
-            self.chunked = 1
+            self.chunked = True
             self.chunk_left = None
         else:
-            self.chunked = 0
+            self.chunked = False
 
         # will the connection close at the end of the response?
         self.will_close = self._check_close()
 
         # do we have a Content-Length?
         # NOTE: RFC 2616, S4.4, #3 says we ignore this if tr_enc is "chunked"
-        length = self.msg.getheader('content-length')
+        self.length = None
+        length = self.headers.get("content-length")
+
+         # are we using the chunked-style of transfer encoding?
+        tr_enc = self.headers.get("transfer-encoding")
         if length and not self.chunked:
             try:
                 self.length = int(length)
@@ -483,23 +429,23 @@ class HTTPResponse(object):
         # does the body have a fixed length? (of zero)
         if (status == NO_CONTENT or status == NOT_MODIFIED or
             100 <= status < 200 or      # 1xx codes
-            self._method == 'HEAD'):
+            self._method == "HEAD"):
             self.length = 0
 
         # if the connection remains open, and we aren't using chunked, and
         # a content-length was not provided, then assume that the connection
         # WILL close.
-        if not self.will_close and \
-           not self.chunked and \
-           self.length is None:
-            self.will_close = 1
+        if (not self.will_close and
+            not self.chunked and
+            self.length is None):
+            self.will_close = True
 
     def _check_close(self):
-        conn = self.msg.getheader('connection')
+        conn = self.headers.get("connection")
         if self.version == 11:
             # An HTTP/1.1 proxy is assumed to stay open unless
             # explicitly closed.
-            conn = self.msg.getheader('connection')
+            conn = self.headers.get("connection")
             if conn and "close" in conn.lower():
                 return True
             return False
@@ -508,7 +454,7 @@ class HTTPResponse(object):
         # connections, using rules different than HTTP/1.1.
 
         # For older HTTP, Keep-Alive indicates persistent connection.
-        if self.msg.getheader('keep-alive'):
+        if self.headers.get("keep-alive"):
             return False
 
         # At least Akamai returns a "Connection: Keep-Alive" header,
@@ -517,19 +463,40 @@ class HTTPResponse(object):
             return False
 
         # Proxy-Connection is a netscape hack.
-        pconn = self.msg.getheader('proxy-connection')
+        pconn = self.headers.get("proxy-connection")
         if pconn and "keep-alive" in pconn.lower():
             return False
 
         # otherwise, assume it will close
         return True
 
+    def _close_conn(self):
+        fp = self.fp
+        self.fp = None
+        fp.close()
+
     def close(self):
+        super().close() # set "closed" flag
         if self.fp:
-            self.fp.close()
-            self.fp = None
+            self._close_conn()
+
+    # These implementations are for the benefit of io.BufferedReader.
+
+    # XXX This class should probably be revised to act more like
+    # the "raw stream" that BufferedReader expects.
+
+    def flush(self):
+        super().flush()
+        if self.fp:
+            self.fp.flush()
+
+    def readable(self):
+        return True
+
+    # End of "raw stream" methods
 
     def isclosed(self):
+        """True if the connection is closed."""
         # NOTE: it is possible that we will not ever call self.close(). This
         #       case occurs when will_close is TRUE, length is None, and we
         #       read up to the last byte, but NOT past it.
@@ -538,93 +505,84 @@ class HTTPResponse(object):
         #          called, meaning self.isclosed() is meaningful.
         return self.fp is None
 
-    # XXX It would be nice to have readline and __iter__ for this, too.
-
     def read(self, amt=None):
         if self.fp is None:
-            return ''
+            return bytes(b"")
 
-        if self._method == 'HEAD':
-            self.close()
-            return ''
+        if self._method == "HEAD":
+            self._close_conn()
+            return bytes(b"")
 
-        if self.chunked:
-            return self._read_chunked(amt)
+        if amt is not None:
+            # Amount is given, so call base class version
+            # (which is implemented in terms of self.readinto)
+            return super(HTTPResponse, self).read(amt)
+        else:
+            # Amount is not given (unbounded read) so we must check self.length
+            # and self.chunked
 
-        if amt is None:
-            # unbounded read
+            if self.chunked:
+                return self._readall_chunked()
+
             if self.length is None:
                 s = self.fp.read()
             else:
                 try:
                     s = self._safe_read(self.length)
                 except IncompleteRead:
-                    self.close()
+                    self._close_conn()
                     raise
                 self.length = 0
-            self.close()        # we read everything
+            self._close_conn()        # we read everything
             return s
 
+    def readinto(self, b):
+        if self.fp is None:
+            return 0
+
+        if self._method == "HEAD":
+            self._close_conn()
+            return 0
+
+        if self.chunked:
+            return self._readinto_chunked(b)
+
         if self.length is not None:
-            if amt > self.length:
+            if len(b) > self.length:
                 # clip the read to the "end of response"
-                amt = self.length
+                b = memoryview(b)[0:self.length]
 
         # we do not use _safe_read() here because this may be a .will_close
         # connection, and the user is reading more bytes than will be provided
         # (for example, reading in 1k chunks)
-        s = self.fp.read(amt)
-        if not s:
+        n = self.fp.readinto(b)
+        if not n:
             # Ideally, we would raise IncompleteRead if the content-length
             # wasn't satisfied, but it might break compatibility.
-            self.close()
-        if self.length is not None:
-            self.length -= len(s)
+            self._close_conn()
+        elif self.length is not None:
+            self.length -= n
             if not self.length:
-                self.close()
+                self._close_conn()
+        return n
 
-        return s
+    def _read_next_chunk_size(self):
+        # Read the next chunk size from the file
+        line = self.fp.readline(_MAXLINE + 1)
+        if len(line) > _MAXLINE:
+            raise LineTooLong("chunk size")
+        i = line.find(b";")
+        if i >= 0:
+            line = line[:i] # strip chunk-extensions
+        try:
+            return int(line, 16)
+        except ValueError:
+            # close the connection as protocol synchronisation is
+            # probably lost
+            self._close_conn()
+            raise
 
-    def _read_chunked(self, amt):
-        assert self.chunked != _UNKNOWN
-        chunk_left = self.chunk_left
-        value = []
-        while True:
-            if chunk_left is None:
-                line = self.fp.readline(_MAXLINE + 1)
-                if len(line) > _MAXLINE:
-                    raise LineTooLong("chunk size")
-                i = line.find(';')
-                if i >= 0:
-                    line = line[:i] # strip chunk-extensions
-                try:
-                    chunk_left = int(line, 16)
-                except ValueError:
-                    # close the connection as protocol synchronisation is
-                    # probably lost
-                    self.close()
-                    raise IncompleteRead(''.join(value))
-                if chunk_left == 0:
-                    break
-            if amt is None:
-                value.append(self._safe_read(chunk_left))
-            elif amt < chunk_left:
-                value.append(self._safe_read(amt))
-                self.chunk_left = chunk_left - amt
-                return ''.join(value)
-            elif amt == chunk_left:
-                value.append(self._safe_read(amt))
-                self._safe_read(2)  # toss the CRLF at the end of the chunk
-                self.chunk_left = None
-                return ''.join(value)
-            else:
-                value.append(self._safe_read(chunk_left))
-                amt -= chunk_left
-
-            # we read the whole chunk, get another
-            self._safe_read(2)      # toss the CRLF at the end of the chunk
-            chunk_left = None
-
+    def _read_and_discard_trailer(self):
         # read and discard trailer up to the CRLF terminator
         ### note: we shouldn't have any trailers!
         while True:
@@ -635,13 +593,74 @@ class HTTPResponse(object):
                 # a vanishingly small number of sites EOF without
                 # sending the trailer
                 break
-            if line == '\r\n':
+            if line in (b'\r\n', b'\n', b''):
                 break
 
-        # we read everything; close the "file"
-        self.close()
+    def _readall_chunked(self):
+        assert self.chunked != _UNKNOWN
+        chunk_left = self.chunk_left
+        value = []
+        while True:
+            if chunk_left is None:
+                try:
+                    chunk_left = self._read_next_chunk_size()
+                    if chunk_left == 0:
+                        break
+                except ValueError:
+                    raise IncompleteRead(b''.join(value))
+            value.append(self._safe_read(chunk_left))
 
-        return ''.join(value)
+            # we read the whole chunk, get another
+            self._safe_read(2)      # toss the CRLF at the end of the chunk
+            chunk_left = None
+
+        self._read_and_discard_trailer()
+
+        # we read everything; close the "file"
+        self._close_conn()
+
+        return bytes(b'').join(value)
+
+    def _readinto_chunked(self, b):
+        assert self.chunked != _UNKNOWN
+        chunk_left = self.chunk_left
+
+        total_bytes = 0
+        mvb = memoryview(b)
+        while True:
+            if chunk_left is None:
+                try:
+                    chunk_left = self._read_next_chunk_size()
+                    if chunk_left == 0:
+                        break
+                except ValueError:
+                    raise IncompleteRead(bytes(b[0:total_bytes]))
+
+            if len(mvb) < chunk_left:
+                n = self._safe_readinto(mvb)
+                self.chunk_left = chunk_left - n
+                return total_bytes + n
+            elif len(mvb) == chunk_left:
+                n = self._safe_readinto(mvb)
+                self._safe_read(2)  # toss the CRLF at the end of the chunk
+                self.chunk_left = None
+                return total_bytes + n
+            else:
+                temp_mvb = mvb[0:chunk_left]
+                n = self._safe_readinto(temp_mvb)
+                mvb = mvb[n:]
+                total_bytes += n
+
+            # we read the whole chunk, get another
+            self._safe_read(2)      # toss the CRLF at the end of the chunk
+            chunk_left = None
+
+        self._read_and_discard_trailer()
+
+        # we read everything; close the "file"
+        self._close_conn()
+
+        return total_bytes
 
     def _safe_read(self, amt):
         """Read the number of bytes requested, compensating for partial reads.
@@ -657,34 +676,68 @@ class HTTPResponse(object):
         reading. If the bytes are truly not available (due to EOF), then the
         IncompleteRead exception can be used to detect the problem.
         """
-        # NOTE(gps): As of svn r74426 socket._fileobject.read(x) will never
-        # return less than x bytes unless EOF is encountered.  It now handles
-        # signal interruptions (socket.error EINTR) internally.  This code
-        # never caught that exception anyways.  It seems largely pointless.
-        # self.fp.read(amt) will work fine.
         s = []
         while amt > 0:
             chunk = self.fp.read(min(amt, MAXAMOUNT))
             if not chunk:
-                raise IncompleteRead(''.join(s), amt)
+                raise IncompleteRead(b''.join(s), amt)
             s.append(chunk)
             amt -= len(chunk)
-        return ''.join(s)
+        return bytes(b"").join(s)
+
+    def _safe_readinto(self, b):
+        """Same as _safe_read, but for reading into a buffer."""
+        total_bytes = 0
+        mvb = memoryview(b)
+        while total_bytes < len(b):
+            if MAXAMOUNT < len(mvb):
+                temp_mvb = mvb[0:MAXAMOUNT]
+                n = self.fp.readinto(temp_mvb)
+            else:
+                n = self.fp.readinto(mvb)
+            if not n:
+                raise IncompleteRead(bytes(mvb[0:total_bytes]), len(b))
+            mvb = mvb[n:]
+            total_bytes += n
+        return total_bytes
 
     def fileno(self):
         return self.fp.fileno()
 
     def getheader(self, name, default=None):
-        if self.msg is None:
+        if self.headers is None:
             raise ResponseNotReady()
-        return self.msg.getheader(name, default)
-
+        headers = self.headers.get_all(name) or default
+        if isinstance(headers, str) or not hasattr(headers, '__iter__'):
+            return headers
+        else:
+            try:
+                return ', '.join(headers)
+            except UnicodeDecodeError:
+                import pdb
+                pdb.set_trace()
+                
     def getheaders(self):
         """Return list of (header, value) tuples."""
-        if self.msg is None:
+        if self.headers is None:
             raise ResponseNotReady()
-        return self.msg.items()
+        return list(self.headers.items())
 
+    # We override IOBase.__iter__ so that it doesn't check for closed-ness
+
+    def __iter__(self):
+        return self
+
+    # For compatibility with old-style urllib responses.
+
+    def info(self):
+        return self.headers
+
+    def geturl(self):
+        return self.url
+
+    def getcode(self):
+        return self.status
 
 class HTTPConnection(object):
 
@@ -695,10 +748,13 @@ class HTTPConnection(object):
     default_port = HTTP_PORT
     auto_open = 1
     debuglevel = 0
-    strict = 0
 
-    def __init__(self, host, port=None, strict=None,
+    def __init__(self, host, port=None, strict=_strict_sentinel,
                  timeout=socket._GLOBAL_DEFAULT_TIMEOUT, source_address=None):
+        if strict is not _strict_sentinel:
+            warnings.warn("the 'strict' argument isn't supported anymore; "
+                "http.client now always assumes HTTP/1.x compliant servers.",
+                DeprecationWarning, 2)
         self.timeout = timeout
         self.source_address = source_address
         self.sock = None
@@ -711,8 +767,6 @@ class HTTPConnection(object):
         self._tunnel_headers = {}
 
         self._set_hostport(host, port)
-        if strict is not None:
-            self.strict = strict
 
     def set_tunnel(self, host, port=None, headers=None):
         """ Sets up the host and the port for the HTTP CONNECT Tunnelling.
@@ -735,7 +789,7 @@ class HTTPConnection(object):
                 try:
                     port = int(host[i+1:])
                 except ValueError:
-                    if host[i+1:] == "":  # http://foo.com:/ == http://foo.com/
+                    if host[i+1:] == "": # http://foo.com:/ == http://foo.com/
                         port = self.default_port
                     else:
                         raise InvalidURL("nonnumeric port: '%s'" % host[i+1:])
@@ -752,12 +806,16 @@ class HTTPConnection(object):
 
     def _tunnel(self):
         self._set_hostport(self._tunnel_host, self._tunnel_port)
-        self.send("CONNECT %s:%d HTTP/1.0\r\n" % (self.host, self.port))
-        for header, value in self._tunnel_headers.iteritems():
-            self.send("%s: %s\r\n" % (header, value))
-        self.send("\r\n")
-        response = self.response_class(self.sock, strict = self.strict,
-                                       method = self._method)
+        connect_str = "CONNECT %s:%d HTTP/1.0\r\n" % (self.host, self.port)
+        connect_bytes = connect_str.encode("ascii")
+        self.send(connect_bytes)
+        for header, value in self._tunnel_headers.items():
+            header_str = "%s: %s\r\n" % (header, value)
+            header_bytes = header_str.encode("latin-1")
+            self.send(header_bytes)
+        self.send(bytes(b'\r\n'))
+
+        response = self.response_class(self.sock, method=self._method)
         (version, code, message) = response._read_status()
 
         if code != 200:
@@ -769,17 +827,15 @@ class HTTPConnection(object):
             if len(line) > _MAXLINE:
                 raise LineTooLong("header line")
             if not line:
-                # for sites which EOF without sending trailer
+                # for sites which EOF without sending a trailer
                 break
-            if line == '\r\n':
+            if line in (b'\r\n', b'\n', b''):
                 break
-
 
     def connect(self):
         """Connect to the host and port specified in __init__."""
         self.sock = socket.create_connection((self.host,self.port),
                                              self.timeout, self.source_address)
-
         if self._tunnel_host:
             self._tunnel()
 
@@ -793,8 +849,6 @@ class HTTPConnection(object):
             self.__response = None
         self.__state = _CS_IDLE
 
-    # Stricter send() method backported from Py3.3. Avoids UnicodeDecodeErrors
-    # on Py2
     def send(self, data):
         """Send `data' to the server.
         ``data`` can be a string object, a bytes object, an array object, a
@@ -810,9 +864,8 @@ class HTTPConnection(object):
         if self.debuglevel > 0:
             print("send:", repr(data))
         blocksize = 8192
-        # The read() method of array.array in Py2 is a red herring;
-        # it is a deprecated redirector to array.fromfile that takes two args,
-        # not one. So we can't use it.
+        # Python 2.7 array objects have a read method which is incompatible
+        # with the 2-arg calling syntax below.
         if hasattr(data, "read") and not isinstance(data, array):
             if self.debuglevel > 0:
                 print("sendIng a read()able")
@@ -838,34 +891,13 @@ class HTTPConnection(object):
 
         try:
             self.sock.sendall(data)
-        except (TypeError, UnicodeDecodeError):
+        except TypeError:
             if isinstance(data, collections.Iterable):
                 for d in data:
                     self.sock.sendall(d)
             else:
                 raise TypeError("data should be a bytes-like object "
                                 "or an iterable, got %r" % type(data))
-
-    # Original send() method:
-    # def send(self, data):
-    #     """Send `data' to the server."""
-    #     if self.sock is None:
-    #         if self.auto_open:
-    #             self.connect()
-    #         else:
-    #             raise NotConnected()
-
-    #     if self.debuglevel > 0:
-    #         print "send:", repr(data)
-    #     blocksize = 8192
-    #     if hasattr(data,'read') and not isinstance(data, array):
-    #         if self.debuglevel > 0: print "sendIng a read()able"
-    #         datablock = data.read(blocksize)
-    #         while datablock:
-    #             self.sock.sendall(datablock)
-    #             datablock = data.read(blocksize)
-    #     else:
-    #         self.sock.sendall(data)
 
     def _output(self, s):
         """Add a line of output to the current request buffer.
@@ -880,19 +912,19 @@ class HTTPConnection(object):
         Appends an extra \\r\\n to the buffer.
         A message_body may be specified, to be appended to the request.
         """
-        self._buffer.extend((b"", b""))
-        msg = b"\r\n".join(self._buffer)
+        self._buffer.extend((bytes(b""), bytes(b"")))
+        msg = bytes(b"\r\n").join(self._buffer)
         del self._buffer[:]
         # If msg and message_body are sent in a single send() call,
         # it will avoid performance problems caused by the interaction
         # between delayed ack and the Nagle algorithm.
-        if isinstance(message_body, str):
+        if isinstance(message_body, bytes):
             msg += message_body
             message_body = None
         self.send(msg)
         if message_body is not None:
-            #message_body was not a string (i.e. it is a file) and
-            #we must run the risk of Nagle
+            # message_body was not a string (i.e. it is a file), and
+            # we must run the risk of Nagle.
             self.send(message_body)
 
     def putrequest(self, method, url, skip_host=0, skip_accept_encoding=0):
@@ -931,15 +963,16 @@ class HTTPConnection(object):
         if self.__state == _CS_IDLE:
             self.__state = _CS_REQ_STARTED
         else:
-            raise CannotSendRequest()
+            raise CannotSendRequest(self.__state)
 
         # Save the method we use, we need it later in the response phase
         self._method = method
         if not url:
             url = '/'
-        hdr = '%s %s %s' % (method, url, self._http_vsn_str)
+        request = '%s %s %s' % (method, url, self._http_vsn_str)
 
-        self._output(hdr)
+        # Non-ASCII characters should have been eliminated earlier
+        self._output(request.encode('ascii'))
 
         if self._http_vsn == 11:
             # Issue some standard headers for better HTTP/1.1 compliance
@@ -974,12 +1007,17 @@ class HTTPConnection(object):
                         host_enc = self.host.encode("ascii")
                     except UnicodeEncodeError:
                         host_enc = self.host.encode("idna")
-                    # Wrap the IPv6 Host Header with [] (RFC 2732)
-                    if host_enc.find(':') >= 0:
-                        host_enc = "[" + host_enc + "]"
+
+                    # As per RFC 273, IPv6 address should be wrapped with []
+                    # when used as Host header
+
+                    if self.host.find(':') >= 0:
+                        host_enc = b'[' + host_enc + b']'
+
                     if self.port == self.default_port:
                         self.putheader('Host', host_enc)
                     else:
+                        host_enc = host_enc.decode("ascii")
                         self.putheader('Host', "%s:%s" % (host_enc, self.port))
 
             # note: we are assuming that clients will not attempt to set these
@@ -1013,17 +1051,26 @@ class HTTPConnection(object):
         if self.__state != _CS_REQ_STARTED:
             raise CannotSendHeader()
 
-        hdr = '%s: %s' % (header, '\r\n\t'.join([str(v) for v in values]))
-        self._output(hdr)
+        if hasattr(header, 'encode'):
+            header = header.encode('ascii')
+        values = list(values)
+        for i, one_value in enumerate(values):
+            if hasattr(one_value, 'encode'):
+                values[i] = one_value.encode('latin-1')
+            elif isinstance(one_value, int):
+                values[i] = str(one_value).encode('ascii')
+        value = bytes(b'\r\n\t').join(values)
+        header = header + b': ' + value
+        self._output(header)
 
     def endheaders(self, message_body=None):
         """Indicate that the last header line has been sent to the server.
 
-        This method sends the request to the server.  The optional
-        message_body argument can be used to pass a message body
-        associated with the request.  The message body will be sent in
-        the same packet as the message headers if it is string, otherwise it is
-        sent as a separate packet.
+        This method sends the request to the server.  The optional message_body
+        argument can be used to pass a message body associated with the
+        request.  The message body will be sent in the same packet as the
+        message headers if it is a string, otherwise it is sent as a separate
+        packet.
         """
         if self.__state == _CS_REQ_STARTED:
             self.__state = _CS_REQ_SENT
@@ -1063,20 +1110,34 @@ class HTTPConnection(object):
 
         self.putrequest(method, url, **skips)
 
-        if body is not None and 'content-length' not in header_names:
+        if body is not None and ('content-length' not in header_names):
             self._set_content_length(body)
-        for hdr, value in headers.iteritems():
+        for hdr, value in headers.items():
             self.putheader(hdr, value)
+        if isinstance(body, str):
+            # RFC 2616 Section 3.7.1 says that text default has a
+            # default charset of iso-8859-1.
+            body = body.encode('iso-8859-1')
         self.endheaders(body)
 
-    def getresponse(self, buffering=False):
-        "Get the response from the server."
+    def getresponse(self):
+        """Get the response from the server.
+
+        If the HTTPConnection is in the correct state, returns an
+        instance of HTTPResponse or of whatever object is returned by
+        class the response_class variable.
+
+        If a request has not been sent or if a previous response has
+        not be handled, ResponseNotReady is raised.  If the HTTP
+        response indicates that the connection should be closed, then
+        it will be closed before the response is returned.  When the
+        connection is closed, the underlying socket is closed.
+        """
 
         # if a prior response has been completed, then forget about it.
         if self.__response and self.__response.isclosed():
             self.__response = None
 
-        #
         # if a prior response exists, then it must be completed (otherwise, we
         # cannot read this response's header to determine the connection-close
         # behavior)
@@ -1093,17 +1154,13 @@ class HTTPConnection(object):
         #                  isclosed() status to become true.
         #
         if self.__state != _CS_REQ_SENT or self.__response:
-            raise ResponseNotReady()
+            raise ResponseNotReady(self.__state)
 
-        args = (self.sock,)
-        kwds = {"strict":self.strict, "method":self._method}
         if self.debuglevel > 0:
-            args += (self.debuglevel,)
-        if buffering:
-            #only add this keyword if non-default, for compatibility with
-            #other response_classes.
-            kwds["buffering"] = True;
-        response = self.response_class(*args, **kwds)
+            response = self.response_class(self.sock, self.debuglevel,
+                                           method=self._method)
+        else:
+            response = self.response_class(self.sock, method=self._method)
 
         response.begin()
         assert response.will_close != _UNKNOWN
@@ -1123,6 +1180,9 @@ try:
 except ImportError:
     pass
 else:
+    ######################################
+    # We use the old HTTPSConnection class from Py2.7, because ssl.SSLContext
+    # doesn't exist in the Py2.7 stdlib
     class HTTPSConnection(HTTPConnection):
         "This class allows communication via SSL."
 
@@ -1147,6 +1207,60 @@ else:
             self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file)
 
     __all__.append("HTTPSConnection")
+
+
+    ######################################
+    # class HTTPSConnection(HTTPConnection):
+    #     "This class allows communication via SSL."
+
+    #     default_port = HTTPS_PORT
+
+    #     # XXX Should key_file and cert_file be deprecated in favour of context?
+
+    #     def __init__(self, host, port=None, key_file=None, cert_file=None,
+    #                  strict=_strict_sentinel, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+    #                  source_address=None, context=None, check_hostname=None):
+    #         super(HTTPSConnection, self).__init__(host, port, strict, timeout,
+    #                                               source_address)
+    #         self.key_file = key_file
+    #         self.cert_file = cert_file
+    #         if context is None:
+    #             # Some reasonable defaults
+    #             context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+    #             context.options |= ssl.OP_NO_SSLv2
+    #         will_verify = context.verify_mode != ssl.CERT_NONE
+    #         if check_hostname is None:
+    #             check_hostname = will_verify
+    #         elif check_hostname and not will_verify:
+    #             raise ValueError("check_hostname needs a SSL context with "
+    #                              "either CERT_OPTIONAL or CERT_REQUIRED")
+    #         if key_file or cert_file:
+    #             context.load_cert_chain(cert_file, key_file)
+    #         self._context = context
+    #         self._check_hostname = check_hostname
+
+    #     def connect(self):
+    #         "Connect to a host on a given (SSL) port."
+
+    #         sock = socket.create_connection((self.host, self.port),
+    #                                         self.timeout, self.source_address)
+
+    #         if self._tunnel_host:
+    #             self.sock = sock
+    #             self._tunnel()
+
+    #         server_hostname = self.host if ssl.HAS_SNI else None
+    #         self.sock = self._context.wrap_socket(sock,
+    #                                               server_hostname=server_hostname)
+    #         try:
+    #             if self._check_hostname:
+    #                 ssl.match_hostname(self.sock.getpeercert(), self.host)
+    #         except Exception:
+    #             self.sock.shutdown(socket.SHUT_RDWR)
+    #             self.sock.close()
+    #             raise
+
+    # __all__.append("HTTPSConnection")
 
 class HTTPException(Exception):
     # Subclasses that define an __init__ must call Exception.__init__
@@ -1210,4 +1324,3 @@ class LineTooLong(HTTPException):
 
 # for backwards compatibility
 error = HTTPException
-

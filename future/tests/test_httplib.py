@@ -30,24 +30,24 @@ class FakeSocket(object):
             text = text.encode('ascii')
         self.text = text
         self.fileclass = fileclass
-        self.data = b''
+        self.data = bytes(b'')
 
     def sendall(self, data):
         olddata = self.data
-        assert isinstance(olddata, type(b''))   # FIXME!
+        assert isinstance(olddata, type(b''))   # i.e. native string type. FIXME!
         if utils.PY3:
             self.data += data
         else:
             if isinstance(data, str):  # i.e. unicode
                 newdata = data.encode('ascii')
-            elif isinstance(data, type(b'')):   # FIXME!
+            elif isinstance(data, type(b'')):   # native string type. FIXME!
                 newdata = bytes(data)
             elif isinstance(data, bytes):
                 newdata = data
             elif isinstance(data, array.array):
                 newdata = data.tostring()
             else:
-                newdata = b''.join(chr(d) for d in data)
+                newdata = bytes(b'').join(chr(d) for d in data)
             self.data += newdata
 
     def makefile(self, mode, bufsize=None):
@@ -157,16 +157,16 @@ class HeaderTests(TestCase):
     def test_ipv6host_header(self):
         # Default host header on IPv6 transaction should wrapped by [] if
         # its actual IPv6 address
-        expected = b'GET /foo HTTP/1.1\r\nHost: [2001::]:81\r\n' \
-                   b'Accept-Encoding: identity\r\n\r\n'
+        expected = bytes(b'GET /foo HTTP/1.1\r\nHost: [2001::]:81\r\n') + \
+                   bytes(b'Accept-Encoding: identity\r\n\r\n')
         conn = client.HTTPConnection('[2001::]:81')
         sock = FakeSocket('')
         conn.sock = sock
         conn.request('GET', '/foo')
         self.assertTrue(sock.data.startswith(expected))
 
-        expected = b'GET /foo HTTP/1.1\r\nHost: [2001:102A::]\r\n' \
-                   b'Accept-Encoding: identity\r\n\r\n'
+        expected = bytes(b'GET /foo HTTP/1.1\r\nHost: [2001:102A::]\r\n') + \
+                   bytes(b'Accept-Encoding: identity\r\n\r\n')
         conn = client.HTTPConnection('[2001:102A::]')
         sock = FakeSocket('')
         conn.sock = sock
@@ -284,8 +284,8 @@ class BasicTest(TestCase):
             self.fail("Did not expect response from HEAD request")
 
     def test_send_file(self):
-        expected = (b'GET /foo HTTP/1.1\r\nHost: example.com\r\n'
-                    b'Accept-Encoding: identity\r\nContent-Length:')
+        expected = (bytes(b'GET /foo HTTP/1.1\r\nHost: example.com\r\n') +
+                    bytes(b'Accept-Encoding: identity\r\nContent-Length:'))
 
         # __file__ will usually be the .pyc, i.e. binary data
         with open(__file__, 'rb') as body:
@@ -297,20 +297,20 @@ class BasicTest(TestCase):
                     (sock.data[:len(expected)], expected))
 
     def test_send(self):
-        expected = b'this is a test this is only a test'
+        expected = bytes(b'this is a test this is only a test')
         conn = client.HTTPConnection('example.com')
         sock = FakeSocket(None)
         conn.sock = sock
         conn.send(expected)
         self.assertEqual(expected, sock.data)
-        sock.data = b''
+        sock.data = bytes(b'')
         if utils.PY3:
             mydata = array.array('b', expected)
         else:
             mydata = array.array(b'b', expected)
         conn.send(mydata)
         self.assertEqual(expected, sock.data)
-        sock.data = b''
+        sock.data = bytes(b'')
         conn.send(io.BytesIO(expected))
         self.assertEqual(expected, sock.data)
 
