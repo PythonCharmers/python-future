@@ -1679,22 +1679,25 @@ def modules_cleanup(oldmodules):
 # at the end of a test run.
 
 def threading_setup():
-    if _thread:
-        return _thread._count(), threading._dangling.copy()
-    else:
-        return 1, ()
+    # Disabled for python-future because threading._dangling does not exist
+    return 1, ()
+    # if _thread:
+    #     return _thread._count(), threading._dangling.copy()
+    # else:
+    #     return 1, ()
 
 def threading_cleanup(*original_values):
-    if not _thread:
-        return
-    _MAX_COUNT = 10
-    for count in range(_MAX_COUNT):
-        values = _thread._count(), threading._dangling
-        if values == original_values:
-            break
-        time.sleep(0.1)
-        gc_collect()
-    # XXX print a warning in case of failure?
+    return
+    # if not _thread:
+    #     return
+    # _MAX_COUNT = 10
+    # for count in range(_MAX_COUNT):
+    #     values = _thread._count(), threading._dangling
+    #     if values == original_values:
+    #         break
+    #     time.sleep(0.1)
+    #     gc_collect()
+    # # XXX print a warning in case of failure?
 
 def reap_threads(func):
     """Use this function when threads are being used.  This will
