@@ -276,12 +276,7 @@ def parse_headers(fp, _class=HTTPMessage):
     hstring = bytes(b'').join(headers).decode('iso-8859-1')
                                           #  Try passing it as bytes to Py2.7 email.parser.parsestr
                                           #  which expects a byte-string
-    try:
-        return email.parser.Parser(_class=_class).parsestr(hstring)
-    except UnicodeDecodeError:
-        import pdb
-        pdb.set_trace()
-        return email.parser.Parser(_class=_class).parsestr(hstring)
+    return email.parser.Parser(_class=_class).parsestr(hstring)
 
 _strict_sentinel = object()
 
@@ -711,12 +706,8 @@ class HTTPResponse(io.RawIOBase, object):
         if isinstance(headers, str) or not hasattr(headers, '__iter__'):
             return headers
         else:
-            try:
-                return ', '.join(headers)
-            except UnicodeDecodeError:
-                import pdb
-                pdb.set_trace()
-                
+            return ', '.join(headers)
+    
     def getheaders(self):
         """Return list of (header, value) tuples."""
         if self.headers is None:
