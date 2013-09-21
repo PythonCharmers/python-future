@@ -209,11 +209,17 @@ class newbytes(_builtin_bytes):
 
     @no_unicode(1)
     def split(self, sep=None, maxsplit=-1):
-        return newbytes(super(newbytes, self).split(sep, maxsplit=maxsplit))
+        # Py2 str.split() takes maxsplit as an optional parameter, not as a
+        # keyword argument as in Python 3 bytes.
+        parts = super(newbytes, self).split(sep, maxsplit)
+        return [newbytes(part) for part in parts]
 
     @no_unicode(1)
     def rsplit(self, sep=None, maxsplit=-1):
-        return newbytes(super(newbytes, self).rsplit(sep, maxsplit=maxsplit))
+        # Py2 str.rsplit() takes maxsplit as an optional parameter, not as a
+        # keyword argument as in Python 3 bytes.
+        parts = super(newbytes, self).rsplit(sep, maxsplit)
+        return [newbytes(part) for part in parts]
 
     @no_unicode(1)
     def partition(self, sep):
