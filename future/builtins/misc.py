@@ -50,4 +50,15 @@ else:
     int = builtins.int
     input = builtins.input
     open = builtins.open
+
     __all__ = []
+
+    # From Pandas, for Python versions 3.0 and 3.1 only. The callable()
+    # function was removed from Py3.0 and 3.1 and reintroduced into Py3.2.
+    try:
+        # callable reintroduced in later versions of Python
+        callable = callable
+    except NameError:
+        def callable(obj):
+            return any("__call__" in klass.__dict__ for klass in type(obj).__mro__)
+        __all__.append('callable')
