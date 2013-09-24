@@ -9,6 +9,10 @@ These come from several sources:
 
 This exports useful functions for 2/3 compatible code that are not
 builtins on Python 3:
+* bind_method: binds functions to classes
+* ``native_str_to_bytes`` and ``bytes_to_native_str``
+* ``native_str``: always equal to the native platform string object (because
+  this may be shadowed by imports from future.builtins)
 * lists: lrange(), lmap(), lzip(), lfilter()
 * iterable method compatibility: iteritems, iterkeys, itervalues
   * Uses the original method if available, otherwise uses items, keys, values.
@@ -16,7 +20,6 @@ builtins on Python 3:
     * text_type: unicode in Python 2, str in Python 3
     * binary_type: str in Python 2, bythes in Python 3
     * string_types: basestring in Python 2, str in Python 3
-* bind_method: binds functions to classes
 
 * bchr(c):
     Take an integer and make a 1-character byte string
@@ -161,17 +164,17 @@ else:
             return ''.join(s)
 
 if PY3:
-    def str_to_bytes(s, encoding='ascii'):
+    def native_str_to_bytes(s, encoding='ascii'):
         return s.encode(encoding)
 
-    def bytes_to_str(b, encoding='utf-8'):
+    def bytes_to_native_str(b, encoding='ascii'):
         return b.decode(encoding)
 else:
     # Python 2
-    def str_to_bytes(s, encoding='ascii'):
+    def native_str_to_bytes(s, encoding='ascii'):
         return s
 
-    def bytes_to_str(b, encoding='ascii'):
+    def bytes_to_native_str(b, encoding='ascii'):
         return b
 
 
@@ -366,6 +369,10 @@ def is_new_style(cls):
     return hasattr(cls, '__class__') and ('__dict__' in dir(cls) 
                                           or hasattr(cls, '__slots__'))
 
+# The native platform string. Useful because ``str`` is redefined on Py2 by
+# ``from future.builtins import *``.
+native_str = str
+
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'with_metaclass', 'bchr', 'bstr', 'bord',
@@ -374,5 +381,6 @@ __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'isidentifier', 'iteritems', 'iterkeys', 'itervalues',
            'viewitems', 'viewkeys', 'viewvalues',
            'bind_method', 'getexception',
-           'reraise', 'implements_iterator', 'get_next', 'is_new_style']
+           'reraise', 'implements_iterator', 'get_next', 'encode_filename',
+           'is_new_style', 'native_str']
 
