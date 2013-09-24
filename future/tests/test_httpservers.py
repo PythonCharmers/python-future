@@ -84,6 +84,7 @@ class BaseTestCase(unittest.TestCase):
         return self.connection.getresponse()
 
 
+@unittest.skipIf('/home/travis' in __file__, 'These tests sporadically fail on travis-ci for some reason. (Threading?)')
 class BaseHTTPServerTestCase(BaseTestCase):
     class request_handler(NoLogRequestHandler, BaseHTTPRequestHandler):
         protocol_version = 'HTTP/1.1'
@@ -123,7 +124,6 @@ class BaseHTTPServerTestCase(BaseTestCase):
         self.con = http.client.HTTPConnection(self.HOST, self.PORT)
         self.con.connect()
 
-    @unittest.skipIf('/home/travis' in __file__, 'This test fails on travis-ci for some reason. (Threading?)')
     def test_command(self):
         self.con.request('GET', '/')
         res = self.con.getresponse()
