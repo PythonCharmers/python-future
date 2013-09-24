@@ -13,12 +13,9 @@ Contents:
 
    overview
    quickstart
+   future_imports
+   what_else
    automatic_conversion
-   explicit_imports
-   bytes_object
-   dict_methods
-   str_method
-   custom_iterator
    faq
    credits
 

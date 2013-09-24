@@ -1,7 +1,8 @@
+.. _custom-iterators:
 Custom iterators
 ----------------
 
-If you define your own iterator, there is an incompatibility in the method name
+If you define your own iterators, there is an incompatibility in the method name
 across Py3 and Py2. On Python 3 it is ``__next__``, whereas on Python 2 it is
 ``next``.
 
@@ -22,5 +23,5 @@ identically on Py2::
     print(list(Upper('hello')))
     # prints ['H', 'E', 'L', 'L', 'O']
 
-On Python 3 this decorator does nothing (no-op).
+On Python 3 this decorator does nothing.
 
