@@ -140,7 +140,7 @@ On Python 3 these decorators are no-ops.
 More information:
 
  - :ref:`custom-iterators`
- - :ref:`custom-str-method`
+ - :ref:`custom-str-methods`
  - :ref:`metaclasses`
 
 
