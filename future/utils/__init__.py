@@ -60,6 +60,7 @@ On Python 3, this decorator is a no-op.
 
 from __future__ import unicode_literals
 
+import types
 import sys
 
 PY3 = sys.version_info[0] == 3
@@ -211,10 +212,11 @@ def isidentifier(s, dotted=False):
 
 
 def viewitems(obj, **kwargs):
-    """replacement for six's iteritems for Python2/3 compat
-       uses 'viewitems' if available and otherwise uses 'items'.
+    """
+    Function for iterating over dictionary items with the same set-like
+    behaviour on Py2.7 as on Py3.
 
-       Passes kwargs to method."""
+    Passes kwargs to method."""
     func = getattr(obj, "viewitems", None)
     if not func:
         func = obj.items
@@ -222,6 +224,11 @@ def viewitems(obj, **kwargs):
 
 
 def viewkeys(obj, **kwargs):
+    """
+    Function for iterating over dictionary keys with the same set-like
+    behaviour on Py2.7 as on Py3.
+
+    Passes kwargs to method."""
     func = getattr(obj, "viewkeys", None)
     if not func:
         func = obj.keys
@@ -229,7 +236,42 @@ def viewkeys(obj, **kwargs):
 
 
 def viewvalues(obj, **kwargs):
+    """
+    Function for iterating over dictionary values with the same set-like
+    behaviour on Py2.7 as on Py3.
+
+    Passes kwargs to method."""
     func = getattr(obj, "viewvalues", None)
+    if not func:
+        func = obj.values
+    return func(**kwargs)
+
+
+def iteritems(obj, **kwargs):
+    """Use this only if compatibility with Python versions before 2.7 is
+    required. Otherwise, prefer viewitems().
+    """
+    func = getattr(obj, "iteritems", None)
+    if not func:
+        func = obj.items
+    return func(**kwargs)
+
+
+def iterkeys(obj, **kwargs):
+    """Use this only if compatibility with Python versions before 2.7 is
+    required. Otherwise, prefer viewkeys().
+    """
+    func = getattr(obj, "iterkeys", None)
+    if not func:
+        func = obj.keys
+    return func(**kwargs)
+
+
+def itervalues(obj, **kwargs):
+    """Use this only if compatibility with Python versions before 2.7 is
+    required. Otherwise, prefer viewvalues().
+    """
+    func = getattr(obj, "itervalues", None)
     if not func:
         func = obj.values
     return func(**kwargs)
@@ -315,6 +357,12 @@ def encode_filename(filename):
 
 
 def is_new_style(cls):
+    """
+    Python 2.7 has both new-style and old-style classes. Old-style classes can
+    be pesky in some circumstances, such as when using inheritance.  Use this
+    function to test for whether a class is new-style. (Python 3 only has
+    new-style classes.)
+    """
     return hasattr(cls, '__class__') and ('__dict__' in dir(cls) 
                                           or hasattr(cls, '__slots__'))
 
@@ -324,6 +372,7 @@ __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'tobytes', 'str_to_bytes', 'bytes_to_str', 
            'lrange', 'lmap', 'lzip', 'lfilter',
            'isidentifier', 'iteritems', 'iterkeys', 'itervalues',
+           'viewitems', 'viewkeys', 'viewvalues',
            'bind_method', 'getexception',
-           'reraise', 'implements_iterator', 'get_next']
+           'reraise', 'implements_iterator', 'get_next', 'is_new_style']
 
