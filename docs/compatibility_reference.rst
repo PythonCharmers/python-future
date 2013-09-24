@@ -36,8 +36,8 @@ The Python 3 bytes object is substantially different from the Python 2 one::
     bytes objects print with a b'' prefix like b'ABCD' on Py3.
 
   * casting to Unicode
-	Python 3 often raises TypeErrors to guard against implicit type conversions
-	from byte-strings to Unicode.
+    Python 3 often raises TypeErrors to guard against implicit type conversions
+    from byte-strings to Unicode.
 
 - str
 -----
@@ -62,7 +62,7 @@ Use the following decorator in front of classes which define their own ``__str__
 @python_2_unicode_compatible
 class MyClass(object):
     def __str__(self):
-		return u'Unicode string here'
+        return u'Unicode string here'
 
 For more details of what this does, see here: http://link_here
 
@@ -85,7 +85,7 @@ To get the standard Py3 representation on Py2, you can import
 
 On Py3 or Py2:
     >>> from future.builtin_hacks import long
-	>>> 2**64
+    >>> 2**64
     18446744073709551616
 
 
@@ -99,7 +99,7 @@ iterator portably, apply the following decorator::
 @implements_iterator
 class MyIter(object):
     def __next__(self):
-		...
+        ...
 
 - metaclasses
 -------------
@@ -124,15 +124,15 @@ If ``d`` is a small dictionary, use of ``d.keys()``, ``d.values()`` and ``d.item
 If ``d`` is a large dictionary for which the memory overhead of list creation from these methods on Python 2 is significant, then use the ``viewkeys()`` etc. functions from ``future.utils``::
 
     from future.utils import viewkeys, viewvalues, viewitems
-	
-	for (k, v) in viewitems(hugedictionary):
-		...
+    
+    for (k, v) in viewitems(hugedictionary):
+        ...
 
-	These functions return view objects [ref] on both Py3 and Py2 which have set-like behaviour:
+    These functions return view objects [ref] on both Py3 and Py2 which have set-like behaviour:
 
     >>> d = {i**2: i for i in range(1000)}
-	>>> viewkeys(d) & set(range(0, 1000, 7))
-	
+    >>> viewkeys(d) & set(range(0, 1000, 7))
+    
 
 [ref]: http://www.python.org/dev/peps/pep-3106/
 

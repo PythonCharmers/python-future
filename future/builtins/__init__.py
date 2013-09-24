@@ -39,3 +39,4 @@ else:
     # No namespace pollution on Py3
     __all__ = []
 
+    # TODO: add 'callable' for Py3.0 and Py3.1?

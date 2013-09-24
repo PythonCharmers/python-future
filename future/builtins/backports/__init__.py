@@ -35,7 +35,7 @@ and::
     class VerboseList(list):
         def append(self, item):
             print('Adding an item')
-            super().append(item)    	# new simpler super() function
+            super().append(item)        # new simpler super() function
 
 Notes
 =====

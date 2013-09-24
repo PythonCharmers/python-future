@@ -10,7 +10,7 @@ And then, for example:
     class VerboseList(list):
         def append(self, item):
             print('Adding an item')
-            super().append(item)    	# new simpler super() function
+            super().append(item)        # new simpler super() function
 
 Importing this module on Python 3 has no effect.
 
