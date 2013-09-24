@@ -1,9 +1,9 @@
 .. _future-imports:
-Future imports
-==============
+Imports
+=======
 
-Standard rubric
-~~~~~~~~~~~~~~~
+future imports
+~~~~~~~~~~~~~~
 
 The imports to include at the top of every future-compatible Py3/2 module are::
 

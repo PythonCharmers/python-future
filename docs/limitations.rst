@@ -41,7 +41,7 @@ Also:
       b'\x01'[0] != 1
   
   ``futurize`` does not yet wrap all byte-string literals in a ``bytes()``
-  call. This is on the to-do list. See `:ref:bytes-object` for more information.
+  call. This is on the to-do list. See :ref:`bytes-object` for more information.
 
 
 Notes

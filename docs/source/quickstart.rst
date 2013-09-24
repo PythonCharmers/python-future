@@ -82,7 +82,7 @@ For more information, see :ref:`standard-library`.
 
 
 For examples of code fragments that run identically on Python 3 and 2, see
-`:ref:code-examples`.
+:ref:`code-examples`.
 
 For a more substantial example, you can see the included `backported http.client module
 <https://github.com/edschofield/python-future/blob/master/future/standard_library/http/client.py>`_,
@@ -139,8 +139,8 @@ On Python 3 these decorators are no-ops.
 
 More information:
 
- - `:ref:custom-iterators`
- - `:ref:custom-str-method`
- - `:ref:metaclasses`
+ - :ref:`custom-iterators`
+ - :ref:`custom-str-method`
+ - :ref:`metaclasses`
 
 

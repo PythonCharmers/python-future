@@ -10,7 +10,7 @@ substantially different.
 
 ``future`` contains a backport of the ``bytes`` object from Python 3 which
 passes most of the Python 3 tests for ``bytes``. (See
-`:ref:bytes-test-results`.) You can use it as follows::
+:ref:`bytes-test-results`.) You can use it as follows::
 
     from future.builtins import bytes
     
