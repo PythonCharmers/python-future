@@ -1,4 +1,5 @@
 .. _quickstart-guide:
+
 Quick-start guide
 =================
 
@@ -10,6 +11,7 @@ still have it run on Python 2.
 
 If you already have Python 3 code, you can also use ``future`` to offer Python 2
 compatibility with almost no extra work.
+
 
 If you are writing code from scratch
 ------------------------------------
@@ -137,10 +139,5 @@ Examples::
 On Python 3 these decorators are no-ops.
 
 
-More information:
-
- - :ref:`custom-iterators`
- - :ref:`custom-str-methods`
- - :ref:`metaclasses`
-
+For more information, see :ref:`what-else`.
 

@@ -1,26 +1,25 @@
 .. _overview:
+
 Overview
 ========
 
-The ``future`` module helps run Python 3.x-compatible code under Python 2
-with minimal code cruft.
+``future`` is the missing compatibility layer between Python 3 and Python 2. It
+allows you to maintain a single, clean Python 3.x-compatible codebase with
+minimal cruft and run it easily on Python 2 without further modification.
 
-The goal is to allow you to write clean, modern, forward-compatible
-Python 3 code today and to run it with minimal effort under Python 2
-alongside a Python 2 stack that may contain dependencies that have not
-yet been ported to Python 3.
-
-It is designed to be used as follows::
+It is designed to be used together with Python's built-in ``__future__``
+imports like this::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
     from future import standard_library
     from future.builtins import *
     
-followed by clean Python 3 code (with a few restrictions) that can run
-unchanged on Python 2.7.
+followed by standard Python 3 code, which then runs unchanged on both
+Python 3 and Python 2.7.
 
 .. _code-examples:
+
 Code examples
 -------------
 

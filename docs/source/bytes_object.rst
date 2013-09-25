@@ -1,4 +1,5 @@
 .. _bytes-object:
+
 bytes
 -----
 
@@ -55,6 +56,7 @@ strings.
 
 
 .. _bytes-test-results:
+
 Test results
 ~~~~~~~~~~~~
 

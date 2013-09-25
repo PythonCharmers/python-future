@@ -1,4 +1,5 @@
 .. _future-imports:
+
 Imports
 =======
 
@@ -40,6 +41,7 @@ These are all available in Python 2.6 and up, and mandatory in Python 3+.
 
 
 .. _explicit-imports:
+
 Explicit imports
 ~~~~~~~~~~~~~~~~
 If you prefer explicit imports, the explicit equivalent of the ``from

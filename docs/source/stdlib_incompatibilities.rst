@@ -1,4 +1,5 @@
 .. _stdlib-incompatibilities:
+
 Standard library incompatibilities
 ==================================
 
@@ -15,6 +16,7 @@ There are sources of incompatibility in the standard library between Python 3 an
 
 
 .. _stdlib-array-constructor:
+
 array.array()
 -------------
 
@@ -50,12 +52,14 @@ You can use the following code on both Python 3 and Python 2::
 
 
 .. _stdlib-array-read:
+
 array.array.read()
 ------------------
 This method has been removed in Py3. This crops up in e.g. porting ``http.client``.
 
 
 .. _stdlib-base64_decodebytes:
+
 base64.decodebytes()
 --------------------
 The ``base64`` module on Py2 has no 'decodebytes'. [TODO: describe workaround]

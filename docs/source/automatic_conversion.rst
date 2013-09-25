@@ -1,4 +1,5 @@
 .. _automatic-conversion:
+
 Automatic conversion with ``futurize``
 ======================================
 
@@ -17,6 +18,7 @@ Py3-style code semantics that (hopefully) runs unchanged on both Python 2
 and Python 3.
 
 .. _forwards-conversion:
+
 Forwards: 2 to both
 --------------------
 
@@ -41,6 +43,7 @@ into this code which runs on both Py2 and Py3::
 
 
 .. _backwards-conversion:
+
 Backwards: 3 to both
 --------------------
 
@@ -71,5 +74,14 @@ It also handles the following Python 3 features:
 - keyword-only arguments
 - metaclasses (using ``future.utils.with_metaclass``)
 
+
+How well does ``futurize`` work?
+--------------------------------
+It is incomplete and makes mistakes, like 2to3, on which it is based.
+
+``futurize`` is still useful to automate much of the boring repetitive
+text substitutions needed for the porting effort.
+
+Please report bugs on `GitHub <http://github.com/edschofield/python-future/>`_.
 
 

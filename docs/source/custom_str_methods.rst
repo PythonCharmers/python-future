@@ -1,4 +1,5 @@
 .. _custom-str-methods:
+
 Custom __str__ methods
 ----------------------
 
