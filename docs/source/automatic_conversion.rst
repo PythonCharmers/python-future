@@ -3,10 +3,11 @@
 Automatic conversion with ``futurize``
 ======================================
 
-The ``future`` source tree includes an experimental script called ``futurize``
-to aid in making either Python 2 code or Python 3 code compatible with both
-platforms using the ``future`` module. It is based on 2to3 and uses fixers from
-``lib2to3``, ``lib3to2``, and ``python-modernize``.
+The ``future`` source tree includes an experimental script called
+``futurize`` to aid in making either Python 2 code or Python 3 code
+compatible with both platforms using the :mod:`future` module. It is
+based on 2to3 and uses fixers from ``lib2to3``, ``lib3to2``, and
+``python-modernize``.
 
 For Python 2 code (the default), it runs the code through all the
 appropriate 2to3 fixers to turn it into valid Python 3 code, and then
@@ -42,6 +43,8 @@ into this code which runs on both Py2 and Py3::
     print('Hello', end=' ')
 
 
+To write out all the changes to your Python files that ``futurize`` suggests, use the ``-w`` flag.
+
 .. _backwards-conversion:
 
 Backwards: 3 to both
@@ -69,10 +72,12 @@ into this code which runs on both Py2 and Py3::
 Notice that in both cases ``futurize`` forces a new-style class and
 imports the renamed stdlib module under its Py3 name.
 
-It also handles the following Python 3 features:
+``futurize --from3`` also handles the following Python 3 features:
 
 - keyword-only arguments
-- metaclasses (using ``future.utils.with_metaclass``)
+- metaclasses (using :func:`~future.utils.with_metaclass`)
+- function annotations (PEP 3107)
+- extended tuple unpacking (PEP 3132)
 
 
 How well does ``futurize`` work?

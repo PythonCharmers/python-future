@@ -1,5 +1,5 @@
-FAQ
-***
+Frequently Asked Questions (FAQ)
+********************************
 
 Who is this for?
 ================

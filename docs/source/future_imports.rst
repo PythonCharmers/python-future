@@ -6,7 +6,8 @@ Imports
 future imports
 ~~~~~~~~~~~~~~
 
-The imports to include at the top of every future-compatible Py3/2 module are::
+The imports to include at the top of every future-compatible Py3/2
+module are::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
@@ -29,8 +30,8 @@ explicit form.)
 __future__ imports
 ~~~~~~~~~~~~~~~~~~
 
-For more information about the ``__future__`` imports, which are a standard
-feature of Python, see the following docs:
+For more information about the ``__future__`` imports, which are a
+standard feature of Python, see the following docs:
 
 - absolute_import: `PEP 328: Imports: Multi-Line and Absolute/Relative <http://www.python.org/dev/peps/pep-0328>`_
 - division: `PEP 238: Changing the Division Operator <http://www.python.org/dev/peps/pep-0238>`_
