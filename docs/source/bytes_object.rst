@@ -19,8 +19,8 @@ follows::
     b = bytes(b'ABCD')
 
 On Py2, this object inherits from Python 2's :class:`str`, but it
-enforces the much stricter separation from unicode strings that Python
-3's :class:`bytes` requires::
+enforces the same strict strict separation of unicode strings and byte
+strings as Python 3's :class:`bytes` object::
 
     >>> b + u'EFGH'      # TypeError
     Traceback (most recent call last):
@@ -41,8 +41,8 @@ behaviours to Python 3's :class:`bytes`::
     assert b.split(b'b') == [b'A', b'CD']
 
 Currently the easiest way to ensure identical use of byte-strings
-compatibly between Python 3 and 2 is to wrap all byte-string literals
-``b'...'`` in a :func:`~bytes()`` call, as follows::
+in a Py3/2 codebase is to wrap all byte-string literals ``b'...'`` in a
+:func:`~bytes` call, as follows::
     
     from future.builtins import *
     
