@@ -73,10 +73,10 @@ and Py2 strings.
         FAILED (failures=31, errors=55, skipped=1)
         --------------------------------------------------------------
     
-	Using ``future``'s backported :class:`bytes` object passes most of
-	the same Python 3.3 tests on Py2, except those requiring specific
-	wording in exception messages.
+    Using ``future``'s backported :class:`bytes` object passes most of
+    the same Python 3.3 tests on Py2, except those requiring specific
+    wording in exception messages.
     
-	See ``future/tests/test_bytes.py`` in the source for the actual set
-	of unit tests that are actually run.
+    See ``future/tests/test_bytes.py`` in the source for the actual set
+    of unit tests that are actually run.
 

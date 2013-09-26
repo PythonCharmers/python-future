@@ -135,8 +135,8 @@ until a hypothetical version 2.0.
     Yes, an example is the port of ``xlwt``, available `here
     <https://github.com/python-excel/xlwt/pull/32>`_.
     
-	The code also contains backports for several Py3 standard library
-	modules under ``future/standard_library/``.
+    The code also contains backports for several Py3 standard library
+    modules under ``future/standard_library/``.
 
 
 Relationship between ``future`` and other compatibility tools
