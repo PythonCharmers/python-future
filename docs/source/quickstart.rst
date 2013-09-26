@@ -12,6 +12,15 @@ You can use it to help to port your code from Python 2 to Python 3 today
 If you already have Python 3 code, you can also use :mod:`future` to
 offer Python 2 compatibility with almost no extra work.
 
+Installation
+------------
+
+To install the latest stable version, type::
+
+    pip install future
+
+If you would prefer the latest development version, it is available `here <http://github.com/edschofield/python-future">`_.
+
 
 If you are writing code from scratch
 ------------------------------------
@@ -24,7 +33,7 @@ Start each module with these lines::
     from future.builtins import *
 
 Then write standard Python 3 code. The :mod:`future` package will
-provide support for running your code on Python 2 mostly unchanged.
+provide support for running your code on Python 2.7 mostly unchanged.
 
 See :ref:`what-else` for more details.
 
