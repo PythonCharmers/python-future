@@ -2,9 +2,6 @@ future: clean single-source support for Python 3 and 2
 ======================================================
 
 
-.. image:: https://secure.travis-ci.org/edschofield/python-future.png?branch=master
-    :target: http://travis-ci.org/edschofield/python-future
-
 Overview
 --------
 
