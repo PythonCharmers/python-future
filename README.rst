@@ -93,7 +93,7 @@ and 2.7::
 Documentation
 -------------
 
-See http://pythonhosted.org/future.
+See http://python-future.org
 
 
 Credits
