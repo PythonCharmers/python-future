@@ -1,4 +1,4 @@
-.. _future-imports:
+.. _imports:
 
 Imports
 =======

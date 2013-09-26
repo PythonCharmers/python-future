@@ -1,4 +1,5 @@
 Contents:
+---------
 
 .. toctree::
    :maxdepth: 2
@@ -6,13 +7,13 @@ Contents:
    overview
    quickstart
    what_else
-   future_imports
+   imports
    automatic_conversion
    faq
    credits
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

@@ -6,7 +6,7 @@ Binding a method to a class
 Python 2 draws a distinction between bound and unbound methods, whereas
 in Python 3 this distinction is gone: unbound methods have been removed
 from the language. To bind a method to a class compatibly across Python
-3 and Python 2, you can use this helper function::
+3 and Python 2, you can use the :func:`bind_method` helper function::
 
     from future.utils import bind_method
     

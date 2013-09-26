@@ -3,9 +3,9 @@
 Custom iterators
 ----------------
 
-If you define your own iterators, there is an incompatibility in the method name
-across Py3 and Py2. On Python 3 it is ``__next__``, whereas on Python 2 it is
-``next``.
+If you define your own iterators, there is an incompatibility in the
+method name across Py3 and Py2. On Python 3 it is ``__next__``, whereas
+on Python 2 it is ``next``.
 
 Use the following decorator to allow Py3-style iterators to work
 identically on Py2::

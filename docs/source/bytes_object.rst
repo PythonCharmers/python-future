@@ -11,7 +11,8 @@ Python 2's :class:`str`, rather than a true implementation of the Python
 
 ``future`` contains a backport of the :mod:`bytes` object from Python 3
 which passes most of the Python 3 tests for :mod:`bytes`. (See
-:ref:`bytes-test-results`.) You can use it as follows::
+``future/tests/test_bytes.py`` in the source tree.) You can use it as
+follows::
 
     from future.builtins import bytes
     
@@ -56,25 +57,26 @@ code incompatibilities caused by the many differences between Py3 bytes
 and Py2 strings.
 
 
-.. _bytes-test-results:
-
-Test results
-~~~~~~~~~~~~
-
-For reference, when not using the backported :class:`bytes` object,
-running the Py3.3 ``bytes`` unit tests in ``test_bytes.py`` on Py2 (after
-fixing imports) gives this::
-
-    --------------------------------------------------------------
-    Ran 203 tests in 0.209s
+..
+    .. _bytes-test-results:
     
-    FAILED (failures=31, errors=55, skipped=1)
-    --------------------------------------------------------------
-
-The ``future`` backport of the Py3 :class:`bytes` object passes most of
-the Python 3 tests for ``bytes`` on Py2, except those requiring specific
-wording in exception messages.
-
-See ``future/tests/test_bytes.py`` in the source for the unit tests that
-are actually run.
+    bytes test results
+    ~~~~~~~~~~~~~~~~~~
+    
+    For reference, when using Py2's default :class:`bytes` (i.e.
+    :class:`str`), running the ``bytes`` unit tests from Python 3.3's
+    ``test_bytes.py`` on Py2 (after fixing imports) gives this::
+    
+        --------------------------------------------------------------
+        Ran 203 tests in 0.209s
+        
+        FAILED (failures=31, errors=55, skipped=1)
+        --------------------------------------------------------------
+    
+	Using ``future``'s backported :class:`bytes` object passes most of
+	the same Python 3.3 tests on Py2, except those requiring specific
+	wording in exception messages.
+    
+	See ``future/tests/test_bytes.py`` in the source for the actual set
+	of unit tests that are actually run.
 

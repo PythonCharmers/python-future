@@ -15,7 +15,7 @@ imports like this::
     from future.builtins import *
     
 followed by standard Python 3 code, which then runs unchanged on both
-Python 3 and Python 2.7. For examples, see the :ref:`overview`.
+Python 3 and Python 2. For examples, see the :ref:`overview`.
 
 
 .. include:: contents.rst.inc

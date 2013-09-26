@@ -82,11 +82,16 @@ imports the renamed stdlib module under its Py3 name.
 
 How well does ``futurize`` work?
 --------------------------------
-It is incomplete and makes mistakes, like 2to3, on which it is based.
 
-``futurize`` is still useful to automate much of the boring repetitive
-text substitutions needed for the porting effort.
+It is still incomplete and makes mistakes, like 2to3, on which it is
+based.
 
-Please report bugs on `GitHub <http://github.com/edschofield/python-future/>`_.
+Nevertheless, ``futurize`` is useful to automate much of the work
+of porting, particularly the boring repetitive text substitutions. It
+also helps to flag which parts of the code require attention.
 
+Please report bugs on `GitHub
+<http://github.com/edschofield/python-future/>`_.
+
+Contributions to ``futurize`` are particularly welcome! Please see :ref:`contributing`.
 

@@ -3,16 +3,23 @@
 Standard library incompatibilities
 ==================================
 
-There are sources of incompatibility in the standard library between Python 3 and Python 2.7. Here we will attempt to document these:
+Some standard library interfaces have changed in ways that require
+different code than normal Py3 code in order to achieve Py3/2
+compatibility.
+
+Here we will attempt to document these, together with known workarounds:
 
 .. csv-table:: Standard library incompatibilities
-   :header: "module", "object", "Description"
-   :widths: 15, 10, 30
+   :header: "module", "object / feature", "section"
+   :widths: 10, 20, 15
 
    ``array``, ``array`` constructor, :ref:`stdlib-array-constructor`
    ``array``, ``array.read()`` method, :ref:`stdlib-array-read`
-   ``base64``, ``decodebytes()`` function, :ref:`base64-decodebytes`
+   ``base64``, ``decodebytes()`` function, :ref:`stdlib-base64-decodebytes`
+   ``re``, ``ASCII`` mode, :ref:`stdlib-re-ASCII`
 
+To contribute to this, please email the python-porting list or send a
+pull request. See :ref:`contributing`.
 
 
 .. _stdlib-array-constructor:
@@ -58,9 +65,24 @@ array.array.read()
 This method has been removed in Py3. This crops up in e.g. porting ``http.client``.
 
 
-.. _stdlib-base64_decodebytes:
+.. _stdlib-base64-decodebytes:
 
 base64.decodebytes()
 --------------------
-The ``base64`` module on Py2 has no 'decodebytes'. [TODO: describe workaround]
+The ``base64`` module on Py2 has no 'decodebytes'.
+
+
+.. _stdlib-re-ASCII:
+
+re.ASCII
+--------
+Python 3 code using regular expressions sometimes looks like this (from
+:mod:`urllib.request`)::
+
+    re.compile(r":\d+$", re.ASCII)
+
+This enables 'ASCII mode' for regular expressions (see the docs `here
+<http://docs.python.org/3/library/re.html#re.ASCII>`_). Python 2's
+:mod:`re` module has no equivalent mode.
+
 
