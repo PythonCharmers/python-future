@@ -5,31 +5,52 @@ future: clean single-source support for Python 3 and 2
 .. image:: https://secure.travis-ci.org/edschofield/python-future.png?branch=master
     :target: http://travis-ci.org/edschofield/python-future
 
+Overview
+--------
 
-The ``future`` module helps run Python 3.x-compatible code under Python 2
-with minimal code cruft.
+``future`` is the missing compatibility layer between Python 3 and Python
+2. It allows you to maintain a single, clean Python 3.x-compatible
+codebase with minimal cruft and run it easily on Python 2 without further
+modification.
 
-The goal is to allow you to write clean, modern, forward-compatible
-Python 3 code today and to run it with minimal effort under Python 2
-alongside a Python 2 stack that may contain dependencies that have not
-yet been ported to Python 3.
+Features
+--------
 
-It is designed to be used as follows::
+-   backports or remappings for 15 builtins with different semantics on
+    Py3 versus Py2
+-   supports the reorganized Py3 standard library interface
+-   220+ unit tests
+-   clean on Py3: ``future`` imports and decorators have no effect on Py3
+    (and no namespace pollution)
+-   ``futurize`` script for automatic conversion from either Py2 or Py3
+    to a clean single-source codebase compatible with both Py3 and Py2
+-   a consistent set of utility functions and decorators selected from
+    Py2/3 compatibility interfaces from projects like six, IPython,
+    Jinja2, Django, and Pandas.
+
+
+Code examples
+-------------
+
+``future`` is designed to be imported at the top of each Python module
+together with Python's built-in ``__future__`` module like this::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
     from future import standard_library
     from future.builtins import *
     
-followed by clean Python 3 code (with a few restrictions) that can run
-unchanged on Python 2.7.
+followed by standard Python 3 code. The imports allow this code to run
+unchanged on Python 3 and Python 2.7.
 
-After the imports, this code runs identically on Python 3 and 2::
+For example, after these imports, this code runs identically on Python 3
+and 2.7::
     
     # Support for renamed standard library modules via import hooks
     from http.client import HttpConnection
     from itertools import filterfalse
-    from test import support
+    import html.parser
+    import queue
 
     # Backported Py3 bytes object
     b = bytes(b'ABCD')
@@ -39,6 +60,9 @@ After the imports, this code runs identically on Python 3 and 2::
     # b + u'EFGH'
     # bytes(b',').join([u'Fred', u'Bill'])
 
+    # Extra arguments for the open() function
+    f = open('japanese.txt', encoding='utf-8', errors='replace')
+    
     # New iterable range object with slicing support
     for i in range(10**15)[:10]:
         pass
@@ -69,138 +93,30 @@ After the imports, this code runs identically on Python 3 and 2::
     print('Hello ' + name)
 
 
-On Python 3, the import lines have zero effect (and zero namespace
-pollution).
+Documentation
+-------------
 
-On Python 2, ``from future import standard_library`` installs
-import hooks to allow renamed and moved standard library modules to be
-imported from their new Py3 locations.
-
-On Python 2, the ``from future.builtins import *`` line shadows builtins
-to provide their Python 3 semantics. (See below for the explicit import
-form.)
-
-
-Standard library reorganization
--------------------------------
-``future`` supports the standard library reorganization (PEP 3108)
-via import hooks, allowing almost all moved standard library modules to be
-accessed under their Python 3 names and locations in Python 2::
-    
-    from future import standard_library
-    
-    import socketserver
-    import queue
-    import configparser
-    import test.support
-    from collections import UserList
-    from itertools import filterfalse, zip_longest
-    # and other moved modules and definitions
-
-It also includes backports for these stdlib packages from Py3 that were
-heavily refactored versus Py2::
-    
-    import html, html.entities, html.parser
-    import http, http.client, http.server
-
-These currently are not supported, but we may support them in the
-future::
-    
-    import http.cookies, http.cookiejar
-    import urllib, urllib.parse, urllib.request, urllib.error
-
-
-Utilities
----------
-``future`` also provides some useful functions and decorators to ease backward
-compatibility with Py2 in the ``future.utils`` module. These are a selection
-of the most useful functions from ``six`` and various home-grown Py2/3
-compatibility modules from various Python projects, such as Jinja2, Pandas,
-IPython, and Django.
-
-Examples::
-
-    # Functions like print() expect __str__ on Py2 to return a byte
-    # string. This decorator maps the __str__ to __unicode__ on Py2 and
-    # defines __str__ to encode it as utf-8:
-
-    from future.utils import python_2_unicode_compatible
-
-    @python_2_unicode_compatible
-    class MyClass(object):
-        def __str__(self):
-            return u'Unicode string: \u5b54\u5b50'
-    a = MyClass()
-
-    # This then prints the Chinese characters for Confucius:
-    print(a)
-
-    # Iterators on Py3 require a __next__() method, whereas on Py2 this
-    # is called next(). This decorator allows Py3-style iterators to work
-    # identically on Py2:
-
-    @implements_iterator
-    class Upper(object):
-        def __init__(self, iterable):
-            self._iter = iter(iterable)
-        def __next__(self):                 # note the Py3 interface
-            return next(self._iter).upper()
-        def __iter__(self):
-            return self
-
-    print(list(Upper('hello')))
-    # prints ['H', 'E', 'L', 'L', 'O']
-
-On Python 3 these decorators are no-ops.
-
-
-Explicit imports
-----------------
-If you prefer explicit imports, the explicit equivalent of the ``from
-future.builtins import *`` line above is::
-
-    from future.builtins import (zip, map, filter,
-                                 ascii, oct, hex, chr, input,
-                                 bytes, range, super, round,
-                                 apply, cmp, coerce, execfile, file, long,
-                                 raw_input, reduce, reload, unicode, xrange,
-                                 str, StandardError)
-
-
-The internal API is currently as follows::
-    
-    from future.builtins.iterators import zip, map, filter
-    from future.builtins.misc import ascii, oct, hex, chr, input
-    from future.builtins.backports import bytes, range, super, round
-    from future.builtins.disabled import (apply, cmp, coerce,
-            execfile, file, long, raw_input, reduce, reload, unicode,
-            xrange, StandardError)
-    from future.builtins.str_is_unicode import str
-
-But please note that this internal API is still evolving rapidly.
-
-See the docstrings for each of these modules for more info::
-
-- future.standard_library
-- future.builtins
-- future.utils
+See http://pythonhosted.org/future.
 
 
 Credits
-=======
+-------
+
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
-:Others:  - ``future`` incorporates the ``six`` module by Benjamin
-            Peterson.
+:Others:  - The backported ``super()`` and ``range()`` functions are
+            derived from Ryan Kelly's ``magicsuper`` module and Dan
+            Crosta's ``xrange`` module.
           - The ``futurize`` script uses ``lib2to3``, ``lib3to2``, and
             parts of Armin Ronacher's ``python-modernize`` code.
-          - The backported ``super()`` and ``range()`` functions are
-            derived from Ryan Kelly's ``magicsuper`` module and Dan Crosta's
-            ``xrange`` module.
-          - The ``python_2_unicode_compatible`` decorator is from Django. The
-            ``implements_iterator`` and ``with_metaclass`` decorators are from
-            Jinja2.
+          - The ``python_2_unicode_compatible`` decorator is from
+            Django. The ``implements_iterator`` and ``with_metaclass``
+            decorators are from Jinja2.
+          - ``future`` incorporates the ``six`` module by Benjamin
+            Peterson as ``future.utils.six``.
+          - Documentation is generated using ``sphinx`` using an
+            adaptation of Armin Ronacher's stylesheets from Jinja2.
 
 
 Licensing
