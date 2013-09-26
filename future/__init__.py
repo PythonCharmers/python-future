@@ -35,6 +35,9 @@ After the imports, this code runs identically on Python 3 and 2::
     # b + u'EFGH'
     # bytes(b',').join([u'Fred', u'Bill'])
 
+    # Extra arguments for the open() function
+    f = open('japanese.txt', encoding='utf-8', errors='replace')
+    
     # New iterable range object with slicing support
     for i in range(10**15)[:10]:
         pass
