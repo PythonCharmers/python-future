@@ -19,7 +19,10 @@ Why upgrade to Python 3?
 ========================
 
 .. epigraph::
-"Python 2 is the next COBOL." - Alex Gaynor, at PyCon AU 2013
+
+   "Python 2 is the next COBOL."
+
+   -- Alex Gaynor, at PyCon AU 2013
 
 Python 2.7 is the end of the Python 2 line. (See `PEP 404
 <http://www.python.org/peps/pep-0404/>`_.) The language and standard
@@ -77,11 +80,11 @@ Consider this quote:
 
 .. epigraph::
 
-  "Duplication of effort is wasteful, and replacing the various
-  home-grown approaches with a standard feature usually ends up making
-  things more readable, and interoperable as well."
+   "Duplication of effort is wasteful, and replacing the various
+   home-grown approaches with a standard feature usually ends up making
+   things more readable, and interoperable as well."
 
-  -- Guido van Rossum (`blog post <http://www.artima.com/weblogs/viewpost.jsp?thread=86641>`_)
+   -- Guido van Rossum (`blog post <http://www.artima.com/weblogs/viewpost.jsp?thread=86641>`_)
 
 
 ``future`` also includes various Py2/3 compatibility tools in
