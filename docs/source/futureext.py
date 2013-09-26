@@ -42,12 +42,12 @@ class FutureStyle(Style):
     title = 'Future Style'
     default_style = ""
     styles = {
-        Comment:                    'italic #aaaaaa',
+        Comment:                    'italic #0B6A94',  # was: #0066ff',
         Comment.Preproc:            'noitalic #B11414',
         Comment.Special:            'italic #505050',
 
-        Keyword:                    'bold #B80000',
-        Keyword.Type:               '#808080',
+        Keyword:                    'bold #D15E27',
+        Keyword.Type:               '#D15E27',
 
         Operator.Word:              'bold #B80000',
 
