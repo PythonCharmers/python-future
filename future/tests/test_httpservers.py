@@ -491,6 +491,7 @@ class SocketlessRequestHandler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
 
+@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
 class RejectingSocketlessRequestHandler(SocketlessRequestHandler):
     def handle_expect_100(self):
         self.send_error(417)
