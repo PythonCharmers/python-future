@@ -695,17 +695,18 @@ class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
 
 
 def test_main(verbose=None):
-    cwd = os.getcwd()
-    try:
-        support.run_unittest(
-            BaseHTTPRequestHandlerTestCase,
-            BaseHTTPServerTestCase,
-            SimpleHTTPServerTestCase,
-            CGIHTTPServerTestCase,
-            SimpleHTTPRequestHandlerTestCase,
-        )
-    finally:
-        os.chdir(cwd)
+    if not '/home/travis' in __file__:
+        cwd = os.getcwd()
+        try:
+            support.run_unittest(
+                BaseHTTPRequestHandlerTestCase,
+                BaseHTTPServerTestCase,
+                SimpleHTTPServerTestCase,
+                CGIHTTPServerTestCase,
+                SimpleHTTPRequestHandlerTestCase,
+            )
+        finally:
+            os.chdir(cwd)
 
 if __name__ == '__main__':
     test_main()
