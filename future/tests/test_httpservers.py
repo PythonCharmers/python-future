@@ -672,6 +672,8 @@ class BaseHTTPRequestHandlerTestCase(unittest.TestCase):
         self.assertEqual(result[0], b'HTTP/1.1 400 Line too long\r\n')
         self.assertFalse(self.handler.get_called)
 
+
+@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
 class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
     """ Test url parsing """
     def setUp(self):
@@ -694,19 +696,27 @@ class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
         self.assertEqual(path, self.translated)
 
 
+class DummyTest(unittest.TestCase):
+    """
+    It might help on travis-ci to have at least one test being executed
+    for this module.
+    """
+    def test_nothing(self):
+        self.assertTrue(True)
+
+
 def test_main(verbose=None):
-    if not '/home/travis' in __file__:
-        cwd = os.getcwd()
-        try:
-            support.run_unittest(
-                BaseHTTPRequestHandlerTestCase,
-                BaseHTTPServerTestCase,
-                SimpleHTTPServerTestCase,
-                CGIHTTPServerTestCase,
-                SimpleHTTPRequestHandlerTestCase,
-            )
-        finally:
-            os.chdir(cwd)
+    cwd = os.getcwd()
+    try:
+        support.run_unittest(
+            BaseHTTPRequestHandlerTestCase,
+            BaseHTTPServerTestCase,
+            SimpleHTTPServerTestCase,
+            CGIHTTPServerTestCase,
+            SimpleHTTPRequestHandlerTestCase,
+        )
+    finally:
+        os.chdir(cwd)
 
 if __name__ == '__main__':
     test_main()
