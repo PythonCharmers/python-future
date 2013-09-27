@@ -31,7 +31,7 @@ language and better set of standard libraries than Python 2.x in almost
 every way.
 
 See `this page
-<http://http://pythonhosted.org/kitchen/unicode-frustrations.html>`_
+<http://pythonhosted.org/kitchen/unicode-frustrations.html>`_
 describing some of the problems with handling Unicode on Python 2 that
 Python 3 mostly solves. Python 3 is also cleaner, less warty, and easier
 to learn than Python 2.
