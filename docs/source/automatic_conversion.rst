@@ -91,7 +91,7 @@ of porting, particularly the boring repetitive text substitutions. It
 also helps to flag which parts of the code require attention.
 
 Please report bugs on `GitHub
-<http://github.com/edschofield/python-future/>`_.
+<https://github.com/PythonCharmers/python-future/>`_.
 
 Contributions to ``futurize`` are particularly welcome! Please see :ref:`contributing`.
 

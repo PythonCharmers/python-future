@@ -304,5 +304,5 @@ and stories of either success or failure with using it.
 Where is the repo?
 ------------------
 
-`<http://github.com/edschofield/python-future>`_.
+`<https://github.com/PythonCharmers/python-future>`_.
 

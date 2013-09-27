@@ -177,38 +177,42 @@ See the docstrings for each of these modules for more info::
 
 
 Automatic conversion
-====================
+--------------------
 An experimental script called ``futurize`` is included to aid in making
 either Python 2 code or Python 3 code compatible with both platforms
-using the ``future`` module. See
-https://github.com/edschofield/python-future#automatic-conversion.
+using the ``future`` module. See `<http://python-future.org/automatic_conversion.html>`_.
+
+
+Documentation
+-------------
+
+See http://python-future.org
 
 
 Credits
-=======
+-------
+
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
-:Others:  - ``future`` incorporates the ``six`` module by Benjamin
-            Peterson.
+:Others:  - The backported ``super()`` and ``range()`` functions are
+            derived from Ryan Kelly's ``magicsuper`` module and Dan
+            Crosta's ``xrange`` module.
           - The ``futurize`` script uses ``lib2to3``, ``lib3to2``, and
             parts of Armin Ronacher's ``python-modernize`` code.
-          - The backported ``super()`` and ``range()`` functions are
-            derived from Ryan Kelly's ``magicsuper`` module and Dan Crosta's
-            ``xrange`` module.
           - The ``python_2_unicode_compatible`` decorator is from
-            ``django.utils.encoding``.
+            Django. The ``implements_iterator`` and ``with_metaclass``
+            decorators are from Jinja2.
+          - ``future`` incorporates the ``six`` module by Benjamin
+            Peterson as ``future.utils.six``.
+          - Documentation is generated using ``sphinx`` using an
+            adaptation of Armin Ronacher's stylesheets from Jinja2.
 
 
 Licensing
 ---------
 Copyright 2013 Python Charmers Pty Ltd, Australia.
 The software is distributed under an MIT licence. See LICENSE.txt.
-
-
-FAQ
-===
-See https://github.com/edschofield/python-future#faq.
 
 """
 # pylint: disable=W0622,W0401

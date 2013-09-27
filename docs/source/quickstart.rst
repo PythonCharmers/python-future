@@ -19,7 +19,7 @@ To install the latest stable version, type::
 
     pip install future
 
-If you would prefer the latest development version, it is available `here <http://github.com/edschofield/python-future">`_.
+If you would prefer the latest development version, it is available `here <https://github.com/PythonCharmers/python-future">`_.
 
 
 If you are writing code from scratch
@@ -105,7 +105,7 @@ see :ref:`code-examples`.
 
 For a more substantial example, you can see the included `backported
 http.client module
-<https://github.com/edschofield/python-future/blob/master/future/standard_library/http/client.py>`_,
+<https://github.com/PythonCharmers/python-future/blob/master/future/standard_library/http/client.py>`_,
 but be warned: there is not much to see. It is mostly the same as the
 Python 3.3 standard library code.
     
