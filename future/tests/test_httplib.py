@@ -26,7 +26,7 @@ HOST = support.HOST
 
 class FakeSocket(object):
     def __init__(self, text, fileclass=io.BytesIO):
-        if isinstance(text, str):    # i.e. unicode string
+        if isinstance(text, type(u'')):    # i.e. unicode string
             text = text.encode('ascii')
         self.text = text
         self.fileclass = fileclass
@@ -38,7 +38,7 @@ class FakeSocket(object):
         if utils.PY3:
             self.data += data
         else:
-            if isinstance(data, str):  # i.e. unicode
+            if isinstance(data, type(u'')):  # i.e. unicode
                 newdata = data.encode('ascii')
             elif isinstance(data, type(b'')):   # native string type. FIXME!
                 newdata = bytes(data)
