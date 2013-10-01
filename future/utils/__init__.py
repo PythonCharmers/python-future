@@ -36,21 +36,23 @@ defines ``__unicode__`` and ``__str__`` methods consistently under Python
 a ``__str__`` method returning unicode text and apply the
 python_2_unicode_compatible decorator to the class like this::
     
-    from future.utils import python_2_unicode_compatible
+    >>> from future.utils import python_2_unicode_compatible
     
-    @python_2_unicode_compatible
-    class MyClass(object):
-        def __str__(self):
-            return u'Unicode string: \u5b54\u5b50'
+    >>> @python_2_unicode_compatible
+    ... class MyClass(object):
+    ...     def __str__(self):
+    ...         return u'Unicode string: \u5b54\u5b50'
     
-    a = MyClass()
+    >>> a = MyClass()
 
 Then, after this import:
-    from future.builtins.str_is_unicode import str
+
+    >>> from future.builtins import str
     
 the following is ``True`` on both Python 3 and 2::
     
-    str(a) == a.encode('utf-8').decode('utf-8')
+    >>> str(a) == a.encode('utf-8').decode('utf-8')
+    True
 
 and, on a Unicode-enabled terminal with the right fonts, these both print the
 Chinese characters for Confucius::
@@ -59,6 +61,7 @@ Chinese characters for Confucius::
     print(str(a))
 
 On Python 3, this decorator is a no-op.
+
 """
 
 from __future__ import unicode_literals
