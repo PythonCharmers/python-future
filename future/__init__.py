@@ -35,6 +35,16 @@ After the imports, this code runs identically on Python 3 and 2::
     # b + u'EFGH'
     # bytes(b',').join([u'Fred', u'Bill'])
 
+    # Backported Py3 str object
+    s = str(u'ABCD')
+    assert s != b'ABCD'
+    assert isinstance(s.encode('utf-8'), bytes)
+    assert isinstance(b.decode('utf-8'), str)
+    assert repr(s) == 'ABCD'      # consistent repr with Py3 (no u prefix)
+    # These raise TypeErrors:
+    # b'B' in s
+    # s.find(b'A')
+
     # Extra arguments for the open() function
     f = open('japanese.txt', encoding='utf-8', errors='replace')
     
@@ -54,10 +64,6 @@ After the imports, this code runs identically on Python 3 and 2::
     
     # These raise NameErrors:
     # apply(), cmp(), coerce(), reduce(), xrange(), etc.
-    
-    # This identity is restored. This is normally valid on Py3 and Py2,
-    # but 'from __future__ import unicode_literals' breaks it on Py2:
-    assert isinstance('happy', str)
     
     # The round() function behaves as it does in Python 3, using
     # "Banker's Rounding" to the nearest even last digit:
