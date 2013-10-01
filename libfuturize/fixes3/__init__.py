@@ -16,7 +16,7 @@ libfuturize_3fix_names = set([
                             # 'libfuturize.fixes3.fix_features',  # ?
                             'libfuturize.fixes3.fix_fullargspec',
                             # 'libfuturize.fixes3.fix_funcattrs',
-                            'libfuturize.fixes3.fix_future_builtins',   # adds "from future import *"
+                            'libfuturize.fixes3.fix_future_builtins',   # adds "from future.builtins import *"
                             'libfuturize.fixes3.fix_getcwd',
                             'libfuturize.fixes3.fix_imports',   # adds "from future import standard_library"
                             'libfuturize.fixes3.fix_imports2',
