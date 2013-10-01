@@ -1,3 +1,6 @@
+v0.6:
+  * Add backported Py3-like str object
+  * Remove support for deprecated form ``from future import *``: use ``from future.builtins import *`` instead
 v0.5.3:
   * Doc improvements
 v0.5.2:

@@ -215,29 +215,14 @@ Copyright 2013 Python Charmers Pty Ltd, Australia.
 The software is distributed under an MIT licence. See LICENSE.txt.
 
 """
-# pylint: disable=W0622,W0401
 
-from future import utils
-from future.builtins import *
-
-if not utils.PY3:
-    # Only shadow builtins on Py2; no new names
-    __all__ = ['filter', 'map', 'zip', 
-               'ascii', 'oct', 'hex', 'chr', 'int', 'input', 'open',
-               'apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
-               'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
-               'StandardError',
-               'str', 'bytes', 'round', 'input', 'range', 'super']
-
-else:
-    # No namespace pollution on Py3
-    __all__ = []
+# No namespace pollution
+__all__ = []
 
 __ver_major__ = 0
-__ver_minor__ = 5
-__ver_patch__ = 3
+__ver_minor__ = 6
+__ver_patch__ = 0
 __ver_sub__ = '-dev'
 __version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
                               __ver_patch__, __ver_sub__)
-
 
