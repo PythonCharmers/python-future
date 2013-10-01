@@ -1,21 +1,26 @@
+Comment to add to prevent Pylint from issuing warnings on ``from
+future.builtins import *``:
+
+    # pylint: disable=W0622,W0401
+
 INCOMPATIBLE: array.array()
 
 Python 2:
->>> array.array(b'b')
-array.array(b'b')
+	>>> array.array(b'b')
+	array.array(b'b')
 
->>> array.array(u'u')
-TypeError: must be char, not unicode
+	>>> array.array(u'u')
+	TypeError: must be char, not unicode
 
 Python 3:
->>> array.array(b'b')
-TypeError: must be a unicode character, not bytes
-
->>> array.array(u'b')
-array('b')
+	>>> array.array(b'b')
+	TypeError: must be a unicode character, not bytes
+	
+	>>> array.array(u'b')
+	array('b')
 
 Maybe use on Py2:
->>> array.array(u'b'.encode('ascii')) ??
+	>>> array.array(u'b'.encode('ascii')) ??
 
 Long int syntax (e.g. 1000000L) is incompatible with Py3.
 We probably shouldn't shadow int with long on Py2 because then isinstance(1, int) is False

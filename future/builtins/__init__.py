@@ -6,7 +6,6 @@ See the docs for these modules for more information::
 
 - future.builtins.iterators
 - future.builtins.backports
-- future.builtins.str_as_unicode
 - future.builtins.misc
 - future.builtins.disabled
 

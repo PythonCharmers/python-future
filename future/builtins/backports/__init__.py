@@ -1,10 +1,11 @@
 """
 This module contains backports of new or changed functionality from
-Python 3 to Python 2.
+Python 3 to Python 2:
 
-For example:
 - an implementation of Python 3's bytes object (pure Python subclass of
   Python 2's builtin 8-bit str type)
+- an implementation of Python 3's str object (pure Python subclass of
+  Python 2's builtin unicode type)
 - a backport of the range iterator from Py3 with slicing support
 - the magic zero-argument super() function
 - the new round() behaviour
@@ -12,7 +13,7 @@ For example:
 It is used as follows::
 
     from __future__ import division, absolute_import, print_function
-    from future.builtins.backports import bytes, range, super, round
+    from future.builtins.backports import str, bytes, range, super, round
 
 to bring in the new semantics for these functions from Python 3. And
 then, for example::
@@ -27,6 +28,22 @@ then, for example::
     # b.split(u'B')
     # bytes(b',').join([u'Fred', u'Bill'])
 
+
+    s = str(u'ABCD')
+
+    # These raise TypeErrors:
+    # s.join([b'Fred', b'Bill'])
+    # s.startswith(b'A')
+    # b'B' in s
+    # s.find(b'A')
+    # s.replace(u'A', b'a')
+
+    # This raises an AttributeError:
+    # s.decode('utf-8')
+
+    assert repr(s) == 'ABCD'      # consistent repr with Py3 (no u prefix)
+
+
     for i in range(10**11)[:10]:
         pass
 
@@ -36,6 +53,7 @@ and::
         def append(self, item):
             print('Adding an item')
             super().append(item)        # new simpler super() function
+
 
 Notes
 =====
@@ -51,23 +69,6 @@ super()
 -------
 ``super()`` is based on Ryan Kelly's ``magicsuper`` module. See the
 ``newsuper`` module docstring for more details.
-
-
-input()
--------
-Like the new ``input()`` function from Python 3 (without eval()), except
-that it returns bytes. Equivalent to Python 2's ``raw_input()``.
-
-Warning: By default, importing this module *removes* the old Python 2
-input() function entirely from ``__builtin__`` for safety. This is
-because forgetting to import the new ``input`` from ``future`` might
-otherwise lead to a security vulnerability (shell injection) on Python 2.
-
-To restore it, you can retrieve it yourself from
-``__builtin__._old_input``.
-
-Fortunately, ``input()`` seems to be seldom used in the wild in Python
-2...
 
 
 round()

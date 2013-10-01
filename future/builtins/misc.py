@@ -4,15 +4,32 @@ builtins into Py2. Has no effect on Py3.
 
 The builtin functions are:
 
-- ``ascii``
-- ``hex``
-- ``oct``
+- ``ascii`` (from Py2's future_builtins module)
+- ``hex`` (from Py2's future_builtins module)
+- ``oct`` (from Py2's future_builtins module)
 - ``chr`` (equivalent to ``unichr`` on Py2)
 - ``input`` (equivalent to ``raw_input`` on Py2)
 - ``open`` (equivalent to io.open on Py2)
 
 and:
 - ``int`` (currently unchanged)
+
+
+input()
+-------
+Like the new ``input()`` function from Python 3 (without eval()), except
+that it returns bytes. Equivalent to Python 2's ``raw_input()``.
+
+Warning: By default, importing this module *removes* the old Python 2
+input() function entirely from ``__builtin__`` for safety. This is
+because forgetting to import the new ``input`` from ``future`` might
+otherwise lead to a security vulnerability (shell injection) on Python 2.
+
+To restore it, you can retrieve it yourself from
+``__builtin__._old_input``.
+
+Fortunately, ``input()`` seems to be seldom used in the wild in Python
+2...
 
 """
 
@@ -40,15 +57,20 @@ if not utils.PY3:
     delattr(__builtin__, 'input')
 
     input = raw_input
-    
-    __all__ = ['ascii', 'oct', 'hex', 'chr', 'int', 'input', 'open']
+
+    # In case some code wants to import 'callable' portably from Py3.0/3.1:
+    callable = __builtin__.callable
+
+    __all__ = ['ascii', 'chr', 'hex', 'input', 'int', 'oct', 'open']
 
 else:
     import builtins
-    ascii, oct, hex = builtins.ascii, builtins.oct, builtins.hex
+    ascii = builtins.ascii
     chr = builtins.chr
-    int = builtins.int
+    hex = builtins.hex
     input = builtins.input
+    int = builtins.int
+    oct = builtins.oct
     open = builtins.open
 
     __all__ = []
@@ -57,8 +79,8 @@ else:
     # function was removed from Py3.0 and 3.1 and reintroduced into Py3.2.
     try:
         # callable reintroduced in later versions of Python
-        callable = callable
-    except NameError:
+        callable = builtins.callable
+    except AttributeError:
         def callable(obj):
             return any("__call__" in klass.__dict__ for klass in type(obj).__mro__)
         __all__.append('callable')
