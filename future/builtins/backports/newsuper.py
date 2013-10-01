@@ -1,5 +1,5 @@
 '''
-This module provides a super() function in Python 2 that mimics the
+This module provides a newsuper() function in Python 2 that mimics the
 behaviour of super() in Python 3. It is designed to be used as follows:
 
     from __future__ import division, absolute_import, print_function
@@ -40,7 +40,7 @@ _builtin_super = super
 
 _SENTINEL = object()
 
-def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
+def newsuper(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
     '''Like builtin super(), but capable of magic.
 
     This acts just like the builtin super() function, but if called
@@ -73,7 +73,7 @@ def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
         for typ in mro:
             #  Find the class that owns the currently-executing method.
             for meth in typ.__dict__.values():
-                if not isinstance(meth, type(super)):
+                if not isinstance(meth, type(newsuper)):
                     continue
                 if meth.func_code is f.f_code:
                     break   # Aha!  Found you.
@@ -92,12 +92,8 @@ def super(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
 def superm(*args, **kwds):
     f = sys._getframe(1)
     nm = f.f_code.co_name
-    return getattr(super(framedepth=2),nm)(*args, **kwds)
+    return getattr(newsuper(framedepth=2),nm)(*args, **kwds)
 
 
-if PY3:
-    import builtins
-    super = builtins.super
-    __all__ = []
-else:
-    __all__ = ['super']
+__all__ = ['newsuper']
+

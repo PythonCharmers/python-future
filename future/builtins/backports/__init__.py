@@ -174,8 +174,9 @@ if utils.PY3:
     super = builtins.super
     __all__ = []
 else:
-    from .newbytes import bytes
-    from .newrange import range
-    from .newsuper import super
-    from .newround import round
-    __all__ = ['bytes', 'range', 'super', 'round']
+    from .newstr import newstr as str
+    from .newbytes import newbytes as bytes
+    from .newrange import newrange as range
+    from .newround import newround as round
+    from .newsuper import newsuper as super
+    __all__ = ['str', 'bytes', 'range', 'round', 'super']

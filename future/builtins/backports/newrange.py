@@ -24,7 +24,7 @@ from collections import Sequence, Iterator
 from future.utils import PY3
 
 
-class range(Sequence):
+class newrange(Sequence):
     """
     Pure-Python backport of Python 3's range object.  See `the CPython
     documentation for details:
@@ -66,7 +66,7 @@ class range(Sequence):
         return 'range(%d, %d, %d)' % (self._start, self._stop, self._step)
 
     def __eq__(self, other):
-        return isinstance(other, range) and \
+        return isinstance(other, newrange) and \
                self._start == other._start and \
                self._stop == other._stop and \
                self._step == other._step
@@ -104,7 +104,7 @@ class range(Sequence):
         represents, but in the opposite order."""
         sign = self._step / abs(self._step)
         last = self._start + ((self._len - 1) * self._step)
-        return range(last, self._start - sign, -1 * self._step)
+        return newrange(last, self._start - sign, -1 * self._step)
 
     def __getitem__(self, index):
         """Return the element at position ``index`` in the sequence
@@ -135,7 +135,7 @@ class range(Sequence):
             stop = max(start, stop + self._len)
 
         if step is None or step > 0:
-            return range(start, stop, step or 1)
+            return newrange(start, stop, step or 1)
         else:
             rv = reversed(self)
             rv._step = step
@@ -148,7 +148,7 @@ class range(Sequence):
 
 
 class rangeiterator(Iterator):
-    """An iterator for an :class:`range`.
+    """An iterator for a :class:`range`.
     """
 
     def __init__(self, rangeobj):
@@ -174,10 +174,5 @@ class rangeiterator(Iterator):
             raise StopIteration()
         return self._last
 
-if PY3:
-    import builtins
-    range = builtins.range
-    __all__ = []
-else:
-    __all__ = ['range']
 
+__all__ = ['newrange']

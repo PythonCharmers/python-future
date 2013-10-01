@@ -1,6 +1,10 @@
-def round(number, ndigits=None):
+"""
+``python-future``: pure Python implementation of Python 3 round().
+"""
+ 
+def newround(number, ndigits=None):
     """
-    future module: pure Python implementation of Python 3 round().
+    See Python 3 documentation: uses Banker's Rounding.
  
     Delegates to the __round__ method if for some reason this exists.
  
@@ -8,25 +12,8 @@ def round(number, ndigits=None):
     0 digits). This returns an int when called with one argument,
     otherwise the same type as the number. ndigits may be negative.
  
-    See Python 3 documentation: uses Banker's Rounding:
- 
-    Examples:
-    >>> round(0.1250, 2)
-    0.12
-    >>> round(0.1350, 2)
-    0.14
-    >>> round(0.1251, 2)
-    0.13
-    >>> round(0.125000001, 2)
-    0.13
-    >>> round(10.1350, -1)
-    10.0
-    >>> round(10.1350, -2)
-    0.0
-    >>> round(123.5, 0)
-    124.0
-    >>> round(123.5)
-    124
+    See the test_round method in future/tests/test_builtins.py for
+    examples.
     """
     return_int = False
     if ndigits is None:
@@ -49,3 +36,5 @@ def round(number, ndigits=None):
     else:
         return float(d)
  
+
+__all__ = ['newround']

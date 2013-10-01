@@ -5,15 +5,15 @@ Note that io.open() is more complete but maybe slower. Even so, the
 completeness may be a better default. TODO: compare these
 """
 
-open_ = open
+_builtin_open = open
 
-class open(object):
+class newopen(object):
     """Wrapper providing key part of Python 3 open() interface.
 
     From IPython's py3compat.py module. License: BSD.
     """
     def __init__(self, fname, mode="r", encoding="utf-8"):
-        self.f = open_(fname, mode)
+        self.f = _builtin_open(fname, mode)
         self.enc = encoding
 
     def write(self, s):
