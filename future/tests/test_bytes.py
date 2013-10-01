@@ -240,5 +240,70 @@ class TestBytes(unittest.TestCase):
         with self.assertRaises(AttributeError) as cm:
             b.encode('utf-8')
 
+    def test_eq(self):
+        b = bytes(b'ABCD')
+        self.assertEqual(b, b'ABCD')
+        self.assertTrue(b == b'ABCD')
+        self.assertEqual(b'ABCD', b)
+        self.assertEqual(b, b)
+        self.assertFalse(b == b'ABC')
+        self.assertFalse(b == bytes(b'ABC'))
+        self.assertFalse(b == u'ABCD')
+        self.assertFalse(b == str('ABCD'))
+        # Fails:
+        # self.assertFalse(u'ABCD' == b)
+        self.assertFalse(str('ABCD') == b)
+
+        self.assertFalse(b == list(b))
+        self.assertFalse(b == str(b))
+
+    def test_ne(self):
+        b = bytes(b'ABCD')
+        self.assertFalse(b != b)
+        self.assertFalse(b != b'ABCD')
+        self.assertTrue(b != b'ABCDEFG')
+        self.assertTrue(b != bytes(b'ABCDEFG'))
+        self.assertTrue(b'ABCDEFG' != b)
+
+        # self.assertTrue(b'ABCD' != u'ABCD')
+        self.assertTrue(b != u'ABCD')
+        self.assertTrue(b != u'ABCDE')
+        self.assertTrue(bytes(b'') != str(u''))
+        self.assertTrue(str(u'') != bytes(b''))
+
+        self.assertTrue(b != list(b))
+        self.assertTrue(b != str(b))
+
+    def test_hash(self):
+        d = {}
+        b = bytes(b'ABCD')
+        native_b = b'ABCD'
+        s = str('ABCD')
+        native_s = u'ABCD'
+        d[b] = b
+        d[s] = s
+        self.assertEqual(len(d), 2)
+        # This should overwrite d[s] but not d[b]:
+        d[native_s] = native_s
+        self.assertEqual(len(d), 2)
+        # This should overwrite d[native_s] again:
+        d[s] = s
+        self.assertEqual(len(d), 2)
+        self.assertEqual(set(d.keys()), {s, b})
+    
+    @unittest.expectedFailure
+    def test_hash_with_native_types(self):
+        # Warning: initializing the dict with native Py2 types throws the
+        # hashing out:
+        d = {u'ABCD': u'ABCD', b'ABCD': b'ABCD'}
+        # On Py2: len(d) == 1
+        b = bytes(b'ABCD')
+        s = str('ABCD')
+        d[s] = s
+        d[b] = b
+        # Fails:
+        self.assertEqual(len(d) > 1)
+
+
 if __name__ == '__main__':
     unittest.main()

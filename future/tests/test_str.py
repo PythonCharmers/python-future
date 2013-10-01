@@ -212,6 +212,50 @@ class TestStr(unittest.TestCase):
         with self.assertRaises(TypeError) as cm:
             s.endswith([b'D'])
 
+    def test_split(self):
+        s = str('ABCD')
+        self.assertEqual(s.split('B'), ['A', 'CD'])
+        with self.assertRaises(TypeError) as cm:
+            s.split(b'B')
+
+    def test_rsplit(self):
+        s = str('ABCD')
+        self.assertEqual(s.rsplit('B'), ['A', 'CD'])
+        with self.assertRaises(TypeError) as cm:
+            s.rsplit(b'B')
+
+    def test_eq_bytes(self):
+        s = str('ABCD')
+        b = bytes(b'ABCD')
+        self.assertNotEqual(s, b)
+        self.assertNotEqual(str(''), bytes(b''))
+        native_s = 'ABCD'
+        self.assertNotEqual(b, native_s)
+        # Fails:
+        # self.assertNotEqual(native_s, b)
+        native_b = b'ABCD'
+        self.assertNotEqual(native_b, s)
+        self.assertNotEqual(s, native_b)
+
+    def test_eq(self):
+        s = str('ABCD')
+        self.assertEqual('ABCD', s)
+        self.assertEqual(s, 'ABCD')
+        self.assertEqual(s, s)
+        self.assertTrue(u'ABCD' == s)
+        self.assertFalse(b'ABCD' == s)
+        self.assertFalse(bytes(b'ABCD') == s)
+
+    def test_ne(self):
+        s = str('ABCD')
+        self.assertNotEqual('A', s)
+        self.assertNotEqual(s, 'A')
+        self.assertNotEqual(s, 5)
+        self.assertNotEqual(2.7, s)
+        self.assertNotEqual(s, ['A', 'B', 'C', 'D'])
+        self.assertTrue(b'ABCD' != s)
+        self.assertTrue(bytes(b'ABCD') != s)
+
 
 if __name__ == '__main__':
     unittest.main()
