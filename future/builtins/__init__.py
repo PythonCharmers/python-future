@@ -14,14 +14,12 @@ See the docs for these modules for more information::
 
 from future.builtins.iterators import (filter, map, zip)
 from future.builtins.misc import (ascii, oct, hex, chr, int, input, open)
-from future.builtins.backports import (bytes, round, range, super)
-from future.builtins.str_is_unicode import str  
+from future.builtins.backports import (str, bytes, range, round, super)
 from future import utils
 
-# We don't import the python_2_unicode_compatible decorator; only names
-# that shadow the builtins on Py2.
-
 if not utils.PY3:
+    # We only import names that shadow the builtins on Py2. No other namespace
+    # pollution on Py2.
     from future.builtins.disabled import (apply, cmp, coerce,
             execfile, file, long, raw_input, reduce, reload, unicode,
             xrange, StandardError)
@@ -29,10 +27,9 @@ if not utils.PY3:
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
                'ascii', 'oct', 'hex', 'chr', 'int', 'input', 'open',
-               'bytes', 'round', 'range', 'super',
+               'str', 'bytes', 'range', 'round', 'super',
                'apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
                'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
-               'str',
                'StandardError']
 
 else:

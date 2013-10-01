@@ -85,14 +85,93 @@ TODO:
 
 from __future__ import division, absolute_import, print_function
 
+import functools
+
 from future import utils
+
+
+# Some utility functions to enforce strict type-separation of unicode str and
+# bytes:
+def disallow_types(argnums, disallowed_types):
+    """
+    A decorator that raises a TypeError if any of the given arguments is
+    of the given type (e.g. bytes or unicode string).
+
+    Example use:
+
+    >>> class newbytes(object):
+    ...     @disallow_types([1], [unicode])
+    ...     def __add__(self, other):
+    ...          pass
+
+    >>> newbytes('1234') + u'1234'      #doctest: +IGNORE_EXCEPTION_DETAIL 
+    Traceback (most recent call last):
+      ...
+    TypeError: can't concat 'bytes' to (unicode) str
+    """
+
+    def decorator(function):
+        @functools.wraps(function)
+        def wrapper(*args, **kwargs):
+            errmsg = "argument can't be {}"
+            for (argnum, mytype) in zip(argnums, disallowed_types):
+                if isinstance(args[argnum], mytype):
+                    raise TypeError(errmsg.format(mytype))
+            return function(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def no(mytype, argnums=(1,)):
+    """
+    A shortcut for the disallow_types decorator that disallows only one type
+    (in any position in argnums).
+
+    Example use:
+
+    >>> class newstr(object):
+    ...     @no(bytes)
+    ...     def __add__(self, other):
+    ...          pass
+
+    >>> newstr(u'1234') + b'1234'     #doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+      ...
+    TypeError: argument can't be bytes
+    """
+    if isinstance(argnums, int):
+        argnums = (argnums,)
+    disallowed_types = [mytype] * len(argnums)
+    return disallow_types(argnums, disallowed_types)
+
+
+def issubset(list1, list2):
+    """
+    Examples:
+
+    >>> issubset([], [65, 66, 67])
+    True
+    >>> issubset([65], [65, 66, 67])
+    True
+    >>> issubset([65, 66], [65, 66, 67])
+    True
+    >>> issubset([65, 67], [65, 66, 67])
+    False
+    """
+    n = len(list1)
+    for startpos in range(len(list2) - n + 1):
+        if list2[startpos:startpos+n] == list1:
+            return True
+    return False
+
 
 if utils.PY3:
     import builtins
+    str = builtins.str
     bytes = builtins.bytes
     range = builtins.range
-    super = builtins.super
     round = builtins.round
+    super = builtins.super
     __all__ = []
 else:
     from .newbytes import bytes

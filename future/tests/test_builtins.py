@@ -2,8 +2,8 @@
 Tests to make sure the behaviour of the builtins is sensible and correct.
 """
 
-from __future__ import absolute_import, division
-from future.builtins import int, round, input
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import *
 from future.utils import PY3
 
 import textwrap
@@ -14,7 +14,7 @@ import unittest
 class TestBuiltins(unittest.TestCase):
     def test_int(self):
         """
-        Redefining ``int`` blindly to ``long`` on Py2 would make this
+        Redefining ``int`` to ``long`` on Py2 would make this
         test fail:
         """
         self.assertTrue(isinstance(0, int))
@@ -29,8 +29,9 @@ class TestBuiltins(unittest.TestCase):
 
     def test_round(self):
         """
-        Note that the Python 2.x round() function fails these tests. The Python 3.x
-        round() function passes them, as should our custom round() function.
+        Note that the Python 2.x round() function fails these tests. The
+        Python 3.x round() function passes them, as should our custom
+        round() function.
         """
         self.assertEqual(round(0.1250, 2), 0.12)
         self.assertEqual(round(0.1350, 2), 0.14)
@@ -48,20 +49,17 @@ class TestBuiltins(unittest.TestCase):
 
     @unittest.skip('negative ndigits not implemented yet')
     def test_round_negative_ndigits(self):
+        self.assertEqual(round(10.1350, 0), 10.0)
         self.assertEqual(round(10.1350, -1), 10.0)
         self.assertEqual(round(10.1350, -2), 0.0)
+        self.assertEqual(round(10.1350, -3), 0.0)
 
-    @unittest.skip('negative exponents not implemented yet')
-    def test_round_negative_exponents(self):
         self.assertEqual(round(12.35, -1), 10.0)
         self.assertEqual(round(12.35, -2), 0.0)
         self.assertEqual(round(123.5, -1), 120.0)
         self.assertEqual(round(123.5, -2), 100.0)
         self.assertEqual(round(123.551, -2), 100.0)
         self.assertEqual(round(123.551, -3), 0.0)
-
-        self.assertEqual(round(10.1350, -1), 10.0)
-        self.assertEqual(round(10.1350, -2), 0.0)
 
     def test_input(self, interpreter='python2'):
         """

@@ -4,7 +4,7 @@ Tests for the backported bytes object
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
-from future.builtins import bytes
+from future.builtins import *
 from future import utils
 
 import unittest
@@ -229,6 +229,16 @@ class TestBytes(unittest.TestCase):
         # self.assertIn('bytes', exc)
         # self.assertIn('tuple', exc)
         
+    def test_decode(self):
+        b = bytes(b'abcd')
+        s = b.decode('utf-8')
+        self.assertEqual(s, 'abcd')
+        self.assertTrue(isinstance(s, str))
+
+    def test_encode(self):
+        b = bytes(b'abcd')
+        with self.assertRaises(AttributeError) as cm:
+            b.encode('utf-8')
 
 if __name__ == '__main__':
     unittest.main()
