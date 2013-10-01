@@ -58,6 +58,8 @@ class newstr(unicode):
     """
     A backport of the Python 3 str object to Py2
     """
+    no_convert_msg = "Can't convert '{}' object to str implicitly"
+
     def __new__(cls, *args, **kwargs):
         """
         From the Py3 str docstring:
@@ -166,22 +168,23 @@ class newstr(unicode):
     def startswith(self, prefix, *args):
         if isinstance(prefix, Iterable):
             for thing in prefix:
-                if isinstance(thing, bytes):
-                    raise TypeError("Can't convert 'bytes' object to str implicitly")
+                if not isinstance(thing, unicode):
+                    raise TypeError(self.no_convert_msg.format(type(thing)))
         return super(newstr, self).startswith(prefix, *args)
 
     @no(bytes, 1)
     def endswith(self, prefix, *args):
         if isinstance(prefix, Iterable):
             for thing in prefix:
-                if isinstance(thing, bytes):
-                    raise TypeError("Can't convert 'bytes' object to str implicitly")
+                if not isinstance(thing, unicode):
+                    raise TypeError(self.no_convert_msg.format(type(thing)))
         return super(newstr, self).endswith(prefix, *args)
 
-    @no(bytes, 1)
     def split(self, sep=None, maxsplit=-1):
         # Py2 unicode.split() takes maxsplit as an optional parameter,
         # not as a keyword argument as in Python 3 str.
+        if sep is not None and not isinstance(sep, unicode):
+            raise TypeError(self.no_convert_msg.format(type(sep)))
         parts = super(newstr, self).split(sep, maxsplit)
         return [newstr(part) for part in parts]
 
@@ -189,6 +192,8 @@ class newstr(unicode):
     def rsplit(self, sep=None, maxsplit=-1):
         # Py2 unicode.rsplit() takes maxsplit as an optional parameter,
         # not as a keyword argument as in Python 3 str.
+        if sep is not None and not isinstance(sep, unicode):
+            raise TypeError(self.no_convert_msg.format(type(sep)))
         parts = super(newstr, self).rsplit(sep, maxsplit)
         return [newstr(part) for part in parts]
 
@@ -213,15 +218,18 @@ class newstr(unicode):
             raise ValueError('substring not found')
         return pos
 
-    # def find(self, sub, *args):
-    #     errmsg = "Can't convert '{}' object to newstr implicitly"
-    #     if not isinstance(sub, unicode):
-    #         raise TypeError(errmsg.format(type(sub)))
-    #     try:
-    #         return super(newstr, self).index(sub, *args)
-    #     except ValueError:
-    #         raise ValueError('substring not found')
+    def __eq__(self, other):
+        if isinstance(other, unicode):
+            return super(newstr, self).__eq__(other)
+        else:
+            return False
+
+    def __ne__(self, other):
+        if isinstance(other, unicode):
+            return super(newstr, self).__ne__(other)
+        else:
+            return True
+
 
 
 __all__ = ['newstr']
-

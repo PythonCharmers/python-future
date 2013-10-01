@@ -204,5 +204,17 @@ class newbytes(_builtin_bytes):
         except ValueError:
             raise ValueError('substring not found')
 
+    def __eq__(self, other):
+        if isinstance(other, _builtin_bytes):
+            return super(newbytes, self).__eq__(other)
+        else:
+            return False
+
+    def __ne__(self, other):
+        if isinstance(other, _builtin_bytes):
+            return super(newbytes, self).__ne__(other)
+        else:
+            return True
+
 
 __all__ = ['newbytes']

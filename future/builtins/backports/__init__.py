@@ -95,8 +95,29 @@ from future import utils
 # bytes:
 def disallow_types(argnums, disallowed_types):
     """
-    A decorator that raises a TypeError if any of the given arguments is
-    of the given type (e.g. bytes or unicode string).
+    A decorator that raises a TypeError if any of the given numbered
+    arguments is of the corresponding given type (e.g. bytes or unicode
+    string).
+
+    For example:
+
+        @disallow_types([0, 1], [unicode, bytes])
+        def f(a, b):
+            pass
+
+    raises a TypeError when f is called if a unicode object is passed as
+    `a` or a bytes object is passed as `b`.
+
+    This also skips over keyword arguments, so 
+
+        @disallow_types([0, 1], [unicode, bytes])
+        def g(a, b=None):
+            pass
+
+    doesn't raise an exception if g is called with only one argument a,
+    e.g.:
+
+        g(b'Byte string')
 
     Example use:
 
@@ -116,6 +137,9 @@ def disallow_types(argnums, disallowed_types):
         def wrapper(*args, **kwargs):
             errmsg = "argument can't be {}"
             for (argnum, mytype) in zip(argnums, disallowed_types):
+                # Only restrict kw args only if they are passed:
+                if len(args) <= argnum:
+                    break
                 if isinstance(args[argnum], mytype):
                     raise TypeError(errmsg.format(mytype))
             return function(*args, **kwargs)
