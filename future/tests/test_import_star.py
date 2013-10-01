@@ -29,22 +29,8 @@ new_locals = set(copy.copy(locals())) - new_names - original_locals
 new_globals = set(copy.copy(globals())) - new_names - original_globals - \
               {'new_locals'}
 
-# from future.tests import (test_common_iterators,
-#                           test_super,
-#                           test_standard_library_renames,
-#                           test_str_is_unicode)
 
-# class TestImportStar(test_common_iterators.TestIterators,
-#                      test_super.TestSuper,
-#                      test_standard_library_renames.TestStandardLibraryRenames,
-#                      test_str_is_unicode.TestStrIsUnicode):
-
-# @unittest.skip('Cannot use "from future import *" within unittest module')
 class TestImportStar(unittest.TestCase):
-    """
-    It would be nice if we could implement this as a subclass as above, to
-    avoid duplication. How?
-    """
     def test_namespace_pollution_locals(self):
         if utils.PY3:
             self.assertEqual(len(new_locals), 0,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tests for the future.str_is_unicode module
+Tests for the backported class:`str` class.
 """
 
 from __future__ import absolute_import, unicode_literals, print_function

@@ -223,12 +223,11 @@ from future.builtins import *
 if not utils.PY3:
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
-               'ascii', 'oct', 'hex', 'chr', 'int',
+               'ascii', 'oct', 'hex', 'chr', 'int', 'input', 'open',
                'apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
                'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
                'StandardError',
-               'bytes', 'round', 'input', 'range', 'super',
-               'str']
+               'str', 'bytes', 'round', 'input', 'range', 'super']
 
 else:
     # No namespace pollution on Py3
