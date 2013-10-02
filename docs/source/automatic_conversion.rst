@@ -69,7 +69,8 @@ into this code which runs on both Py2 and Py3::
         pass
     print('Hello', end=None)
 
-Notice that in both cases ``futurize`` forces a new-style class and
+Notice that in both this case and when converting from Py2 above,
+``futurize`` creates a new-style class on both Python versions and
 imports the renamed stdlib module under its Py3 name.
 
 ``futurize --from3`` also handles the following Python 3 features:

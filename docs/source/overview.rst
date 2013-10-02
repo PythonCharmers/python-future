@@ -16,7 +16,7 @@ Features
 -   backports or remappings for 15 builtins with different semantics on
     Py3 versus Py2
 -   supports the reorganized Py3 standard library interface
--   220+ unit tests
+-   260+ unit tests
 -   clean on Py3: ``future`` imports and decorators have no effect on Py3
     (and no namespace pollution)
 -   ``futurize`` script for automatic conversion from either Py2 or Py3

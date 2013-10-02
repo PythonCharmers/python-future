@@ -19,7 +19,7 @@ To install the latest stable version, type::
 
     pip install future
 
-If you would prefer the latest development version, it is available `here <https://github.com/PythonCharmers/python-future">`_.
+If you would prefer the latest development version, it is available `here <https://github.com/PythonCharmers/python-future>`_.
 
 
 If you are writing code from scratch
