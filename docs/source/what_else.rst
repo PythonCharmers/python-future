@@ -14,6 +14,7 @@ Essentials
 
 .. include:: bytes_object.rst
 .. include:: str_object.rst
+.. include:: open_function.rst
 .. include:: dict_methods.rst
 .. include:: custom_str_methods.rst
 .. include:: custom_iterators.rst
