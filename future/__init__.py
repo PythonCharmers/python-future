@@ -85,96 +85,12 @@ On Python 2, the ``from future.builtins import *`` line shadows builtins
 to provide their Python 3 semantics. (See below for the explicit import
 form.)
 
+Documentation
+-------------
 
-Standard library reorganization
--------------------------------
-``future`` supports the standard library reorganization (PEP 3108)
-via import hooks, allowing almost all moved standard library modules to be
-accessed under their Python 3 names and locations in Python 2::
-    
-    from future import standard_library
-    
-    import socketserver
-    import queue
-    import configparser
-    import test.support
-    from collections import UserList
-    from itertools import filterfalse, zip_longest
-    # and other moved modules and definitions
+See: http://python-future.org
 
-It also includes backports for these stdlib packages from Py3 that were
-heavily refactored versus Py2::
-    
-    import html, html.entities, html.parser
-    import http, http.client, http.server
-
-These currently are not supported, but we may support them in the
-future::
-    
-    import http.cookies, http.cookiejar
-    import urllib, urllib.parse, urllib.request, urllib.error
-
-
-Utilities
----------
-``future`` also provides some useful functions and decorators to ease backward
-compatibility with Py2 in the ``future.utils`` module. These are a selection
-of the most useful functions from ``six`` and various home-grown Py2/3
-compatibility modules from various Python projects, such as Jinja2, Pandas,
-IPython, and Django.
-
-Examples::
-
-    # Functions like print() expect __str__ on Py2 to return a byte
-    string. This decorator maps the __str__ to __unicode__ on Py2 and
-    defines __str__ to encode it as utf-8:
-
-    from future.utils import python_2_unicode_compatible
-
-    @python_2_unicode_compatible
-    class MyClass(object):
-        def __str__(self):
-            return u'Unicode string: \u5b54\u5b50'
-    a = MyClass()
-
-    # This then prints the Chinese characters for Confucius:
-    print(a)
-
-
-    # Iterators on Py3 require a __next__() method, whereas on Py2 this
-    # is called next(). This decorator allows Py3-style iterators to work
-    # identically on Py2:
-
-    @implements_iterator
-    class Upper(object):
-        def __init__(self, iterable):
-            self._iter = iter(iterable)
-        def __next__(self):                 # note the Py3 interface
-            return next(self._iter).upper()
-        def __iter__(self):
-            return self
-
-    print(list(Upper('hello')))
-    # prints ['H', 'E', 'L', 'L', 'O']
-
-On Python 3 these decorators are no-ops.
-
-
-Explicit imports
-----------------
-If you prefer explicit imports, the explicit equivalent of the ``from
-future.builtins import *`` line above is::
-    
-    from future.builtins.iterators import (filter, map, zip)
-    from future.builtins.misc import (ascii, chr, hex, input, int, oct, open)
-    from future.builtins.backports import (bytes, range, round, str, super)
-    from future.builtins.disabled import (apply, cmp, coerce, execfile,
-            file, long, raw_input, reduce, reload, unicode,
-            xrange, StandardError)
-
-But please note that the internal API is still evolving.
-
-See the docstrings for each of these modules for more info::
+Also see the docstrings for each of these modules for more info::
 
 - future.standard_library
 - future.builtins
@@ -186,12 +102,6 @@ Automatic conversion
 An experimental script called ``futurize`` is included to aid in making
 either Python 2 code or Python 3 code compatible with both platforms
 using the ``future`` module. See `<http://python-future.org/automatic_conversion.html>`_.
-
-
-Documentation
--------------
-
-See http://python-future.org
 
 
 Credits
