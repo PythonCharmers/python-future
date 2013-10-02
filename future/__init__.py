@@ -165,15 +165,14 @@ Explicit imports
 If you prefer explicit imports, the explicit equivalent of the ``from
 future.builtins import *`` line above is::
     
-    from future.builtins.iterators import zip, map, filter
-    from future.builtins.misc import ascii, oct, hex, chr, input
-    from future.builtins.backports import bytes, range, super, round
-    from future.builtins.disabled import (apply, cmp, coerce,
-            execfile, file, long, raw_input, reduce, reload, unicode,
+    from future.builtins.iterators import (filter, map, zip)
+    from future.builtins.misc import (ascii, chr, hex, input, int, oct, open)
+    from future.builtins.backports import (bytes, range, round, str, super)
+    from future.builtins.disabled import (apply, cmp, coerce, execfile,
+            file, long, raw_input, reduce, reload, unicode,
             xrange, StandardError)
-    from future.builtins.str_is_unicode import str
 
-But please note that the API is still evolving rapidly.
+But please note that the internal API is still evolving.
 
 See the docstrings for each of these modules for more info::
 
