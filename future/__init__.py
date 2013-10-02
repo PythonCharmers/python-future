@@ -27,7 +27,7 @@ After the imports, this code runs identically on Python 3 and 2::
     from itertools import filterfalse
     from test import support
 
-    # Backported Py3-like bytes object
+    # Backported Py3 bytes object
     b = bytes(b'ABCD')
     assert list(b) == [65, 66, 67, 68]
     assert repr(b) == "b'ABCD'"
