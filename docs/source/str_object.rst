@@ -22,7 +22,9 @@ follows::
     >>> from __future__ import unicode_literals
     >>> from future.builtins import str
 
-Then, for example::
+(On Py3, this simply imports the builtin :class:`str` object.)
+
+Then, for example, the following code has the same effect on Py2 as on Py3::
 
     >>> s = str(u'ABCD')
     >>> assert s != b'ABCD'
@@ -41,8 +43,8 @@ Then, for example::
       File "<stdin>", line 1, in <module>
     TypeError: argument can't be <type 'str'>
 
-In most other ways, these :class:`str` objects have identical
-behaviours to Python 3's :class:`str`::
+In most other ways, these :class:`str` objects on Py2 have the same
+behaviours as Python 3's :class:`str`::
 
     >>> s = str('ABCD')
     >>> assert repr(s) == 'ABCD'      # consistent repr with Py3 (no u prefix)
@@ -63,7 +65,7 @@ Py3 and Py2 in a single-source codebase is to wrap string literals in a
     # ...
 
 Most of the time this is unnecessary, but the stricter type-checking of the
-``future.builtins.str`` object, in particular, may be useful for ensuring
-the same consistent separation between unicode and byte strings on Py2 as on
-Py3.
+``future.builtins.str`` object is useful for ensuring the same consistent
+separation between unicode and byte strings on Py2 as on Py3. This is
+important when writing protocol handlers, for example.
 

@@ -18,9 +18,10 @@ follows::
     
     b = bytes(b'ABCD')
 
-On Py2, this object inherits from Python 2's :class:`str`, but it
-enforces the same strict strict separation of unicode strings and byte
-strings as Python 3's :class:`bytes` object::
+On Py3, this is simply the builtin :class:`bytes` object. On Py2, this
+object inherits from Python 2's :class:`str`, but it enforces the same
+strict strict separation of unicode strings and byte strings as Python
+3's :class:`bytes` object::
 
     >>> b + u'EFGH'      # TypeError
     Traceback (most recent call last):
