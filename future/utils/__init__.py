@@ -376,6 +376,13 @@ def is_new_style(cls):
 # ``from future.builtins import *``.
 native_str = str
 
+def is_text(obj):
+    return isinstance(obj, type(u''))
+
+
+def is_bytes(obj):
+    return isinstance(obj, type(b''))
+
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'with_metaclass', 'bchr', 'bstr', 'bord',
