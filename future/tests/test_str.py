@@ -256,6 +256,21 @@ class TestStr(unittest.TestCase):
         self.assertTrue(b'ABCD' != s)
         self.assertTrue(bytes(b'ABCD') != s)
 
+    def test_cmp(self):
+        s = str(u'ABC')
+        with self.assertRaises(TypeError):
+            s > 3
+        with self.assertRaises(TypeError):
+            s < 1000
+        with self.assertRaises(TypeError):
+            s > b'XYZ'
+        with self.assertRaises(TypeError):
+            s < b'XYZ'
+        with self.assertRaises(TypeError):
+            s <= 3
+        with self.assertRaises(TypeError):
+            s >= int(3)
+
 
 if __name__ == '__main__':
     unittest.main()
