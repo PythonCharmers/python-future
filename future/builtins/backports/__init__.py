@@ -84,7 +84,7 @@ TODO:
 
 """
 
-from __future__ import division, absolute_import, print_function
+from __future__ import absolute_import, division, print_function
 
 import functools
 
@@ -192,16 +192,18 @@ def issubset(list1, list2):
 
 if utils.PY3:
     import builtins
-    str = builtins.str
     bytes = builtins.bytes
+    int = builtins.int
     range = builtins.range
     round = builtins.round
+    str = builtins.str
     super = builtins.super
     __all__ = []
 else:
-    from .newstr import newstr as str
     from .newbytes import newbytes as bytes
+    from .newint import newint as int
     from .newrange import newrange as range
     from .newround import newround as round
+    from .newstr import newstr as str
     from .newsuper import newsuper as super
-    __all__ = ['str', 'bytes', 'range', 'round', 'super']
+    __all__ = ['bytes', 'int', 'range', 'round', 'str', 'super']
