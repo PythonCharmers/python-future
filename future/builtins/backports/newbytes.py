@@ -19,7 +19,7 @@ when running
 
 from collections import Iterable
 
-from future.utils import PY3
+from future.utils import PY3, is_int, is_text, is_bytes
 from future.builtins.backports import no, issubset
 
 
@@ -61,12 +61,12 @@ class newbytes(_builtin_bytes):
             if len(args[0]) == 0:
                 # What is this?
                 raise ValueError('unknown argument type')
-            elif len(args[0]) > 0 and isinstance(args[0][0], int):
+            elif len(args[0]) > 0 and is_int(args[0][0]):
                 # It's a list of integers
                 value = b''.join([chr(x) for x in args[0]])
             else:
                 raise ValueError('item cannot be interpreted as an integer')
-        elif isinstance(args[0], int):
+        elif is_int(args[0]):
             if args[0] < 0:
                 raise ValueError('negative count')
             value = b'\x00' * args[0]
@@ -82,7 +82,7 @@ class newbytes(_builtin_bytes):
 
     def __getitem__(self, y):
         value = super(newbytes, self).__getitem__(y)
-        if isinstance(y, int):
+        if is_int(y):
             return ord(value)
         else:
             return newbytes(value)
@@ -104,11 +104,21 @@ class newbytes(_builtin_bytes):
     def __radd__(self, left):
         return newbytes(left) + self
             
+    @no(unicode)
+    def __mul__(self, other):
+        return newbytes(super(newbytes, self).__mul__(other))
+
+    @no(unicode)
+    def __rmul__(self, other):
+        return newbytes(super(newbytes, self).__rmul__(other))
+
     def join(self, iterable_of_bytes):
-        errmsg = 'sequence item {}: expected bytes, found unicode string'
+        errmsg = 'sequence item {}: expected bytes, {} found'
+        if is_bytes(iterable_of_bytes) or is_text(iterable_of_bytes):
+            raise TypeError(errmsg.format(0, type(iterable_of_bytes)))
         for i, item in enumerate(iterable_of_bytes):
-            if isinstance(item, unicode):
-                raise TypeError(errmsg.format(i))
+            if is_text(item):
+                raise TypeError(errmsg.format(i, type(item)))
         return newbytes(super(newbytes, self).join(iterable_of_bytes))
 
     @classmethod
@@ -215,6 +225,28 @@ class newbytes(_builtin_bytes):
             return super(newbytes, self).__ne__(other)
         else:
             return True
+
+    unorderable_err = 'unorderable types: bytes() and {}'
+
+    def __lt__(self, other):
+        if is_text(other) or is_int(other):
+            raise TypeError(self.unorderable_err.format(type(other)))
+        return super(newbytes, self).__lt__(other)
+
+    def __le__(self, other):
+        if is_text(other) or is_int(other):
+            raise TypeError(self.unorderable_err.format(type(other)))
+        return super(newbytes, self).__le__(other)
+
+    def __gt__(self, other):
+        if is_text(other) or is_int(other):
+            raise TypeError(self.unorderable_err.format(type(other)))
+        return super(newbytes, self).__gt__(other)
+
+    def __ge__(self, other):
+        if is_text(other) or is_int(other):
+            raise TypeError(self.unorderable_err.format(type(other)))
+        return super(newbytes, self).__ge__(other)
 
 
 __all__ = ['newbytes']

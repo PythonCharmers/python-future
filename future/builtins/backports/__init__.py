@@ -164,7 +164,7 @@ def no(mytype, argnums=(1,)):
       ...
     TypeError: argument can't be bytes
     """
-    if isinstance(argnums, int):
+    if utils.is_int(argnums):
         argnums = (argnums,)
     disallowed_types = [mytype] * len(argnums)
     return disallow_types(argnums, disallowed_types)

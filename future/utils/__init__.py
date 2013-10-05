@@ -384,6 +384,10 @@ def is_bytes(obj):
     return isinstance(obj, type(b''))
 
 
+def is_int(obj):
+    return isinstance(obj, (int, long))
+
+
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'with_metaclass', 'bchr', 'bstr', 'bord',
            'tobytes', 'str_to_bytes', 'bytes_to_str', 

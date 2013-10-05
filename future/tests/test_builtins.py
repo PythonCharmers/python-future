@@ -4,7 +4,7 @@ Tests to make sure the behaviour of the builtins is sensible and correct.
 
 from __future__ import absolute_import, division, unicode_literals
 from future.builtins import *
-from future.utils import PY3
+from future.utils import PY3, is_int
 
 import textwrap
 from subprocess import Popen, PIPE, check_output, STDOUT
@@ -12,12 +12,20 @@ import unittest
 
 
 class TestBuiltins(unittest.TestCase):
-    def test_int(self):
+    @unittest.expectedFailure
+    def test_isinstance_int(self):
         """
         Redefining ``int`` to ``long`` on Py2 would make this
         test fail:
         """
         self.assertTrue(isinstance(0, int))
+
+    def test_is_int(self):
+        """
+        Tests the custom is_int function in future.utils as an
+        alternative to the above.
+        """
+        self.assertTrue(is_int(0))
 
     @unittest.expectedFailure   # Py2's long doesn't inherit from int!
     def test_long(self):
@@ -45,7 +53,7 @@ class TestBuiltins(unittest.TestCase):
         self.assertEqual(round(123.5, 1), 123.5)
 
         self.assertTrue(isinstance(round(123.5, 0), float))
-        self.assertTrue(isinstance(round(123.5), int))
+        self.assertTrue(is_int(round(123.5)))
 
     @unittest.skip('negative ndigits not implemented yet')
     def test_round_negative_ndigits(self):
