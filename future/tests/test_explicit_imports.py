@@ -30,18 +30,18 @@ class TestExplicitImports(unittest.TestCase):
         On Py2 these should import.
         """
         if not utils.PY3:
-            from future.builtins import (apply,
-                                         cmp,
-                                         coerce,
-                                         execfile,
-                                         file,
-                                         long,
-                                         raw_input,
-                                         reduce,
-                                         reload,
-                                         unicode,
-                                         xrange,
-                                         StandardError)
+            from future.builtins.disabled import (apply,
+                                                  cmp,
+                                                  coerce,
+                                                  execfile,
+                                                  file,
+                                                  long,
+                                                  raw_input,
+                                                  reduce,
+                                                  reload,
+                                                  unicode,
+                                                  xrange,
+                                                  StandardError)
 
 
 if __name__ == '__main__':

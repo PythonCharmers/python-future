@@ -19,17 +19,12 @@ from future import utils
 if not utils.PY3:
     # We only import names that shadow the builtins on Py2. No other namespace
     # pollution on Py2.
-    from future.builtins.disabled import (apply, cmp, coerce,
-            execfile, file, long, raw_input, reduce, reload, unicode,
-            xrange, StandardError)
     
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
-               'ascii', 'oct', 'hex', 'chr', 'int', 'input', 'open',
-               'str', 'bytes', 'range', 'round', 'super',
-               'apply', 'cmp', 'coerce', 'execfile', 'file', 'long',
-               'raw_input', 'reduce', 'reload', 'unicode', 'xrange',
-               'StandardError']
+               'ascii', 'chr', 'hex', 'input', 'oct', 'open',
+               'bytes', 'int', 'range', 'round', 'str', 'super',
+              ]
 
 else:
     # No namespace pollution on Py3
