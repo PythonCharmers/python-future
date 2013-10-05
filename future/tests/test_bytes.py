@@ -36,9 +36,28 @@ class TestBytes(unittest.TestCase):
         In Py3, bytes(int) -> bytes object of size given by the parameter initialized with null
         """
         self.assertEqual(bytes(5), b'\x00\x00\x00\x00\x00')
+        # Test using newint:
+        self.assertEqual(bytes(int(5)), b'\x00\x00\x00\x00\x00')
         # Negative counts are not allowed in Py3:
         with self.assertRaises(ValueError):
             bytes(-1)
+        with self.assertRaises(ValueError):
+            bytes(int(-1))
+
+    @unittest.skipIf(utils.PY3, 'test not needed on Py3: all ints are long')
+    def test_bytes_long(self):
+        """
+        As above, but explicitly feeding in a long on Py2. Note that
+        checks like:
+            isinstance(n, int)
+        are fragile on Py2, because isinstance(10L, int) is False.
+        """
+        m = long(5)
+        n = long(-1)
+        self.assertEqual(bytes(m), b'\x00\x00\x00\x00\x00')
+        # Negative counts are not allowed in Py3:
+        with self.assertRaises(ValueError):
+            bytes(n)
 
     def test_bytes_empty(self):
         """
@@ -48,6 +67,7 @@ class TestBytes(unittest.TestCase):
 
     def test_bytes_iterable_of_ints(self):
         self.assertEqual(bytes([65, 66, 67]), b'ABC')
+        self.assertEqual(bytes([int(120), int(121), int(122)]), b'xyz')
 
     def test_bytes_bytes(self):
         self.assertEqual(bytes(b'ABC'), b'ABC')
@@ -111,7 +131,7 @@ class TestBytes(unittest.TestCase):
     def test_bytes_iteration(self):
         b = bytes(b'ABCD')
         for item in b:
-            self.assertTrue(isinstance(item, int))
+            self.assertTrue(utils.is_int(item))
         self.assertEqual(list(b), [65, 66, 67, 68])
 
     def test_bytes_plus_unicode_string(self):
@@ -143,6 +163,15 @@ class TestBytes(unittest.TestCase):
         result = b.join(strings)
         self.assertEqual(result, b'AB * EFGH * IJKL')
         self.assertTrue(isinstance(result, bytes))
+
+    def test_bytes_join_others(self):
+        b = bytes(b' ')
+        with self.assertRaises(TypeError):
+            b.join([42])
+        with self.assertRaises(TypeError):
+            b.join(b'blah')
+        with self.assertRaises(TypeError):
+            b.join(bytes(b'blah'))
 
     def test_bytes_join_unicode_strings(self):
         b = bytes(b'ABCD')
@@ -241,6 +270,9 @@ class TestBytes(unittest.TestCase):
             b.encode('utf-8')
 
     def test_eq(self):
+        """
+        Equals: ==
+        """
         b = bytes(b'ABCD')
         self.assertEqual(b, b'ABCD')
         self.assertTrue(b == b'ABCD')
@@ -256,6 +288,8 @@ class TestBytes(unittest.TestCase):
 
         self.assertFalse(b == list(b))
         self.assertFalse(b == str(b))
+        self.assertFalse(b == u'ABC')
+        self.assertFalse(bytes(b'Z') == 90)
 
     def test_ne(self):
         b = bytes(b'ABCD')
@@ -304,6 +338,55 @@ class TestBytes(unittest.TestCase):
         # Fails:
         self.assertEqual(len(d) > 1)
 
+    def test_add(self):
+        b = bytes(b'ABC')
+        c = bytes(b'XYZ')
+        d = b + c
+        self.assertTrue(isinstance(d, bytes))
+        self.assertEqual(d, b'ABCXYZ')
+        f = b + b'abc'
+        self.assertTrue(isinstance(f, bytes))
+        self.assertEqual(f, b'ABCabc')
+        g = b'abc' + b
+        self.assertTrue(isinstance(g, bytes))
+        self.assertEqual(g, b'abcABC')
+
+    def test_cmp(self):
+        b = bytes(b'ABC')
+        with self.assertRaises(TypeError):
+            b > 3
+        with self.assertRaises(TypeError):
+            b > u'XYZ'
+        with self.assertRaises(TypeError):
+            b <= 3
+        with self.assertRaises(TypeError):
+            b >= int(3)
+
+    def test_mul(self):
+        b = bytes(b'ABC')
+        c = b * 4
+        self.assertTrue(isinstance(c, bytes))
+        self.assertEqual(c, b'ABCABCABCABC')
+        d = b * int(4)
+        self.assertTrue(isinstance(d, bytes))
+        self.assertEqual(d, b'ABCABCABCABC')
+        if utils.PY2:
+            e = b * long(4)
+            self.assertTrue(isinstance(e, bytes))
+            self.assertEqual(e, b'ABCABCABCABC')
+
+    def test_rmul(self):
+        b = bytes(b'XYZ')
+        c = 3 * b
+        self.assertTrue(isinstance(c, bytes))
+        self.assertEqual(c, b'XYZXYZXYZ')
+        d = b * int(3)
+        self.assertTrue(isinstance(d, bytes))
+        self.assertEqual(d, b'XYZXYZXYZ')
+        if utils.PY2:
+            e = long(3) * b
+            self.assertTrue(isinstance(e, bytes))
+            self.assertEqual(e, b'XYZXYZXYZ')
 
 if __name__ == '__main__':
     unittest.main()
