@@ -385,7 +385,10 @@ def is_bytes(obj):
 
 
 def is_int(obj):
-    return isinstance(obj, (int, long))
+    if PY2:
+        return isinstance(obj, (int, long))
+    else:
+        return isinstance(obj, int)
 
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
