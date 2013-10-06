@@ -12,8 +12,8 @@ See the docs for these modules for more information::
 """
 
 from future.builtins.iterators import (filter, map, zip)
-from future.builtins.misc import (ascii, chr, hex, input, int, oct, open)
-from future.builtins.backports import (bytes, range, round, str, super)
+from future.builtins.misc import (ascii, chr, hex, input, oct, open)
+from future.builtins.backports import (bytes, int, range, round, str, super)
 from future import utils
 
 if not utils.PY3:
