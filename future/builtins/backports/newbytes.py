@@ -18,9 +18,9 @@ when running
 """
 
 from collections import Iterable
-from numbers import Integral
+from numbers import Number, Integral
 
-from future.utils import PY3, is_text, is_bytes
+from future.utils import PY3, istext, isbytes
 from future.builtins.backports import no, issubset
 
 
@@ -115,10 +115,10 @@ class newbytes(_builtin_bytes):
 
     def join(self, iterable_of_bytes):
         errmsg = 'sequence item {}: expected bytes, {} found'
-        if is_bytes(iterable_of_bytes) or is_text(iterable_of_bytes):
+        if isbytes(iterable_of_bytes) or istext(iterable_of_bytes):
             raise TypeError(errmsg.format(0, type(iterable_of_bytes)))
         for i, item in enumerate(iterable_of_bytes):
-            if is_text(item):
+            if istext(item):
                 raise TypeError(errmsg.format(i, type(item)))
         return newbytes(super(newbytes, self).join(iterable_of_bytes))
 
@@ -230,22 +230,22 @@ class newbytes(_builtin_bytes):
     unorderable_err = 'unorderable types: bytes() and {}'
 
     def __lt__(self, other):
-        if is_text(other) or isinstance(other, Integral):
+        if istext(other) or isinstance(other, Number):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__lt__(other)
 
     def __le__(self, other):
-        if is_text(other) or isinstance(other, Integral):
+        if istext(other) or isinstance(other, Integral):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__le__(other)
 
     def __gt__(self, other):
-        if is_text(other) or isinstance(other, Integral):
+        if istext(other) or isinstance(other, Integral):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__gt__(other)
 
     def __ge__(self, other):
-        if is_text(other) or isinstance(other, Integral):
+        if istext(other) or isinstance(other, Integral):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__ge__(other)
 

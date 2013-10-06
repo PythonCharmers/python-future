@@ -19,17 +19,17 @@ class TestUtils(unittest.TestCase):
         self.b = b'ABCDEFG'
         self.b2 = bytes(self.b)
 
-    def test_is_text(self):
-        self.assertTrue(utils.is_text(self.s))
-        self.assertTrue(utils.is_text(self.s2))
-        self.assertFalse(utils.is_text(self.b))
-        self.assertFalse(utils.is_text(self.b2))
+    def test_istext(self):
+        self.assertTrue(utils.istext(self.s))
+        self.assertTrue(utils.istext(self.s2))
+        self.assertFalse(utils.istext(self.b))
+        self.assertFalse(utils.istext(self.b2))
 
-    def test_is_bytes(self):
-        self.assertTrue(utils.is_bytes(self.b))
-        self.assertTrue(utils.is_bytes(self.b2))
-        self.assertFalse(utils.is_bytes(self.s))
-        self.assertFalse(utils.is_bytes(self.s2))
+    def test_isbytes(self):
+        self.assertTrue(utils.isbytes(self.b))
+        self.assertTrue(utils.isbytes(self.b2))
+        self.assertFalse(utils.isbytes(self.s))
+        self.assertFalse(utils.isbytes(self.s2))
 
 
 if __name__ == '__main__':

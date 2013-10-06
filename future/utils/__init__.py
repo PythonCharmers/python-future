@@ -376,15 +376,15 @@ def is_new_style(cls):
 # ``from future.builtins import *``.
 native_str = str
 
-def is_text(obj):
+def istext(obj):
     return isinstance(obj, type(u''))
 
 
-def is_bytes(obj):
+def isbytes(obj):
     return isinstance(obj, type(b''))
 
 
-# def is_int(obj):
+# def isint(obj):
 #     """
 #     Don't define this. Use this idiom instead:
 #         isinstance(obj, numbers.Integral)
