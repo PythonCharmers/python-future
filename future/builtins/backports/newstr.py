@@ -127,6 +127,12 @@ class newstr(unicode):
             except:
                 raise NotImplemented
 
+    def __mul__(self, other):
+        return newstr(super(newstr, self).__mul__(other))
+
+    def __rmul__(self, other):
+        return newstr(super(newstr, self).__rmul__(other))
+
     def join(self, iterable):
         errmsg = 'sequence item {}: expected unicode string, found bytes'
         for i, item in enumerate(iterable):

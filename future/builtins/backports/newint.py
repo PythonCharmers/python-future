@@ -38,8 +38,6 @@ class newint(long):
         """
         if len(args) == 0:
             return super(newint, cls).__new__(cls, **kwargs)
-        elif isinstance(args[0], Integral):
-            return args[0]
         return super(newint, cls).__new__(cls, *args, **kwargs)
         
     def __repr__(self):
