@@ -20,60 +20,6 @@ It is designed to be used as follows::
 followed by clean Python 3 code (with a few restrictions) that can run
 unchanged on Python 2.7.
 
-After the imports, this code runs identically on Python 3 and 2::
-    
-    # Support for renamed standard library modules via import hooks
-    from http.client import HttpConnection
-    from itertools import filterfalse
-    from test import support
-
-    # Backported Py3 bytes object
-    b = bytes(b'ABCD')
-    assert list(b) == [65, 66, 67, 68]
-    assert repr(b) == "b'ABCD'"
-    # These raise TypeErrors:
-    # b + u'EFGH'
-    # bytes(b',').join([u'Fred', u'Bill'])
-
-    # Backported Py3 str object
-    s = str(u'ABCD')
-    assert s != b'ABCD'
-    assert isinstance(s.encode('utf-8'), bytes)
-    assert isinstance(b.decode('utf-8'), str)
-    assert repr(s) == 'ABCD'      # consistent repr with Py3 (no u prefix)
-    # These raise TypeErrors:
-    # b'B' in s
-    # s.find(b'A')
-
-    # Extra arguments for the open() function
-    f = open('japanese.txt', encoding='utf-8', errors='replace')
-    
-    # New iterable range object with slicing support
-    for i in range(10**15)[:10]:
-        pass
-    
-    # Other iterators: map, zip, filter
-    my_iter = zip(range(3), ['a', 'b', 'c'])
-    assert my_iter != list(my_iter)
-    
-    # New simpler super() function:
-    class VerboseList(list):
-        def append(self, item):
-            print('Adding an item')
-            super().append(item)
-    
-    # These raise NameErrors:
-    # apply(), cmp(), coerce(), reduce(), xrange(), etc.
-    
-    # The round() function behaves as it does in Python 3, using
-    # "Banker's Rounding" to the nearest even last digit:
-    assert round(0.1250, 2) == 0.12
-    
-    # input() replaces Py2's raw_input() (with no eval()):
-    name = input('What is your name? ')
-    print('Hello ' + name)
-
-
 On Python 3, the import lines have zero effect (and zero namespace
 pollution).
 
