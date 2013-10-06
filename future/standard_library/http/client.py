@@ -70,6 +70,7 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
+from future.utils import isbytes, istext
 from future.builtins import *
 
 import email.parser
@@ -84,6 +85,7 @@ import collections
 from urlparse import urlsplit
 from array import array
 import warnings
+import numbers
 
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",
@@ -703,7 +705,7 @@ class HTTPResponse(io.RawIOBase, object):
         if self.headers is None:
             raise ResponseNotReady()
         headers = self.headers.get_all(name) or default
-        if isinstance(headers, str) or not hasattr(headers, '__iter__'):
+        if istext(headers) or not hasattr(headers, '__iter__'):
             return headers
         else:
             return ', '.join(headers)
@@ -909,7 +911,7 @@ class HTTPConnection(object):
         # If msg and message_body are sent in a single send() call,
         # it will avoid performance problems caused by the interaction
         # between delayed ack and the Nagle algorithm.
-        if isinstance(message_body, bytes):
+        if isbytes(message_body):
             msg += message_body
             message_body = None
         self.send(msg)
@@ -1105,7 +1107,7 @@ class HTTPConnection(object):
             self._set_content_length(body)
         for hdr, value in headers.items():
             self.putheader(hdr, value)
-        if isinstance(body, str):
+        if istext(body):
             # RFC 2616 Section 3.7.1 says that text default has a
             # default charset of iso-8859-1.
             body = body.encode('iso-8859-1')
