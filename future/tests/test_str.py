@@ -270,7 +270,44 @@ class TestStr(unittest.TestCase):
             s <= 3
         with self.assertRaises(TypeError):
             s >= int(3)
+        with self.assertRaises(TypeError):
+            s < 3.3
+        with self.assertRaises(TypeError):
+            s > 3.3 + 3j
 
+    def test_mul(self):
+        s = str(u'ABC')
+        c = s * 4
+        self.assertTrue(isinstance(c, str))
+        self.assertEqual(c, u'ABCABCABCABC')
+        d = s * int(4)
+        self.assertTrue(isinstance(d, str))
+        self.assertEqual(d, u'ABCABCABCABC')
+        if utils.PY2:
+            e = s * long(4)
+            self.assertTrue(isinstance(e, str))
+            self.assertEqual(e, u'ABCABCABCABC')
+        with self.assertRaises(TypeError):
+            s * 3.3
+        with self.assertRaises(TypeError):
+            s * (3.3 + 3j)
+
+    def test_rmul(self):
+        s = str(u'XYZ')
+        c = 3 * s
+        self.assertTrue(isinstance(c, str))
+        self.assertEqual(c, u'XYZXYZXYZ')
+        d = s * int(3)
+        self.assertTrue(isinstance(d, str))
+        self.assertEqual(d, u'XYZXYZXYZ')
+        if utils.PY2:
+            e = long(3) * s
+            self.assertTrue(isinstance(e, str))
+            self.assertEqual(e, u'XYZXYZXYZ')
+        with self.assertRaises(TypeError):
+            3.3 * s
+        with self.assertRaises(TypeError):
+            (3.3 + 3j) * s
 
 if __name__ == '__main__':
     unittest.main()
