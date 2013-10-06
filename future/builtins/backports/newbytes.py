@@ -18,8 +18,9 @@ when running
 """
 
 from collections import Iterable
+from numbers import Integral
 
-from future.utils import PY3, is_int, is_text, is_bytes
+from future.utils import PY3, is_text, is_bytes
 from future.builtins.backports import no, issubset
 
 
@@ -61,12 +62,12 @@ class newbytes(_builtin_bytes):
             if len(args[0]) == 0:
                 # What is this?
                 raise ValueError('unknown argument type')
-            elif len(args[0]) > 0 and is_int(args[0][0]):
+            elif len(args[0]) > 0 and isinstance(args[0][0], Integral):
                 # It's a list of integers
                 value = b''.join([chr(x) for x in args[0]])
             else:
                 raise ValueError('item cannot be interpreted as an integer')
-        elif is_int(args[0]):
+        elif isinstance(args[0], Integral):
             if args[0] < 0:
                 raise ValueError('negative count')
             value = b'\x00' * args[0]
@@ -82,7 +83,7 @@ class newbytes(_builtin_bytes):
 
     def __getitem__(self, y):
         value = super(newbytes, self).__getitem__(y)
-        if is_int(y):
+        if isinstance(y, Integral):
             return ord(value)
         else:
             return newbytes(value)
@@ -229,24 +230,27 @@ class newbytes(_builtin_bytes):
     unorderable_err = 'unorderable types: bytes() and {}'
 
     def __lt__(self, other):
-        if is_text(other) or is_int(other):
+        if is_text(other) or isinstance(other, Integral):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__lt__(other)
 
     def __le__(self, other):
-        if is_text(other) or is_int(other):
+        if is_text(other) or isinstance(other, Integral):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__le__(other)
 
     def __gt__(self, other):
-        if is_text(other) or is_int(other):
+        if is_text(other) or isinstance(other, Integral):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__gt__(other)
 
     def __ge__(self, other):
-        if is_text(other) or is_int(other):
+        if is_text(other) or isinstance(other, Integral):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__ge__(other)
+
+    def __native__(self):
+        return super(newbytes, self)(self)
 
 
 __all__ = ['newbytes']

@@ -384,11 +384,11 @@ def is_bytes(obj):
     return isinstance(obj, type(b''))
 
 
-def is_int(obj):
-    if PY2:
-        return isinstance(obj, (int, long))
-    else:
-        return isinstance(obj, int)
+# def is_int(obj):
+#     """
+#     Don't define this. Use this idiom instead:
+#         isinstance(obj, numbers.Integral)
+#     """
 
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',

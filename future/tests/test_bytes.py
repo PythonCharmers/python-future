@@ -7,6 +7,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 from future.builtins import *
 from future import utils
 
+from numbers import Integral
 import unittest
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
@@ -131,7 +132,7 @@ class TestBytes(unittest.TestCase):
     def test_bytes_iteration(self):
         b = bytes(b'ABCD')
         for item in b:
-            self.assertTrue(utils.is_int(item))
+            self.assertTrue(isinstance(item, Integral))
         self.assertEqual(list(b), [65, 66, 67, 68])
 
     def test_bytes_plus_unicode_string(self):

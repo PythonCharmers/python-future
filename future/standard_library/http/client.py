@@ -1048,7 +1048,7 @@ class HTTPConnection(object):
         for i, one_value in enumerate(values):
             if hasattr(one_value, 'encode'):
                 values[i] = one_value.encode('latin-1')
-            elif isinstance(one_value, int):
+            elif isinstance(one_value, numbers.Integral):
                 values[i] = str(one_value).encode('ascii')
         value = bytes(b'\r\n\t').join(values)
         header = header + b': ' + value

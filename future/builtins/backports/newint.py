@@ -7,7 +7,9 @@ They are very similar. The most notable difference is:
 
 """
 
-from future.utils import PY3, is_int
+from numbers import Integral
+
+from future.utils import PY3
 
 
 class newint(long):
@@ -36,7 +38,7 @@ class newint(long):
         """
         if len(args) == 0:
             return super(newint, cls).__new__(cls, **kwargs)
-        elif is_int(args[0]):
+        elif isinstance(args[0], Integral):
             return args[0]
         return super(newint, cls).__new__(cls, *args, **kwargs)
         

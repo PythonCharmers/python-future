@@ -87,6 +87,7 @@ TODO:
 from __future__ import absolute_import, division, print_function
 
 import functools
+from numbers import Integral
 
 from future import utils
 
@@ -164,7 +165,7 @@ def no(mytype, argnums=(1,)):
       ...
     TypeError: argument can't be bytes
     """
-    if utils.is_int(argnums):
+    if isinstance(argnums, Integral):
         argnums = (argnums,)
     disallowed_types = [mytype] * len(argnums)
     return disallow_types(argnums, disallowed_types)
