@@ -365,7 +365,11 @@ class TestBytes(unittest.TestCase):
         with self.assertRaises(TypeError):
             b < 3.3
         with self.assertRaises(TypeError):
-            b > 3.3 + 3j
+            b > (3.3 + 3j)
+        with self.assertRaises(TypeError):
+            b >= (1, 2)
+        with self.assertRaises(TypeError):
+            b <= [1, 2]
 
     def test_mul(self):
         b = bytes(b'ABC')

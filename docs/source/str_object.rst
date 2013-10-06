@@ -43,6 +43,18 @@ Then, for example, the following code has the same effect on Py2 as on Py3::
       File "<stdin>", line 1, in <module>
     TypeError: argument can't be <type 'str'>
 
+Various other comparisons between strings and other types return a result
+in Py2 but raise a TypeError in Py3. For example, this is permissible on
+Py2::
+
+    >>> u'u' > 10
+    True
+
+    >>> u'u' <= b'u'
+    True
+
+On Py3, these raise TypeErrors.
+
 In most other ways, these :class:`str` objects on Py2 have the same
 behaviours as Python 3's :class:`str`::
 

@@ -273,7 +273,11 @@ class TestStr(unittest.TestCase):
         with self.assertRaises(TypeError):
             s < 3.3
         with self.assertRaises(TypeError):
-            s > 3.3 + 3j
+            s > (3.3 + 3j)
+        with self.assertRaises(TypeError):
+            s >= (1, 2)
+        with self.assertRaises(TypeError):
+            s <= [1, 2]
 
     def test_mul(self):
         s = str(u'ABC')

@@ -40,7 +40,8 @@ python_2_unicode_compatible decorator in :mod:`future.utils`.
 
 from collections import Iterable
 
-from future.utils import PY2
+from numbers import Number
+from future.utils import PY2, istext
 from future.builtins.backports import no, issubset
 from future.builtins.backports.newbytes import newbytes
 
@@ -230,6 +231,27 @@ class newstr(unicode):
         else:
             return True
 
+    unorderable_err = 'unorderable types: str() and {}'
+
+    def __lt__(self, other):
+        if not istext(other):
+            raise TypeError(self.unorderable_err.format(type(other)))
+        return super(newbytes, self).__lt__(other)
+
+    def __le__(self, other):
+        if not istext(other):
+            raise TypeError(self.unorderable_err.format(type(other)))
+        return super(newbytes, self).__le__(other)
+
+    def __gt__(self, other):
+        if not istext(other):
+            raise TypeError(self.unorderable_err.format(type(other)))
+        return super(newbytes, self).__gt__(other)
+
+    def __ge__(self, other):
+        if not istext(other):
+            raise TypeError(self.unorderable_err.format(type(other)))
+        return super(newbytes, self).__ge__(other)
 
 
 __all__ = ['newstr']

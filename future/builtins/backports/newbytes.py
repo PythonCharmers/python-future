@@ -18,7 +18,7 @@ when running
 """
 
 from collections import Iterable
-from numbers import Number, Integral
+from numbers import Integral
 
 from future.utils import PY3, istext, isbytes
 from future.builtins.backports import no, issubset
@@ -230,22 +230,22 @@ class newbytes(_builtin_bytes):
     unorderable_err = 'unorderable types: bytes() and {}'
 
     def __lt__(self, other):
-        if istext(other) or isinstance(other, Number):
+        if not isbytes(other):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__lt__(other)
 
     def __le__(self, other):
-        if istext(other) or isinstance(other, Integral):
+        if not isbytes(other):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__le__(other)
 
     def __gt__(self, other):
-        if istext(other) or isinstance(other, Integral):
+        if not isbytes(other):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__gt__(other)
 
     def __ge__(self, other):
-        if istext(other) or isinstance(other, Integral):
+        if not isbytes(other):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__ge__(other)
 

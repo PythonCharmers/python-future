@@ -33,6 +33,21 @@ strict strict separation of unicode strings and byte strings as Python
       File "<stdin>", line 1, in <module>
     TypeError: sequence item 0: expected bytes, found unicode string
 
+Various other comparisons between byte-strings and other types return a result
+in Py2 but raise a TypeError in Py3. For example, this is permissible on
+Py2::
+
+    >>> b'u' > 10
+    True
+
+    >>> b'u' <= u'u'
+    True
+
+On Py3, these raise TypeErrors.
+
+In most other ways, these :class:`str` objects on Py2 have the same
+behaviours as Python 3's :class:`str`::
+
 In most other ways, these :class:`bytes` objects have identical
 behaviours to Python 3's :class:`bytes`::
 
