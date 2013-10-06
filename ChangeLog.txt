@@ -1,5 +1,10 @@
+v0.6.1:
+  * Add backported Py3-like int object (inherits from long)
+  * Fixes and stricter type-checking for bytes and str objects
+  * Add docs about isinstance() and utility functions for type-checking
+  * Don't disable obsolete Py2 builtins by default with ``from * future.builtins import *``
 v0.6:
-  * Add backported Py3-like str object
+  * Add backported Py3-like str object (inherits from unicode)
   * Remove support for deprecated form ``from future import *``: use ``from future.builtins import *`` instead
 v0.5.3:
   * Doc improvements

@@ -86,9 +86,6 @@ and 2.7::
             print('Adding an item')
             super().append(item)
     
-    # These raise NameErrors:
-    # apply(), cmp(), coerce(), reduce(), xrange(), etc.
-    
     # The round() function behaves as it does in Python 3, using
     # "Banker's Rounding" to the nearest even last digit:
     assert round(0.1250, 2) == 0.12
@@ -96,6 +93,11 @@ and 2.7::
     # input() replaces Py2's raw_input() (with no eval()):
     name = input('What is your name? ')
     print('Hello ' + name)
+
+    # To disable obsolete Py2 builtins removed from Py3, use this:
+    from future.builtins.disabled import *
+    # Then these raise NameErrors on both Py2 and Py3:
+    # apply(), cmp(), coerce(), reduce(), xrange(), etc.
 
 
 Next steps
