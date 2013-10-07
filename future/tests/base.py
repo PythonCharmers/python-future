@@ -2,8 +2,23 @@ import os
 import tempfile
 from unittest import TestCase
 from textwrap import dedent
-from subprocess import check_output, STDOUT
+import subprocess
 
+# For Python 2.6 compatibility: see http://stackoverflow.com/questions/4814970/
+if "check_output" not in dir(subprocess): # duck punch it in!
+    def f(*popenargs, **kwargs):
+        if 'stdout' in kwargs:
+            raise ValueError('stdout argument not allowed, it will be overridden.')
+        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+        output, unused_err = process.communicate()
+        retcode = process.poll()
+        if retcode:
+            cmd = kwargs.get("args")
+            if cmd is None:
+                cmd = popenargs[0]
+            raise CalledProcessError(retcode, cmd)
+        return output
+    subprocess.check_output = f
 
 class CodeHandler(TestCase):
     """
@@ -169,15 +184,15 @@ class CodeHandler(TestCase):
             assert stages == [1, 2]
             # No extra params needed
 
-        output = check_output(['python', 'futurize.py'] + params +
-                              ['-w', self.tempdir + filename],
-                              stderr=STDOUT)
+        output = subprocess.check_output(['python', 'futurize.py'] + params +
+                                         ['-w', self.tempdir + filename],
+                                         stderr=subprocess.STDOUT)
         return output
 
     def _run_test_script(self, filename='mytestscript.py',
                          interpreter='python'):
         env = {'PYTHONPATH': os.getcwd()}
-        return check_output([interpreter, self.tempdir + filename],
-                            env=env)
+        return subprocess.check_output([interpreter, self.tempdir + filename],
+                                       env=env)
 
 
