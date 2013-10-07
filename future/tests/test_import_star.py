@@ -19,11 +19,11 @@ from future import utils
 
 original_locals = set(copy.copy(locals()))
 original_globals = set(copy.copy(globals()))
-new_names = {'original_locals', 'original_globals', 'new_names'}
+new_names = set(['original_locals', 'original_globals', 'new_names'])
 from future.builtins import *
 new_locals = set(copy.copy(locals())) - new_names - original_locals
 new_globals = set(copy.copy(globals())) - new_names - original_globals - \
-              {'new_locals'}
+              set(['new_locals'])
 
 
 class TestImportStar(unittest.TestCase):

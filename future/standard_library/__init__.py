@@ -66,7 +66,7 @@ We don't currently support these modules, but would like to::
 
 Notes
 -----
-This module only supports Python 2.7 and Python 3.1+.
+This module only supports Python 2.6 and Python 3.1+.
 
 The following renames are already supported on Python 2.7 without any
 additional work from us::
@@ -82,6 +82,7 @@ Old things that can perhaps be fixed for people by futurize.py::
   sys.maxint -> sys.maxsize      # but this isn't identical
 
 TODO: Check out these:
+Not available on Py2.6:
   unittest2 -> unittest?
   buffer -> memoryview?
 
@@ -172,8 +173,8 @@ RENAMES = {
            'future.standard_library._markupbase': '_markupbase',
           }
 
-REPLACED_MODULES = {'test', 'urllib', 'pickle'}  # add dbm when we support it
-# These are entirely new to Python 2.7, so they cause no potential clashes
+REPLACED_MODULES = set(['test', 'urllib', 'pickle'])  # add dbm when we support it
+# These are entirely new to Python 2.x, so they cause no potential clashes
 #   xmlrpc, tkinter, http, html
 
 
@@ -209,11 +210,11 @@ class RenameImport(object):
         # print(both)
         assert len(both) == 0, \
                'Ambiguity in renaming (handler not implemented'
-        self.new_to_old = {new: old for (old, new) in old_to_new.items()}
+        self.new_to_old = dict((new, old) for (old, new) in old_to_new.items())
  
     def find_module(self, fullname, path=None):
         # Handles hierarchical importing: package.module.module2
-        new_base_names = {s.split('.')[0] for s in self.new_to_old}
+        new_base_names = set([s.split('.')[0] for s in self.new_to_old])
         if fullname in set(self.old_to_new) | new_base_names:
             return self
         return None
