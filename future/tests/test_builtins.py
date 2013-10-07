@@ -7,7 +7,7 @@ from future.builtins import *
 from future.utils import PY3
 
 import textwrap
-from subprocess import Popen, PIPE, check_output, STDOUT
+from subprocess import Popen, PIPE
 from numbers import Integral
 import unittest
 
