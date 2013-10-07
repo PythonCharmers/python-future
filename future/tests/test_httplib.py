@@ -18,6 +18,7 @@ import socket
 import errno
 
 import unittest
+import pytest
 TestCase = unittest.TestCase
 
 from test import support
@@ -410,8 +411,8 @@ class BasicTest(TestCase):
 
     # Test lines overflowing the max line size (_MAXLINE in http.client)
 
+    pytest.mark.skip('disabled for HTTP 0.9 support')
     def test_overflowing_status_line(self):
-        self.skipTest("disabled for HTTP 0.9 support")
         body = "HTTP/1.1 200 Ok" + "k" * 65536 + "\r\n"
         resp = client.HTTPResponse(FakeSocket(body))
         self.assertRaises((client.LineTooLong, client.BadStatusLine), resp.begin)
@@ -471,8 +472,8 @@ class SourceAddressTest(TestCase):
         self.conn.connect()
         self.assertEqual(self.conn.sock.getsockname()[1], self.source_port)
 
-    @unittest.skipIf(not hasattr(client, 'HTTPSConnection'),
-                     'http.client.HTTPSConnection not defined')
+    @pytest.mark.skipif(not hasattr(client, 'HTTPSConnection'),
+                        'http.client.HTTPSConnection not defined')
     def testHTTPSConnectionSourceAddress(self):
         self.conn = client.HTTPSConnection(HOST, self.port,
                 source_address=('', self.source_port))
@@ -535,7 +536,7 @@ class HTTPSTest(TestCase):
             h = client.HTTPSConnection(HOST, TimeoutTest.PORT, timeout=30)
             self.assertEqual(h.timeout, 30)
 
-    @unittest.skipIf(not hasattr(client, 'HTTPSConnection'), 'http.client.HTTPSConnection not available')
+    @pytest.mark.skipif(not hasattr(client, 'HTTPSConnection'), 'http.client.HTTPSConnection not available')
     def test_host_port(self):
         # Check invalid host_port
 

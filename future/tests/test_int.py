@@ -1,4 +1,5 @@
 """
+import pyte
 int tests from Py3.3
 """
 
@@ -10,6 +11,7 @@ import sys
 
 import unittest
 from test import support
+import pytest
 
 L = [
         ('0', 0),
@@ -225,7 +227,7 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(int('2br45qc', 35), 4294967297)
         self.assertEqual(int('1z141z5', 36), 4294967297)
 
-    @unittest.expectedFailure     # fails on Py2
+    @pytest.mark.xfail     # fails on Py2
     @support.cpython_only
     def test_small_ints(self):
         # Bug #3236: Return small longs from PyLong_FromString
@@ -368,7 +370,7 @@ class IntTestCases(unittest.TestCase):
 
     # Exception messages in Py2 are 8-bit strings. The following fails,
     # even if the testlist strings are wrapped in str() calls...
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_error_message(self):
         testlist = ('\xbd', '123\xbd', '  123 456  ')
         for s in testlist:

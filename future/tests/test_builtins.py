@@ -10,10 +10,11 @@ import textwrap
 from subprocess import Popen, PIPE
 from numbers import Integral
 import unittest
+import pytest
 
 
 class TestBuiltins(unittest.TestCase):
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_isinstance_int(self):
         """
         Redefining ``int`` to ``long`` on Py2 would make this
@@ -27,7 +28,7 @@ class TestBuiltins(unittest.TestCase):
         """
         self.assertTrue(isinstance(0, Integral))
 
-    @unittest.expectedFailure   # Py2's long doesn't inherit from int!
+    @pytest.mark.xfail   # Py2's long doesn't inherit from int!
     def test_long(self):
         self.assertEqual(isinstance(10**100, int))
         if not PY3:
@@ -55,7 +56,7 @@ class TestBuiltins(unittest.TestCase):
         self.assertTrue(isinstance(round(123.5, 0), float))
         self.assertTrue(isinstance(round(123.5), Integral))
 
-    @unittest.skip('negative ndigits not implemented yet')
+    @pytest.mark.xfail('negative ndigits not implemented yet')
     def test_round_negative_ndigits(self):
         self.assertEqual(round(10.1350, 0), 10.0)
         self.assertEqual(round(10.1350, -1), 10.0)

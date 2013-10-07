@@ -8,6 +8,7 @@ from future.builtins import *
 from future import utils
 
 import unittest
+import pytest
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
 
@@ -63,7 +64,7 @@ class TestStr(unittest.TestCase):
         self.assertEqual(s[0:1], 'A')
         self.assertEqual(s[:], u'ABCD')
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_u_literal_creates_newstr_object(self):
         """
         It would nice if the u'' or '' literal syntax could be coaxed

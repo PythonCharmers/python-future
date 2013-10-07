@@ -68,7 +68,7 @@ class TestFuturizeSimple(CodeHandler, unittest.TestCase):
         '''
         self.simple_convert_and_run(code)
     
-    @unittest.skip('not implemented yet')
+    @pytest.mark.skip('not implemented yet')
     def test_download_pypi_package_and_test(self, package_name='future'):
         URL = 'http://pypi.python.org/pypi/{}/json'
         

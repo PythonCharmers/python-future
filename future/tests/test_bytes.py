@@ -9,6 +9,7 @@ from future import utils
 
 from numbers import Integral
 import unittest
+import pytest
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
 # Tk icon as a .gif:
@@ -45,7 +46,7 @@ class TestBytes(unittest.TestCase):
         with self.assertRaises(ValueError):
             bytes(int(-1))
 
-    @unittest.skipIf(utils.PY3, 'test not needed on Py3: all ints are long')
+    @pytest.mark.skipif(utils.PY3, 'test not needed on Py3: all ints are long')
     def test_bytes_long(self):
         """
         As above, but explicitly feeding in a long on Py2. Note that
@@ -88,7 +89,7 @@ class TestBytes(unittest.TestCase):
     def test_isinstance_bytes(self):
         self.assertTrue(isinstance(bytes(b'blah'), bytes))
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_isinstance_oldbytestrings_bytes(self):
         """
         Watch out for this. Byte-strings produced in various places in Py2
@@ -105,7 +106,7 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(b[0:1], b'A')
         self.assertEqual(b[:], b'ABCD')
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_b_literal_creates_newbytes_object(self):
         """
         It would nice if the b'' literal syntax could be coaxed into producing
@@ -326,7 +327,7 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(len(d), 2)
         self.assertEqual(set(d.keys()), set([s, b]))
     
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_hash_with_native_types(self):
         # Warning: initializing the dict with native Py2 types throws the
         # hashing out:

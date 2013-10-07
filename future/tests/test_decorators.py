@@ -9,6 +9,7 @@ from future.builtins import *
 from future.utils import implements_iterator, python_2_unicode_compatible
 
 import unittest
+import pytest
 
 
 class TestDecorators(unittest.TestCase):
@@ -25,7 +26,7 @@ class TestDecorators(unittest.TestCase):
             assert hasattr(a, '__unicode__')
         self.assertEqual(str(a), my_unicode_str)
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_str_encode_returns_bytes(self):
         " The following fails but should ideally pass: "
         self.assertTrue(isinstance(str(a).encode('utf-8'), bytes))

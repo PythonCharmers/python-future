@@ -34,6 +34,9 @@ import unittest
 from test import support
 threading = support.import_module('threading')
 
+import pytest
+
+
 TRAVIS_MSG = 'These tests sporadically fail on travis-ci for some reason. (Threading?)'
 
 class NoLogRequestHandler(object):
@@ -65,7 +68,7 @@ class TestServerThread(threading.Thread):
         self.server.shutdown()
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
+@pytest.mark.skipif('/home/travis' in __file__, TRAVIS_MSG)
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self._threads = support.threading_setup()
@@ -87,7 +90,7 @@ class BaseTestCase(unittest.TestCase):
         return self.connection.getresponse()
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
+@pytest.mark.skipif('/home/travis' in __file__, TRAVIS_MSG)
 class BaseHTTPServerTestCase(BaseTestCase):
     class request_handler(NoLogRequestHandler, BaseHTTPRequestHandler):
         protocol_version = 'HTTP/1.1'
@@ -219,7 +222,7 @@ class BaseHTTPServerTestCase(BaseTestCase):
         res = self.con.getresponse()
         self.assertEqual(res.status, 999)
 
-    @unittest.skip('Unicode bug in Py2.7 email.parser.parsestr ?')
+    @pytest.mark.skip('Unicode bug in Py2.7 email.parser.parsestr ?')
     def test_latin1_header(self):
         self.con.request('LATINONEHEADER', '/', headers={
             'X-Special-Incoming':       'Ärger mit Unicode'
@@ -229,7 +232,7 @@ class BaseHTTPServerTestCase(BaseTestCase):
         self.assertEqual(res.read(), 'Ärger mit Unicode'.encode('utf-8'))
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
+@pytest.mark.skipif('/home/travis' in __file__, TRAVIS_MSG)
 class SimpleHTTPServerTestCase(BaseTestCase):
     class request_handler(NoLogRequestHandler, SimpleHTTPRequestHandler):
         pass
@@ -259,7 +262,7 @@ class SimpleHTTPServerTestCase(BaseTestCase):
         body = response.read()
         self.assertTrue(response)
         self.assertEqual(response.status, status)
-        self.assertIsNotNone(response.reason)
+        self.assertFalse(response.reason is None)
         if data:
             self.assertEqual(data, body)
 
@@ -326,8 +329,8 @@ print("%%s, %%s, %%s" %% (form.getfirst("spam"), form.getfirst("eggs"),
 """
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
-@unittest.skipIf(hasattr(os, 'geteuid') and os.geteuid() == 0,
+@pytest.mark.skipif('/home/travis' in __file__, TRAVIS_MSG)
+@pytest.mark.skipif(hasattr(os, 'geteuid') and os.geteuid() == 0,
         "This test can't be run reliably as root (issue #13308).")
 class CGIHTTPServerTestCase(BaseTestCase):
     class request_handler(NoLogRequestHandler, CGIHTTPRequestHandler):
@@ -429,13 +432,13 @@ class CGIHTTPServerTestCase(BaseTestCase):
                                  msg='path = %r\nGot:    %r\nWanted: %r' %
                                  (path, actual, expected))
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_headers_and_content(self):
         res = self.request('/cgi-bin/file1.py')
         self.assertEqual((b'Hello World' + self.linesep, 'text/html', 200),
             (res.read(), res.getheader('Content-type'), res.status))
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_post(self):
         # Was: params = urllib.parse.urlencode(
         params = urllib.urlencode(
@@ -450,7 +453,7 @@ class CGIHTTPServerTestCase(BaseTestCase):
         res.read()
         self.assertEqual(res.status, 404)
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_authorization(self):
         headers = {bytes(b'Authorization') : bytes(b'Basic ') +
                    base64.b64encode(bytes(b'username:pass'))}
@@ -458,14 +461,14 @@ class CGIHTTPServerTestCase(BaseTestCase):
         self.assertEqual((b'Hello World' + self.linesep, 'text/html', 200),
                 (res.read(), res.getheader('Content-type'), res.status))
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_no_leading_slash(self):
         # http://bugs.python.org/issue2254
         res = self.request('cgi-bin/file1.py')
         self.assertEqual((b'Hello World' + self.linesep, 'text/html', 200),
              (res.read(), res.getheader('Content-type'), res.status))
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_os_environ_is_not_altered(self):
         signature = "Test CGI Server"
         os.environ['SERVER_SOFTWARE'] = signature
@@ -475,7 +478,7 @@ class CGIHTTPServerTestCase(BaseTestCase):
         self.assertEqual(os.environ['SERVER_SOFTWARE'], signature)
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
+@pytest.mark.skipif('/home/travis' in __file__, TRAVIS_MSG)
 class SocketlessRequestHandler(SimpleHTTPRequestHandler):
     def __init__(self):
         self.get_called = False
@@ -491,7 +494,7 @@ class SocketlessRequestHandler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
+@pytest.mark.skipif('/home/travis' in __file__, TRAVIS_MSG)
 class RejectingSocketlessRequestHandler(SocketlessRequestHandler):
     def handle_expect_100(self):
         self.send_error(417)
@@ -514,7 +517,7 @@ class AuditableBytesIO(object):
         return len(self.datas)
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
+@pytest.mark.skipif('/home/travis' in __file__, TRAVIS_MSG)
 class BaseHTTPRequestHandlerTestCase(unittest.TestCase):
     """Test the functionality of the BaseHTTPServer.
 
@@ -673,7 +676,7 @@ class BaseHTTPRequestHandlerTestCase(unittest.TestCase):
         self.assertFalse(self.handler.get_called)
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
+@pytest.mark.skipif('/home/travis' in __file__, TRAVIS_MSG)
 class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
     """ Test url parsing """
     def setUp(self):

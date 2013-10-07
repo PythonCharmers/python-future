@@ -53,7 +53,7 @@ class TestImportStar(unittest.TestCase):
         import socketserver
 
     def test_str(self):
-        self.assertIsNot(str, bytes)            # Py2: assertIsNot only in 2.7
+        self.assertFalse(str is bytes)
         self.assertEqual(str('blah'), u'blah')  # Py3.3 and Py2 only
 
     def test_python_2_unicode_compatible_decorator(self):

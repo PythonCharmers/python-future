@@ -13,6 +13,7 @@ import os
 
 from future.standard_library import RENAMES, REPLACED_MODULES
 from future.tests.base import CodeHandler
+import pytest
 
 
 class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
@@ -21,7 +22,7 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
         self.interpreter = 'python'
         self.tempdir = tempfile.mkdtemp() + os.path.sep
 
-    @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
+    @pytest.mark.skipif(utils.PY3, reason='generic import tests are for Py2 only')
     def test_all(self):
         """
         Tests whether all of the old imports in RENAMES are accessible
@@ -39,7 +40,7 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
             if '.' not in oldname:
                 self.assertEqual(oldmod, newmod)
 
-    @unittest.skipIf(utils.PY3, 'not testing for old urllib on Py3')
+    @pytest.mark.skipif(utils.PY3, 'not testing for old urllib on Py3')
     def test_old_urllib_import(self):
         """
         Tests whether an imported module can import the old urllib package.
@@ -151,7 +152,7 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
     def test_socketserver(self):
         import socketserver
 
-    @unittest.skip("Not testing tkinter import (it may be installed separately from Python)")
+    @pytest.mark.skip("Not testing tkinter import (it may be installed separately from Python)")
     def test_tkinter(self):
         import tkinter
 
@@ -159,7 +160,7 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    @unittest.skip("skipping in case there's no net connection")
+    @pytest.mark.skip("skipping in case there's no net connection")
     def test_urllib_request(self):
         import urllib.request
         from pprint import pprint
@@ -177,14 +178,14 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
         import http.client
         self.assertTrue(True)
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_http_imports(self):
         import http
         import http.server
         import http.cookies
         import http.cookiejar
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_urllib_imports(self):
         import urllib
         import urllib.parse
@@ -194,7 +195,7 @@ class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
         import urllib.response
         self.assertTrue(True)
 
-    @unittest.expectedFailure
+    @pytest.mark.xfail
     def test_urllib_parse(self):
         import urllib.parse
         URL = 'http://pypi.python.org/test_url/spaces oh no/'

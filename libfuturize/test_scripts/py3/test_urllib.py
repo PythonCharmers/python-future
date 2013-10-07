@@ -1152,8 +1152,8 @@ class Pathname_Tests(unittest.TestCase):
                          "url2pathname() failed; %s != %s" %
                          (expect, result))
 
-    @unittest.skipUnless(sys.platform == 'win32',
-                         'test specific to the urllib.url2path function.')
+    @pytest.mark.skipif(sys.platform != 'win32',
+                        'test specific to the urllib.url2path function.')
     def test_ntpath(self):
         given = ('/C:/', '///C:/', '/C|//')
         expect = 'C:\\'
