@@ -677,11 +677,11 @@ STDTESTS = [
     'test_doctest2',
 ]
 
-NOTTESTS = {
+NOTTESTS = set([
     'test_support',
     'test_future1',
     'test_future2',
-}
+])
 
 def findtests(testdir=None, stdtests=STDTESTS, nottests=NOTTESTS):
     """Return a list of all applicable test modules."""

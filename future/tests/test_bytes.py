@@ -324,7 +324,7 @@ class TestBytes(unittest.TestCase):
         # This should overwrite d[native_s] again:
         d[s] = s
         self.assertEqual(len(d), 2)
-        self.assertEqual(set(d.keys()), {s, b})
+        self.assertEqual(set(d.keys()), set([s, b]))
     
     @unittest.expectedFailure
     def test_hash_with_native_types(self):

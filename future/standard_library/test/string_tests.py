@@ -63,7 +63,7 @@ class BaseTest(object):
         result = self.fixtype(result)
         obj = self.fixtype(obj)
         args = self.fixtype(args)
-        kwargs = {k: self.fixtype(v) for k,v in kwargs.items()}
+        kwargs = dict((k, self.fixtype(v)) for k,v in kwargs.items())
         realresult = getattr(obj, methodname)(*args, **kwargs)
         self.assertEqual(
             result,
