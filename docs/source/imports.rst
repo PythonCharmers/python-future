@@ -49,12 +49,9 @@ Explicit imports
 If you prefer explicit imports, the explicit equivalent of the ``from
 future.builtins import *`` line is::
 
-    from future.builtins import (zip, map, filter,
-                                 ascii, oct, hex, chr, int, input, open,
-                                 str, bytes, range, round, super,
-                                 apply, cmp, coerce, execfile, file, long,
-                                 raw_input, reduce, reload, unicode, xrange,
-                                 StandardError)
+    from future.builtins import (filter, map, zip,
+                                 ascii, chr, hex, input, int, oct, open,
+                                 bytes, range, round, str, super)
 
 However, we discourage importing only some of these builtins because this
 increases the risk of introducing Py2/3 portability bugs into your code.
@@ -65,17 +62,35 @@ To understand what each of these does, see the docs for these modules:
 - future.builtins.iterators
 - future.builtins.misc
 - future.builtins.backports
-- future.builtins.disabled
 
 The internal API is currently as follows::
 
     from future.builtins.iterators import filter, map, zip
     from future.builtins.misc import ascii, chr, hex, input, int, oct, open
     from future.builtins.backports import bytes, range, round, str, super
-    from future.builtins.disabled import (apply, cmp, coerce,
-            execfile, file, long, raw_input, reduce, reload, unicode,
-            xrange, StandardError)
 
 But please note that this internal API is evolving and may not be stable
 between different versions of ``future``.
+
+.. _obsolete-builtins:
+
+Obsolete Python 2 builtins
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Twelve Python 2 builtins have been removed from Python 3. To aid with
+porting code to Python 3 module by module, you can use the following
+import to cause a ``NameError`` exception to be raised on Python 2 as
+on Python 3 when any of the obsolete builtins is used::
+
+    from future.builtins.disabled import *
+
+This is equivalent to::
+
+    from future.builtins.disabled import (apply, cmp, coerce, execfile,
+                                 file, long, raw_input, reduce, reload,
+                                 unicode, xrange, StandardError)
+
+Running ``futurize`` over code that uses these Python 2 builtins replaces
+them with their Python 3 equivalents (which work on Py2 as well using
+``future`` imports.)
 
