@@ -18,6 +18,7 @@ from lib2to3.fixes.fix_import import FixImport
 from libfuturize.fixer_util import future_import
 
 class FixAbsoluteImport(FixImport):
+    run_order = 9
     def transform(self, node, results):
         result = super(FixAbsoluteImport, self).transform(node, results)
         future_import(u"absolute_import", node)

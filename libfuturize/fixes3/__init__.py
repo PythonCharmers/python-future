@@ -1,8 +1,14 @@
 import sys
 from lib2to3 import refactor
 
-
+# The original set of these fixes comes from lib3to2 (https://bitbucket.org/amentajo/lib3to2):
 libfuturize_3fix_names = set([
+                            'libfuturize.fixes2.fix_add__future__imports',  # from __future__ import absolute_import etc. on separate lines
+                            'libfuturize.fixes2.fix_add_future_standard_library_import',  # we force adding this import for now, even if it doesn't seem necessary to the fix_future_standard_library fixer, for ease of testing
+                            'libfuturize.fixes2.fix_order___future__imports',  # consolidates to a single line to simplify testing
+                            'libfuturize.fixes3.fix_future_builtins',   # adds "from future.builtins import *"
+                            'libfuturize.fixes2.fix_future_standard_library', # adds "from future import standard_library"
+
                             'libfuturize.fixes3.fix_annotations',
                             # 'libfuturize.fixes3.fix_bitlength',  # ints have this in Py2.7
                             # 'libfuturize.fixes3.fix_bool',    # need a decorator or Mixin
@@ -16,7 +22,6 @@ libfuturize_3fix_names = set([
                             # 'libfuturize.fixes3.fix_features',  # ?
                             'libfuturize.fixes3.fix_fullargspec',
                             # 'libfuturize.fixes3.fix_funcattrs',
-                            'libfuturize.fixes3.fix_future_builtins',   # adds "from future.builtins import *"
                             'libfuturize.fixes3.fix_getcwd',
                             'libfuturize.fixes3.fix_imports',   # adds "from future import standard_library"
                             'libfuturize.fixes3.fix_imports2',

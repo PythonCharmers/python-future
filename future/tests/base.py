@@ -16,17 +16,34 @@ class CodeHandler(TestCase):
         headers:
         """
         # After stage1:
+        # TODO: use this form after implementing a fixer to consolidate
+        #       __future__ imports into a single line:
+        # self.headers1 = """
+        # from __future__ import absolute_import, division, print_function
+        # """
         self.headers1 = """
-        from __future__ import absolute_import, division, print_function
-        """
+        from __future__ import absolute_import
+        from __future__ import division
+        from __future__ import print_function
+        """[1:]
 
         # After stage2:
+        # TODO: use this form after implementing a fixer to consolidate
+        #       __future__ imports into a single line:
+        # self.headers2 = """
+        # from __future__ import (absolute_import, division,
+        #                         print_function, unicode_literals)
+        # from future import standard_library
+        # from future.builtins import *
+        # """
         self.headers2 = """
-        from __future__ import (absolute_import, division,
-                                print_function, unicode_literals)
+        from __future__ import absolute_import
+        from __future__ import division
+        from __future__ import print_function
+        from __future__ import unicode_literals
         from future import standard_library
         from future.builtins import *
-        """
+        """[1:]
         self.interpreters = ['python']
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         self.env = {'PYTHONPATH': os.getcwd()}
@@ -54,6 +71,14 @@ class CodeHandler(TestCase):
         self._futurize_test_script(stages=stages, from3=from3)
         return self._read_test_script()
 
+    def reformat(self, code):
+        """
+        Removes any leading \n and dedents.
+        """
+        if code.startswith('\n'):
+            code = code[1:]
+        return dedent(code)
+
     def check(self, before, after=None, stages=(1, 2), from3=False, run=True):
         """
         Pass in ``before`` and (optinally) ``after``, as code blocks. If after
@@ -72,7 +97,7 @@ class CodeHandler(TestCase):
         from Python 2 to both 2 and 3. If from3 is True, runs ``futurize
         --from3`` to convert from Python 3 to both 2 and 3.
         """
-        output = self.simple_convert(dedent(before), stages=stages, from3=from3)
+        output = self.simple_convert(self.reformat(before), stages=stages, from3=from3)
         if run:
             for interpreter in self.interpreters:
                 _ = self._run_test_script(interpreter=interpreter)
@@ -81,14 +106,32 @@ class CodeHandler(TestCase):
                 headers = self.headers2
             else:
                 headers = self.headers1
-            self.assertEqual(dedent(headers + after), output)
+            desired = self.reformat(headers) + self.reformat(after)
+            self.assertEqual(desired.strip(), self.order_future_lines(output).strip())
+
+    def order_future_lines(self, code):
+        """
+        Returns the code block with any __future__ import lines sorted.
+        """
+        codelines = code.splitlines()
+        future_line_numbers = [i for i in range(len(codelines)) if codelines[i].startswith('from __future__ import ')]
+        sorted_future_lines = sorted([codelines[i] for i in future_line_numbers])
+        # Replace the old unsorted "from __future__ import ..." lines with the
+        # new sorted ones:
+        codelines2 = []
+        for i in range(len(codelines)):
+            if i in future_line_numbers:
+                codelines2.append(sorted_future_lines[i])
+            else:
+                codelines2.append(codelines[i])
+        return '\n'.join(codelines2)
 
     def unchanged(self, code, stages=(1, 2), from3=False, run=True):
         """
         Tests to ensure the code is unchanged by the futurize process,
         exception for the addition of __future__ and future imports.
         """
-        return self.check(code, code, stages, from3, run)
+        self.check(code, code, stages, from3, run)
 
     def _write_test_script(self, code, filename='mytestscript.py'):
         """

@@ -15,6 +15,7 @@ def match_division(node):
                                   not node.prev_sibling.type == slash
 
 class FixDivision(fixer_base.BaseFix):
+    run_order = 4    # this seems to be ignored?
 
     def match(self, node):
         u"""

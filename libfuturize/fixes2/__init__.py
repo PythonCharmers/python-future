@@ -64,16 +64,21 @@ lib2to3_fix_names_stage2 = set([
 ])
 
 libfuturize_2fix_names_stage1 = set([
-    'libfuturize.fixes2.fix_add__future__imports',
-    # 'libfuturize.fixes2.fix_absolute_import',
-    # 'libfuturize.fixes2.fix_print_with_import',
-    # 'libfuturize.fixes2.fix_division',
+    'libfuturize.fixes2.fix_add__future__imports_except_unicode_literals',  # we force adding all imports for now, even if they don't seem necessary, for ease of testing
+    'libfuturize.fixes2.fix_absolute_import',
+    'libfuturize.fixes2.fix_division',
+    'libfuturize.fixes2.fix_print_with_import',
+    'libfuturize.fixes2.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing
 ])
 
 libfuturize_2fix_names_stage2 = set([
+    'libfuturize.fixes2.fix_add__future__imports',
+    'libfuturize.fixes2.fix_add_future_standard_library_import',  # we force adding this import for now, even if it doesn't seem necessary to the fix_future_standard_library fixer, for ease of testing
     'libfuturize.fixes2.fix_future_builtins',
     'libfuturize.fixes2.fix_future_standard_library',
     'libfuturize.fixes2.fix_metaclass',
+    'libfuturize.fixes2.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing
     'libfuturize.fixes2.fix_unicode_keep_u',
+    'libfuturize.fixes2.fix_unicode_literals_import',
 ])
 

@@ -254,7 +254,6 @@ def touch_import_top(package, name, node):
         
     Based on lib2to3.fixer_util.touch_import()
     """
-
     root = find_root(node)
 
     if does_tree_import(package, name, root):
@@ -263,10 +262,10 @@ def touch_import_top(package, name, node):
     # try to find the first non-__future__ import, and insert above that
     insert_pos = offset = 0
     for idx, node in enumerate(root.children):
-        if not is_import_stmt(node):
-            continue
         if check_future_import(node):
             continue
+        # if not is_import_stmt(node):
+        #     continue
         insert_pos = idx + offset
         break
 

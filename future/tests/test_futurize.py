@@ -263,6 +263,12 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.check(before, after, stages=[1])
 
+    @unittest.skip("2to3 does not convert string exceptions")
+    def test_string_exceptions(self):
+        """
+        2to3 does not convert string exceptions: see
+        http://python3porting.com/differences.html.
+        """
         before = """
         try:
             raise "old string exception"
@@ -277,7 +283,11 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.check(before, after, stages=[1])
 
+    @unittest.skip("old-style classes are not converted")
     def test_oldstyle_classes(self):
+        """
+        We don't convert old-style classes to new-style automatically. Should we?
+        """
         before = """
         class Blah:
             pass
@@ -299,6 +309,9 @@ class TestFuturizeStage1(CodeHandler):
         self.check(before, after, stages=[1])
 
     def test_all(self):
+        """
+        Standard library module names should not be changed in stage 1
+        """
         before = """
         import ConfigParser
         import HTMLParser
@@ -313,10 +326,10 @@ class TestFuturizeStage1(CodeHandler):
         """
         after = """
         from future.utils import old_div
-
-        import configparser
-        import html
+        import Configparser
+        import HTMLParser
         import collections
+
         print('Hello')
         try:
             raise AttributeError('blah')
