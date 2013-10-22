@@ -304,6 +304,7 @@ def check_future_import(node):
     # now node is the import_from node
     if not (node.type == syms.import_from and
             # node.type == token.NAME and      # seems to break it
+            hasattr(node.children[1], 'value') and
             node.children[1].value == u'__future__'):
         return set()
     node = node.children[3]

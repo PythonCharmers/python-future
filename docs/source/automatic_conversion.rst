@@ -77,8 +77,10 @@ imports the renamed stdlib module under its Py3 name.
 
 - keyword-only arguments
 - metaclasses (using :func:`~future.utils.with_metaclass`)
-- function annotations (PEP 3107)
 - extended tuple unpacking (PEP 3132)
+
+To handle function annotations (PEP 3107), see
+`:ref:func_annotations`.
 
 
 How well does ``futurize`` work?
