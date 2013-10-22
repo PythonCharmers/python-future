@@ -1,9 +1,10 @@
 """Fixer that changes unicode to str and unichr to chr, but -- unlike the
 lib2to3 fix_unicode.py fixer, does not change u"..." into "...".
 
-The reason is that Py3.3+ support the u"..." string prefix, and the prefix
-provides useful information for disambiguating between byte strings and unicode
-strings, which is often the hardest part of the porting task.
+The reason is that Py3.3+ support the u"..." string prefix, and, if
+present, the prefix may provide useful information for disambiguating
+between byte strings and unicode strings, which is often the hardest part
+of the porting task.
 """
 
 import re
