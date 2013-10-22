@@ -1,9 +1,8 @@
 """HTTP/1.1 client library
 
-From Python 3.3
+A backport of the Python 3.3 module to Python 2.7 using ``future``.
 
-<intro stuff goes here>
-<other stuff, too>
+--------------
 
 HTTPConnection goes through a number of "states", which define when a client
 may legally make another request or fetch the response for a particular
@@ -70,8 +69,8 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future.utils import isbytes, istext
 from future.builtins import *
+from future.utils import isbytes, istext
 
 import email.parser
 import email.message
@@ -83,9 +82,10 @@ import collections
 # from urllib.parse import urlsplit
 # Use the Py2.7 equivalent:
 from urlparse import urlsplit
-from array import array
+
 import warnings
 import numbers
+from array import array
 
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",
@@ -1201,59 +1201,6 @@ else:
 
     __all__.append("HTTPSConnection")
 
-
-    ######################################
-    # class HTTPSConnection(HTTPConnection):
-    #     "This class allows communication via SSL."
-
-    #     default_port = HTTPS_PORT
-
-    #     # XXX Should key_file and cert_file be deprecated in favour of context?
-
-    #     def __init__(self, host, port=None, key_file=None, cert_file=None,
-    #                  strict=_strict_sentinel, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-    #                  source_address=None, context=None, check_hostname=None):
-    #         super(HTTPSConnection, self).__init__(host, port, strict, timeout,
-    #                                               source_address)
-    #         self.key_file = key_file
-    #         self.cert_file = cert_file
-    #         if context is None:
-    #             # Some reasonable defaults
-    #             context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-    #             context.options |= ssl.OP_NO_SSLv2
-    #         will_verify = context.verify_mode != ssl.CERT_NONE
-    #         if check_hostname is None:
-    #             check_hostname = will_verify
-    #         elif check_hostname and not will_verify:
-    #             raise ValueError("check_hostname needs a SSL context with "
-    #                              "either CERT_OPTIONAL or CERT_REQUIRED")
-    #         if key_file or cert_file:
-    #             context.load_cert_chain(cert_file, key_file)
-    #         self._context = context
-    #         self._check_hostname = check_hostname
-
-    #     def connect(self):
-    #         "Connect to a host on a given (SSL) port."
-
-    #         sock = socket.create_connection((self.host, self.port),
-    #                                         self.timeout, self.source_address)
-
-    #         if self._tunnel_host:
-    #             self.sock = sock
-    #             self._tunnel()
-
-    #         server_hostname = self.host if ssl.HAS_SNI else None
-    #         self.sock = self._context.wrap_socket(sock,
-    #                                               server_hostname=server_hostname)
-    #         try:
-    #             if self._check_hostname:
-    #                 ssl.match_hostname(self.sock.getpeercert(), self.host)
-    #         except Exception:
-    #             self.sock.shutdown(socket.SHUT_RDWR)
-    #             self.sock.close()
-    #             raise
-
-    # __all__.append("HTTPSConnection")
 
 class HTTPException(Exception):
     # Subclasses that define an __init__ must call Exception.__init__
