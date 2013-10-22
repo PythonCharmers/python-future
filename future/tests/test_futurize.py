@@ -215,24 +215,19 @@ class TestFuturizeStage1(CodeHandler):
         self.unchanged(code, stages=[1])
 
     def test_safe_futurize_imports(self):
+        """
+        The standard library module names should not be changed until stage 2
+        """
         before = """
         import ConfigParser
         import HTMLParser
         import collections
 
-        ConfigParser.blah()
-        thing = HTMLParser.thing + 1
+        ConfigParser.ConfigParser
+        HTMLParser.HTMLParser
         d = collections.OrderedDict()
         """
-        after = """
-        import configparser
-        import html
-
-        configparser.blah()
-        thing = html.parser.thing + 1
-        d = collections.OrderedDict()
-        """
-        self.check(before, after, stages=[1])
+        self.unchanged(before, stages=[1])
 
     def test_print(self):
         before = """

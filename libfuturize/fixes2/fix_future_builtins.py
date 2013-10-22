@@ -14,6 +14,8 @@ from libfuturize.fixer_util import touch_import_top
 
        
 class FixFutureBuiltins(BaseFix):
+    BM_compatible = True
+    PATTERN = "file_input"
 
     def match(self, node):
         if node.type == syms.file_input:

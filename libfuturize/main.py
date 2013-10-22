@@ -2,11 +2,13 @@
 futurize: automatic conversion to clean 2&3 code using ``python-future``
 ======================================================================
 
-Like Armin Ronacher's modernize.py, but it attempts to produce clean
-standard Python 3 code that runs on both Py2 and Py3 using the ``future``
-package.
+Like Armin Ronacher's modernize.py, ``futurize`` attempts to produce clean
+standard Python 3 code that runs on both Py2 and Py3.
 
-Use like this:
+One pass
+--------
+
+Use it like this on Python 2 code:
 
   $ futurize --verbose mypython2script.py
 
@@ -22,17 +24,44 @@ using the ``future`` package:
 which removes any Py3-only syntax (e.g. new metaclasses) and adds these
 import lines:
 
-    from __future__ import absolute_import
-    from __future__ import division
-    from __future__ import print_function
-    from __future__ import unicode_literals
-    import future.standard_library
+    from __future__ import (absolute_import, division,
+                            print_function, unicode_literals)
+    from future import standard_library
     from future.builtins import *
+
+To write changes to the files, use the -w flag.
+
+Two stages
+----------
+
+The ``futurize`` script can also be called in two separate stages. First:
+
+  $ futurize --stage1 mypython2script.py
+
+This produces more modern Python 2 code that is not yet compatible with Python
+3. The tests should still run and the diff should be uncontroversial to apply to
+most Python projects that are willing to drop support for Python 2.5 and lower.
+
+After this, the recommended approach is to explicitly mark all strings that must
+be byte-strings with a b'' prefix, and then invoke the second stage with:
+
+  $ futurize --stage2 mypython2script.py
+
+This implicitly turns all unadorned string literals into unicode strings (Py3
+str) and makes the additional changes needed to support Python 3. This stage
+introduces a dependency on ``future`` to restore Py2 support.
+
+If you would prefer instead to mark all your text strings explicitly with u''
+prefixes and have all unadorned '' strings converted to byte-strings, use this:
+
+  $ futurize --stage2 --tobytes mypython2script.py
+
+Separate stages are not available (or needed) when converting from Python 3.
 """
 
 from __future__ import (absolute_import, print_function, unicode_literals)
+from future import standard_library
 from future.builtins import *
-import future.standard_library
 
 import sys
 import logging
@@ -41,7 +70,10 @@ import optparse
 from lib2to3.main import main, warn, StdoutRefactoringTool
 from lib2to3 import refactor
 
-from libfuturize.fixes2 import (lib2to3_fix_names, libfuturize_2fix_names)
+from libfuturize.fixes2 import (lib2to3_fix_names_stage1,
+                                lib2to3_fix_names_stage2,
+                                libfuturize_2fix_names_stage1,
+                                libfuturize_2fix_names_stage2)
 from libfuturize.fixes3 import libfuturize_3fix_names
 
 
@@ -54,16 +86,24 @@ def main(args=None):
     parser = optparse.OptionParser(usage="futurize [options] file|dir ...")
     parser.add_option("-d", "--doctests_only", action="store_true",
                       help="Fix up doctests only")
-    parser.add_option("-f", "--fix", action="append", default=[],
-                      help="Each FIX specifies a transformation; default: all")
+    parser.add_option("-b", "--tobytes", action="store_true",
+                      help="Convert all unadorned string literals to bytes objects")
+    parser.add_option("-1", "--stage1", action="store_true",
+                      help="Modernize Python 2 code only; no compatibility with Python 3 (or dependency on ``future``)")
+    parser.add_option("-2", "--stage2", action="store_true",
+                      help="Take modernized (stage1) code and add a dependency on ``future`` to provide Py3 compatibility.")
+    parser.add_option("-0", "--both-stages", action="store_true",
+                      help="Apply both stages 1 and 2")
+    # parser.add_option("-f", "--fix", action="append", default=[],
+    #                   help="Each FIX specifies a transformation; default: all")
     parser.add_option("-j", "--processes", action="store", default=1,
                       type="int", help="Run 2to3 concurrently")
     parser.add_option("-x", "--nofix", action="append", default=[],
                       help="Prevent a fixer from being run.")
     parser.add_option("-l", "--list-fixes", action="store_true",
                       help="List available transformations")
-    parser.add_option("-p", "--print-function", action="store_true",
-                      help="Modify the grammar so that print() is a function")
+    # parser.add_option("-p", "--print-function", action="store_true",
+    #                   help="Modify the grammar so that print() is a function")
     parser.add_option("-v", "--verbose", action="store_true",
                       help="More verbose logging")
     parser.add_option("--no-diffs", action="store_true",
@@ -80,7 +120,13 @@ def main(args=None):
     refactor_stdin = False
     flags = {}
     options, args = parser.parse_args(args)
+    if options.tobytes:
+        raise NotImplementedError('the fixer for this is not yet written. '
+                          'Please open an issue on:\n'
+                          '   https://github.com/PythonCharmers/python-future\n'
+                          'if you need it.')
     if options.from3:
+        assert not (options.stage1 or options.stage2)
         fixer_pkg = 'libfuturize.fixes3'
         # avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
         # avail_fixes.update(libfuturize_3fix_names)
@@ -88,10 +134,19 @@ def main(args=None):
         flags["print_function"] = True
     else:
         fixer_pkg = 'libfuturize.fixes2'
-        # avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
         avail_fixes = set()
-        avail_fixes.update(lib2to3_fix_names)
-        avail_fixes.update(libfuturize_2fix_names)
+        # avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
+        if not (options.stage1 or options.stage2):
+            options.both_stages = True
+        else:
+            assert options.both_stages is None
+            options.both_stages = False
+        if options.stage1 or options.both_stages:
+            avail_fixes.update(lib2to3_fix_names_stage1)
+            avail_fixes.update(libfuturize_2fix_names_stage1)
+        if options.stage2 or options.both_stages:
+            avail_fixes.update(lib2to3_fix_names_stage2)
+            avail_fixes.update(libfuturize_2fix_names_stage2)
 
     if not options.write and options.no_diffs:
         warn("not writing files and not printing diffs; that's not very useful")
@@ -113,8 +168,9 @@ def main(args=None):
         if options.write:
             print("Can't write to stdin.", file=sys.stderr)
             return 2
-    if options.print_function:
-        flags["print_function"] = True
+    # Is this ever needed?
+    # if options.print_function:
+    #     flags["print_function"] = True
 
     # Set up logging handler
     level = logging.DEBUG if options.verbose else logging.INFO
@@ -126,19 +182,19 @@ def main(args=None):
 
     # Remove all fixes except one if the input is already Py3
     explicit = set()
-    if options.fix:
-        all_present = False
-        for fix in options.fix:
-            if fix == "all":
-                all_present = True
-            else:
-                explicit.add(fixer_pkg + ".fix_" + fix)
-                # explicit.add(fix)
-        requested = avail_fixes.union(explicit) if all_present else explicit
-    else:
-        requested = avail_fixes.union(explicit)
+    # if options.fix:
+    #     all_present = False
+    #     for fix in options.fix:
+    #         if fix == "all":
+    #             all_present = True
+    #         else:
+    #             explicit.add(fixer_pkg + ".fix_" + fix)
+    #             # explicit.add(fix)
+    #     requested = avail_fixes.union(explicit) if all_present else explicit
+    # else:
+    #     requested = avail_fixes.union(explicit)
+    requested = avail_fixes
     fixer_names = requested.difference(unwanted_fixes)
-    print(explicit)
     rt = StdoutRefactoringTool(sorted(fixer_names), flags, sorted(explicit),
                                options.nobackups, not options.no_diffs)
 
