@@ -298,6 +298,7 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.check(before, after, stages=[1])
 
+    @unittest.expectedFailure
     def test_division(self):
         before = """
         x = 1 / 2
@@ -308,6 +309,7 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.check(before, after, stages=[1])
 
+    @unittest.expectedFailure
     def test_all(self):
         """
         Standard library module names should not be changed in stage 1
@@ -339,40 +341,6 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.check(before, after, stages=[1])
         
-
-class TestFuturizeFrom3(CodeHandler):
-    def test_range_slice(self):
-        """
-        After running ``futurize --from3``, this Python 3 code should run on
-        both Py3 and Py2 without a MemoryError
-        """
-        code = '''
-        for i in range(10**15)[:10]:
-            pass
-        '''
-        self.unchanged(code, from3=True)
-
-    def test_print(self):
-        """
-        This Python 3-only code is a SyntaxError on Py2 without the
-        print_function import from __future__.
-        """
-        code = '''
-        import sys
-        print('Hello', out=sys.STDERR')
-        '''
-        self.unchanged(code, from3=True)
-
-    def test_division(self):
-        """
-        True division should not be screwed up by conversion from 3 to both
-        """
-        code = '''
-        x = 3 / 2
-        assert x == 1.5
-        '''
-        self.unchanged(code, from3=True)
-
 
 if __name__ == '__main__':
     unittest.main()
