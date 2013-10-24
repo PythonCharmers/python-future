@@ -20,7 +20,7 @@ when running
 from collections import Iterable
 from numbers import Integral
 
-from future.utils import PY3, istext, isbytes
+from future.utils import istext, isbytes
 from future.builtins.backports import no, issubset
 
 
@@ -250,7 +250,9 @@ class newbytes(_builtin_bytes):
         return super(newbytes, self).__ge__(other)
 
     def __native__(self):
-        return super(newbytes, self)(self)
+        # We can't just feed a newbytes object into str(), because
+        # newbytes.__str__() returns e.g. "b'blah'", consistent with Py3 bytes.
+        return super(newbytes, self).__str__()
 
 
 __all__ = ['newbytes']

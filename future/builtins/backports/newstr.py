@@ -41,18 +41,14 @@ python_2_unicode_compatible decorator in :mod:`future.utils`.
 from collections import Iterable
 
 from numbers import Number
-from future.utils import PY2, istext
+from future.utils import PY3, istext
 from future.builtins.backports import no, issubset
 from future.builtins.backports.newbytes import newbytes
 
 
-if PY2:
-    import __builtin__
-    unicode = __builtin__.unicode
-else:
-    import builtins
+if PY3:
     # We'll probably never use newstr on Py3 anyway...
-    unicode = builtins.str
+    unicode = str
 
 
 class newstr(unicode):
@@ -258,6 +254,9 @@ class newstr(unicode):
         if not istext(other):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__ge__(other)
+
+    def __native__(self):
+        return unicode(self)
 
 
 __all__ = ['newstr']

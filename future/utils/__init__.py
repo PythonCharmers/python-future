@@ -421,7 +421,7 @@ def native(obj):
     unicode
     """
     if hasattr(obj, '__native__'):
-        return obj.__native__
+        return obj.__native__()
     else:
         return obj
 
