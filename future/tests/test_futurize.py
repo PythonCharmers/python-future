@@ -16,6 +16,7 @@ class TestFuturizeSimple(CodeHandler):
     run under both Python 2 again and Python 3.
     """
 
+    @unittest.expectedFailure
     def test_problematic_string(self):
         """ This string generates a SyntaxError on Python 3 unless it has
         an r prefix.
@@ -35,11 +36,13 @@ class TestFuturizeSimple(CodeHandler):
         '''
         self.convert_check(code)
     
+    @unittest.expectedFailure
     def test_source_coding_utf8(self):
         """
-        Tests to ensure that the source coding line is not corrupted or removed.
-        Also tests whether the unicode characters in this encoding are parsed
-        correctly and left alone.
+        Tests to ensure that the source coding line is not corrupted or
+        removed. It must be left as the first line in the file (including
+        before any __future__ imports). Also tests whether the unicode
+        characters in this encoding are parsed correctly and left alone.
         """
         code = """
         # -*- coding: utf-8 -*-
@@ -47,7 +50,7 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.unchanged(code)
 
-    def test_exception_syntax():
+    def test_exception_syntax(self):
         """
         Test of whether futurize handles the old-style exception syntax
         """

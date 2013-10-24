@@ -34,7 +34,7 @@ class TestFuturizeFrom3(CodeHandler):
         """
         code = '''
         import sys
-        print('Hello', out=sys.STDERR')
+        print('Hello', file=sys.stderr)
         '''
         self.unchanged(code, from3=True)
 
