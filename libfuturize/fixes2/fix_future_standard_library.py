@@ -14,6 +14,7 @@ from libfuturize.fixer_util import touch_import_top
 
 
 class FixFutureStandardLibrary(FixImports):
+    run_order = 9
     def transform(self, node, results):
         result = super(FixFutureStandardLibrary, self).transform(node, results)
         # TODO: add a blank line between any __future__ imports and this?

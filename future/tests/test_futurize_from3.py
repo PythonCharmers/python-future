@@ -15,7 +15,42 @@ import os
 from future.tests.base import CodeHandler
 
 
-class TestFuturizeAnnotations(CodeHandler, unittest.TestCase):
+class TestFuturizeFrom3(CodeHandler):
+    def test_range_slice(self):
+        """
+        After running ``futurize --from3``, this Python 3 code should run on
+        both Py3 and Py2 without a MemoryError
+        """
+        code = '''
+        for i in range(10**15)[:10]:
+            pass
+        '''
+        self.unchanged(code, from3=True)
+
+    def test_print(self):
+        """
+        This Python 3-only code is a SyntaxError on Py2 without the
+        print_function import from __future__.
+        """
+        code = '''
+        import sys
+        print('Hello', out=sys.STDERR')
+        '''
+        self.unchanged(code, from3=True)
+
+    def test_division(self):
+        """
+        True division should not be screwed up by conversion from 3 to both
+        """
+        code = '''
+        x = 3 / 2
+        assert x == 1.5
+        '''
+        self.unchanged(code, from3=True)
+
+
+class TestFuturizeAnnotations(CodeHandler):
+    @unittest.expectedFailure
     def test_return_annotations_alone(self):
         before = "def foo() -> 'bar': pass"
         after = """
@@ -36,6 +71,7 @@ class TestFuturizeAnnotations(CodeHandler, unittest.TestCase):
         """
         self.check(b, a, from3=True)
 
+    @unittest.expectedFailure
     def test_single_param_annotations(self):
         b = "def foo(bar:'baz'): pass"
         a = """
@@ -57,6 +93,7 @@ class TestFuturizeAnnotations(CodeHandler, unittest.TestCase):
         """
         self.check(b, a, from3=True)
 
+    @unittest.expectedFailure
     def test_multiple_param_annotations(self):
         b = "def foo(bar:'spam'=False, baz:'eggs'=True, ham:False='spaghetti'): pass"
         a = "def foo(bar=False, baz=True, ham='spaghetti'): pass"
@@ -74,6 +111,7 @@ class TestFuturizeAnnotations(CodeHandler, unittest.TestCase):
         """
         self.check(b, a, from3=True)
 
+    @unittest.expectedFailure
     def test_mixed_annotations(self):
         b = "def foo(bar=False, baz:'eggs'=True, ham:False='spaghetti') -> 'zombies': pass"
         a = "def foo(bar=False, baz=True, ham='spaghetti'): pass"
@@ -95,7 +133,7 @@ class TestFuturizeAnnotations(CodeHandler, unittest.TestCase):
         a = "def foo(bar): pass"
         self.check(b, a, from3=True)
 
-    def test_unchanged(self):
+    def test_functions_unchanged(self):
         s = "def foo(): pass"
         self.unchanged(s, from3=True)
 
@@ -107,7 +145,7 @@ class TestFuturizeAnnotations(CodeHandler, unittest.TestCase):
         self.unchanged(s, from3=True)
 
         s = """
-        def foo(bar=baz):
+        def foo(bar='baz'):
             pass
             pass
         """

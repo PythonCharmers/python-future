@@ -111,17 +111,28 @@ class CodeHandler(TestCase):
 
     def order_future_lines(self, code):
         """
-        Returns the code block with any __future__ import lines sorted.
+        TODO: simplify this hideous code ...
+
+        Returns the code block with any ``__future__`` import lines sorted, and
+        then any ``future`` import lines sorted.
         """
         codelines = code.splitlines()
-        future_line_numbers = [i for i in range(len(codelines)) if codelines[i].startswith('from __future__ import ')]
+        # Under under future lines:
+        uufuture_line_numbers = [i for i in range(len(codelines)) if codelines[i].startswith('from __future__ import ')]
+        sorted_uufuture_lines = sorted([codelines[i] for i in uufuture_line_numbers])
+
+        # future import lines:
+        future_line_numbers = [i for i in range(len(codelines)) if codelines[i].startswith('from future')]
         sorted_future_lines = sorted([codelines[i] for i in future_line_numbers])
+
         # Replace the old unsorted "from __future__ import ..." lines with the
         # new sorted ones:
         codelines2 = []
         for i in range(len(codelines)):
-            if i in future_line_numbers:
-                codelines2.append(sorted_future_lines[i])
+            if i in uufuture_line_numbers:
+                codelines2.append(sorted_uufuture_lines[i])
+            elif i in future_line_numbers:
+                codelines2.append(sorted_future_lines[i - len(uufuture_line_numbers)])
             else:
                 codelines2.append(codelines[i])
         return '\n'.join(codelines2)
