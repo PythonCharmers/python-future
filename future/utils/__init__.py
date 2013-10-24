@@ -68,6 +68,7 @@ from __future__ import unicode_literals
 
 import types
 import sys
+import numbers
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
@@ -384,11 +385,12 @@ def isbytes(obj):
     return isinstance(obj, type(b''))
 
 
-# def isint(obj):
-#     """
-#     Don't define this. Use this idiom instead:
-#         isinstance(obj, numbers.Integral)
-#     """
+def isint(obj):
+    """
+    Instead of using this function, you can use the following idiom:
+        isinstance(obj, numbers.Integral)
+    """
+    return isinstance(obj, numbers.Integral)
 
 
 def native(obj):
