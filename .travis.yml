@@ -2,6 +2,7 @@ language: python
 python:
   - "3.3"
   - "2.7"
+  - "2.6"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 # These packages only exist on Ubuntu 13.04 and newer:
 # before_install:
