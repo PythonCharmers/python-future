@@ -1,3 +1,5 @@
+.. _isinstance-calls
+
 isinstance
 ----------
 
@@ -75,6 +77,17 @@ Integers and long integers
 
 Python 3 unifies Python 2's concepts of integers (``int``) and long
 integers (``long``) into a single ``int`` type.
+
+On Python 2, checks such as ``isinstance(x, int)`` are fragile (with or
+without importing ``int`` from ``future.builtins``)::
+
+    >>> x = 2**62
+    >>> assert isinstance(x, int)
+    >>> x *= 2
+    >>> assert isinstance(x, int)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    AssertionError
 
 The preferred way to test if a variable is an integer on Py3 or either an
 ``int`` or ``long`` on Py2 is with the abstract base class :class:`Integral`
