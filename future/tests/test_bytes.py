@@ -399,5 +399,34 @@ class TestBytes(unittest.TestCase):
             self.assertTrue(isinstance(e, bytes))
             self.assertEqual(e, b'XYZXYZXYZ')
 
+    @unittest.expectedFailure
+    def test_slice(self):
+        b = bytes(b'ABCD')
+        c1 = b[:]
+        self.assertTrue(isinstance(c1, bytes))
+        self.assertTrue(c1 is b)
+        self.assertTrue(c1 == b)
+
+        c2 = b[10:]
+        self.assertTrue(isinstance(c2, bytes))
+        self.assertTrue(c2 == bytes(b''))
+        self.assertTrue(c2 == b'')
+
+        c3 = b[:0]
+        self.assertTrue(isinstance(c3, bytes))
+        self.assertTrue(c3 == bytes(b''))
+        self.assertTrue(c3 == b'')
+
+        c4 = b[:1]
+        self.assertTrue(isinstance(c4, bytes))
+        self.assertTrue(c4 == bytes(b'A'))
+        self.assertTrue(c4 == b'A')
+
+        c5 = b[:-1]
+        self.assertTrue(isinstance(c5, bytes))
+        self.assertTrue(c5 == bytes(b'ABC'))
+        self.assertTrue(c5 == b'ABC')
+
+
 if __name__ == '__main__':
     unittest.main()
