@@ -45,20 +45,23 @@ class TestUtils(unittest.TestCase):
     def test_native(self):   
         a = int(10**20)     # long int
         b = native(a)
+        self.assertEqual(a, b)
         if PY2:
             self.assertEqual(type(b), long)
         else:
-            self.assertEqual(type(b), int))
+            self.assertEqual(type(b), int)
     
         c = bytes(b'ABC')
         d = native(c)
+        self.assertEqual(c, d)
         if PY2:
-            self.assertEqual(type(d), type(b'Py2 byte-string')
+            self.assertEqual(type(d), type(b'Py2 byte-string'))
         else:
-            self.assertEqual(type(d), bytes))
+            self.assertEqual(type(d), bytes)
     
         s = str(u'ABC')
         t = native(s)
+        self.assertEqual(s, t)
         if PY2:
             self.assertEqual(type(t), unicode)
         else:
