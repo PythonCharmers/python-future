@@ -1,58 +1,101 @@
 v0.7:
-  * Add backported Py3-like int object (inherits from long)
+  * We no longer disable obsolete Py2 builtins by default with ``from
+    future.builtins import *``. Use ``from future.builtins.disabled
+    import *`` instead.
+
+  * Added utility functions for type-checking and docs about
+    ``isinstance()`` uses/alternatives.
+
+  * Added a backported Py3-like ``int`` object (inherits from long).
+
   * Fixes and stricter type-checking for bytes and str objects
-  * Add docs about isinstance() and utility functions for type-checking
-  * Add many more tests for futurize script
-  * Don't disable obsolete Py2 builtins by default with ``from future.builtins import *``. Use ``from future.builtins.disabled import *`` instead.
+
+  * Added many more tests for the ``futurize`` script
+
+  * Removed undocumented functions from ``future.utils``. We'll now add
+    functions to this module carefully -- only when they have proven
+    their utility.
+
 v0.6:
-  * Add backported Py3-like str object (inherits from unicode)
-  * Remove support for deprecated form ``from future import *``: use ``from future.builtins import *`` instead
+  * Added a backported Py3-like ``str`` object (inherits from Py2's ``unicode``)
+
+  * Removed support for the deprecated form ``from future import *``: use ``from future.builtins import *`` instead
+
 v0.5.3:
   * Doc improvements
+
 v0.5.2:
   * Add lots of docs and a Sphinx project
+
 v0.5.1:
-  * Upgrade ``six`` (future.utils.six) to v1.4.1
-  * http.server module backport
+  * Upgraded included ``six`` module (included as ``future.utils.six``) to v1.4.1
+
+  * ``http.server`` module backported
+
   * bytes.split() and .rsplit() bugfixes
+
 v0.5.0:
-  * Add backported Py3-like bytes object
+  * Added backported Py3-like ``bytes`` object
+
 v0.4.2:
-  * [Various fixes]
+  * Various fixes
+
 v0.4.1:
-  * Add open() (from io module on Py2)
-  * Improve docs
+  * Added ``open()`` (from ``io`` module on Py2)
+  * Improved docs
+
 v0.4.0:
-  * Add various useful compatibility functions to future.utils
-  * Reorganize package: Move all builtins to future.builtins.*; move all stdlib things to future.standard_library.*
-  * Rename ``python-futurize`` console script to ``futurize``
-  * Move future.six to future.utils.six and pull the most relevant
-    definitions to future.utils.
+  * Added various useful compatibility functions to ``future.utils``
+
+  * Reorganized package: moved all builtins to ``future.builtins``; moved
+    all stdlib things to ``future.standard_library``
+
+  * Renamed ``python-futurize`` console script to ``futurize``
+
+  * Moved ``future.six`` to ``future.utils.six`` and pulled the most relevant
+    definitions to ``future.utils``.
+
   * More improvements to "Py3 to both" conversion (futurize.py --from3)
+
 v0.3.5:
-  * Fix broken package setup ("package directory 'libfuturize/tests' does not exist")
+  * Fixed broken package setup ("package directory 'libfuturize/tests' does not exist")
+
 v0.3.4:
-  * Add itertools.zip_longest
-  * Update 2to3_backcompat tests to use futurize.py
-  * Improve libfuturize fixers: correct order of imports; add imports only when necessary (except absolute_import currently)
+  * Added ``itertools.zip_longest``
+
+  * Updated 2to3_backcompat tests to use futurize.py
+
+  * Improved libfuturize fixers: correct order of imports; add imports only when necessary (except absolute_import currently)
+
 v0.3.3:
-  * Add python-futurize console script
-  * Add itertools.filterfalse
-  * Remove docs about unfinished backports (urllib etc.)
-  * Remove old Py2 syntax in some files that breaks py3 setup.py install
+  * Added ``python-futurize`` console script
+
+  * Added ``itertools.filterfalse``
+
+  * Removed docs about unfinished backports (urllib etc.)
+
+  * Removed old Py2 syntax in some files that breaks py3 setup.py install
+
 v0.3.2:
-  * Add test.support module
-  * Add UserList, UserString, UserDict classes to collections module
-  * Remove int -> long
-  * Add backported _markupbase.py etc. with new-style classes to fix travis-ci build problems
-  * Add working html and http.client backports
+  * Added test.support module
+
+  * Added UserList, UserString, UserDict classes to collections module
+
+  * Removed ``int`` -> ``long`` mapping
+  
+  * Added backported ``_markupbase.py`` etc. with new-style classes to fix travis-ci build problems
+
+  * Added working ``html`` and ``http.client`` backported modules
 v0.3.0:
-  * generalize import hooks to allow dotted imports
-  * add backports of urllib, html, http from Py3.3 stdlib using ``future``
-  * add ``futurize`` script for automatically turning Py2 or Py3 modules into
+  * Generalized import hooks to allow dotted imports
+
+  * Added backports of ``urllib``, ``html``, ``http`` modules from Py3.3 stdlib using ``future``
+
+  * Added ``futurize`` script for automatically turning Py2 or Py3 modules into
     cross-platform Py3 modules
-  * rename future.standard_library_renames to future.standard_library. (No
-    longer just renames, but backports too.)
+
+  * Renamed ``future.standard_library_renames`` to
+    ``future.standard_library``. (No longer just renames, but backports too.)
 
 v0.2.2.1:
   * small bug fixes to get tests passing on travis-ci.org
