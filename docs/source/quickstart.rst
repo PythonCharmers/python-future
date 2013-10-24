@@ -120,7 +120,7 @@ If you need one of these, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.
 
 For more information on interfaces that have changed in the standard library
-between Python 2 and Python 3, see :ref:`_stdlib-incompatibilities`.
+between Python 2 and Python 3, see :ref:`stdlib-incompatibilities`.
 
 
 .. _utilities-guide:

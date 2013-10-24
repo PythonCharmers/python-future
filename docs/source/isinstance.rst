@@ -1,4 +1,4 @@
-.. _isinstance-calls
+.. _isinstance-calls:
 
 isinstance
 ----------
@@ -78,8 +78,9 @@ Integers and long integers
 Python 3 unifies Python 2's concepts of integers (``int``) and long
 integers (``long``) into a single ``int`` type.
 
-On Python 2, checks such as ``isinstance(x, int)`` are fragile (with or
-without importing ``int`` from ``future.builtins``)::
+On Python 2, checks such as ``isinstance(x, int)`` are fragile because
+``long`` does not inherit from ``int``. So when an integer gets too
+large, the check starts to fail. For example::
 
     >>> x = 2**62
     >>> assert isinstance(x, int)
@@ -89,8 +90,17 @@ without importing ``int`` from ``future.builtins``)::
       File "<stdin>", line 1, in <module>
     AssertionError
 
-The preferred way to test if a variable is an integer on Py3 or either an
-``int`` or ``long`` on Py2 is with the abstract base class :class:`Integral`
+``future``'s backported ``int`` object doesn't help with these checks;
+both of them fail. To test if a variable is an integer on Py3 or either an
+``int`` or ``long`` on Py2, you can use the ``future.utils.isint``
+function::
+
+    >>> from future.utils import isint
+
+    >>> assert isint(10)
+    >>> assert isint(10**1000)
+
+An alternative is to use the abstract base class :class:`Integral`
 from the :mod:`numbers` module as follows::
 
     >>> from numbers import Integral
