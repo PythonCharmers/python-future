@@ -39,6 +39,8 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(bytes(5), b'\x00\x00\x00\x00\x00')
         # Test using newint:
         self.assertEqual(bytes(int(5)), b'\x00\x00\x00\x00\x00')
+        self.assertTrue(isinstance(bytes(int(5)), bytes))
+
         # Negative counts are not allowed in Py3:
         with self.assertRaises(ValueError):
             bytes(-1)

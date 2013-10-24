@@ -9,14 +9,19 @@ They are very similar. The most notable difference is:
 
 from numbers import Integral
 
-from future.utils import PY3
+from future.builtins.backports.newbytes import newbytes
+from future.utils import PY3, isint, istext, isbytes
+
+
+if PY3:
+    long = int
 
 
 class newint(long):
     """
     A backport of the Python 3 int object to Py2
     """
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, x=0, base=10):
         """
         From the Py3 int docstring:
 
@@ -36,9 +41,37 @@ class newint(long):
         |  4
 
         """
-        if len(args) == 0:
-            return super(newint, cls).__new__(cls, **kwargs)
-        return super(newint, cls).__new__(cls, *args, **kwargs)
+        try:
+            val = x.__int__()
+        except AttributeError:
+            val = x
+        else:
+            if not isint(val):
+                raise TypeError('__int__ returned non-int ({})'.format(type(val)))
+
+        if base != 10:
+            # Explicit base
+            if not (istext(val) or isbytes(val) or isinstance(val, bytearray)):
+                raise TypeError("int() can't convert non-string with explicit base")
+            try:
+                return super(newint, cls).__new__(cls, val, base)
+            except TypeError:
+                return super(newint, cls).__new__(cls, newbytes(val), base)
+        # After here, base is 10
+        try:
+            return super(newint, cls).__new__(cls, val)
+        except TypeError:
+            # Py2 long doesn't handle bytearray input with an explicit base, so
+            # handle this here.
+            # Py3: int(bytearray(b'10'), 2) == 2
+            # Py2: int(bytearray(b'10'), 2) == 2 raises TypeError
+            # Py2: long(bytearray(b'10'), 2) == 2 raises TypeError
+            try:
+                return super(newint, cls).__new__(cls, newbytes(val))
+            except:
+                raise TypeError("newint argument must be a string or a number, not '{}'".format(
+                                    type(val)))
+            
         
     def __repr__(self):
         """
@@ -61,10 +94,16 @@ class newint(long):
         return newint(super(newint, self).__rsub__(other))
 
     def __mul__(self, other):
-        return newint(super(newint, self).__mul__(other))
+        value = super(newint, self).__mul__(other)
+        if isint(value):
+            return newint(value)
+        return value
 
     def __rmul__(self, other):
-        return newint(super(newint, self).__rmul__(other))
+        value = super(newint, self).__rmul__(other)
+        if isint(value):
+            return newint(value)
+        return value
 
     def __div__(self, other):
         return newint(super(newint, self).__div__(other))
@@ -143,6 +182,9 @@ class newint(long):
     
     def __invert__(self):
         return newint(super(newint, self).__invert__())
+
+    def __native__(self):
+        return long(self)
 
 
 __all__ = ['newint']
