@@ -426,6 +426,14 @@ def native(obj):
         return obj
 
 
+def old_div(a, b):
+    """
+    Equivalent to Python 2's ``a / b`` before ``from __future__ import
+    division``.
+    """
+    return a // b if (isint(a) and isint(b)) else a / b
+
+
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'with_metaclass', 'bchr', 'bstr', 'bord',
            'tobytes', 'str_to_bytes', 'bytes_to_str', 
