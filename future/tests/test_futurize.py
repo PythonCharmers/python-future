@@ -20,20 +20,20 @@ class TestFuturizeSimple(CodeHandler):
         """ This string generates a SyntaxError on Python 3 unless it has
         an r prefix.
         """
-        code = """
+        before = """
         s = 'The folder is "C:\Users"'.
         """
         after = """
         s = r'The folder is "C:\Users"'.
         """
-        self.check(before, after)
+        self.convert_check(before, after)
 
     def test_xrange(self):
         code = '''
         for i in xrange(10):
             pass
         '''
-        self.check(code)
+        self.convert_check(code)
     
     def test_source_coding_utf8(self):
         """
@@ -63,7 +63,7 @@ class TestFuturizeSimple(CodeHandler):
         except IOError as e:
             val = e.errno
         """
-        self.check(before, after)
+        self.convert_check(before, after)
 
     def test_super(self):
         """
@@ -73,11 +73,12 @@ class TestFuturizeSimple(CodeHandler):
         code = '''
         class VerboseList(list):
             def append(self, item):
-                print 'Adding an item'
+                print('Adding an item')
                 super(VerboseList, self).append(item)
         '''
         self.unchanged(code)
 
+    @unittest.expectedFailure
     def test_file(self):
         """
         file() as a synonym for open() is obsolete and invalid on Python 3.
@@ -92,7 +93,7 @@ class TestFuturizeSimple(CodeHandler):
         data = f.read()
         f.close()
         '''
-        self.check(before, after)
+        self.convert_check(before, after)
 
     def test_apply(self):
         before = '''
@@ -107,22 +108,7 @@ class TestFuturizeSimple(CodeHandler):
         
         assert addup(*(10,20)) == 30
         """
-        self.check(before, after, run=True)
-    
-    def test_renamed_modules(self):
-        before = """
-        import ConfigParser
-        import copy_reg
-        import cPickle
-        import cStringIO
-        """
-        after = """
-        import configparser
-        import copy_reg
-        import pickle
-        from io import StringIO
-        """
-        self.check(before, after)
+        self.convert_check(before, after, run=True)
     
     @unittest.skip('not implemented yet')
     def test_download_pypi_package_and_test(self, package_name='future'):
@@ -160,16 +146,17 @@ class TestFuturizeSimple(CodeHandler):
         name = raw_input()
         greet(name)
         """
-        after = """
+        desired = """
         def greet(name):
             print("Hello, {0}!".format(name))
         print("What's your name?")
         name = input()
         greet(name)
         """
-        self._write_test_script(before)
-        output = self._futurize_test_script()
-        self.assertEqual(output, after)
+        self._write_test_script(self.reformat(before))
+        self._futurize_test_script()
+        output = self._read_test_script()
+        self.compare(output, self.headers2 + self.reformat(desired))
 
         for interpreter in self.interpreters:
             p1 = Popen([interpreter, self.tempdir + 'mytestscript.py'],
@@ -191,6 +178,79 @@ class TestFuturizeSimple(CodeHandler):
         b = b'byte string'
         '''
         self.unchanged(code)
+
+
+class TestFuturizeRenamedModules(CodeHandler):
+    def test_renamed_modules(self):
+        before = """
+        import ConfigParser
+        import copy_reg
+        import cPickle
+        import cStringIO
+
+        s = cStringIO.StringIO('blah')
+        """
+        after = """
+        import configparser
+        import copyreg
+        import pickle
+        import io
+
+        s = io.StringIO('blah')
+        """
+        self.convert_check(before, after)
+    
+    def test_renamed_copy_reg_module(self):
+        """
+        Example from docs.python.org/2/library/copy_reg.html
+        """
+        before = """
+        import copy_reg
+        import copy
+        import cPickle
+        class C(object):
+            def __init__(self, a):
+                self.a = a
+
+        def pickle_c(c):
+            print('pickling a C instance...')
+            return C, (c.a,)
+
+        copyreg.pickle(C, pickle_c)
+        c = C(1)
+        d = copy.copy(c)
+        p = cPickle.dumps(c)
+        """
+        after = """
+        import copyreg
+        import copy
+        import pickle
+        class C(object):
+            def __init__(self, a):
+                self.a = a
+
+        def pickle_c(c):
+            print('pickling a C instance...')
+            return C, (c.a,)
+
+        copyreg.pickle(C, pickle_c)
+        c = C(1)
+        d = copy.copy(c)
+        p = pickle.dumps(c)
+        """
+        self.convert_check(before, after)
+
+    @unittest.expectedFailure
+    def test_Py2_StringIO_module(self):
+        """
+        TODO: add the Py3 equivalent for this to the docs
+        """
+        before = """
+        import cStringIO
+        s = cStringIO.StringIO('my string')
+        assert isinstance(s, cStringIO.InputType)
+        """
+        self.assertTrue(False)
 
 
 class TestFuturizeStage1(CodeHandler):
@@ -236,7 +296,7 @@ class TestFuturizeStage1(CodeHandler):
         after = """
         print('Hello')
         """
-        self.check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1])
 
         before = """
         import sys
@@ -246,7 +306,7 @@ class TestFuturizeStage1(CodeHandler):
         import sys
         print('Hello', 'world', file=sys.stderr)
         """
-        self.check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1])
 
     def test_exceptions(self):
         before = """
@@ -261,9 +321,9 @@ class TestFuturizeStage1(CodeHandler):
         except AttributeError as e:
             pass
         """
-        self.check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1])
 
-    @unittest.skip("2to3 does not convert string exceptions")
+    @unittest.expectedFailure
     def test_string_exceptions(self):
         """
         2to3 does not convert string exceptions: see
@@ -281,9 +341,9 @@ class TestFuturizeStage1(CodeHandler):
         except Exception as e:
             pass
         """
-        self.check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1])
 
-    @unittest.skip("old-style classes are not converted")
+    @unittest.expectedFailure
     def test_oldstyle_classes(self):
         """
         We don't convert old-style classes to new-style automatically. Should we?
@@ -296,8 +356,9 @@ class TestFuturizeStage1(CodeHandler):
         class Blah(object):
             pass
         """
-        self.check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1])
 
+    # TODO: implement this!
     @unittest.expectedFailure
     def test_division(self):
         before = """
@@ -307,7 +368,7 @@ class TestFuturizeStage1(CodeHandler):
         from future.utils import old_div
         x = old_div(1, 2)
         """
-        self.check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1])
 
     @unittest.expectedFailure
     def test_all(self):
@@ -337,9 +398,9 @@ class TestFuturizeStage1(CodeHandler):
             raise AttributeError('blah')
         except AttributeError as e:
             pass
-        print('Number is', old_style_div(1, 2))
+        print('Number is', old_div(1, 2))
         """
-        self.check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1])
         
 
 if __name__ == '__main__':

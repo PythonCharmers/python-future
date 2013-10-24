@@ -21,11 +21,11 @@ class CodeHandler(TestCase):
         # self.headers1 = """
         # from __future__ import absolute_import, division, print_function
         # """
-        self.headers1 = """
+        self.headers1 = self.reformat("""
         from __future__ import absolute_import
         from __future__ import division
         from __future__ import print_function
-        """[1:]
+        """)
 
         # After stage2:
         # TODO: use this form after implementing a fixer to consolidate
@@ -36,31 +36,17 @@ class CodeHandler(TestCase):
         # from future import standard_library
         # from future.builtins import *
         # """
-        self.headers2 = """
+        self.headers2 = self.reformat("""
         from __future__ import absolute_import
         from __future__ import division
         from __future__ import print_function
         from __future__ import unicode_literals
         from future import standard_library
         from future.builtins import *
-        """[1:]
+        """)
         self.interpreters = ['python']
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         self.env = {'PYTHONPATH': os.getcwd()}
-
-    # def simple_convert_and_run(self, code):
-    #     """
-    #     Tests a complete conversion of a piece of code and whether
-    #     ``futurize`` can be applied and then the resulting code be
-    #     automatically run under Python 2 with the future module.
-
-    #     The stdout and stderr from calling the script is returned.
-    #     """
-    #     # Translate the clean source file, then add our imports
-    #     self._write_test_script(code)
-    #     self._futurize_test_script()
-    #     for interpreter in self.interpreters:
-    #         _ = self._run_test_script(interpreter=interpreter)
 
     def simple_convert(self, code, stages=(1, 2), from3=False):
         """
@@ -79,19 +65,32 @@ class CodeHandler(TestCase):
             code = code[1:]
         return dedent(code)
 
-    def check(self, before, after=None, stages=(1, 2), from3=False, run=True):
+    def compare(self, output, expected):
         """
-        Pass in ``before`` and (optinally) ``after``, as code blocks. If after
-        is passed, we assert that the output of the conversion of ``before``
-        with ``futurize`` is equal to ``after`` plus the appropriate headers
-        (self.headers1 or self.headers2) depending on the stage(s) used.
+        Compares whether the code blocks are equal. Ignores the order of
+        __future__ and future import lines and any trailing whitespace like
+        blank lines.
+        """
+        self.assertEqual(expected.rstrip(),
+                         self.order_future_lines(output).rstrip())
+
+    def convert_check(self, before, expected=None, stages=(1, 2), from3=False, run=True):
+        """
+        Reformats the ``before`` code block, converts it using ``futurize``
+        and, optionally, and runs the resulting code.
+        
+        If run is True, runs the resulting code under all Python interpreters
+        in self.interpreters.
+
+        If ``expected`` is passed (as a code block), it is reformatted and
+        compared with the resulting code. If ``expected`` is passed, we assert
+        that the output of the conversion of ``before`` with ``futurize`` is
+        equal to ``after`` plus the appropriate headers (self.headers1 or
+        self.headers2) depending on the stage(s) used.
 
         Passing stages=[1] or stages=[2] passes the flag ``--stage1`` or
         ``stage2`` to ``futurize``. Passing both stages runs ``futurize`` with
         both stages by default.
-
-        If run is True, runs the resulting code under all Python interpreters
-        in self.interpreters.
 
         If from3 is False, runs ``futurize`` in the default mode, converting
         from Python 2 to both 2 and 3. If from3 is True, runs ``futurize
@@ -101,13 +100,13 @@ class CodeHandler(TestCase):
         if run:
             for interpreter in self.interpreters:
                 _ = self._run_test_script(interpreter=interpreter)
-        if after is not None:
+
+        if expected is not None:
             if 2 in stages:
                 headers = self.headers2
             else:
                 headers = self.headers1
-            desired = self.reformat(headers) + self.reformat(after)
-            self.assertEqual(desired.strip(), self.order_future_lines(output).strip())
+            self.compare(output, headers + self.reformat(expected))
 
     def order_future_lines(self, code):
         """
@@ -142,7 +141,7 @@ class CodeHandler(TestCase):
         Tests to ensure the code is unchanged by the futurize process,
         exception for the addition of __future__ and future imports.
         """
-        self.check(code, code, stages, from3, run)
+        self.convert_check(code, code, stages, from3, run)
 
     def _write_test_script(self, code, filename='mytestscript.py'):
         """
