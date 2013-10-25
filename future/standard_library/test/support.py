@@ -25,13 +25,16 @@ import platform
 import shutil
 import warnings
 import unittest
+# For Python 2.6 compatibility:
+if not hasattr(unittest, 'skip'):
+    import unittest2 as unittest
+
 import importlib
 # import collections.abc    # not present on Py2.7
 import re
 import subprocess
 import imp
 import time
-import sysconfig
 import fnmatch
 import logging.handlers
 import struct
@@ -1235,6 +1238,8 @@ def disable_gc():
 
 def python_is_optimized():
     """Find if Python was built with optimizations."""
+    # We don't have sysconfig on Py2.6:
+    import sysconfig
     cflags = sysconfig.get_config_var('PY_CFLAGS') or ''
     final_opt = ""
     for opt in cflags.split():
@@ -1606,18 +1611,19 @@ def run_unittest(*classes):
     _filter_suite(suite, case_pred)
     _run_suite(suite)
 
-#=======================================================================
-# Check for the presence of docstrings.
-
-HAVE_DOCSTRINGS = (check_impl_detail(cpython=False) or
-                   sys.platform == 'win32' or
-                   sysconfig.get_config_var('WITH_DOC_STRINGS'))
-
-requires_docstrings = unittest.skipUnless(HAVE_DOCSTRINGS,
-                                          "test requires docstrings")
-
-
-#=======================================================================
+# We don't have sysconfig on Py2.6:
+# #=======================================================================
+# # Check for the presence of docstrings.
+# 
+# HAVE_DOCSTRINGS = (check_impl_detail(cpython=False) or
+#                    sys.platform == 'win32' or
+#                    sysconfig.get_config_var('WITH_DOC_STRINGS'))
+# 
+# requires_docstrings = unittest.skipUnless(HAVE_DOCSTRINGS,
+#                                           "test requires docstrings")
+# 
+# 
+# #=======================================================================
 # doctest driver.
 
 def run_doctest(module, verbosity=None, optionflags=0):
