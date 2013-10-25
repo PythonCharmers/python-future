@@ -12,8 +12,7 @@ from libfuturize.fixer_util import future_import
 class FixAddFutureImports(fixer_base.BaseFix):
     BM_compatible = True
     PATTERN = "file_input"
-
-    run_order = 9
+    run_order = 1
 
     def transform(self, node, results):
         future_import(u"unicode_literals", node)

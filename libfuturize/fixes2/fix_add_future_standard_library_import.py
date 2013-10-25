@@ -14,6 +14,7 @@ from libfuturize.fixer_util import touch_import_top
 class FixAddFutureStandardLibraryImport(fixer_base.BaseFix):
     BM_compatible = True
     PATTERN = "file_input"
+    run_order = 8
 
     def transform(self, node, results):
         # TODO: add a blank line between any __future__ imports and this?

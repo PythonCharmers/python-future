@@ -187,6 +187,36 @@ def ImportAsName(name, as_name, prefix=None):
 
 
 def future_import(feature, node):
+    """
+    This seems to work
+    """
+    root = find_root(node)
+
+    if does_tree_import(u"__future__", feature, node):
+        return
+
+    for idx, node in enumerate(root.children):
+        if node.type == syms.simple_stmt and \
+           len(node.children) > 0 and node.children[0].type == token.STRING:
+            # skip over docstring
+            continue
+        names = check_future_import(node)
+        if not names:
+            # not a future statement; need to insert before this
+            break
+        if feature in names:
+            # already imported
+            return
+
+    import_ = FromImport(u'__future__', [Leaf(token.NAME, feature, prefix=" ")])
+    children = [import_, Newline()]
+    root.insert_child(idx, Node(syms.simple_stmt, children))
+
+
+def future_import2(feature, node):
+    """
+    An alternative to future_import() which might not work ...
+    """
     root = find_root(node)
     
     if does_tree_import(u"__future__", feature, node):
@@ -246,7 +276,7 @@ def is_import_stmt(node):
             is_import(node.children[0]))
 
 
-def touch_import_top(package, name, node):
+def touch_import_top(package, name_to_import, node):
     """Works like `does_tree_import` but adds an import statement at the
     top if it was not imported (but below any __future__ imports).
 
@@ -256,35 +286,49 @@ def touch_import_top(package, name, node):
     """
     root = find_root(node)
 
-    if does_tree_import(package, name, root):
+    if does_tree_import(package, name_to_import, root):
         return
 
-    # try to find the first non-__future__ import, and insert above that
-    insert_pos = offset = 0
-    for idx, node in enumerate(root.children):
-        if check_future_import(node):
-            continue
-        # if not is_import_stmt(node):
-        #     continue
-        insert_pos = idx + offset
-        break
-
-    # if there are no imports where we can insert, find the docstring.
-    # if that also fails, we stick to the beginning of the file
-    if insert_pos == 0:
+    # Look for __future__ imports and insert below them
+    found = False
+    for name in ['absolute_import', 'division', 'print_function',
+                 'unicode_literals']:
+        if does_tree_import('__future__', name, root):
+            found = True
+            break
+    if found:
+        # At least one __future__ import. We want to loop until we've seen them
+        # all.
+        start, end = None, None
         for idx, node in enumerate(root.children):
-            if (node.type == syms.simple_stmt and node.children and
-               node.children[0].type == token.STRING):
-                insert_pos = idx + 1
+            if check_future_import(node):
+                start = idx
+                # Start looping
+                idx2 = start
+                while node:
+                    node = node.next_sibling
+                    idx2 += 1
+                    if not check_future_import(node):
+                        end = idx2
+                        break
                 break
+        assert start is not None
+        assert end is not None
+        insert_pos = end
+    else:
+        # No __future__ imports
+        for idx, node in enumerate(root.children):
+            if node.type == syms.simple_stmt: # and node.children and node.children[0].type == token.STRING):
+                break
+        insert_pos = idx
 
     if package is None:
         import_ = Node(syms.import_name, [
             Leaf(token.NAME, u"import"),
-            Leaf(token.NAME, name, prefix=u" ")
+            Leaf(token.NAME, name_to_import, prefix=u" ")
         ])
     else:
-        import_ = FromImport(package, [Leaf(token.NAME, name, prefix=u" ")])
+        import_ = FromImport(package, [Leaf(token.NAME, name_to_import, prefix=u" ")])
 
     children = [import_, Newline()]
     root.insert_child(insert_pos, Node(syms.simple_stmt, children))
@@ -328,24 +372,4 @@ def check_future_import(node):
     else:
         assert 0, "strange import"
 
-def add_future(node, symbol):
-
-    root = find_root(node)
-
-    for idx, node in enumerate(root.children):
-        if node.type == syms.simple_stmt and \
-           len(node.children) > 0 and node.children[0].type == token.STRING:
-            # skip over docstring
-            continue
-        names = check_future_import(node)
-        if not names:
-            # not a future statement; need to insert before this
-            break
-        if symbol in names:
-            # already imported
-            return
-
-    import_ = FromImport('__future__', [Leaf(token.NAME, symbol, prefix=" ")])
-    children = [import_, Newline()]
-    root.insert_child(idx, Node(syms.simple_stmt, children))
 
