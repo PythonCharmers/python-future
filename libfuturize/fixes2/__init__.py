@@ -19,7 +19,7 @@ lib2to3_fix_names_stage1 = set([
     'lib2to3.fixes.fix_ne',
     'lib2to3.fixes.fix_paren',
     'lib2to3.fixes.fix_print',
-    'lib2to3.fixes.fix_raise',
+    # 'lib2to3.fixes.fix_raise',   # uses incompatible with_traceback() method on exceptions
     'lib2to3.fixes.fix_renames',
     'lib2to3.fixes.fix_reduce',
     # 'lib2to3.fixes.fix_set_literal',  # this is optional but breaks Py2.6 support
@@ -68,6 +68,7 @@ libfuturize_2fix_names_stage1 = set([
     'libfuturize.fixes2.fix_absolute_import',
     'libfuturize.fixes2.fix_division',
     'libfuturize.fixes2.fix_print_with_import',
+    'libfuturize.fixes2.fix_raise',
     'libfuturize.fixes2.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing
 ])
 
