@@ -6,13 +6,12 @@ run under both Python 2 and Python 3.
 
 from __future__ import print_function, absolute_import
 
-import unittest
 import pprint
 from subprocess import Popen, PIPE
 import tempfile
 import os
 
-from future.tests.base import CodeHandler
+from future.tests.base import CodeHandler, unittest
 
 
 class TestFuturizeFrom3(CodeHandler):

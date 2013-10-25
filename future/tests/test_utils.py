@@ -8,7 +8,7 @@ from future.builtins import *
 from future.utils import old_div, isint, istext, isbytes, native, PY2, PY3
 
 from numbers import Integral
-import unittest
+from future.tests.base import unittest
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
 

@@ -7,8 +7,7 @@ from __future__ import absolute_import, division
 from future import utils
 from future.builtins import *
 from future.utils import implements_iterator, python_2_unicode_compatible
-
-import unittest
+from future.tests.base import unittest
 
 
 class TestDecorators(unittest.TestCase):

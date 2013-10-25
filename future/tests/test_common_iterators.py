@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 
 from future.builtins.iterators import *
+from future.tests.base import unittest
 
-import unittest
 
 class TestIterators(unittest.TestCase):
     def test_range(self):

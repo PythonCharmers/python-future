@@ -6,7 +6,6 @@ Based on lib2to3/tests/test_fixers.py
 # Support code for test_*.py files, from lib2to3/tests/support.py by Collin Winter:
 
 # Python imports
-import unittest
 import sys
 import os
 import os.path
@@ -14,10 +13,11 @@ import re
 from itertools import chain
 from textwrap import dedent
 from operator import itemgetter
-
-# Local imports
 from lib2to3 import pygram, pytree, refactor, fixer_util
 from lib2to3.pgen2 import driver
+
+# Local imports
+from future.tests.base import unittest
 
 
 test_dir = os.path.dirname(__file__)

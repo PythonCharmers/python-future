@@ -10,6 +10,7 @@ from __future__ import (absolute_import, division,
 from future import standard_library
 from future.builtins import *
 from future import utils
+from future.tests.base import unittest
 
 from http import client
 import array
@@ -17,7 +18,6 @@ import io
 import socket
 import errno
 
-import unittest
 TestCase = unittest.TestCase
 
 from test import support

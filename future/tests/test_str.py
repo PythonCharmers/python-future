@@ -6,15 +6,14 @@ Tests for the backported class:`str` class.
 from __future__ import absolute_import, unicode_literals, print_function
 from future.builtins import *
 from future import utils
-
-import unittest
+from future.tests.base import unittest
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
 
 
 class TestStr(unittest.TestCase):
     def test_str(self):
-        self.assertIsNot(str, bytes)            # Py2: assertIsNot only in 2.7
+        self.assertFalse(str is bytes)
         self.assertEqual(str('blah'), u'blah')  # u'' prefix: Py3.3 and Py2 only
         self.assertEqual(str(b'1234'), "b'1234'")
 

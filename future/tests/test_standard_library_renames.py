@@ -5,9 +5,9 @@ Tests for the future.standard_library module
 from __future__ import absolute_import, unicode_literals, print_function
 from future import standard_library
 from future import utils
+from future.tests.base import unittest
 
 import sys
-import unittest
 import tempfile
 import os
 
@@ -15,7 +15,7 @@ from future.standard_library import RENAMES, REPLACED_MODULES
 from future.tests.base import CodeHandler
 
 
-class TestStandardLibraryRenames(CodeHandler, unittest.TestCase):
+class TestStandardLibraryRenames(CodeHandler):
 
     def setUp(self):
         self.interpreter = 'python'

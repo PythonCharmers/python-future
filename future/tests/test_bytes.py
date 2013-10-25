@@ -8,7 +8,8 @@ from future.builtins import *
 from future import utils
 
 from numbers import Integral
-import unittest
+from future.tests.base import unittest
+
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
 # Tk icon as a .gif:

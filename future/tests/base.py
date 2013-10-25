@@ -1,6 +1,9 @@
 import os
 import tempfile
-from unittest import TestCase
+import unittest
+if not hasattr(unittest, 'skip'):
+    import unittest2 as unittest
+
 from textwrap import dedent
 import subprocess
 
@@ -20,7 +23,7 @@ if "check_output" not in dir(subprocess): # duck punch it in!
         return output
     subprocess.check_output = f
 
-class CodeHandler(TestCase):
+class CodeHandler(unittest.TestCase):
     """
     Handy mixin for test classes for writing / reading / futurizing /
     running .py files in the test suite.

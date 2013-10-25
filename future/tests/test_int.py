@@ -6,11 +6,11 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future import standard_library, utils
 from future.builtins import *
+from future.tests.base import unittest
 
 import sys
-
-import unittest
 from test import support
+
 
 L = [
         ('0', 0),

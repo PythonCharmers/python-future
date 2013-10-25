@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-import unittest
 import pprint
 from subprocess import Popen, PIPE
 import os
 
-from future.tests.base import CodeHandler
+from future.tests.base import CodeHandler, unittest
 
 
 class TestFuturizeSimple(CodeHandler):

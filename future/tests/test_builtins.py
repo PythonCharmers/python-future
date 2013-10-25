@@ -5,14 +5,29 @@ Tests to make sure the behaviour of the builtins is sensible and correct.
 from __future__ import absolute_import, division, unicode_literals
 from future.builtins import *
 from future.utils import PY3
+from future.tests.base import unittest
 
 import textwrap
 from subprocess import Popen, PIPE
 from numbers import Integral
-import unittest
 
 
 class TestBuiltins(unittest.TestCase):
+    def test_super(self):
+        class verbose_list(list):
+            '''
+            A class that uses the new simpler super() function
+            '''
+            def append(self, item):
+                print('Adding an item')
+                super().append(item)
+
+        l = verbose_list()
+        l.append('blah')
+        self.assertEqual(l[0], 'blah')
+        self.assertEqual(len(l), 1)
+        self.assertTrue(isinstance(l, list))
+
     @unittest.expectedFailure
     def test_isinstance_int(self):
         """

@@ -9,10 +9,11 @@ etc. all work as expected on both Python 2 and Python 3.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import unittest
 import copy
 
 from future import utils
+from future.tests.base import unittest
+
 
 class TestExplicitImports(unittest.TestCase):
     def test_py3_builtin_imports(self):

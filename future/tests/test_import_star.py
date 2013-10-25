@@ -12,10 +12,11 @@ works as expected:
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import unittest
 import copy
 
 from future import utils
+from future.tests.base import unittest
+
 
 original_locals = set(copy.copy(locals()))
 original_globals = set(copy.copy(globals()))
