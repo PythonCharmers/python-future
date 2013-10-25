@@ -45,6 +45,74 @@ into this code which runs on both Py2 and Py3::
 
 To write out all the changes to your Python files that ``futurize`` suggests, use the ``-w`` flag.
 
+For complex projects, it may be better to divide the porting into two stages. Stage 1 is for "safe" changes that modernize the code but do not break Python 2.6 compatibility or introduce a depdendency on the ``future`` package. Stage 2 is to complete the process.
+
+
+Stage 1: "safe" fixes
+~~~~~~~~~~~~~~~~~~~~~
+
+Run with::
+
+	futurize --stage1
+
+This applies fixes that modernize Python 2 code without changing the effect of
+the code. With luck, this will not introduce any bugs into the code. The
+changes are those that bring the Python code up-to-date without breaking Py2
+compatibility. The resulting code will be perfectly good Python 2.x code plus
+``__future__`` imports. It will probably not (yet) run on Python 3. The
+changes include:
+
+- except MyException, e:
++ except MyException as e:
+
+- print >>stderr, "Blah"
++ from __future__ import print_function
++ print("Blah", stderr)
+
+Implicit relative imports fixed, e.g.
+
+- import mymodule
++ from __future__ import absolute_import
++ from . import mymodule
+
+The ``from __future__ import unicode_literals`` declaration is not yet added
+during stage 1.
+
+.. and all unprefixed string literals '...' gain a b prefix to be b'...'.
+
+.. (This last step can be prevented using --no-bytes-literals if you already have b'...' markup in your code, whose meaning would otherwise be lost.)
+
+Stage 1 does not add any ``future`` imports.
+
+The idea is that this stage will create the majority of the lines in the
+``diff`` for the entire porting process, but without introducing any bugs. It
+should be uncontroversial and safe to apply to every Python 2 package. The
+subsequent patches introducing Python 3 compatibility should then be shorter
+and easier to review.
+
+
+Separating text from bytes
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+After applying stage 1, the recommended step is to decide which of your Python
+2 strings represent binary data and to prefix all byte-string literals for binary
+data with ``b`` like ``b'\x00ABCD'``.
+
+After stage 2 conversion, all string literals for textual data without ``b``
+prefixes will use Python 3's ``str`` type (and the backported ``str`` object on
+Python 2 with ``future``).
+
+
+Stage 2: 
+~~~~~~~~
+
+Ideally the output of this stage should not be a ``SyntaxError`` on either Python 3 or Python 2.
+
+- Standard-library imports are renamed to their Py3 versions.
+
+- ...
+
+
 .. _backwards-conversion:
 
 Backwards: 3 to both

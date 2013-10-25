@@ -5,21 +5,33 @@ int
 
 Python 3's ``int`` type is very similar to Python 2's ``long``, except
 for the representation (which omits the ``L`` suffix in Python 2). Python
-2's normal (short) integers have been removed from Python 3.
+2's normal (short) integers have been removed from Python 3, as has the
+``long`` builtin.
+
+Python 3::
+
+    >>> 2**64
+    18446744073709551616
+
+Python 2::
+
+    >>> 2**64
+    18446744073709551616L
 
 ``future`` includes a backport of Python 3's ``int`` since v0.7.0, which
 is a subclass of Python 2's ``long`` with the same representation
-behaviour. To ensure an integer is long compatibly both Py3 and Py2, cast
-it like this::
+behaviour as Python 3's ``int``. To ensure an integer is long compatibly both
+Py3 and Py2, cast it like this::
 
     >>> from future.builtins import *
     >>> must_be_a_long_integer = int(1234)
 
-This simplifies code that deals with ``long`` and ``int`` as special
-cases on Py2. An example is the following code from ``xlwt-future`` (which is
-called by the ``xlwt.antlr.BitSet`` class), which must use long integers.
+The backported ``int`` object helps with writing doctests and simplifies code
+that deals with ``long`` and ``int`` as special cases on Py2. An example is the
+following code from ``xlwt-future`` (called by the ``xlwt.antlr.BitSet`` class)
+for writing out Excel ``.xls`` spreadsheets.
 
-With ``future`` v0.7.0+, this becomes::
+With ``future`` v0.7.0+, the code is::
 
     def longify(data):
         """
@@ -28,7 +40,7 @@ With ``future`` v0.7.0+, this becomes::
         """
         if not data:
             return [int(0)]
-        if not isinstance(data,list):
+        if not isinstance(data, list):
             return [int(data)]
         return list(map(int, data))
 

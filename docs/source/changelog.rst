@@ -1,9 +1,14 @@
+.. _changelog:
+
+Change log
+==========
+
 v0.8:
   * Added Python 2.6 support
 
   * Removed unused modules: ``future.six`` and ``future.hacks``
 
-  * Removed undocumented functions in ``future.utils``
+  * Removed undocumented functions from ``future.utils``
 
 v0.7:
   * Added a backported Py3-like ``int`` object (inherits from long).

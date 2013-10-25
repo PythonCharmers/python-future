@@ -11,6 +11,7 @@ Contents:
    imports
    automatic_conversion
    faq
+   changelog
    credits
 
 Indices and tables
