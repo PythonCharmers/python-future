@@ -57,7 +57,15 @@ class newbytes(_builtin_bytes):
         elif isinstance(args[0], unicode):
             if 'encoding' not in kwargs:
                 raise TypeError('unicode string argument without an encoding')
-            value = args[0].encode(**kwargs)
+            ###
+            # Was:   value = args[0].encode(**kwargs)
+            # Python 2.6 string encode() method doesn't take kwargs:
+            # Use this instead:
+            newargs = [kwargs['encoding']]
+            if 'errors' in kwargs:
+                newargs.append(kwargs['errors'])
+            value = args[0].encode(*newargs)
+            ### 
         elif isinstance(args[0], Iterable):
             if len(args[0]) == 0:
                 # What is this?
