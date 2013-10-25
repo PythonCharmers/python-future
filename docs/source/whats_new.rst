@@ -1,3 +1,10 @@
+v0.8:
+  * Added Python 2.6 support
+
+  * Removed unused modules: ``future.six`` and ``future.hacks``
+
+  * Removed undocumented functions in ``future.utils``
+
 v0.7:
   * Added a backported Py3-like ``int`` object (inherits from long).
 
@@ -94,24 +101,29 @@ v0.3.0:
     ``future.standard_library``. (No longer just renames, but backports too.)
 
 v0.2.2.1:
-  * small bug fixes to get tests passing on travis-ci.org
+  * Small bug fixes to get tests passing on travis-ci.org
+
 v0.2.1:
-  * small bug fixes
+  * Small bug fixes
+
 v0.2.0:
-  * features module renamed to modified_builtins
-  * new functions added: round(), input()
-  * no more namespace pollution as a policy:
+  * Features module renamed to modified_builtins
+
+  * New functions added: ``round()``, ``input()``
+
+  * No more namespace pollution as a policy::
+
         from future import *
+
     should have no effect on Python 3. On Python 2, it only shadows the
     builtins; it doesn't introduce any new names.
-  * end-to-end tests with Python 2 code and 2to3 now work:
-        test_2to3_backcompat.py
+
+  * End-to-end tests with Python 2 code and 2to3 now work
 
 v0.1.0:
   * first version with tests!
+
   * removed the inspect-module magic
 
-v0.0.3:
-v0.0.2:
-v0.0.1:
-  * initial release. Use at your peril.
+v0.0.x:
+  * initial releases. Use at your peril.

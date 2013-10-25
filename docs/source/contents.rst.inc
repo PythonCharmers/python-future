@@ -5,6 +5,7 @@ Contents:
    :maxdepth: 2
 
    overview
+   whats_new
    quickstart
    what_else
    imports

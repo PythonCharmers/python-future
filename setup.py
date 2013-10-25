@@ -30,11 +30,10 @@ PACKAGES = ["future",
 PACKAGE_DATA = {'': [
                      'README.rst',
                      'LICENSE.txt',
-                     'ChangeLog.txt',
                      'futurize.py',
                      'discover_tests.py',
-                     'check_rst.sh',
-                     'docs/*.txt']}
+                     'check_rst.sh'
+                    ]}
 REQUIRES = []
 VERSION = future.__version__
 DESCRIPTION = "Clean single-source support for Python 3 and 2"
