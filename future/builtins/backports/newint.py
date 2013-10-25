@@ -47,7 +47,7 @@ class newint(long):
             val = x
         else:
             if not isint(val):
-                raise TypeError('__int__ returned non-int ({})'.format(type(val)))
+                raise TypeError('__int__ returned non-int ({0})'.format(type(val)))
 
         if base != 10:
             # Explicit base
@@ -69,7 +69,7 @@ class newint(long):
             try:
                 return super(newint, cls).__new__(cls, newbytes(val))
             except:
-                raise TypeError("newint argument must be a string or a number, not '{}'".format(
+                raise TypeError("newint argument must be a string or a number, not '{0}'".format(
                                     type(val)))
             
         

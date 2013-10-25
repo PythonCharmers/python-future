@@ -611,7 +611,7 @@ else:
 
 # Disambiguate TESTFN for parallel testing, while letting it remain a valid
 # module name.
-TESTFN = "{}_{}_tmp".format(TESTFN, os.getpid())
+TESTFN = "{0}_{1}_tmp".format(TESTFN, os.getpid())
 
 # # FS_NONASCII: non-ASCII character encodable by os.fsencode(),
 # # or None if there is no such character.
@@ -1386,7 +1386,7 @@ class _MemoryWatchdog(object):
         try:
             f = open(self.procfile, 'r')
         except OSError as e:
-            warnings.warn('/proc not available for stats: {}'.format(e),
+            warnings.warn('/proc not available for stats: {0}'.format(e),
                           RuntimeWarning)
             sys.stderr.flush()
             return

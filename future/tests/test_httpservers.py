@@ -30,8 +30,9 @@ import http.client
 import tempfile
 from io import BytesIO
 
-import unittest
 from test import support
+from future.tests.base import unittest
+
 threading = support.import_module('threading')
 
 TRAVIS_MSG = 'These tests sporadically fail on travis-ci for some reason. (Threading?)'

@@ -55,7 +55,7 @@ class newstr(unicode):
     """
     A backport of the Python 3 str object to Py2
     """
-    no_convert_msg = "Can't convert '{}' object to str implicitly"
+    no_convert_msg = "Can't convert '{0}' object to str implicitly"
 
     def __new__(cls, *args, **kwargs):
         """
@@ -101,7 +101,7 @@ class newstr(unicode):
         return newstr(super(newstr, self).__getitem__(y))
 
     def __contains__(self, key):
-        errmsg = "'in <string>' requires string as left operand, not {}"
+        errmsg = "'in <string>' requires string as left operand, not {0}"
         if isinstance(key, newstr):
             newkey = key
         elif isinstance(key, unicode):
@@ -130,7 +130,7 @@ class newstr(unicode):
         return newstr(super(newstr, self).__rmul__(other))
 
     def join(self, iterable):
-        errmsg = 'sequence item {}: expected unicode string, found bytes'
+        errmsg = 'sequence item {0}: expected unicode string, found bytes'
         for i, item in enumerate(iterable):
             if isinstance(item, bytes):
                 raise TypeError(errmsg.format(i))
@@ -233,7 +233,7 @@ class newstr(unicode):
         else:
             return True
 
-    unorderable_err = 'unorderable types: str() and {}'
+    unorderable_err = 'unorderable types: str() and {0}'
 
     def __lt__(self, other):
         if not istext(other):

@@ -136,7 +136,7 @@ def disallow_types(argnums, disallowed_types):
     def decorator(function):
         @functools.wraps(function)
         def wrapper(*args, **kwargs):
-            errmsg = "argument can't be {}"
+            errmsg = "argument can't be {0}"
             for (argnum, mytype) in zip(argnums, disallowed_types):
                 # Only restrict kw args only if they are passed:
                 if len(args) <= argnum:

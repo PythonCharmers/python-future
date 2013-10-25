@@ -79,7 +79,7 @@ class newbytes(_builtin_bytes):
         return 'b' + super(newbytes, self).__repr__()
 
     def __str__(self):
-        return 'b' + "'{}'".format(super(newbytes, self).__str__())
+        return 'b' + "'{0}'".format(super(newbytes, self).__str__())
 
     def __getitem__(self, y):
         value = super(newbytes, self).__getitem__(y)
@@ -117,7 +117,7 @@ class newbytes(_builtin_bytes):
         return newbytes(super(newbytes, self).__rmul__(other))
 
     def join(self, iterable_of_bytes):
-        errmsg = 'sequence item {}: expected bytes, {} found'
+        errmsg = 'sequence item {0}: expected bytes, {1} found'
         if isbytes(iterable_of_bytes) or istext(iterable_of_bytes):
             raise TypeError(errmsg.format(0, type(iterable_of_bytes)))
         for i, item in enumerate(iterable_of_bytes):
@@ -230,7 +230,7 @@ class newbytes(_builtin_bytes):
         else:
             return True
 
-    unorderable_err = 'unorderable types: bytes() and {}'
+    unorderable_err = 'unorderable types: bytes() and {0}'
 
     def __lt__(self, other):
         if not isbytes(other):
