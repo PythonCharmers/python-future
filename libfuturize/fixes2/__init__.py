@@ -17,7 +17,6 @@ lib2to3_fix_names_stage1 = set([
     'lib2to3.fixes.fix_isinstance',
     'lib2to3.fixes.fix_methodattrs',
     'lib2to3.fixes.fix_ne',
-    'lib2to3.fixes.fix_next',
     'lib2to3.fixes.fix_paren',
     'lib2to3.fixes.fix_print',
     'lib2to3.fixes.fix_raise',
@@ -52,6 +51,7 @@ lib2to3_fix_names_stage2 = set([
     'lib2to3.fixes.fix_long',
     'lib2to3.fixes.fix_map',
     # 'lib2to3.fixes.fix_metaclass', # causes SyntaxError in Py2! Use the one from ``six`` instead
+    'lib2to3.fixes.fix_next',
     'lib2to3.fixes.fix_nonzero',       # TODO: add a decorator for mapping __bool__ to __nonzero__
     'lib2to3.fixes.fix_numliterals',   # TODO: add int(33243) calls for what used to be 33243L
     'lib2to3.fixes.fix_operator',   # we will need support for this by e.g. extending the Py2 operator module to provide those functions in Py3
