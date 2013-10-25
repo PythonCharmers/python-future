@@ -405,6 +405,30 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.convert_check(before, after, stages=[1])
         
+    def test___future___import_position(self):
+        """
+        Issue #4: __future__ imports inserted too low in file: SyntaxError
+        """
+        code = """
+        # Comments here
+        # and here
+        __version__=''' $Id$ '''
+        __doc__="A Sequencer class counts things. It aids numbering and formatting lists."
+        __all__='Sequencer getSequencer setSequencer'.split()
+        #
+        # another comment
+        #
+        
+        CONSTANTS = [ 0, 01, 011, 0111, 012, 02, 021, 0211, 02111, 013 ]
+        _RN_LETTERS = "IVXLCDM"
+        
+        def my_func(value):
+            pass
+        
+        ''' Docstring-like comment here '''
+        """
+        self.convert_check(code)
+
 
 if __name__ == '__main__':
     unittest.main()
