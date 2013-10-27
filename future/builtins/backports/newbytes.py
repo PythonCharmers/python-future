@@ -88,6 +88,9 @@ class newbytes(_builtin_bytes):
         else:
             return newbytes(value)
 
+    def __getslice__(self, *args):
+        return self.__getitem__(slice(*args))
+
     def __contains__(self, key):
         if isinstance(key, int):
             newbyteskey = newbytes([key])
