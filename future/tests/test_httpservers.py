@@ -35,7 +35,6 @@ from future.tests.base import unittest
 
 threading = support.import_module('threading')
 
-TRAVIS_MSG = 'These tests sporadically fail on travis-ci for some reason. (Threading?)'
 
 class NoLogRequestHandler(object):
     def log_message(self, *args):
@@ -66,7 +65,6 @@ class TestServerThread(threading.Thread):
         self.server.shutdown()
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
 class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self._threads = support.threading_setup()
@@ -88,7 +86,6 @@ class BaseTestCase(unittest.TestCase):
         return self.connection.getresponse()
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
 class BaseHTTPServerTestCase(BaseTestCase):
     class request_handler(NoLogRequestHandler, BaseHTTPRequestHandler):
         protocol_version = 'HTTP/1.1'
@@ -230,7 +227,6 @@ class BaseHTTPServerTestCase(BaseTestCase):
         self.assertEqual(res.read(), 'Ärger mit Unicode'.encode('utf-8'))
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
 class SimpleHTTPServerTestCase(BaseTestCase):
     class request_handler(NoLogRequestHandler, SimpleHTTPRequestHandler):
         pass
@@ -327,7 +323,6 @@ print("%%s, %%s, %%s" %% (form.getfirst("spam"), form.getfirst("eggs"),
 """
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
 @unittest.skipIf(hasattr(os, 'geteuid') and os.geteuid() == 0,
         "This test can't be run reliably as root (issue #13308).")
 class CGIHTTPServerTestCase(BaseTestCase):
@@ -476,8 +471,7 @@ class CGIHTTPServerTestCase(BaseTestCase):
         self.assertEqual(os.environ['SERVER_SOFTWARE'], signature)
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
-class SocketlessRequestHandler(SimpleHTTPRequestHandler):
+class SocketlessRequestHandler(SimpleHTTPRequestHandler, object):
     def __init__(self):
         self.get_called = False
         self.protocol_version = "HTTP/1.1"
@@ -492,7 +486,7 @@ class SocketlessRequestHandler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
+
 class RejectingSocketlessRequestHandler(SocketlessRequestHandler):
     def handle_expect_100(self):
         self.send_error(417)
@@ -515,7 +509,6 @@ class AuditableBytesIO(object):
         return len(self.datas)
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
 class BaseHTTPRequestHandlerTestCase(unittest.TestCase):
     """Test the functionality of the BaseHTTPServer.
 
@@ -674,7 +667,6 @@ class BaseHTTPRequestHandlerTestCase(unittest.TestCase):
         self.assertFalse(self.handler.get_called)
 
 
-@unittest.skipIf('/home/travis' in __file__, TRAVIS_MSG)
 class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
     """ Test url parsing """
     def setUp(self):
