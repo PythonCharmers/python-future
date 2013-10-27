@@ -20,10 +20,10 @@ class TestFuturizeSimple(CodeHandler):
         """ This string generates a SyntaxError on Python 3 unless it has
         an r prefix.
         """
-        before = """
+        before = r"""
         s = 'The folder is "C:\Users"'.
         """
-        after = """
+        after = r"""
         s = r'The folder is "C:\Users"'.
         """
         self.convert_check(before, after)
