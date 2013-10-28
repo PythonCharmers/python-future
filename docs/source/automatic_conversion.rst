@@ -48,6 +48,8 @@ To write out all the changes to your Python files that ``futurize`` suggests, us
 For complex projects, it may be better to divide the porting into two stages. Stage 1 is for "safe" changes that modernize the code but do not break Python 2.6 compatibility or introduce a depdendency on the ``future`` package. Stage 2 is to complete the process.
 
 
+.. _forwards-conversion-stage1:
+
 Stage 1: "safe" fixes
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -60,20 +62,20 @@ the code. With luck, this will not introduce any bugs into the code. The
 changes are those that bring the Python code up-to-date without breaking Py2
 compatibility. The resulting code will be perfectly good Python 2.x code plus
 ``__future__`` imports. It will probably not (yet) run on Python 3. The
-changes include:
+changes include::
 
-- except MyException, e:
-+ except MyException as e:
+    - except MyException, e:
+    + except MyException as e:
+    
+    - print >>stderr, "Blah"
+    + from __future__ import print_function
+    + print("Blah", stderr)
 
-- print >>stderr, "Blah"
-+ from __future__ import print_function
-+ print("Blah", stderr)
+Implicit relative imports fixed, e.g.::
 
-Implicit relative imports fixed, e.g.
-
-- import mymodule
-+ from __future__ import absolute_import
-+ from . import mymodule
+    - import mymodule
+    + from __future__ import absolute_import
+    + from . import mymodule
 
 The ``from __future__ import unicode_literals`` declaration is not yet added
 during stage 1.
@@ -90,6 +92,7 @@ should be uncontroversial and safe to apply to every Python 2 package. The
 subsequent patches introducing Python 3 compatibility should then be shorter
 and easier to review.
 
+.. _forwards-conversion-text:
 
 Separating text from bytes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,18 +102,41 @@ After applying stage 1, the recommended step is to decide which of your Python
 data with ``b`` like ``b'\x00ABCD'``.
 
 After stage 2 conversion, all string literals for textual data without ``b``
-prefixes will use Python 3's ``str`` type (and the backported ``str`` object on
-Python 2 with ``future``).
+prefixes will use Python 3's ``str`` type (or the backported ``str`` object
+from ``future`` on Python 2).
 
 
-Stage 2: 
-~~~~~~~~
+.. _forwards-conversion-stage2:
 
-Ideally the output of this stage should not be a ``SyntaxError`` on either Python 3 or Python 2.
+Stage 2: Py3 code with ``future`` wrappers for Py2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- Standard-library imports are renamed to their Py3 versions.
+The goal for this step is to get the tests passing first on Py3 and then on Py2
+again with the help of the ``future`` package.
 
-- ...
+Run with::
+
+    futurize —-stage2 myfolder/*.py
+
+This adds three further imports::
+
+    from __future__ import unicode_literals
+    from future import standard_library
+    from future.builtins import *
+
+to each module and makes other changes needed to support Python 3, such as
+renaming standard-library imports to their Py3 names.
+
+All strings are then unicode (on Py2 as on Py3) unless explicitly marked with a ``b''`` prefix.
+
+Ideally the output of this stage should not be a ``SyntaxError`` on either
+Python 3 or Python 2.
+
+After this, you can run your tests on Python 3 and make further code changes
+until they pass on Python 3.
+
+The next step would be manually adding wrappers from ``future`` to re-enable
+Python 2 compatibility. See :ref:`what-else` for more info.
 
 
 .. _backwards-conversion:

@@ -1,6 +1,6 @@
 .. _changelog:
 
-Change log
+What's new
 ==========
 
 v0.8:
