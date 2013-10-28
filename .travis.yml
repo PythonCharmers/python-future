@@ -7,7 +7,7 @@ python:
 # These packages only exist on Ubuntu 13.04 and newer:
 # before_install:
 #   - sudo apt-get install -qq libpython2.7-testsuite libpython3.3-testsuite
-# No dependencies currently:
-# install: pip install -r requirements.txt --use-mirrors
+# No dependencies currently unless using Python 2.6.
+install: pip install -r requirements_py26.txt --use-mirrors
 # command to run tests, e.g. python setup.py test
 script:  python setup.py test
