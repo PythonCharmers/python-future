@@ -121,8 +121,6 @@ Credits
           - The ``python_2_unicode_compatible`` decorator is from
             Django. The ``implements_iterator`` and ``with_metaclass``
             decorators are from Jinja2.
-          - ``future`` incorporates the ``six`` module by Benjamin
-            Peterson as ``future.utils.six``.
           - Documentation is generated using ``sphinx`` using an
             adaptation of Armin Ronacher's stylesheets from Jinja2.
 
