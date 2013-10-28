@@ -310,6 +310,31 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.convert_check(before, after, stages=[1])
 
+    def test_print_already_function(self):
+        """
+        Running futurize --stage1 should not add a second set of parentheses 
+        """
+        before = """
+        print('Hello')
+        """
+        self.unchanged(before, stages=[1])
+
+    @unittest.expectedFailure
+    def test_print_already_function_complex(self):
+        """
+        Running futurize --stage1 does add a second second set of parentheses
+        in this case. This is because the underlying lib2to3 has two distinct
+        grammars -- with a print statement and with a print function -- and,
+        when going forwards (2 to both), futurize assumes print is a statement,
+        which raises a ParseError.
+        """
+        before = """
+        import sys
+        print('Hello', 'world', file=sys.stderr)
+        """
+        self.unchanged(before, stages=[1])
+
+
     def test_exceptions(self):
         before = """
         try:
