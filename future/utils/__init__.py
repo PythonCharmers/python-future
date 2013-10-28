@@ -123,7 +123,7 @@ def with_metaclass(meta, *bases):
             if this_bases is None:
                 return type.__new__(cls, name, (), d)
             return meta(name, bases, d)
-    return metaclass('temporary_class', None, {})
+    return metaclass(native_str('temporary_class'), None, {})
 
 
 # Definitions from pandas.compat follow:
