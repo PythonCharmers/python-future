@@ -64,8 +64,6 @@ On Python 3, this decorator is a no-op.
 
 """
 
-from __future__ import unicode_literals
-
 import types
 import sys
 import numbers
@@ -123,7 +121,7 @@ def with_metaclass(meta, *bases):
             if this_bases is None:
                 return type.__new__(cls, name, (), d)
             return meta(name, bases, d)
-    return metaclass(native_str('temporary_class'), None, {})
+    return metaclass('temporary_class', None, {})
 
 
 # Definitions from pandas.compat follow:
@@ -387,6 +385,9 @@ def isbytes(obj):
 
 def isint(obj):
     """
+    Tests whether an object is a Py3 ``int`` or either a Py2 ``int`` or
+    ``long``.
+
     Instead of using this function, you can use the following idiom:
         isinstance(obj, numbers.Integral)
     """
@@ -400,6 +401,8 @@ def native(obj):
     On Py2, returns the corresponding native Py2 types that are
     superclasses for backported objects from Py3:
     
+    >>> from future.builtins import str, bytes, int
+
     >>> native(str(u'ABC'))
     u'ABC'
     >>> type(native(str(u'ABC')))
@@ -428,7 +431,7 @@ def native(obj):
 
 def old_div(a, b):
     """
-    Equivalent to Python 2's ``a / b`` before ``from __future__ import
+    Equivalent to ``a / b`` on Python 2 without ``from __future__ import
     division``.
     """
     return a // b if (isint(a) and isint(b)) else a / b
@@ -436,7 +439,7 @@ def old_div(a, b):
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'with_metaclass', 'bchr', 'bstr', 'bord',
-           'tobytes', 'str_to_bytes', 'bytes_to_str', 
+           'tobytes', 'str_to_native_bytes', 'bytes_to_native_str', 
            'lrange', 'lmap', 'lzip', 'lfilter',
            'isidentifier', 'iteritems', 'iterkeys', 'itervalues',
            'viewitems', 'viewkeys', 'viewvalues',
