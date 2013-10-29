@@ -10,18 +10,21 @@ Instructions and notes on porting code from Python 2 to both Python 3 and 2 usin
 Step 0: setup
 -------------
 
-Step 0 goal: set up and see the tests passing on Python 2.
+Step 0 goal: set up and see the tests passing on Python 2 and failing on Python 3.
 
 a. Clone the package from github/bitbucket. Rename your repo to ``package-future``. Examples: ``reportlab-future``, ``paramiko-future``, ``mezzanine-future``.
-b. Create and activate a virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test`` or ``nosetests``)
+b. Create and activate a Python 2 virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test`` or ``nosetests``)
 c. Optionally: if there’s a ``.travis.yml`` file, add Python version 3.3 and remove any versions < 2.6.
+d. Install Python 3.3 with e.g. ``sudo apt-get install python3``. On other platforms, an easy way is to use Miniconda3. See `Miniconda3: http://repo.continuum.io/miniconda/index.html`_. Then e.g.::
+    
+    conda create -n py3 python=3
 
 .. _porting-step1:
 
 Step 1: modern Py2 code
 -----------------------
 
-The goal for this step is to modernize the Python 2 code without introducing any dependencies (on ``future`` or e.g. ``six`` at this stage.
+The goal for this step is to modernize the Python 2 code without introducing any dependencies (on ``future`` or e.g. ``six``) at this stage.
 
 1a. ``pip install future`` into the virtualenv
 1b. Run ``futurize --stage1 -w *.py subdir1/*.py subdir2/*.py``
