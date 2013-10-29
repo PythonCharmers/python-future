@@ -286,7 +286,9 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         after = """
         import io
         s = io.StringIO('my string')
-        assert isinstance(s, io.InputType)
+        # assert isinstance(s, io.InputType)
+        # There is no io.InputType in Python 3. What should we change this to
+        # instead?
         """
         self.convert_check(before, after)
 
@@ -319,6 +321,7 @@ class TestFuturizeStage1(CodeHandler):
             return a + b
 
         args = (1, 2)
+        assert f(*args) == 3
         assert f(*('a', 'b')) == 'ab'
         '''
         self.convert_check(before, after, stages=[1])
