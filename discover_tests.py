@@ -15,7 +15,7 @@ def additional_tests():
     setup_dir = os.path.abspath(os.path.dirname(setup_file))
     testsuite = unittest.defaultTestLoader.discover(setup_dir)
     blacklist = []
-    if '/Users/schofield' in __file__:
+    if '/home/travis' in __file__:
         # Skip some tests that fail on travis-ci
         blacklist.append('test_command')
     return exclude_tests(testsuite, blacklist)
