@@ -3,6 +3,15 @@
 What's new
 ==========
 
+v0.8.1:
+  * Backported socketserver.py. Fixes sporadic test failures with http.server
+    (related to threading and old-style classes used in Py2.7's
+    SocketServer.py).
+
+  * Move a few more safe ``futurize`` fixes from stage2 to stage1
+
+  * Bug fixes to ``future.utils``
+  
 v0.8:
   * Added Python 2.6 support
 

@@ -8,9 +8,14 @@ Python 2.6 support
 
 ``future`` now includes support for Python 2.6.
 
-To run the ``future`` test suite on Python 2.6, two additional packages are needed::
+To run the ``future`` test suite on Python 2.6, this additional package is needed::
 
     pip install unittest2
+
+``http.server`` also requires the ``argparse`` package::
+
+    pip install argparse
+
 
 Unused modules removed
 ----------------------
