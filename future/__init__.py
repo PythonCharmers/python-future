@@ -82,8 +82,8 @@ __all__ = []
 
 __ver_major__ = 0
 __ver_minor__ = 8
-__ver_patch__ = 1
-__ver_sub__ = ''
+__ver_patch__ = 2
+__ver_sub__ = '-dev'
 __version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
                               __ver_patch__, __ver_sub__)
 

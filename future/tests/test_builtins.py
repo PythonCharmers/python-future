@@ -28,13 +28,13 @@ class TestBuiltins(unittest.TestCase):
         self.assertEqual(len(l), 1)
         self.assertTrue(isinstance(l, list))
 
-    @unittest.expectedFailure
     def test_isinstance_int(self):
         """
-        Redefining ``int`` to ``long`` on Py2 would make this
-        test fail:
+        Redefining ``int`` to a ``long`` subclass on Py2 makes this
+        test fail unless isinstance() is defined appropriately:
         """
         self.assertTrue(isinstance(0, int))
+        self.assertFalse(isinstance(1.0, int))
 
     def test_isinstance_Integral(self):
         """
@@ -42,13 +42,24 @@ class TestBuiltins(unittest.TestCase):
         """
         self.assertTrue(isinstance(0, Integral))
 
-    @unittest.expectedFailure   # Py2's long doesn't inherit from int!
-    def test_long(self):
-        self.assertEqual(isinstance(10**100, int))
+    def test_isinstance_long(self):
+        """
+        Py2's long doesn't inherit from int!
+        """
+        self.assertTrue(isinstance(10**100, int))
         if not PY3:
-            self.assertEqual(isinstance(long(1), int))
+            self.assertTrue(isinstance(long(1), int))
         # Note: the following is a SyntaxError on Py3:
-        # self.assertEqual(isinstance(1L, int))
+        # self.assertTrue(isinstance(1L, int))
+
+    def test_isinstance_bytes(self):
+        self.assertTrue(isinstance(b'byte-string', bytes))
+        self.assertFalse(isinstance(b'byte-string', str))
+
+    def test_isinstance_str(self):
+        self.assertTrue(isinstance('string', str))
+        self.assertTrue(isinstance(u'string', str))
+        self.assertFalse(isinstance(u'string', bytes))
 
     def test_round(self):
         """

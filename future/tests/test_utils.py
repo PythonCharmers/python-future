@@ -5,7 +5,7 @@ Tests for the various utility functions and classes in ``future.utils``
 
 from __future__ import absolute_import, unicode_literals, print_function
 from future.builtins import *
-from future.utils import old_div, isint, istext, isbytes, native, PY2, PY3
+from future.utils import old_div, istext, isbytes, native, PY2, PY3
 
 from numbers import Integral
 from future.tests.base import unittest
@@ -26,16 +26,16 @@ class TestUtils(unittest.TestCase):
         """
         self.assertEqual(old_div(1, 2), 0)
         self.assertEqual(old_div(2, 2), 1)
-        self.assertTrue(isint(old_div(2, 2)))
+        self.assertTrue(isinstance(old_div(2, 2), int))
 
         self.assertEqual(old_div(3, 2), 1)
-        self.assertTrue(isint(old_div(3, 2)))
+        self.assertTrue(isinstance(old_div(3, 2), int))
 
         self.assertEqual(old_div(3., 2), 1.5)
-        self.assertTrue(not isint(old_div(3., 2)))
+        self.assertTrue(not isinstance(old_div(3., 2), int))
 
         self.assertEqual(old_div(-1, 2.), -0.5)
-        self.assertTrue(not isint(old_div(-1, 2.)))
+        self.assertTrue(not isinstance(old_div(-1, 2.), int))
 
         with self.assertRaises(ZeroDivisionError):
             old_div(0, 0)

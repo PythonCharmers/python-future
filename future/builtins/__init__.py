@@ -12,7 +12,7 @@ See the docs for these modules for more information::
 """
 
 from future.builtins.iterators import (filter, map, zip)
-from future.builtins.misc import (ascii, chr, hex, input, oct, open)
+from future.builtins.misc import (ascii, chr, hex, input, isinstance, oct, open)
 from future.builtins.backports import (bytes, int, range, round, str, super)
 from future import utils
 
@@ -22,7 +22,7 @@ if not utils.PY3:
     
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
-               'ascii', 'chr', 'hex', 'input', 'oct', 'open',
+               'ascii', 'chr', 'hex', 'input', 'isinstance', 'oct', 'open',
                'bytes', 'int', 'range', 'round', 'str', 'super',
               ]
 

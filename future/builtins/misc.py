@@ -33,17 +33,37 @@ Fortunately, ``input()`` seems to be seldom used in the wild in Python
 
 """
 
+from future.builtins.backports.newint import newint
 from future import utils
 
-if not utils.PY3:
+
+if utils.PY2:
     from io import open
     from future_builtins import ascii, oct, hex
     from __builtin__ import unichr as chr
-    # Was:
-    # from __builtin__ import long as int
-    # Was this safe? Probably not: it makes isinstance(1, int) == False
-    # Stick to this:
     from __builtin__ import int
+    import __builtin__
+
+    # Is it a good idea to define this? It'll mean many fewer lines of code
+    # need to be changed. Example: xlwt package uses isinstance() a lot.
+    # On the other hand, it may break some things and make them harder to debug.
+    def isinstance(obj, class_or_type_or_tuple):
+        """
+        isinstance(object, class-or-type-or-tuple) -> bool
+        
+        Return whether an object is an instance of a class or of a
+        subclass thereof.  With a type as second argument, return whether
+        that is the object's type.  The form using a tuple, isinstance(x,
+        (A, B, ...)), is a shortcut for isinstance(x, A) or isinstance(x,
+        B) or ... (etc.).
+        """
+        if hasattr(class_or_type_or_tuple, '__native__'):
+            # Special case for Py2 short int
+            if class_or_type_or_tuple == newint and isinstance(obj, int):
+                return True
+            return __builtin__.isinstance(obj, class_or_type_or_tuple.__base__)
+        else:
+            return __builtin__.isinstance(obj, class_or_type_or_tuple)
 
     # The following seems like a good idea, but it may be a bit
     # paranoid and the implementation may be fragile:
@@ -52,7 +72,6 @@ if not utils.PY3:
     # accidentally by someone who expects Python 3 semantics but forgets
     # to import it on Python 2. So we delete it from __builtin__. We
     # keep a copy though:
-    import __builtin__
     __builtin__._oldinput = __builtin__.input
     delattr(__builtin__, 'input')
 

@@ -3,6 +3,10 @@
 What's new
 ==========
 
+v0.8.2:
+  * New :func:`isinstance` function in :mod:`future.builtins`. This obviates
+    and deprecates the utility functions for type-checking in :mod:`future.utils`.
+
 v0.8.1:
   * Backported socketserver.py. Fixes sporadic test failures with http.server
     (related to threading and old-style classes used in Py2.7's
@@ -10,20 +14,20 @@ v0.8.1:
 
   * Move a few more safe ``futurize`` fixes from stage2 to stage1
 
-  * Bug fixes to ``future.utils``
+  * Bug fixes to :mod:`future.utils`
   
 v0.8:
   * Added Python 2.6 support
 
-  * Removed unused modules: ``future.six`` and ``future.hacks``
+  * Removed unused modules: :mod:`future.six` and :mod:`future.hacks`
 
-  * Removed undocumented functions from ``future.utils``
+  * Removed undocumented functions from :mod:`future.utils`
 
 v0.7:
   * Added a backported Py3-like ``int`` object (inherits from long).
 
   * Added utility functions for type-checking and docs about
-    ``isinstance()`` uses/alternatives.
+    :func:`isinstance` uses/alternatives.
 
   * Fixes and stricter type-checking for bytes and str objects
 
@@ -36,7 +40,7 @@ v0.7:
 v0.6:
   * Added a backported Py3-like ``str`` object (inherits from Py2's ``unicode``)
 
-  * Removed support for the deprecated form ``from future import *``: use ``from future.builtins import *`` instead
+  * Removed support for the form ``from future import *``: use ``from future.builtins import *`` instead
 
 v0.5.3:
   * Doc improvements
@@ -47,7 +51,7 @@ v0.5.2:
 v0.5.1:
   * Upgraded included ``six`` module (included as ``future.utils.six``) to v1.4.1
 
-  * ``http.server`` module backported
+  * :mod:`http.server` module backported
 
   * bytes.split() and .rsplit() bugfixes
 
@@ -58,21 +62,21 @@ v0.4.2:
   * Various fixes
 
 v0.4.1:
-  * Added ``open()`` (from ``io`` module on Py2)
+  * Added :func:`open` (from :mod:`io` module on Py2)
   * Improved docs
 
 v0.4.0:
-  * Added various useful compatibility functions to ``future.utils``
+  * Added various useful compatibility functions to :mod:`future.utils`
 
-  * Reorganized package: moved all builtins to ``future.builtins``; moved
+  * Reorganized package: moved all builtins to :mod:`future.builtins`; moved
     all stdlib things to ``future.standard_library``
 
   * Renamed ``python-futurize`` console script to ``futurize``
 
   * Moved ``future.six`` to ``future.utils.six`` and pulled the most relevant
-    definitions to ``future.utils``.
+    definitions to :mod:`future.utils`.
 
-  * More improvements to "Py3 to both" conversion (futurize.py --from3)
+  * More improvements to "Py3 to both" conversion (``futurize.py --from3``)
 
 v0.3.5:
   * Fixed broken package setup ("package directory 'libfuturize/tests' does not exist")
@@ -123,7 +127,7 @@ v0.2.1:
 v0.2.0:
   * Features module renamed to modified_builtins
 
-  * New functions added: ``round()``, ``input()``
+  * New functions added: :func:`round`, :func:`input`
 
   * No more namespace pollution as a policy::
 

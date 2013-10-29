@@ -25,6 +25,15 @@ class TestStr(unittest.TestCase):
         self.assertTrue(isinstance(s, str))
         self.assertEqual(s, TEST_UNICODE_STR)
 
+    def test_str_encode_decode_with_py2_str_arg(self):
+        # Try passing a standard Py2 string (as if unicode_literals weren't imported)
+        b = str(TEST_UNICODE_STR).encode(utils.native_str(b'utf-8'))
+        self.assertTrue(isinstance(b, bytes))
+        self.assertFalse(isinstance(b, str))
+        s = b.decode(utils.native_str(b'utf-8'))
+        self.assertTrue(isinstance(s, str))
+        self.assertEqual(s, TEST_UNICODE_STR)
+
     def test_str_encode_decode_big5(self):
         a = u'Unicode string: \u5b54\u5b50'
         self.assertEqual(str(a), a.encode('big5').decode('big5'))

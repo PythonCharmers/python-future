@@ -85,4 +85,17 @@ This enables 'ASCII mode' for regular expressions (see the docs `here
 <http://docs.python.org/3/library/re.html#re.ASCII>`_). Python 2's
 :mod:`re` module has no equivalent mode.
 
+struct.pack()
+-------------
+
+The :func:`struct.pack` function must take a native string as its format argument. For example::
+
+    >>> from __future__ import unicode_literals
+    >>> from struct import pack
+    >>> pack('<4H2I', version, rec_type, build, year, file_hist_flags, ver_can_read) 
+
+raises ``TypeError: Struct() argument 1 must be string, not unicode`` on Python
+2. To work around this, pass the format string argument as e.g. 
+``future.utils.native('<4H2I')``.
+
 

@@ -144,6 +144,8 @@ else:
     def bord(s):
         return ord(s)
 
+###
+
 if PY3:
     def tobytes(s):
         if isinstance(s, bytes):
@@ -371,15 +373,29 @@ def is_new_style(cls):
     return hasattr(cls, '__class__') and ('__dict__' in dir(cls) 
                                           or hasattr(cls, '__slots__'))
 
-# The native platform string. Useful because ``str`` is redefined on Py2 by
-# ``from future.builtins import *``.
+# The native platform string and bytes types. Useful because ``str`` and
+# ``bytes`` are redefined on Py2 by ``from future.builtins import *``.
 native_str = str
+native_bytes = bytes
+
 
 def istext(obj):
+    """
+    Deprecated. Use::
+        isinstance(obj, str)
+    after this import:
+        >>> from future.builtins import str, isinstance
+    """
     return isinstance(obj, type(u''))
 
 
 def isbytes(obj):
+    """
+    Deprecated. Use::
+        isinstance(obj, bytes)
+    after this import:
+        >>> from future.builtins import bytes, isinstance
+    """
     return isinstance(obj, type(b''))
 
 
@@ -390,6 +406,10 @@ def isint(obj):
 
     Instead of using this function, you can use the following idiom:
         isinstance(obj, numbers.Integral)
+    or simply:
+        isinstance(obj, int)
+    after this import:
+        from future.builtins import int, isinstance
     """
     return isinstance(obj, numbers.Integral)
 
