@@ -116,7 +116,6 @@ class TestFuturizeSimple(CodeHandler):
     def test_download_pypi_package_and_test(self, package_name='future'):
         URL = 'http://pypi.python.org/pypi/{}/json'
         
-        from future import standard_library
         import requests
         r = requests.get(URL.format(package_name))
         pprint.pprint(r.json())
@@ -126,12 +125,6 @@ class TestFuturizeSimple(CodeHandler):
         # r2 = requests.get(download_url)
         # with open('/tmp/' + filename, 'w') as tarball:
         #     tarball.write(r2.content)
-
-        # Ideally, we'd be able to use code like this:
-        # import urllib.request
-        # 
-        # r = urllib.request.urlopen(URL.format(package_name))
-        # pprint.pprint(r.read()) 
 
     def test_raw_input(self):
         """
@@ -171,9 +164,9 @@ class TestFuturizeSimple(CodeHandler):
         Tests to ensure that the u'' and b'' prefixes on unicode strings and
         byte strings are not removed by the futurize script.  Removing the
         prefixes on Py3.3+ is unnecessary and loses some information -- namely,
-        that the strings have explicitly been marked as unicode, rather than
-        just the futurize script's guess (perhaps incorrect) that they should
-        be unicode.
+        that the strings have explicitly been marked as unicode or bytes,
+        rather than just e.g. a guess by some automated tool about what they
+        are.
         """
         code = '''
         s = u'unicode string'
@@ -181,8 +174,22 @@ class TestFuturizeSimple(CodeHandler):
         '''
         self.unchanged(code)
 
+    @unittest.expectedFailure
+    def test_division(self):
+        """
+        TODO: implement this!
+        """
+        before = """
+        x = 1 / 2
+        """
+        after = """
+        from future.utils import old_div
+        x = old_div(1, 2)
+        """
+        self.convert_check(before, after, stages=[1])
 
-class TestFuturizeRenamedModules(CodeHandler):
+
+class TestFuturizeRenamedStdlib(CodeHandler):
     def test_renamed_modules(self):
         before = """
         import ConfigParser
@@ -202,7 +209,29 @@ class TestFuturizeRenamedModules(CodeHandler):
         """
         self.convert_check(before, after)
     
-    def test_renamed_copy_reg_module(self):
+    @unittest.expectedFailure
+    def test_urllib_refactor(self):
+        # Code like this using urllib is refactored by futurize --stage2 to use
+        # the new Py3 module names, but ``future`` doesn't support urllib yet.
+        before = """
+        import urllib
+
+        URL = 'http://pypi.python.org/pypi/{}/json'
+        package_name = 'future'
+        r = urllib.urlopen(URL.format(package_name))
+        data = r.read()
+        """
+        after = """
+        import urllib.request
+        
+        URL = 'http://pypi.python.org/pypi/{}/json'
+        package_name = 'future'
+        r = urllib.request.urlopen(URL.format(package_name))
+        data = r.read()
+        """
+        self.convert_check(before, after)
+
+    def test_renamed_copy_reg_and_cPickle_modules(self):
         """
         Example from docs.python.org/2/library/copy_reg.html
         """
@@ -218,7 +247,7 @@ class TestFuturizeRenamedModules(CodeHandler):
             print('pickling a C instance...')
             return C, (c.a,)
 
-        copyreg.pickle(C, pickle_c)
+        copy_reg.pickle(C, pickle_c)
         c = C(1)
         d = copy.copy(c)
         p = cPickle.dumps(c)
@@ -245,6 +274,8 @@ class TestFuturizeRenamedModules(CodeHandler):
     @unittest.expectedFailure
     def test_Py2_StringIO_module(self):
         """
+        Ideally, there would be a fixer for this. For now:
+
         TODO: add the Py3 equivalent for this to the docs
         """
         before = """
@@ -252,7 +283,12 @@ class TestFuturizeRenamedModules(CodeHandler):
         s = cStringIO.StringIO('my string')
         assert isinstance(s, cStringIO.InputType)
         """
-        self.assertTrue(False)
+        after = """
+        import io
+        s = io.StringIO('my string')
+        assert isinstance(s, io.InputType)
+        """
+        self.convert_check(before, after)
 
 
 class TestFuturizeStage1(CodeHandler):
@@ -265,6 +301,27 @@ class TestFuturizeStage1(CodeHandler):
     goal is to reduce the size of the real porting patch-set by performing
     the uncontroversial patches first.
     """
+
+    def test_apply(self):
+        """
+        apply() should be changed by futurize --stage1
+        """
+        before = '''
+        def f(a, b):
+            return a + b
+
+        args = (1, 2)
+        assert apply(f, args) == 3
+        assert apply(f, ('a', 'b')) == 'ab'
+        '''
+        after = '''
+        def f(a, b):
+            return a + b
+
+        args = (1, 2)
+        assert f(*('a', 'b')) == 'ab'
+        '''
+        self.convert_check(before, after, stages=[1])
 
     def test_xrange(self):
         """
@@ -334,7 +391,6 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.unchanged(before, stages=[1])
 
-
     def test_exceptions(self):
         before = """
         try:
@@ -385,18 +441,6 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.convert_check(before, after, stages=[1])
 
-    # TODO: implement this!
-    @unittest.expectedFailure
-    def test_division(self):
-        before = """
-        x = 1 / 2
-        """
-        after = """
-        from future.utils import old_div
-        x = old_div(1, 2)
-        """
-        self.convert_check(before, after, stages=[1])
-
     @unittest.expectedFailure
     def test_all(self):
         """
@@ -429,6 +473,24 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.convert_check(before, after, stages=[1])
         
+    def test_octal_literals(self):
+        before = """
+        mode = 0644
+        """
+        after = """
+        mode = 0o644
+        """
+        self.convert_check(before, after)
+
+    def test_long_int_literals(self):
+        before = """
+        bignumber = 12345678901234567890L
+        """
+        after = """
+        bignumber = 12345678901234567890
+        """
+        self.convert_check(before, after)
+
     def test___future___import_position(self):
         """
         Issue #4: __future__ imports inserted too low in file: SyntaxError

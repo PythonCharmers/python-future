@@ -43,6 +43,9 @@ class TestStandardLibraryRenames(CodeHandler):
     def test_old_urllib_import(self):
         """
         Tests whether an imported module can import the old urllib package.
+        Importing future.standard_library in a script should be possible and
+        not disrupt any uses of the old Py2 standard library names in modules
+        imported by that script.
         """
         code1 = '''
                 from future import standard_library
