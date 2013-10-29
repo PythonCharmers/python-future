@@ -139,7 +139,7 @@ DEFAULT_ERROR_CONTENT_TYPE = "text/html;charset=utf-8"
 def _quote_html(html):
     return html.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-class HTTPServer(socketserver.TCPServer, object):
+class HTTPServer(socketserver.TCPServer):
 
     allow_reuse_address = 1    # Seems to make sense in testing environment
 
@@ -151,7 +151,7 @@ class HTTPServer(socketserver.TCPServer, object):
         self.server_port = port
 
 
-class BaseHTTPRequestHandler(socketserver.StreamRequestHandler, object):
+class BaseHTTPRequestHandler(socketserver.StreamRequestHandler):
 
     """HTTP request handler base class.
 

@@ -123,7 +123,7 @@ RENAMES = {
            '__builtin__': 'builtins',
            'copy_reg': 'copyreg',
            'Queue': 'queue',
-           'SocketServer': 'socketserver',
+           'future.standard_library.socketserver': 'socketserver',
            'ConfigParser': 'configparser',
            'repr': 'reprlib',
            # 'FileDialog': 'tkinter.filedialog',
