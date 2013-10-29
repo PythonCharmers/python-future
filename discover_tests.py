@@ -40,6 +40,9 @@ def exclude_tests(suite, blacklist):
     
     for test_group in suite._tests:
         for test in test_group:
+            if not hasattr(test, '_tests'):
+                # e.g. ModuleImportFailure
+                continue
             for subtest in test._tests:
                 method = subtest._testMethodName
                 print(method)
