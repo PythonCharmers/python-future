@@ -45,7 +45,6 @@ def exclude_tests(suite, blacklist):
                 continue
             for subtest in test._tests:
                 method = subtest._testMethodName
-                print(method)
                 if method in blacklist:
                     setattr(test, method, getattr(SkipCase(), 'runTest'))
             new_suite.addTest(test)
