@@ -20,11 +20,15 @@ when running
 from collections import Iterable
 from numbers import Integral
 
-from future.utils import istext, isbytes
+from future.utils import istext, isbytes, PY3
 from future.builtins.backports import no, issubset
 
 
 _builtin_bytes = bytes
+
+if PY3:
+    # We'll probably never use newstr on Py3 anyway...
+    unicode = str
 
 
 class newbytes(_builtin_bytes):

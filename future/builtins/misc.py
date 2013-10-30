@@ -11,8 +11,12 @@ The builtin functions are:
 - ``input`` (equivalent to ``raw_input`` on Py2)
 - ``open`` (equivalent to io.open on Py2)
 
-and:
-- ``int`` (currently unchanged)
+This function is also defined specially:
+
+- ``isinstance``
+
+to be compatible with the backported ``int``, ``str``, and ``bytes`` types of
+``future.builtins``.
 
 
 input()
@@ -41,12 +45,13 @@ if utils.PY2:
     from io import open
     from future_builtins import ascii, oct, hex
     from __builtin__ import unichr as chr
-    from __builtin__ import int
     import __builtin__
 
-    # Is it a good idea to define this? It'll mean many fewer lines of code
-    # need to be changed. Example: xlwt package uses isinstance() a lot.
-    # On the other hand, it may break some things and make them harder to debug.
+    # Is it a good idea to define this? It'll mean many fewer lines of
+    # type-checking code need to be changed to using custom 
+    # functions (like future.utils.isint). Example: the xlwt package uses
+    # isinstance() a lot. On the other hand, it may break some things and make
+    # them harder to debug.
     def isinstance(obj, class_or_type_or_tuple):
         """
         isinstance(object, class-or-type-or-tuple) -> bool
@@ -80,7 +85,7 @@ if utils.PY2:
     # In case some code wants to import 'callable' portably from Py3.0/3.1:
     callable = __builtin__.callable
 
-    __all__ = ['ascii', 'chr', 'hex', 'input', 'int', 'oct', 'open']
+    __all__ = ['ascii', 'chr', 'hex', 'input', 'isinstance', 'oct', 'open']
 
 else:
     import builtins
@@ -88,7 +93,7 @@ else:
     chr = builtins.chr
     hex = builtins.hex
     input = builtins.input
-    int = builtins.int
+    isinstance = builtins.isinstance
     oct = builtins.oct
     open = builtins.open
 

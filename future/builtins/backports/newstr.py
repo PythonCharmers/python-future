@@ -2,11 +2,14 @@
 This module redefines ``str`` on Python 2.x to be a subclass of the Py2
 ``unicode`` type that behaves like the Python 3.x ``str``.
 
+The main differences between ``newstr`` and Python 2.x's ``unicode`` type are
+the stricter type-checking and absence of a `u''` prefix in the representation.
+
 It is designed to be used together with the ``unicode_literals`` import
 as follows:
 
     >>> from __future__ import unicode_literals
-    >>> from future.builtins import str
+    >>> from future.builtins import str, isinstance
 
 On Python 3.x and normally on Python 2.x, these expressions hold
 
@@ -26,10 +29,9 @@ the same expressions are False:
     >>> isinstance('blah', str)
     False
 
-This module is designed to be imported together with unicode_literals on
-Python 2 to bring the meaning of ``str`` back into alignment with
-unprefixed string literals (i.e. ``unicode`` if ``unicode_literals`` has
-been imported from ``__future__``).
+This module is designed to be imported together with ``unicode_literals`` on
+Python 2 to bring the meaning of ``str`` back into alignment with unprefixed
+string literals (i.e. ``unicode``).
 
 Note that ``str()`` (and ``print()``) would then normally call the
 ``__unicode__`` method on objects in Python 2. To define string
@@ -151,7 +153,6 @@ class newstr(unicode):
     def decode(self, *args):
         raise AttributeError("decode method has been disabled in newstr")
 
-    @no(bytes, 1)
     def encode(self, encoding='utf-8', errors='strict'):
         """
         Returns bytes
