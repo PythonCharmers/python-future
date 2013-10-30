@@ -30,7 +30,7 @@ Also:
 - Usage of ``file('myfile', 'w')`` as a synonym for ``open`` doesn't seem
   to be converted currently.
 
-- ``isinstance(var, basestr)`` should sometimes be converted to
+- ``isinstance(var, basestring)`` should sometimes be converted to
   ``isinstance(var, str) or isinstance(var, bytes)``, or sometimes simply
   ``isinstance(var, str)``, depending on the context. Currently it is always
   converted to ``isinstance(var, str)``.

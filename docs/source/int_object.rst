@@ -68,6 +68,7 @@ Without ``future`` (or with ``future`` < 0.7), this might be::
             return list(map(long, data))
 
 
-The redefinition of ``int`` has the side-effect of breaking ``isinstance(x, int)``
-calls for Python 2's short integers. See :ref:`isinstance-calls`.
+Note that ``future.builtins`` defines :func:`isinstance` specially to handle
+Python 2's short integers as well as the backported Py3-like ``int``.  See
+:ref:`isinstance-calls`.
 
