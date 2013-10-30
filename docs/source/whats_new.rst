@@ -27,3 +27,19 @@ alongside each other easily if needed.
 
 The unused ``hacks`` module has also been removed from the source tree.
 
+
+isinstance() added to :mod:`future.builtins` (v0.8.2)
+-----------------------------------------------------
+
+It is now possible to use ``isinstance()`` calls normally after importing ``isinstance`` from 
+``future.builtins``. On Python 2, this is specially defined to be compatible with
+``future``'s backported ``int``, ``str``, and ``bytes`` types, as well as
+handling Python 2's int/long distinction.
+
+The result is that code that uses ``isinstance`` to perform type-checking of
+ints, strings, and bytes should now work identically on Python 2 as on Python 3.
+
+The utility functions ``isint``, ``istext``, and ``isbytes`` provided before for
+compatible type-checking across Python 2 and 3 in :mod:`future.utils` are now
+deprecated.
+
