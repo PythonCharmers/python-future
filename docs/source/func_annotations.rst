@@ -30,7 +30,7 @@ corresponds to the ``'return'`` key in the dictionary.
 ``__annotations__``.)
 
 Be aware that some libraries that consume function annotations, such as
-Reticulated (https://github.com/mvitousek/reticulated), have their own
+`Reticulated <https://github.com/mvitousek/reticulated>`_, have their own
 semantics for supporting earlier Python versions, such as decorators. If you
 are using such a library, please use its own mechanism for providing
 compatibility with earlier Python versions, rather than the generic equivalent

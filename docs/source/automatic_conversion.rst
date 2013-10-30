@@ -174,7 +174,7 @@ imports the renamed stdlib module under its Py3 name.
 - extended tuple unpacking (PEP 3132)
 
 To handle function annotations (PEP 3107), see
-`:ref:func_annotations`.
+:ref:`func_annotations`.
 
 
 How well does ``futurize`` work?
@@ -206,7 +206,7 @@ Known limitations of ``futurize``
   
    is not kept at the top of a file. It must be moved manually back to line 1 to take effect.
 
-1. Strings containing ``\U`` produce a ``SyntaxError`` on Python 3. An example is::
+2. Strings containing ``\U`` produce a ``SyntaxError`` on Python 3. An example is::
 
        s = 'C:\Users'.
 

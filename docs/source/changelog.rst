@@ -1,4 +1,7 @@
-.. _whats-new:
+What's new
+**********
+
+.. whats-new-0.8:
 
 What's new in version 0.8
 =========================
@@ -43,19 +46,20 @@ The utility functions ``isint``, ``istext``, and ``isbytes`` provided before for
 compatible type-checking across Python 2 and 3 in :mod:`future.utils` are now
 deprecated.
 
-.. _changelog:
 
-Change log
-==========
+.. changelog:
+
+Summary of all changes
+======================
 
 v0.8.2:
-  * New :func:`isinstance` function in :mod:`future.builtins`. This obviates
+  * New ``isinstance`` function in :mod:`future.builtins`. This obviates
     and deprecates the utility functions for type-checking in :mod:`future.utils`.
 
 v0.8.1:
-  * Backported socketserver.py. Fixes sporadic test failures with http.server
-    (related to threading and old-style classes used in Py2.7's
-    SocketServer.py).
+  * Backported ``socketserver.py``. Fixes sporadic test failures with
+    ``http.server`` (related to threading and old-style classes used in Py2.7's
+    ``SocketServer.py``).
 
   * Move a few more safe ``futurize`` fixes from stage2 to stage1
 
@@ -72,7 +76,7 @@ v0.7:
   * Added a backported Py3-like ``int`` object (inherits from long).
 
   * Added utility functions for type-checking and docs about
-    :func:`isinstance` uses/alternatives.
+    ``isinstance`` uses/alternatives.
 
   * Fixes and stricter type-checking for bytes and str objects
 
