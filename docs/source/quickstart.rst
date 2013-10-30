@@ -4,7 +4,7 @@ Quick-start guide
 =================
 
 The ``future`` module helps run Python 3.x-compatible code under Python
-2 with minimal code cruft.
+2.6 and 2.7 with minimal code cruft.
 
 You can use it to help to port your code from Python 2 to Python 3 today
 -- and still have it run on Python 2.
@@ -33,7 +33,7 @@ Start each module with these lines::
     from future.builtins import *
 
 Then write standard Python 3 code. The :mod:`future` package will
-provide support for running your code on Python 2.7 mostly unchanged.
+provide support for running your code on Python 2.6 and 2.7 mostly unchanged.
 
 See :ref:`what-else` for more details.
 
@@ -41,9 +41,9 @@ See :ref:`what-else` for more details.
 To convert existing Python 3 code
 ---------------------------------
 
-To offer backward compatibility with Python 2, you can use the ``futurize`` script with a ``--from3`` parameter. This adds
-
-these lines at the top of your Python 3 modules::
+To offer backward compatibility with Python 2, you can use the ``futurize``
+script with the ``--from3`` parameter. This adds these lines at the top of each
+module::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)

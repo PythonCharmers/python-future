@@ -4,7 +4,7 @@ What else you need to know
 **************************
 
 ``future`` cannot completely close the gap between Python 3 and Python 2
-with just the right :ref:`imports`. The following require some
+with just the right :ref:`imports`. The following points require some
 additional work.
 
 .. _what-else-essentials:

@@ -14,14 +14,14 @@ which passes most of the Python 3 tests for :mod:`bytes`. (See
 ``future/tests/test_bytes.py`` in the source tree.) You can use it as
 follows::
 
-    from future.builtins import bytes
+    >>> from future.builtins import bytes
     
-    b = bytes(b'ABCD')
+    >>> b = bytes(b'ABCD')
 
 On Py3, this is simply the builtin :class:`bytes` object. On Py2, this
-object inherits from Python 2's :class:`str`, but it enforces the same
-strict strict separation of unicode strings and byte strings as Python
-3's :class:`bytes` object::
+object is a subclass of Python 2's :class:`str` that enforces the same
+strict separation of unicode strings and byte strings as Python 3's
+:class:`bytes` object::
 
     >>> b + u'EFGH'      # TypeError
     Traceback (most recent call last):
@@ -45,9 +45,6 @@ Py2::
 
 On Py3, these raise TypeErrors.
 
-In most other ways, these :class:`str` objects on Py2 have the same
-behaviours as Python 3's :class:`str`::
-
 In most other ways, these :class:`bytes` objects have identical
 behaviours to Python 3's :class:`bytes`::
 
@@ -56,7 +53,7 @@ behaviours to Python 3's :class:`bytes`::
     assert repr(b) == "b'ABCD'"
     assert b.split(b'b') == [b'A', b'CD']
 
-Currently the easiest way to ensure identical use of byte-strings
+Currently the easiest way to ensure identical behaviour of byte-strings
 in a Py3/2 codebase is to wrap all byte-string literals ``b'...'`` in a
 :func:`~bytes` call, as follows::
     

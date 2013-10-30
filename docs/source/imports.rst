@@ -50,8 +50,9 @@ If you prefer explicit imports, the explicit equivalent of the ``from
 future.builtins import *`` line is::
 
     from future.builtins import (filter, map, zip,
-                                 ascii, chr, hex, input, oct, open,
+                                 ascii, chr, hex, input, isinstance, oct, open,
                                  bytes, int, range, round, str, super)
+
 
 However, we discourage importing only some of these builtins because this
 increases the risk of introducing Py2/3 portability bugs into your code.
@@ -66,11 +67,12 @@ To understand what each of these does, see the docs for these modules:
 The internal API is currently as follows::
 
     from future.builtins.iterators import filter, map, zip
-    from future.builtins.misc import ascii, chr, hex, input, oct, open
+    from future.builtins.misc import ascii, chr, hex, input, isinstance, oct, open
     from future.builtins.backports import bytes, int, range, round, str, super
 
 But please note that this internal API is evolving and may not be stable
 between different versions of ``future``.
+
 
 .. _obsolete-builtins:
 

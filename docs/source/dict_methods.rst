@@ -35,3 +35,5 @@ etc. functions from :mod:`future.utils`::
     # Set union:
     both = viewvalues(d1) | viewvalues(d2)
 
+For Python 2.6 compatibility, the functions ``iteritems`` etc. are also
+available in :mod:`future.utils`.

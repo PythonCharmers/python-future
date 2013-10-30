@@ -6,12 +6,12 @@ str
 The :class:`str` object in Python 3 is quite similar but not identical to the
 Python 2 :class:`unicode` object.
 
-The major difference is the stricter type-checking with Py3 ``str`` to enforce
-the distinction between unicode strings and byte-strings, such as when
+The major difference is the stricter type-checking of Py3's ``str`` that
+enforces a distinction between unicode strings and byte-strings, such as when
 comparing, concatenating, joining, or replacing parts of strings.
 
-There are also minor differences, such as the ``repr`` of unicode strings in
-Py2 having a ``"u'...'"`` prefix, versus simply ``"'...'"``, and the removal of
+There are also other differences, such as the ``repr`` of unicode strings in
+Py2 having a ``u'...'`` prefix, versus simply ``'...'``, and the removal of
 the :func:`str.decode` method in Py3.
 
 ``future`` contains a backport of the :mod:`str` object from Python 3 which
@@ -63,9 +63,9 @@ behaviours as Python 3's :class:`str`::
     >>> assert list(s) == ['A', 'B', 'C', 'D']
     >>> assert s.split('B') == ['A', 'CD']
 
-Currently the easiest way to ensure identical use of (unicode) strings across
-Py3 and Py2 in a single-source codebase is to wrap string literals in a
-:func:`~str` call, as follows::
+If you must ensure identical use of (unicode) strings across Py3 and Py2 in a
+single-source codebase, you can wrap string literals in a :func:`~str` call, as
+follows::
     
     from __future__ import unicode_literals
     from future.builtins import *

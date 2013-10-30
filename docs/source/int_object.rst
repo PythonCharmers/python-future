@@ -5,8 +5,8 @@ int
 
 Python 3's ``int`` type is very similar to Python 2's ``long``, except
 for the representation (which omits the ``L`` suffix in Python 2). Python
-2's normal (short) integers have been removed from Python 3, as has the
-``long`` builtin.
+2's usual (short) integers have been removed from Python 3, as has the
+``long`` builtin name.
 
 Python 3::
 
@@ -18,7 +18,7 @@ Python 2::
     >>> 2**64
     18446744073709551616L
 
-``future`` includes a backport of Python 3's ``int`` since v0.7.0, which
+``future`` includes a backport of Python 3's ``int`` that
 is a subclass of Python 2's ``long`` with the same representation
 behaviour as Python 3's ``int``. To ensure an integer is long compatibly both
 Py3 and Py2, cast it like this::
@@ -31,7 +31,7 @@ that deals with ``long`` and ``int`` as special cases on Py2. An example is the
 following code from ``xlwt-future`` (called by the ``xlwt.antlr.BitSet`` class)
 for writing out Excel ``.xls`` spreadsheets.
 
-With ``future`` v0.7.0+, the code is::
+With ``future``, the code is::
 
     def longify(data):
         """

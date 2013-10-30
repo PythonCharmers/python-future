@@ -12,7 +12,7 @@ The following tests all pass on Python 3::
     >>> assert isinstance('unicode string 2', str)
 
 
-However, two normally fail on Python 2::
+However, two of these normally fail on Python 2::
 
     >>> assert isinstance(2**63, int)
     Traceback (most recent call last):
@@ -58,10 +58,10 @@ If you are passing any of the backported types (``bytes``, ``str``,
 ``int``) into brittle library code that performs type-checks using ``type()``,
 rather than ``isinstance()``, or requires that you pass Python 2's native types
 (rather than subclasses) for some other reason, it may be necessary to upcast
-the types from ``future`` to their native superclasses on Py2. A function
-``future.utils.native`` is provided for this.
+the types from ``future`` to their native superclasses on Py2.
 
-Here is how to use it. (The output showing is from Py2)::
+The ``native`` function in ``future.utils`` is provided for this. Here is how
+to use it. (The output showing is from Py2)::
 
     >>> from future.builtins import *
     >>> from future.utils import native
@@ -103,12 +103,12 @@ constructor, require native strings on Python 2 and Python 3. This means that
 there is no simple way to pass the appropriate string type when the
 ``unicode_literals`` import from ``__future__`` is in effect.
 
-The objects ``native_str`` and ``native_bytes`` are available in 
-``future.utils`` for this case. These are equivalent to ``__builtin__.str`` on
-Python 2 or ``builtins.str`` on Python 3.
+The objects ``native_str`` and ``native_bytes`` are available in
+``future.utils`` for this case. These are equivalent to the ``str`` and
+``bytes`` objects in ``__builtin__`` on Python 2 or in ``builtins`` on Python 3.
 
-Alternatively, the functions ``native_str_to_bytes`` and
-``bytes_to_native_str`` are also available for conversions.
+The functions ``native_str_to_bytes`` and ``bytes_to_native_str`` are also
+available for more explicit conversions.
 
 
 .. ``isinstance`` checks are sometimes fragile and generally discouraged in
