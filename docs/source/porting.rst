@@ -1,6 +1,6 @@
 .. _porting:
 
-Python 3 porting cheet-sheet
+Python 3 porting cheat-sheet
 ============================
 
 Instructions and notes on porting code from Python 2 to both Python 3 and 2 using ``future``:
