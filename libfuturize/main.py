@@ -84,6 +84,8 @@ def main(args=None):
     """
     # Set up option parser
     parser = optparse.OptionParser(usage="futurize [options] file|dir ...")
+    parser.add_option("-a", "--all-imports", action="store_true",
+                      help="Adds all __future__ and future imports to each module")
     parser.add_option("-d", "--doctests_only", action="store_true",
                       help="Fix up doctests only")
     parser.add_option("-b", "--tobytes", action="store_true",
@@ -128,14 +130,11 @@ def main(args=None):
     if options.from3:
         assert not (options.stage1 or options.stage2)
         fixer_pkg = 'libfuturize.fixes3'
-        # avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
-        # avail_fixes.update(libfuturize_3fix_names)
         avail_fixes = libfuturize_3fix_names
         flags["print_function"] = True
     else:
         fixer_pkg = 'libfuturize.fixes2'
         avail_fixes = set()
-        # avail_fixes = set(refactor.get_fixers_from_package(fixer_pkg))
         if not (options.stage1 or options.stage2):
             options.both_stages = True
         else:
@@ -168,7 +167,9 @@ def main(args=None):
         if options.write:
             print("Can't write to stdin.", file=sys.stderr)
             return 2
-    # Is this ever needed?
+
+    # If this option were ever needed, it would probably mean the --from3 flag
+    # had been forgotten.
     # if options.print_function:
     #     flags["print_function"] = True
 
@@ -177,24 +178,27 @@ def main(args=None):
     logging.basicConfig(format='%(name)s: %(message)s', level=level)
 
     # Initialize the refactoring tool
-    # unwanted_fixes = set(options.nofix)
-    unwanted_fixes = set(fixer_pkg + ".fix_" + fix for fix in options.nofix)
+    nofix = set(options.nofix)
+
+    # The 'all-imports' option forces adding all imports __future__ and "from
+    # future import standard_library", even if they don't seem necessary for
+    # the current state of each module. (This can simplify testing, and can
+    # reduce the need to think about Py2 compatibility when editing the code
+    # further.)
+    if options.all_imports:
+        if options.stage1:
+            nofix.add('fix_add__future__imports_except_unicode_literals')
+        else:
+            # In case the user hasn't run stage1 for some reason:
+            nofix.add('fix_add__future__imports')
+            nofix.add('fix_add_future_standard_library_import')
+
+    unwanted_fixes = set(fixer_pkg + ".fix_" + fix for fix in nofix)
 
     # Remove all fixes except one if the input is already Py3
     explicit = set()
-    # if options.fix:
-    #     all_present = False
-    #     for fix in options.fix:
-    #         if fix == "all":
-    #             all_present = True
-    #         else:
-    #             explicit.add(fixer_pkg + ".fix_" + fix)
-    #             # explicit.add(fix)
-    #     requested = avail_fixes.union(explicit) if all_present else explicit
-    # else:
-    #     requested = avail_fixes.union(explicit)
-    requested = avail_fixes
-    fixer_names = requested.difference(unwanted_fixes)
+    fixer_names = avail_fixes.difference(unwanted_fixes)
+
     rt = StdoutRefactoringTool(sorted(fixer_names), flags, sorted(explicit),
                                options.nobackups, not options.no_diffs)
 

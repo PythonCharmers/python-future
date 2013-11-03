@@ -36,7 +36,8 @@ lib2to3_fix_names_stage1 = set([
     'lib2to3.fixes.fix_xreadlines',
 ])
 
-# The following fixers add a dependency on the ``future`` package:
+# The following fixers add a dependency on the ``future`` package on order to
+# support Python 2:
 lib2to3_fix_names_stage2 = set([
     'lib2to3.fixes.fix_basestring',
     # 'lib2to3.fixes.fix_buffer',    # perhaps not safe. Test this.
@@ -64,7 +65,6 @@ lib2to3_fix_names_stage2 = set([
 ])
 
 libfuturize_2fix_names_stage1 = set([
-    'libfuturize.fixes2.fix_add__future__imports_except_unicode_literals',  # we force adding all imports for now, even if they don't seem necessary, for ease of testing
     'libfuturize.fixes2.fix_absolute_import',
     'libfuturize.fixes2.fix_division',
     'libfuturize.fixes2.fix_print_with_import',
@@ -73,8 +73,6 @@ libfuturize_2fix_names_stage1 = set([
 ])
 
 libfuturize_2fix_names_stage2 = set([
-    'libfuturize.fixes2.fix_add__future__imports',
-    'libfuturize.fixes2.fix_add_future_standard_library_import',  # we force adding this import for now, even if it doesn't seem necessary to the fix_future_standard_library fixer, for ease of testing
     'libfuturize.fixes2.fix_future_builtins',
     'libfuturize.fixes2.fix_future_standard_library',
     'libfuturize.fixes2.fix_metaclass',
