@@ -25,6 +25,15 @@ class TestStr(unittest.TestCase):
         self.assertTrue(isinstance(s, str))
         self.assertEqual(s, TEST_UNICODE_STR)
 
+    def test_str_encode_cp1251(self):
+        b1 = b'\xcd\xeb\xff'
+        s1 = str(b1, 'cp1251')
+        self.assertEqual(s1, u'Нля')
+
+        b2 = bytes(b'\xcd\xeb\xff')
+        s2 = str(b2, 'cp1251')
+        self.assertEqual(s2, u'Нля')
+
     def test_str_encode_decode_with_py2_str_arg(self):
         # Try passing a standard Py2 string (as if unicode_literals weren't imported)
         b = str(TEST_UNICODE_STR).encode(utils.bytes_to_native_str(b'utf-8'))
