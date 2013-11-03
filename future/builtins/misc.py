@@ -18,6 +18,13 @@ This function is also defined specially:
 to be compatible with the backported ``int``, ``str``, and ``bytes`` types of
 ``future.builtins``.
 
+Examples::
+
+    # Compatible output from isinstance() across Py2/3:
+    assert isinstance(2**63, int)        # long integers
+    assert isinstance(u'blah', str)
+    assert isinstance('blah', str)       # with unicode_literals in effect
+
 
 input()
 -------

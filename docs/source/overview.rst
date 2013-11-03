@@ -8,17 +8,16 @@ Overview
 codebase with minimal cruft and run it easily on Python 2 without further
 modification.
 
+
 .. _features:
 
 Features
 --------
 
--   backports or remappings for 15 builtins with different semantics on
-    Py3 versus Py2
--   supports the reorganized Py3 standard library interface
+-   provides backports and remappings for 15 builtins with different
+    semantics on Py3 versus Py2
+-   provides backports and remappings from the Py3 standard library
 -   300+ unit tests
--   clean on Py3: ``future`` imports and decorators have no effect on Py3
-    (and no namespace pollution)
 -   2to3-based ``futurize`` script for automatic conversion from either Py2 or Py3
     to a clean single-source codebase compatible with both Py3 and Py2
 -   a consistent set of utility functions and decorators selected from
@@ -39,11 +38,11 @@ together with Python's built-in ``__future__`` module like this::
     from future import standard_library
     from future.builtins import *
     
-followed by standard Python 3 code. The imports allow this code to run
-unchanged on Python 3 and Python 2.7.
+followed by standard Python 3 code. The imports have no effect on Python
+3 but allow the code to run mostly unchanged on Python 3 and Python 2.6/2.7.
 
 For example, after these imports, this code runs identically on Python 3
-and 2.7::
+and 2.6/2.7::
     
     # Support for renamed standard library modules via import hooks
     from http.client import HttpConnection
@@ -94,10 +93,10 @@ and 2.7::
     name = input('What is your name? ')
     print('Hello ' + name)
 
-    # To disable obsolete Py2 builtins removed from Py3, use this:
-    from future.builtins.disabled import *
-    # Then these raise NameErrors on both Py2 and Py3:
-    # apply(), cmp(), coerce(), reduce(), xrange(), etc.
+    # Compatible output from isinstance() across Py2/3:
+    assert isinstance(2**63, int)        # long integers
+    assert isinstance(u'blah', str)
+    assert isinstance('blah', str)       # with unicode_literals in effect
 
 
 Next steps

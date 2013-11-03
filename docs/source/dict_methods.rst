@@ -7,7 +7,7 @@ methods which return memory-efficient set-like objects, not lists. (See
 
 If your dictionaries are small enough that the memory overhead of extra
 list creation is not significant, stick with standard Python 3 code in
-your Py3/2 compatible codebase::
+your Py2/3 compatible codebase::
 
     for item in d:
         # code here

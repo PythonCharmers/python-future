@@ -30,16 +30,15 @@ libraries are improving only in Python 3.x. Python 3.3 is a better
 language and better set of standard libraries than Python 2.x in almost
 every way.
 
-See `this page
-<http://pythonhosted.org/kitchen/unicode-frustrations.html>`_
-describing some of the problems with handling Unicode on Python 2 that
-Python 3 mostly solves. Python 3 is also cleaner, less warty, and easier
-to learn than Python 2.
+Python 3 is cleaner, less warty, and easier to learn than Python 2. It
+has better memory efficiency, easier Unicode handling, and powerful new
+features like function annotations and the `asyncio
+<https://pypi.python.org/pypi/asyncio>`_ module.
 
-``future`` helps you to take advantage of the cleaner semantics of Python
-3 code today while still supporting Python 2. The goal is to facilitate
-writing future-proof code and give the Python community an easier upgrade
-path to Python 3.
+.. Unicode handling is also much easier. For example, see `this page
+.. <http://pythonhosted.org/kitchen/unicode-frustrations.html>`_
+.. describing some of the problems with handling Unicode on Python 2 that
+.. Python 3 mostly solves. 
 
 
 Porting philosophy

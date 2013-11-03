@@ -4,7 +4,7 @@ Standard library incompatibilities
 ==================================
 
 Some standard library interfaces have changed in ways that require
-different code than normal Py3 code in order to achieve Py3/2
+different code than normal Py3 code in order to achieve Py2/3
 compatibility.
 
 Here we will attempt to document these, together with known workarounds:

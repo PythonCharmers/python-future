@@ -15,7 +15,7 @@ Limitations of the ``futurize`` script
 The ``futurize`` script is not yet mature; like ``2to3``, on which it is based,
 it makes mistakes. Nevertheless, it should be useful for automatically
 performing a lot of the repetitive code-substitution tasks when porting from
-Py2 to Py3/2.
+Py2 to Py2/3.
 
 Some new Python 3.3 features that cause SyntaxErrors on earlier versions
 are not currently handled by the ``futurize`` script. This includes:

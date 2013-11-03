@@ -4,7 +4,7 @@ bytes
 -----
 
 Handling ``bytes`` consistently and correctly has traditionally been one
-of the most difficult tasks in writing a Py3/2 compatible codebase. This
+of the most difficult tasks in writing a Py2/3 compatible codebase. This
 is because the Python 2 :class:`bytes` object is simply an alias for
 Python 2's :class:`str`, rather than a true implementation of the Python
 3 :class:`bytes` object, which is substantially different.
@@ -54,8 +54,8 @@ behaviours to Python 3's :class:`bytes`::
     assert b.split(b'b') == [b'A', b'CD']
 
 Currently the easiest way to ensure identical behaviour of byte-strings
-in a Py3/2 codebase is to wrap all byte-string literals ``b'...'`` in a
-:func:`~bytes` call, as follows::
+in a Py2/3 codebase is to wrap all byte-string literals ``b'...'`` in a
+:func:`~bytes` call as follows::
     
     from future.builtins import *
     

@@ -6,8 +6,8 @@ Imports
 future imports
 ~~~~~~~~~~~~~~
 
-The imports to include at the top of every future-compatible Py3/2
-module are::
+The imports to include at the top of every Py2/3-compatible module using
+``future`` are::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
@@ -54,10 +54,12 @@ future.builtins import *`` line is::
                                  bytes, int, range, round, str, super)
 
 
-However, we discourage importing only some of these builtins because this
-increases the risk of introducing Py2/3 portability bugs into your code.
+The disadvantage of importing only some of these builtins is that it
+increases the risk of introducing Py2/3 portability bugs as your code
+evolves over time.
 
-To understand what each of these does, see the docs for these modules:
+To understand the details of these functions on Python 2, see the docs
+for these modules:
 
 - future.builtins
 - future.builtins.iterators
@@ -70,8 +72,8 @@ The internal API is currently as follows::
     from future.builtins.misc import ascii, chr, hex, input, isinstance, oct, open
     from future.builtins.backports import bytes, int, range, round, str, super
 
-But please note that this internal API is evolving and may not be stable
-between different versions of ``future``.
+(Please note that this internal API is evolving and may not be stable
+between different versions of ``future``.)
 
 
 .. _obsolete-builtins:
