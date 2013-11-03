@@ -61,6 +61,25 @@ class TestBuiltins(unittest.TestCase):
         self.assertTrue(isinstance(u'string', str))
         self.assertFalse(isinstance(u'string', bytes))
 
+    def test_isinstance_tuple_of_types(self):
+        # These two should be equivalent, even if ``int`` is a special
+        # backported type.
+        label = 1
+        self.assertTrue(isinstance(label, (float, Decimal)) or
+                        isinstance(label, int))
+        self.assertTrue(isinstance(label, (float, Decimal, int)))
+        self.assertTrue(isinstance(10**100, (float, Decimal, int)))
+
+        self.assertTrue(isinstance(b'blah', (str, bytes)))
+        self.assertTrue(isinstance(b'blah', (bytes, float, int)))
+
+        self.assertFalse(isinstance(b'blah', (str, Decimal, float, int)))
+
+        self.assertTrue(isinstance('blah', (str, Decimal, float, int)))
+        self.assertTrue(isinstance(u'blah', (Decimal, float, int, str)))
+
+        self.assertFalse(isinstance('blah', (bytes, Decimal, float, int)))
+
     def test_round(self):
         """
         Note that the Python 2.x round() function fails these tests. The
