@@ -46,11 +46,24 @@ The utility functions ``isint``, ``istext``, and ``isbytes`` provided before for
 compatible type-checking across Python 2 and 3 in :mod:`future.utils` are now
 deprecated.
 
+--all-imports option added to ``futurize`` script (v0.8.3)
+----------------------------------------------------------
+
+By default, the ``futurize`` script now only adds the minimal set of
+imports deemed necessary. The previous behaviour, which added all
+``__future__`` and ``future`` imports to every module, even an empty
+``__init__.py`` file, can be obtained by passing the ``--all-imports``
+command-line argument to ``futurize``.
+
 
 .. changelog:
 
 Summary of all changes
 ======================
+
+v0.8.3:
+  * New ``--all-imports`` option to ``futurize``
+  * Fix bug with ``str.encode()`` with encoding as a non-keyword arg
 
 v0.8.2:
   * New ``isinstance`` function in :mod:`future.builtins`. This obviates

@@ -14,14 +14,14 @@ lib2to3_fix_names_stage1 = set([
     'lib2to3.fixes.fix_filter',
     'lib2to3.fixes.fix_has_key',
     'lib2to3.fixes.fix_idioms',
-    'lib2to3.fixes.fix_import',    # makes any implicit relative imports explicit. (Use with ``from __future__ import absolute_import)
+    # 'lib2to3.fixes.fix_import',    # makes any implicit relative imports explicit. (Use with ``from __future__ import absolute_import)
     'lib2to3.fixes.fix_intern',
     'lib2to3.fixes.fix_isinstance',
     'lib2to3.fixes.fix_methodattrs',
     'lib2to3.fixes.fix_ne',
     'lib2to3.fixes.fix_numliterals',    # turns 1L into 1, 0755 into 0o755
     'lib2to3.fixes.fix_paren',
-    'lib2to3.fixes.fix_print',
+    # 'lib2to3.fixes.fix_print',
     # 'lib2to3.fixes.fix_raise',   # uses incompatible with_traceback() method on exceptions
     'lib2to3.fixes.fix_renames',
     'lib2to3.fixes.fix_reduce',

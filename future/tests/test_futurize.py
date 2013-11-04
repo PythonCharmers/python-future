@@ -33,7 +33,7 @@ class TestFuturizeSimple(CodeHandler):
         for i in xrange(10):
             pass
         '''
-        self.convert_check(code)
+        self.convert(code)
     
     @unittest.expectedFailure
     def test_source_coding_utf8(self):
@@ -110,7 +110,7 @@ class TestFuturizeSimple(CodeHandler):
         
         assert addup(*(10,20)) == 30
         """
-        self.convert_check(before, after, run=True)
+        self.convert_check(before, after)
     
     @unittest.skip('not implemented yet')
     def test_download_pypi_package_and_test(self, package_name='future'):
@@ -148,10 +148,12 @@ class TestFuturizeSimple(CodeHandler):
         name = input()
         greet(name)
         """
-        self._write_test_script(self.reformat(before))
-        self._futurize_test_script()
-        output = self._read_test_script()
-        self.compare(output, self.headers2 + self.reformat(desired))
+        self.convert_check(before, desired, run=False)
+        # self._write_test_script(self.reformat(before))
+        # self._futurize_test_script()
+        # output = self._read_test_script()
+        # self.compare(output, self.headers2 + self.reformat(desired),
+        #              ignore_imports=False)
 
         for interpreter in self.interpreters:
             p1 = Popen([interpreter, self.tempdir + 'mytestscript.py'],
@@ -516,7 +518,7 @@ class TestFuturizeStage1(CodeHandler):
         
         ''' Docstring-like comment here '''
         """
-        self.convert_check(code)
+        self.convert(code)
 
 
 if __name__ == '__main__':

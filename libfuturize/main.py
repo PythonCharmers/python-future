@@ -178,28 +178,27 @@ def main(args=None):
     logging.basicConfig(format='%(name)s: %(message)s', level=level)
 
     # Initialize the refactoring tool
-    nofix = set(options.nofix)
+    unwanted_fixes = set(fixer_pkg + ".fix_" + fix for fix in options.nofix)
 
     # The 'all-imports' option forces adding all imports __future__ and "from
     # future import standard_library", even if they don't seem necessary for
     # the current state of each module. (This can simplify testing, and can
     # reduce the need to think about Py2 compatibility when editing the code
     # further.)
+    explicit = set()
     if options.all_imports:
+        prefix = 'libfuturize.fixes2.'
         if options.stage1:
-            nofix.add('fix_add__future__imports_except_unicode_literals')
+            explicit.add(prefix +
+                            'fix_add__future__imports_except_unicode_literals')
         else:
             # In case the user hasn't run stage1 for some reason:
-            nofix.add('fix_add__future__imports')
-            nofix.add('fix_add_future_standard_library_import')
+            explicit.add(prefix + 'fix_add__future__imports')
+            explicit.add(prefix + 'fix_add_future_standard_library_import')
 
-    unwanted_fixes = set(fixer_pkg + ".fix_" + fix for fix in nofix)
+    fixer_names = avail_fixes | explicit - unwanted_fixes
 
-    # Remove all fixes except one if the input is already Py3
-    explicit = set()
-    fixer_names = avail_fixes.difference(unwanted_fixes)
-
-    rt = StdoutRefactoringTool(sorted(fixer_names), flags, sorted(explicit),
+    rt = StdoutRefactoringTool(sorted(fixer_names), flags, explicit,
                                options.nobackups, not options.no_diffs)
 
     # Refactor all files and directories passed as arguments

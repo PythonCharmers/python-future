@@ -30,8 +30,8 @@ class CodeHandler(unittest.TestCase):
     """
     def setUp(self):
         """
-        The outputs from the various futurize stages should have the following
-        headers:
+        The outputs from the various futurize stages should have the
+        following headers:
         """
         # After stage1:
         # TODO: use this form after implementing a fixer to consolidate
@@ -66,14 +66,36 @@ class CodeHandler(unittest.TestCase):
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         self.env = {'PYTHONPATH': os.getcwd()}
 
-    def simple_convert(self, code, stages=(1, 2), from3=False):
+    def convert(self, code, stages=(1, 2), all_imports=False, from3=False,
+                reformat=True, run=True):
         """
-        Returns the equivalent of ``code`` after passing it to the ``futurize``
-        script.
+        Converts the code block using ``futurize`` and returns the
+        resulting code.
+        
+        Passing stages=[1] or stages=[2] passes the flag ``--stage1`` or
+        ``stage2`` to ``futurize``. Passing both stages runs ``futurize``
+        with both stages by default.
+
+        If from3 is False, runs ``futurize`` in the default mode,
+        converting from Python 2 to both 2 and 3. If from3 is True, runs
+        ``futurize --from3`` to convert from Python 3 to both 2 and 3.
+
+        Optionally reformats the code block first using the reformat()
+        method.
+
+        If run is True, runs the resulting code under all Python
+        interpreters in self.interpreters.
         """
+        if reformat:
+            code = self.reformat(code)
         self._write_test_script(code)
-        self._futurize_test_script(stages=stages, from3=from3)
-        return self._read_test_script()
+        self._futurize_test_script(stages=stages, all_imports=all_imports,
+                                   from3=from3)
+        output = self._read_test_script()
+        if run:
+            for interpreter in self.interpreters:
+                _ = self._run_test_script(interpreter=interpreter)
+        return output
 
     def reformat(self, code):
         """
@@ -83,48 +105,87 @@ class CodeHandler(unittest.TestCase):
             code = code[1:]
         return dedent(code)
 
-    def compare(self, output, expected):
+    def compare(self, output, expected, ignore_imports=True):
         """
-        Compares whether the code blocks are equal. Ignores the order of
-        __future__ and future import lines and any trailing whitespace like
-        blank lines.
-        """
-        self.assertEqual(expected.rstrip(),
-                         self.order_future_lines(output).rstrip())
+        Compares whether the code blocks are equal. Ignores any trailing
+        whitespace like blank lines.
 
-    def convert_check(self, before, expected=None, stages=(1, 2), from3=False, run=True):
+        If ignore_imports is True, passes the code blocks into the
+        strip_future_imports method.
         """
-        Reformats the ``before`` code block, converts it using ``futurize``
-        and, optionally, and runs the resulting code.
+        # self.assertEqual(expected.rstrip(),
+        #                  self.order_future_lines(output).rstrip())
+        if ignore_imports:
+            output = self.strip_future_imports(output)
+            expected = self.strip_future_imports(expected)
+        self.assertEqual(output.rstrip(), expected.rstrip())
+
+    def strip_future_imports(self, code):
+        """
+        Strips any of these import lines:
+
+            from __future__ import <anything>
+            from future <anything>
+            from future.<anything>
+
+        Limitation: doesn't handle imports split across multiple lines like
+        this:
+
+            from __future__ import (absolute_import, division, print_function,
+                                    unicode_literals)
+        """
+        output = []
+        for line in code.splitlines():
+            if not (line.startswith('from __future__ import ')
+                    or line.startswith('from future ')
+                    # but don't match "from future_builtins" :)
+                    or line.startswith('from future.')):
+                output.append(line)
+        return '\n'.join(output)
+
+    def convert_check(self, before, expected, stages=(1, 2),
+                      all_imports=False, ignore_imports=True, from3=False,
+                      run=True):
+        """
+        Convenience method that calls convert() and check().
+
+        Reformats the code blocks automatically using the reformat()
+        method.
+        """
+        output = self.convert(before, stages=stages,
+                              all_imports=all_imports, from3=from3,
+                              run=run)
+
+        self.check(output, expected, stages=stages,
+                   ignore_imports=ignore_imports)
+
+    def check(self, output, expected, stages=(1, 2), ignore_imports=True):
+        """
+        Checks that the output is equal to the expected output, after
+        reformatting.
         
-        If run is True, runs the resulting code under all Python interpreters
-        in self.interpreters.
-
-        If ``expected`` is passed (as a code block), it is reformatted and
-        compared with the resulting code. If ``expected`` is passed, we assert
-        that the output of the conversion of ``before`` with ``futurize`` is
-        equal to ``after`` plus the appropriate headers (self.headers1 or
-        self.headers2) depending on the stage(s) used.
-
-        Passing stages=[1] or stages=[2] passes the flag ``--stage1`` or
-        ``stage2`` to ``futurize``. Passing both stages runs ``futurize`` with
-        both stages by default.
-
-        If from3 is False, runs ``futurize`` in the default mode, converting
-        from Python 2 to both 2 and 3. If from3 is True, runs ``futurize
-        --from3`` to convert from Python 3 to both 2 and 3.
+        If ignore_imports is True, ignores the presence of any lines
+        beginning:
+        
+            from __future__ import ...
+            from future import ...
+            
+        Pass ``expected`` as a string (as a code block). It will be
+        reformatted and compared with the resulting code. We assert that
+        the output of the conversion of ``before`` with ``futurize`` is
+        equal to ``after``. Unless ignore_imports is True, the
+        appropriate headers for the stage(s) used are added automatically
+        for the comparison.
         """
-        output = self.simple_convert(self.reformat(before), stages=stages, from3=from3)
-        if run:
-            for interpreter in self.interpreters:
-                _ = self._run_test_script(interpreter=interpreter)
-
         if expected is not None:
-            if 2 in stages:
-                headers = self.headers2
-            else:
-                headers = self.headers1
-            self.compare(output, headers + self.reformat(expected))
+            headers = ''
+            if not ignore_imports:
+                if 2 in stages:
+                    headers = self.headers2
+                else:
+                    headers = self.headers1
+            self.compare(output, headers + self.reformat(expected),
+                         ignore_imports=ignore_imports)
 
     def order_future_lines(self, code):
         """
@@ -154,12 +215,12 @@ class CodeHandler(unittest.TestCase):
                 codelines2.append(codelines[i])
         return '\n'.join(codelines2)
 
-    def unchanged(self, code, stages=(1, 2), from3=False, run=True):
+    def unchanged(self, code, **kwargs):
         """
-        Tests to ensure the code is unchanged by the futurize process,
-        exception for the addition of __future__ and future imports.
+        Convenience method to ensure the code is unchanged by the
+        futurize process.
         """
-        self.convert_check(code, code, stages, from3, run)
+        self.convert_check(code, code, **kwargs)
 
     def _write_test_script(self, code, filename='mytestscript.py'):
         """
@@ -174,15 +235,18 @@ class CodeHandler(unittest.TestCase):
             newsource = f.read()
         return newsource
 
-    def _futurize_test_script(self, filename='mytestscript.py', stages=(1, 2), from3=False):
+    def _futurize_test_script(self, filename='mytestscript.py', stages=(1, 2),
+                              all_imports=False, from3=False):
         params = []
         stages = list(stages)
+        if all_imports:
+            params.append('--all-imports')
         if from3:
-            params += ['--from3']
+            params.append('--from3')
         if stages == [1]:
-            params += ['--stage1']
+            params.append('--stage1')
         elif stages == [2]:
-            params += ['--stage2']
+            params.append('--stage2')
         else:
             assert stages == [1, 2]
             # No extra params needed

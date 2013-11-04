@@ -61,8 +61,17 @@ This applies fixes that modernize Python 2 code without changing the effect of
 the code. With luck, this will not introduce any bugs into the code. The
 changes are those that bring the Python code up-to-date without breaking Py2
 compatibility. The resulting code will be perfectly good Python 2.x code plus
-``__future__`` imports. It will probably not (yet) run on Python 3. The
-changes include::
+``__future__`` imports from the following set::
+
+    from __future__ import absolute_import
+    from __future__ import division
+    from __future__ import print_function
+
+Only those ``__future__`` imports deemed necessary will be added unless
+the ``--all-imports`` command-line option is passed to ``futurize``, in
+which case they are all added.
+
+The changes include::
 
     - except MyException, e:
     + except MyException as e:
@@ -84,13 +93,15 @@ during stage 1.
 
 .. (This last step can be prevented using --no-bytes-literals if you already have b'...' markup in your code, whose meaning would otherwise be lost.)
 
-Stage 1 does not add any ``future`` imports.
+Stage 1 does not add any ``future`` imports. The output of stage 1 will
+probably not (yet) run on Python 3. 
 
 The idea is that this stage will create the majority of the lines in the
 ``diff`` for the entire porting process, but without introducing any bugs. It
 should be uncontroversial and safe to apply to every Python 2 package. The
 subsequent patches introducing Python 3 compatibility should then be shorter
 and easier to review.
+
 
 .. _forwards-conversion-text:
 

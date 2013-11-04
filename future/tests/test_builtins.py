@@ -10,6 +10,7 @@ from future.tests.base import unittest
 import textwrap
 from subprocess import Popen, PIPE
 from numbers import Integral
+from decimal import Decimal
 
 
 class TestBuiltins(unittest.TestCase):
