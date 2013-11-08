@@ -62,6 +62,20 @@ class TestBuiltins(unittest.TestCase):
         self.assertTrue(isinstance(u'string', str))
         self.assertFalse(isinstance(u'string', bytes))
 
+    def test_type(self):
+        """
+        The following fails when passed a unicode string on Python
+        (including when unicode_literals is in effect) and fails when
+        passed a byte-string on Python 3. So type() always wants a native
+        string as the first argument.
+
+        TODO: provide a replacement that works identically on Py2/3?
+        """
+        mytype = type('blah', (dict,), {"old": 1, "new": 2})
+        d = mytype()
+        self.assertTrue(isinstance(d, mytype))
+        self.assertTrue(isinstance(d, dict))
+
     def test_isinstance_tuple_of_types(self):
         # These two should be equivalent, even if ``int`` is a special
         # backported type.

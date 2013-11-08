@@ -39,6 +39,37 @@ class TestStandardLibraryRenames(CodeHandler):
             if '.' not in oldname:
                 self.assertEqual(oldmod, newmod)
 
+    def test_suspend_hooks(self):
+        example_PY2_check = False
+        with standard_library.suspend_hooks():
+            # An example of fragile import code that we don't want to break:
+            try:
+                import builtins
+            except ImportError:
+                example_PY2_check = True
+        if utils.PY2:
+            self.assertTrue(example_PY2_check)
+        else:
+            self.assertFalse(example_PY2_check)
+        # The import should succeed again now:
+        import builtins
+
+    def test_disable_hooks(self):
+        example_PY2_check = False
+        standard_library.disable_hooks()
+        # An example of fragile import code that we don't want to break:
+        try:
+            import builtins
+        except ImportError:
+            example_PY2_check = True
+        if utils.PY2:
+            self.assertTrue(example_PY2_check)
+        else:
+            self.assertFalse(example_PY2_check)
+        standard_library.enable_hooks()
+        # The import should succeed again now:
+        import builtins
+
     @unittest.skipIf(utils.PY3, 'not testing for old urllib on Py3')
     def test_old_urllib_import(self):
         """

@@ -28,6 +28,40 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after)
 
+    def test_import_builtins(self):
+        before = """
+        a = raw_input()
+        b = open(a, b, c)
+        c = filter(a, b)
+        d = map(a, b)
+        e = isinstance(a, str)
+        f = bytes(a, encoding='utf-8')
+        for g in xrange(10**10):
+            pass
+        super(MyClass, self)
+        """
+        after = """
+        from __future__ import unicode_literals
+        from future.builtins import bytes
+        from future.builtins import filter
+        from future.builtins import input
+        from future.builtins import isinstance
+        from future.builtins import map
+        from future.builtins import open
+        from future.builtins import range
+        from future.builtins import super
+        a = input()
+        b = open(a, b, c)
+        c = list(filter(a, b))
+        d = list(map(a, b))
+        e = isinstance(a, str)
+        f = bytes(a, encoding='utf-8')
+        for g in range(10**10):
+            pass
+        super(MyClass, self)
+        """
+        self.convert_check(before, after, ignore_imports=False, run=False)
+
     def test_xrange(self):
         code = '''
         for i in xrange(10):
@@ -149,11 +183,6 @@ class TestFuturizeSimple(CodeHandler):
         greet(name)
         """
         self.convert_check(before, desired, run=False)
-        # self._write_test_script(self.reformat(before))
-        # self._futurize_test_script()
-        # output = self._read_test_script()
-        # self.compare(output, self.headers2 + self.reformat(desired),
-        #              ignore_imports=False)
 
         for interpreter in self.interpreters:
             p1 = Popen([interpreter, self.tempdir + 'mytestscript.py'],

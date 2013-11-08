@@ -5,7 +5,7 @@ Tests for the various utility functions and classes in ``future.utils``
 
 from __future__ import absolute_import, unicode_literals, print_function
 from future.builtins import *
-from future.utils import old_div, istext, isbytes, native, PY2, PY3
+from future.utils import old_div, istext, isbytes, native, PY2, PY3, native_str
 
 from numbers import Integral
 from future.tests.base import unittest
@@ -41,6 +41,27 @@ class TestUtils(unittest.TestCase):
             old_div(0, 0)
         with self.assertRaises(ZeroDivisionError):
             old_div(1, 0)
+
+    def test_native_str(self):
+        """
+        Tests whether native_str(b'blah') and native_str(u'blah') and
+        native_str('blah') are all equivalent to 'blah'. Should be true
+        on both Python 2 and Python 3.
+        """
+        if PY2:
+            s = b'blah'    # b because unicode_literals is in effect
+            native_s_type = type(s)
+        elif PY3:
+            s = 'blah'
+            native_s_type = type(s)
+        self.assertEqual(native_str(b'blah'), s)
+        self.assertTrue(isinstance(native_str(b'blah'), native_s_type))
+
+        self.assertEqual(native_str(u'blah'), s)
+        self.assertTrue(isinstance(native_str(u'blah'), native_s_type))
+
+        self.assertEqual(native_str('blah'), s)
+        self.assertTrue(isinstance(native_str('blah'), native_s_type))
 
     def test_native(self):   
         a = int(10**20)     # long int

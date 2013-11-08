@@ -105,10 +105,11 @@ class CodeHandler(unittest.TestCase):
             code = code[1:]
         return dedent(code)
 
-    def compare(self, output, expected, ignore_imports=True):
+    def check(self, output, expected, ignore_imports=True):
         """
-        Compares whether the code blocks are equal. Ignores any trailing
-        whitespace like blank lines.
+        Compares whether the code blocks are equal. If not, raises an
+        exception so the test fails. Ignores any trailing whitespace like
+        blank lines.
 
         If ignore_imports is True, passes the code blocks into the
         strip_future_imports method.
@@ -118,7 +119,8 @@ class CodeHandler(unittest.TestCase):
         if ignore_imports:
             output = self.strip_future_imports(output)
             expected = self.strip_future_imports(expected)
-        self.assertEqual(output.rstrip(), expected.rstrip())
+        self.assertEqual(self.order_future_lines(output.rstrip()),
+                         expected.rstrip())
 
     def strip_future_imports(self, code):
         """
@@ -151,25 +153,35 @@ class CodeHandler(unittest.TestCase):
 
         Reformats the code blocks automatically using the reformat()
         method.
-        """
-        output = self.convert(before, stages=stages,
-                              all_imports=all_imports, from3=from3,
-                              run=run)
 
-        self.check(output, expected, stages=stages,
-                   ignore_imports=ignore_imports)
+        If all_imports is passed, we add the appropriate import headers
+        for the stage(s) selected to the ``expected`` code-block, so they
+        needn't appear repeatedly in the test code.
 
-    def check(self, output, expected, stages=(1, 2), ignore_imports=True):
-        """
-        Checks that the output is equal to the expected output, after
-        reformatting.
-        
         If ignore_imports is True, ignores the presence of any lines
         beginning:
         
             from __future__ import ...
             from future import ...
             
+        for the purpose of the comparison.
+        """
+        output = self.convert(before, stages=stages,
+                              all_imports=all_imports, from3=from3,
+                              run=run)
+        if all_imports:
+            headers = self.headers2 if 2 in stages else self.headers1
+        else:
+            headers = ''
+
+        self.check(output, self.reformat(headers + expected),
+                   ignore_imports=ignore_imports)
+
+    def check_old(self, output, expected, stages=(1, 2), ignore_imports=True):
+        """
+        Checks that the output is equal to the expected output, after
+        reformatting.
+        
         Pass ``expected`` as a string (as a code block). It will be
         reformatted and compared with the resulting code. We assert that
         the output of the conversion of ``before`` with ``futurize`` is
@@ -177,15 +189,14 @@ class CodeHandler(unittest.TestCase):
         appropriate headers for the stage(s) used are added automatically
         for the comparison.
         """
-        if expected is not None:
-            headers = ''
-            if not ignore_imports:
-                if 2 in stages:
-                    headers = self.headers2
-                else:
-                    headers = self.headers1
-            self.compare(output, headers + self.reformat(expected),
-                         ignore_imports=ignore_imports)
+        headers = ''
+        # if not ignore_imports:
+        #     if 2 in stages:
+        #         headers = self.headers2
+        #     else:
+        #         headers = self.headers1
+        self.compare(output, headers + self.reformat(expected),
+                     ignore_imports=ignore_imports)
 
     def order_future_lines(self, code):
         """

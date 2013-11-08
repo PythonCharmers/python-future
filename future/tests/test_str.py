@@ -8,6 +8,8 @@ from future.builtins import *
 from future import utils
 from future.tests.base import unittest
 
+import os
+
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
 
 
@@ -16,6 +18,13 @@ class TestStr(unittest.TestCase):
         self.assertFalse(str is bytes)
         self.assertEqual(str('blah'), u'blah')  # u'' prefix: Py3.3 and Py2 only
         self.assertEqual(str(b'1234'), "b'1234'")
+
+    def test_os_path_join(self):
+        """
+        Issue #...: can't os.path.join(u'abc', str(u'def'))
+        """
+        self.assertEqual(os.path.join(u'abc', str(u'def')),
+                         u'abc{}def'.format(os.sep))
 
     def test_str_encode_utf8(self):
         b = str(TEST_UNICODE_STR).encode('utf-8')
@@ -140,9 +149,7 @@ class TestStr(unittest.TestCase):
 
         s4 = 'ZYXW' + s1
         self.assertEqual(s4, 'ZYXWABCD')
-        # str objects don't have an __radd__ method, so the following is
-        # not True. Is this a problem?
-        # self.assertTrue(isinstance(s4, str))
+        self.assertTrue(isinstance(s4, str))
 
     def test_str_join_str(self):
         s = str(' * ')
