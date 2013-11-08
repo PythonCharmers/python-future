@@ -93,6 +93,7 @@ from __future__ import absolute_import, print_function
 import sys
 import logging
 import imp
+import contextlib
 
 from future import utils
 
@@ -173,6 +174,7 @@ RENAMES = {
            'future.standard_library._markupbase': '_markupbase',
           }
 
+
 REPLACED_MODULES = set(['test', 'urllib', 'pickle'])  # add dbm when we support it
 # These are entirely new to Python 2.x, so they cause no potential clashes
 #   xmlrpc, tkinter, http, html
@@ -245,6 +247,7 @@ class RenameImport(object):
         module_info = imp.find_module(name, path)
         return imp.load_module(name, *module_info)
 
+
 # (New module name, new object name, old module name, old object name)
 MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('collections', 'UserDict', 'UserDict', 'UserDict'),
@@ -311,7 +314,9 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          # urlparse.urlunsplit	urllib.parse
         ]
 
+
 _old_sys_meta_path = sys.meta_path
+
 
 def enable_hooks():
     if utils.PY3:
@@ -324,9 +329,22 @@ def enable_hooks():
 
     sys.meta_path = [RenameImport(RENAMES)]
 
+
 def disable_hooks():
     if not utils.PY3:
         sys.meta_path = _old_sys_meta_path
+
+
+@contextlib.contextmanager
+def suspend_hooks():
+    disable_hooks()
+    try:
+        yield
+    except Exception as e:
+        raise e
+    finally:
+        enable_hooks()
+
 
 if not utils.PY3:
     enable_hooks()

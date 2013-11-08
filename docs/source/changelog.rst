@@ -55,6 +55,22 @@ imports deemed necessary. The previous behaviour, which added all
 ``__init__.py`` file, can be obtained by passing the ``--all-imports``
 command-line argument to ``futurize``.
 
+suspend_hooks() context manager added to ``future.standard_library`` (v0.8.3)
+-----------------------------------------------------------------------------
+
+Currently (v0.6.1) Pychecker's ``checker.py`` attempts to import the ``builtins``
+module as a way of determining whether Python 3 is running. Since this
+succeeds when ``from future import standard_library`` is in effect, this
+check does not work and the wrong value for pychecker's internal ``PY2``
+flag is set.
+
+To work around this, ``future`` now provides the following context manager::
+
+    from future import standard_library
+    ...
+    with standard_library.suspend_hooks():
+        from pychecker.checker import Checker
+
 
 .. changelog:
 
