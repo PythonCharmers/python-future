@@ -185,20 +185,21 @@ def main(args=None):
     # the current state of each module. (This can simplify testing, and can
     # reduce the need to think about Py2 compatibility when editing the code
     # further.)
-    explicit = set()
+    extra_fixes = set()
     if options.all_imports:
         prefix = 'libfuturize.fixes2.'
         if options.stage1:
-            explicit.add(prefix +
+            extra_fixes.add(prefix +
                             'fix_add__future__imports_except_unicode_literals')
         else:
             # In case the user hasn't run stage1 for some reason:
-            explicit.add(prefix + 'fix_add__future__imports')
-            explicit.add(prefix + 'fix_add_future_standard_library_import')
+            extra_fixes.add(prefix + 'fix_add__future__imports')
+            extra_fixes.add(prefix + 'fix_add_future_standard_library_import')
+            extra_fixes.add(prefix + 'fix_add_all_future_builtins')
 
-    fixer_names = avail_fixes | explicit - unwanted_fixes
+    fixer_names = avail_fixes | extra_fixes - unwanted_fixes
 
-    rt = StdoutRefactoringTool(sorted(fixer_names), flags, explicit,
+    rt = StdoutRefactoringTool(sorted(fixer_names), flags, set(),
                                options.nobackups, not options.no_diffs)
 
     # Refactor all files and directories passed as arguments
