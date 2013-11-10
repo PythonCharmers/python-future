@@ -1,6 +1,53 @@
 What's new
 **********
 
+
+.. whats-new-0.9:
+
+What's new in version 0.9
+=========================
+
+Looser type-checking for the backported ``str`` object?
+-------------------------------------------------------
+
+This is to work around some bugs / sloppiness in the Python 2 standard library.
+
+Overridden ``isinstance`` builtin deprecated?
+---------------------------------------------
+
+``isinstance`` checks with the backported types now work correctly using
+``__subclasshook__``?
+
+
+``futurize``: minimal imports by default
+----------------------------------------
+
+By default, the ``futurize`` script now only adds the minimal set of
+imports deemed necessary.
+
+There is now an ``--all-imports`` option to the ``futurize`` script which
+gives the previous behaviour, which is to add all ``__future__`` imports
+and ``from future.builtins import *`` imports to every module. (This even
+applies to an empty ``__init__.py`` file.
+
+
+suspend_hooks() context manager added to ``future.standard_library``
+--------------------------------------------------------------------
+
+Pychecker (as of v0.6.1)'s ``checker.py`` attempts to import the ``builtins``
+module as a way of determining whether Python 3 is running. Since this
+succeeds when ``from future import standard_library`` is in effect, this
+check does not work and the wrong value for pychecker's internal ``PY2``
+flag is set.
+
+To work around this, ``future`` now provides the following context manager::
+
+    from future import standard_library
+    ...
+    with standard_library.suspend_hooks():
+        from pychecker.checker import Checker
+
+
 .. whats-new-0.8:
 
 What's new in version 0.8
@@ -45,31 +92,6 @@ ints, strings, and bytes should now work identically on Python 2 as on Python 3.
 The utility functions ``isint``, ``istext``, and ``isbytes`` provided before for
 compatible type-checking across Python 2 and 3 in :mod:`future.utils` are now
 deprecated.
-
---all-imports option added to ``futurize`` script (v0.8.3)
-----------------------------------------------------------
-
-By default, the ``futurize`` script now only adds the minimal set of
-imports deemed necessary. The previous behaviour, which added all
-``__future__`` and ``future`` imports to every module, even an empty
-``__init__.py`` file, can be obtained by passing the ``--all-imports``
-command-line argument to ``futurize``.
-
-suspend_hooks() context manager added to ``future.standard_library`` (v0.8.3)
------------------------------------------------------------------------------
-
-Currently (v0.6.1) Pychecker's ``checker.py`` attempts to import the ``builtins``
-module as a way of determining whether Python 3 is running. Since this
-succeeds when ``from future import standard_library`` is in effect, this
-check does not work and the wrong value for pychecker's internal ``PY2``
-flag is set.
-
-To work around this, ``future`` now provides the following context manager::
-
-    from future import standard_library
-    ...
-    with standard_library.suspend_hooks():
-        from pychecker.checker import Checker
 
 
 .. changelog:
