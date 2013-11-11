@@ -141,7 +141,7 @@ def disallow_types(argnums, disallowed_types):
                 # Only restrict kw args only if they are passed:
                 if len(args) <= argnum:
                     break
-                if isinstance(args[argnum], mytype):
+                if type(args[argnum]) == mytype:
                     raise TypeError(errmsg.format(mytype))
             return function(*args, **kwargs)
         return wrapper

@@ -43,7 +43,7 @@ python_2_unicode_compatible decorator in :mod:`future.utils`.
 from collections import Iterable
 
 from numbers import Number
-from future.utils import PY3, istext
+from future.utils import PY3, istext, with_metaclass
 from future.builtins.backports import no, issubset
 from future.builtins.backports.newbytes import newbytes
 
@@ -53,7 +53,12 @@ if PY3:
     unicode = str
 
 
-class newstr(unicode):
+class BaseNewStr(type):
+    def __instancecheck__(cls, instance):
+        return isinstance(instance, unicode)
+
+
+class newstr(with_metaclass(BaseNewStr, unicode)):
     """
     A backport of the Python 3 str object to Py2
     """
@@ -78,7 +83,11 @@ class newstr(unicode):
         
         if len(args) == 0:
             return super(newstr, cls).__new__(cls)
-        elif isinstance(args[0], newstr):
+        # Was: elif isinstance(args[0], newstr):
+        # We use type() instead of the above because we're redefining
+        # this to be True for all unicode string subclasses. Warning:
+        # This may render newstr un-subclassable.
+        elif type(args[0]) == newstr:
             return args[0]
         elif isinstance(args[0], unicode):
             value = args[0]
@@ -104,7 +113,9 @@ class newstr(unicode):
 
     def __contains__(self, key):
         errmsg = "'in <string>' requires string as left operand, not {0}"
-        if isinstance(key, newstr):
+        # Don't use isinstance() here because we only want to catch
+        # newstr, not Python 2 unicode:
+        if type(key) == newstr:
             newkey = key
         elif isinstance(key, unicode):
             newkey = newstr(key)

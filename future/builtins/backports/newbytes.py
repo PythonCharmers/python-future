@@ -20,7 +20,7 @@ when running
 from collections import Iterable
 from numbers import Integral
 
-from future.utils import istext, isbytes, PY3
+from future.utils import istext, isbytes, PY3, with_metaclass
 from future.builtins.backports import no, issubset
 
 
@@ -31,7 +31,12 @@ if PY3:
     unicode = str
 
 
-class newbytes(_builtin_bytes):
+class BaseNewBytes(type):
+    def __instancecheck__(cls, instance):
+        return isinstance(instance, _builtin_bytes)
+
+
+class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
     """
     A backport of the Python 3 bytes object to Py2
     """
@@ -54,7 +59,11 @@ class newbytes(_builtin_bytes):
         
         if len(args) == 0:
             return super(newbytes, cls).__new__(cls)
-        elif isinstance(args[0], newbytes):
+        # Was: elif isinstance(args[0], newbytes):
+        # We use type() instead of the above because we're redefining
+        # this to be True for all unicode string subclasses. Warning:
+        # This may render newstr un-subclassable.
+        elif type(args[0]) == newbytes:
             return args[0]
         elif isinstance(args[0], _builtin_bytes):
             value = args[0]
@@ -106,7 +115,9 @@ class newbytes(_builtin_bytes):
     def __contains__(self, key):
         if isinstance(key, int):
             newbyteskey = newbytes([key])
-        elif isinstance(key, newbytes):
+        # Don't use isinstance() here because we only want to catch
+        # newbytes, not Python 2 str:
+        elif type(key) == newbytes:
             newbyteskey = key
         else:
             newbyteskey = newbytes(key)

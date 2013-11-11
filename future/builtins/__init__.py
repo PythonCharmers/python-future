@@ -12,6 +12,8 @@ See the docs for these modules for more information::
 """
 
 from future.builtins.iterators import (filter, map, zip)
+# The isinstance import is unneeded. For backward-compatibility with
+# future v0.8 only.
 from future.builtins.misc import (ascii, chr, hex, input, isinstance, oct, open)
 from future.builtins.backports import (bytes, int, range, round, str, super)
 from future import utils

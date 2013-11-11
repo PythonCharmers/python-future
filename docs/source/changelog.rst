@@ -12,12 +12,14 @@ Looser type-checking for the backported ``str`` object?
 
 This is to work around some bugs / sloppiness in the Python 2 standard library.
 
-Overridden ``isinstance`` builtin deprecated?
----------------------------------------------
+``isinstance`` checks supported natively with backported types
+--------------------------------------------------------------
 
-``isinstance`` checks with the backported types now work correctly using
-``__subclasshook__``?
-
+The ``isinstance`` function is no longer redefined in ``future.builtins``
+to operate with the backported ``int``, ``bytes`` and ``str``.
+``isinstance`` checks with the backported types now work correctly by
+default; we achieve this through overriding the ``__instancecheck__``
+method of metaclasses of the backported types.
 
 ``futurize``: minimal imports by default
 ----------------------------------------

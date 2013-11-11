@@ -10,14 +10,20 @@ They are very similar. The most notable difference is:
 from numbers import Integral
 
 from future.builtins.backports.newbytes import newbytes
-from future.utils import PY3, isint, istext, isbytes
+from future.utils import PY3, isint, istext, isbytes, with_metaclass
 
 
 if PY3:
     long = int
 
 
-class newint(long):
+class BaseNewInt(type):
+    def __instancecheck__(cls, instance):
+        # Special case for Py2 short or long int
+        return isinstance(instance, (int, long))
+
+
+class newint(with_metaclass(BaseNewInt, long)):
     """
     A backport of the Python 3 int object to Py2
     """

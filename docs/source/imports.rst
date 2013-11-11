@@ -50,7 +50,7 @@ If you prefer explicit imports, the explicit equivalent of the ``from
 future.builtins import *`` line is::
 
     from future.builtins import (filter, map, zip,
-                                 ascii, chr, hex, input, isinstance, oct, open,
+                                 ascii, chr, hex, input, oct, open,
                                  bytes, int, range, round, str, super)
 
 
@@ -69,7 +69,7 @@ for these modules:
 The internal API is currently as follows::
 
     from future.builtins.iterators import filter, map, zip
-    from future.builtins.misc import ascii, chr, hex, input, isinstance, oct, open
+    from future.builtins.misc import ascii, chr, hex, input, oct, open
     from future.builtins.backports import bytes, int, range, round, str, super
 
 (Please note that this internal API is evolving and may not be stable

@@ -54,28 +54,8 @@ if utils.PY2:
     from __builtin__ import unichr as chr
     import __builtin__
 
-    # Is it a good idea to define this? It'll mean many fewer lines of
-    # type-checking code need to be changed to using custom 
-    # functions (like future.utils.isint). Example: the xlwt package uses
-    # isinstance() a lot. On the other hand, it may break some things and make
-    # them harder to debug.
-    def isinstance(obj, class_or_type_or_tuple):
-        """
-        isinstance(object, class-or-type-or-tuple) -> bool
-        
-        Return whether an object is an instance of a class or of a
-        subclass thereof.  With a type as second argument, return whether
-        that is the object's type.  The form using a tuple, isinstance(x,
-        (A, B, ...)), is a shortcut for isinstance(x, A) or isinstance(x,
-        B) or ... (etc.).
-        """
-        if hasattr(class_or_type_or_tuple, '__native__'):
-            # Special case for Py2 short int
-            if class_or_type_or_tuple == newint and isinstance(obj, int):
-                return True
-            return __builtin__.isinstance(obj, class_or_type_or_tuple.__base__)
-        else:
-            return __builtin__.isinstance(obj, class_or_type_or_tuple)
+    # Only for backward compatibility with future v0.8.2
+    isinstance = __builtin__.isinstance
 
     # The following seems like a good idea, but it may be a bit
     # paranoid and the implementation may be fragile:
@@ -100,6 +80,7 @@ else:
     chr = builtins.chr
     hex = builtins.hex
     input = builtins.input
+    # Only for backward compatibility with future v0.8.2:
     isinstance = builtins.isinstance
     oct = builtins.oct
     open = builtins.open

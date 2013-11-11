@@ -36,8 +36,8 @@ then the fifth test fails too::
     AssertionError
 
 
-After importing the builtins from ``future``, the tests pass on Python 2 as
-on Python 3::
+After importing the builtins from ``future``, all these tests pass on
+Python 2 as on Python 3::
 
     >>> from __future__ import unicode_literals
     >>> from future.builtins import *
@@ -49,6 +49,11 @@ on Python 3::
     >>> assert isinstance('unicode string 2', str)
 
 Note that the last test requires that ``unicode_literals`` be imported to succeed.
+
+This works because the backported types ``int``, ``bytes`` and ``str``
+have metaclasses that override ``__instancecheck__``. See `PEP 3119
+<http://www.python.org/dev/peps/pep-3119/#overloading-isinstance-and-issubclass>`_
+for details.
 
 
 Passing data to/from Python 2 libraries
@@ -109,97 +114,4 @@ The objects ``native_str`` and ``native_bytes`` are available in
 
 The functions ``native_str_to_bytes`` and ``bytes_to_native_str`` are also
 available for more explicit conversions.
-
-
-.. ``isinstance`` checks are sometimes fragile and generally discouraged in
-.. Python code (in favour of duck typing). When passing ``future``'s backported
-.. ``int``, ``str``, or ``bytes`` types from Python 3 to standard library code
-.. or 3rd-party modules on Python 2 that contain checks with ``isinstance``, some 
-.. special handling may be required to achieve portability.
-.. 
-.. This section explains the issues involved and describes some utility functions
-.. in :mod:`future.utils` that assist with writing clean code.
-.. 
-.. Distinguishing bytes from unicode text
-.. ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. 
-.. On Python 2, (unicode) string literals ``'...'`` and byte-string literals
-.. ``b'...'`` create instances of the superclasses of the backported
-.. :class:`str` and :class:`bytes` types from :mod:`future.builtins` (i.e.
-.. the native Py2 unicode and 8-bit string types). Therefore ``isinstance`` checks
-.. in standard library code or 3rd-party modules should succeed. Just keep in mind
-.. that with ``future``, ``str`` and ``bytes`` are like Python 3's types of the
-.. same names.
-
-.. Old
-.. ~~~
-.. If type-checking is necessary to distinguish unicode text from bytes
-.. portably across Py3 and Py2, utility functions called :func:`istext` and
-.. :func:`isbytes` are available in :mod:`future.utils`. You can use them
-.. as follows::
-.. 
-..     >>> from __future__ import unicode_literals
-..     >>> from future.builtins import *
-..     >>> from future.utils import istext, isbytes
-.. 
-..     >>> assert istext('My (unicode) string')
-..     >>> assert istext(str('My (unicode) string'))
-.. 
-..     >>> assert isbytes(b'My byte-string')
-..     >>> assert isbytes(bytes(b'My byte-string'))
-.. 
-.. ``istext(s)`` tests whether the object ``s`` is (or inherits from) a
-.. unicode string. It is equivalent to the following expression::
-.. 
-..     isinstance(s, type(u''))
-.. 
-.. which is ``True`` if ``s`` is a native Py3 string, Py2 unicode object, or
-.. :class:`future.builtins.str` object on Py2.
-.. 
-.. Likewise, ``isbytes(b)`` tests whether ``b`` is (or inherits from) an
-.. 8-bit byte-string. It is equivalent to::
-.. 
-..     isinstance(b, type(b''))
-.. 
-.. which is ``True`` if ``b`` is a native Py3 bytes object, Py2 8-bit str,
-.. or :class:`future.builtins.bytes` object on Py2.
-
-
-.. Integers and long integers
-.. ~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. 
-.. Python 3 unifies Python 2's concepts of integers (``int``) and long
-.. integers (``long``) into a single ``int`` type.
-.. 
-.. On Python 2, checks such as ``isinstance(x, int)`` are fragile because
-.. ``long`` does not inherit from ``int``. So when an integer gets too
-.. large, the check starts to fail. For example::
-.. 
-..     >>> x = 2**62
-..     >>> assert isinstance(x, int)
-..     >>> x *= 2
-..     >>> assert isinstance(x, int)
-..     Traceback (most recent call last):
-..       File "<stdin>", line 1, in <module>
-..     AssertionError
-.. 
-.. ``future``'s backported ``int`` object doesn't help with these checks;
-.. both of them fail. To test if a variable is an integer on Py3 or either an
-.. ``int`` or ``long`` on Py2, you can use the ``future.utils.isint``
-..  function::
-.. 
-..     >>> from future.utils import isint
-.. 
-..     >>> assert isint(10)
-..     >>> assert isint(10**1000)
-.. 
-.. An alternative is to use the abstract base class :class:`Integral`
-.. from the :mod:`numbers` module as follows::
-.. 
-..     >>> from numbers import Integral
-.. 
-..     >>> assert isinstance(10, Integral)
-..     >>> assert isinstance(10**1000, Integral)
-
-
 
