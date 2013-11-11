@@ -83,10 +83,10 @@ class newstr(unicode):
         elif isinstance(args[0], unicode):
             value = args[0]
         elif isinstance(args[0], bytes):
-            if 'encoding' not in kwargs:
-                value = args[0].__str__()
+            if 'encoding' in kwargs or len(args) > 1:
+                value = args[0].decode(*args[1:], **kwargs)
             else:
-                value = args[0].encode(**kwargs)
+                value = args[0].__str__()
         else:
             value = args[0]
         return super(newstr, cls).__new__(cls, value)
