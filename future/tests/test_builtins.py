@@ -64,6 +64,7 @@ class TestBuiltins(unittest.TestCase):
         self.assertTrue(isinstance(u'string', str))
         self.assertFalse(isinstance(u'string', bytes))
 
+    @unittest.expectedFailure
     def test_type(self):
         """
         The following fails when passed a unicode string on Python
@@ -71,7 +72,7 @@ class TestBuiltins(unittest.TestCase):
         passed a byte-string on Python 3. So type() always wants a native
         string as the first argument.
 
-        TODO: provide a replacement that works identically on Py2/3?
+        TODO: maybe provide a replacement that works identically on Py2/3?
         """
         mytype = type('blah', (dict,), {"old": 1, "new": 2})
         d = mytype()
