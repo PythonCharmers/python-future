@@ -35,6 +35,7 @@ class TestBuiltins(unittest.TestCase):
         test fail unless isinstance() is defined appropriately:
         """
         self.assertTrue(isinstance(0, int))
+        self.assertTrue(isinstance(int(1), int))
         self.assertFalse(isinstance(1.0, int))
 
     def test_isinstance_Integral(self):
@@ -48,6 +49,7 @@ class TestBuiltins(unittest.TestCase):
         Py2's long doesn't inherit from int!
         """
         self.assertTrue(isinstance(10**100, int))
+        self.assertTrue(isinstance(int(2**64), int))
         if not PY3:
             self.assertTrue(isinstance(long(1), int))
         # Note: the following is a SyntaxError on Py3:
