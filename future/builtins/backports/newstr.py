@@ -130,11 +130,11 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
     @no(bytes)
     def __radd__(self, left):
         " left + self "
-        if isinstance(left, unicode):
-            try:
-                return newstr(left) + self
-            except:
-                raise NotImplemented
+        try:
+            return newstr(left) + self
+        except:
+            pass
+        return NotImplemented
 
     def __mul__(self, other):
         return newstr(super(newstr, self).__mul__(other))
