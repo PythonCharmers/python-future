@@ -218,10 +218,11 @@ class TestStr(unittest.TestCase):
         self.assertTrue(s.startswith('a'))
         self.assertTrue(s.startswith(('a', 'd')))
         self.assertTrue(s.startswith(str('ab')))
-        # We allow this, because e.g. Python 2 os.path.join passes its arg a
-        # byte-string '/' indiscriminately.
-        self.assertFalse(s.startswith(b'A'))
-        self.assertTrue(s.startswith(b'a'))
+        if utils.PY2:
+            # We allow this, because e.g. Python 2 os.path.join concatenates
+            # its arg with a byte-string '/' indiscriminately.
+            self.assertFalse(s.startswith(b'A'))
+            self.assertTrue(s.startswith(b'a'))
         with self.assertRaises(TypeError) as cm:
             self.assertFalse(s.startswith(bytes(b'A')))
         with self.assertRaises(TypeError) as cm:

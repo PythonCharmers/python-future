@@ -44,25 +44,20 @@ class TestUtils(unittest.TestCase):
 
     def test_native_str(self):
         """
-        Tests whether native_str(b'blah') and native_str(u'blah') and
-        native_str('blah') are all equivalent to 'blah'. Should be true
-        on both Python 2 and Python 3.
+        Tests whether native_str is really equal to the platform str.
         """
         if PY2:
-            s = b'blah'    # b because unicode_literals is in effect
-            native_s_type = type(s)
-        elif PY3:
-            s = 'blah'
-            native_s_type = type(s)
-        self.assertEqual(native_str(b'blah'), s)
-        self.assertTrue(isinstance(native_str(b'blah'), native_s_type))
+            import __builtin__
+            builtin_str = __builtin__.str
+        else:
+            import builtins
+            builtin_str = builtins.str
 
-        self.assertEqual(native_str(u'blah'), s)
-        self.assertTrue(isinstance(native_str(u'blah'), native_s_type))
-
-        self.assertEqual(native_str('blah'), s)
-        self.assertTrue(isinstance(native_str('blah'), native_s_type))
-
+        inputs = [b'blah', u'blah', 'blah']
+        for s in inputs:
+            self.assertEqual(native_str(s), builtin_str(s))
+            self.assertTrue(isinstance(native_str(s), builtin_str))
+        
     def test_native(self):   
         a = int(10**20)     # long int
         b = native(a)
