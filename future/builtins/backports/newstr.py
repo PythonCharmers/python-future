@@ -123,11 +123,11 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
             raise TypeError(errmsg.format(type(key)))
         return issubset(list(newkey), list(self))
     
-    @no(bytes)
+    @no(newbytes)
     def __add__(self, other):
         return newstr(super(newstr, self).__add__(other))
 
-    @no(bytes)
+    @no(newbytes)
     def __radd__(self, left):
         " left + self "
         try:
@@ -149,21 +149,22 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
                 raise TypeError(errmsg.format(i))
         return newstr(super(newstr, self).join(iterable))
 
-    @no(bytes)
+    @no(newbytes)
     def find(self, sub, *args):
         return super(newstr, self).find(sub, *args)
 
-    @no(bytes)
+    @no(newbytes)
     def rfind(self, sub, *args):
         return super(newstr, self).rfind(sub, *args)
 
-    @no(bytes, (1, 2))
+    @no(newbytes, (1, 2))
     def replace(self, old, new, *args):
         return newstr(super(newstr, self).replace(old, new, *args))
 
     def decode(self, *args):
         raise AttributeError("decode method has been disabled in newstr")
 
+    @no(newbytes, (1, 2))
     def encode(self, encoding='utf-8', errors='strict'):
         """
         Returns bytes
@@ -179,7 +180,7 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         # not keyword arguments as in Python 3 str.
         return newbytes(super(newstr, self).encode(encoding, errors))
 
-    @no(bytes, 1)
+    @no(newbytes, 1)
     def startswith(self, prefix, *args):
         if isinstance(prefix, Iterable):
             for thing in prefix:
@@ -187,7 +188,7 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
                     raise TypeError(self.no_convert_msg.format(type(thing)))
         return super(newstr, self).startswith(prefix, *args)
 
-    @no(bytes, 1)
+    @no(newbytes, 1)
     def endswith(self, prefix, *args):
         if isinstance(prefix, Iterable):
             for thing in prefix:
@@ -195,6 +196,7 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
                     raise TypeError(self.no_convert_msg.format(type(thing)))
         return super(newstr, self).endswith(prefix, *args)
 
+    @no(newbytes, 1)
     def split(self, sep=None, maxsplit=-1):
         # Py2 unicode.split() takes maxsplit as an optional parameter,
         # not as a keyword argument as in Python 3 str.
@@ -203,7 +205,7 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         parts = super(newstr, self).split(sep, maxsplit)
         return [newstr(part) for part in parts]
 
-    @no(bytes, 1)
+    @no(newbytes, 1)
     def rsplit(self, sep=None, maxsplit=-1):
         # Py2 unicode.rsplit() takes maxsplit as an optional parameter,
         # not as a keyword argument as in Python 3 str.
@@ -212,17 +214,17 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         parts = super(newstr, self).rsplit(sep, maxsplit)
         return [newstr(part) for part in parts]
 
-    @no(bytes, 1)
+    @no(newbytes, 1)
     def partition(self, sep):
         parts = super(newstr, self).partition(sep)
         return tuple(newstr(part) for part in parts)
 
-    @no(bytes, 1)
+    @no(newbytes, 1)
     def rpartition(self, sep):
         parts = super(newstr, self).rpartition(sep)
         return tuple(newstr(part) for part in parts)
 
-    @no(bytes, 1)
+    @no(newbytes, 1)
     def index(self, sub, *args):
         """
         Like newstr.find() but raise ValueError when the substring is not
@@ -248,22 +250,22 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
     unorderable_err = 'unorderable types: str() and {0}'
 
     def __lt__(self, other):
-        if not istext(other):
+        if not isinstance(other, unicode):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__lt__(other)
 
     def __le__(self, other):
-        if not istext(other):
+        if not isinstance(other, unicode):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__le__(other)
 
     def __gt__(self, other):
-        if not istext(other):
+        if not isinstance(other, unicode):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__gt__(other)
 
     def __ge__(self, other):
-        if not istext(other):
+        if not isinstance(other, unicode):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newbytes, self).__ge__(other)
 
