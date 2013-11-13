@@ -346,5 +346,46 @@ def suspend_hooks():
         enable_hooks()
 
 
+def os_path_join(a, *p):
+    """
+    Replacement os.path.join from Python 3.3 (posixpath.py) which doesn't
+    add a byte-string to a unicode string as Python 2.7's does.
+
+    Join two or more pathname components, inserting '/' as needed.
+    If any component is an absolute path, all previous path components
+    will be discarded.  An empty last part will result in a path that
+    ends with a separator."""
+    sep = _get_sep(a)
+    path = a
+    try:
+        for b in p:
+            if b.startswith(sep):
+                path = b
+            elif not path or path.endswith(sep):
+                path += b
+            else:
+                path += sep + b
+    except TypeError:
+        valid_types = all(isinstance(s, (str, bytes, bytearray))
+                          for s in (a, ) + p)
+        if valid_types:
+            # Must have a mixture of text and binary data
+            raise TypeError("Can't mix strings and bytes in path "
+                            "components.") from None
+        raise
+    return path
+
+
+def monkey_patch_stdlib():
+    """
+    Patches out some bugs, like the dodgy os.path.join in Python 2.x,
+    which adds the byte-string '/' to unicode paths.
+    """
+    if not module in sys.modules:
+        __import__(module)
+    modname, module = module, sys.modules[module]
+
+
 if not utils.PY3:
     enable_hooks()
+    monkey_patch_stdlib()
