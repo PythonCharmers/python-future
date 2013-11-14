@@ -18,8 +18,9 @@ Features
     semantics on Py3 versus Py2
 -   provides backports and remappings from the Py3 standard library
 -   300+ unit tests
--   2to3-based ``futurize`` script for automatic conversion from either Py2 or Py3
-    to a clean single-source codebase compatible with both Py3 and Py2
+-   ``futurize`` script based on ``2to3``, ``3to2`` and parts of
+    ``python-modernize`` for automatic conversion from either Py2 or Py3 to a
+    clean single-source codebase compatible with both Py3 and Py2
 -   a consistent set of utility functions and decorators selected from
     Py2/3 compatibility interfaces from projects like six, IPython,
     Jinja2, Django, and Pandas.
@@ -71,6 +72,12 @@ and 2.6/2.7::
     # Extra arguments for the open() function
     f = open('japanese.txt', encoding='utf-8', errors='replace')
     
+    # New simpler super() function:
+    class VerboseList(list):
+        def append(self, item):
+            print('Adding an item')
+            super().append(item)
+
     # New iterable range object with slicing support
     for i in range(10**15)[:10]:
         pass
@@ -78,12 +85,6 @@ and 2.6/2.7::
     # Other iterators: map, zip, filter
     my_iter = zip(range(3), ['a', 'b', 'c'])
     assert my_iter != list(my_iter)
-    
-    # New simpler super() function:
-    class VerboseList(list):
-        def append(self, item):
-            print('Adding an item')
-            super().append(item)
     
     # The round() function behaves as it does in Python 3, using
     # "Banker's Rounding" to the nearest even last digit:
@@ -94,9 +95,10 @@ and 2.6/2.7::
     print('Hello ' + name)
 
     # Compatible output from isinstance() across Py2/3:
-    assert isinstance(2**63, int)        # long integers
+    assert isinstance(2**64, int)        # long integers
     assert isinstance(u'blah', str)
     assert isinstance('blah', str)       # with unicode_literals in effect
+    assert isinstance(b'bytestring', bytes)
 
 
 Next steps

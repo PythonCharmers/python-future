@@ -29,9 +29,7 @@ Py3 and Py2, cast it like this::
 The backported ``int`` object helps with writing doctests and simplifies code
 that deals with ``long`` and ``int`` as special cases on Py2. An example is the
 following code from ``xlwt-future`` (called by the ``xlwt.antlr.BitSet`` class)
-for writing out Excel ``.xls`` spreadsheets.
-
-With ``future``, the code is::
+for writing out Excel ``.xls`` spreadsheets. With ``future``, the code is::
 
     def longify(data):
         """

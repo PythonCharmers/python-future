@@ -6,7 +6,7 @@ Quick-start guide
 You can use ``future`` to help to port your code from Python 2 to Python 3
 today -- and still have it run on Python 2.
 
-If you already have Python 3 code, you can instead use :mod:`future` to
+If you already have Python 3 code, you can instead use ``future`` to
 offer Python 2 compatibility with almost no extra work.
 
 Installation
@@ -63,8 +63,9 @@ See :ref:`backwards-conversion` for more details.
 To convert existing Python 2 code
 ---------------------------------
 
-If you already know Python 3, start with the :ref:`automatic-conversion` page.
+Start with the :ref:`automatic-conversion` page.
 
+.. If you already know Python 3, start with the :ref:`automatic-conversion` page.
 .. If you don't know Python 3 yet, start with :ref:`python3-essentials`.
 
 

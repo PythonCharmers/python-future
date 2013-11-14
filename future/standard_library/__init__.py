@@ -18,7 +18,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import winreg    # on Windows only
     import test.support
     import html, html.parser, html.entites
-    import http, http.client
+    import http, http.client, http.server
     import _thread
     import _dummythread
     import _markupbase
@@ -50,7 +50,7 @@ Limitations
 -----------
 We don't currently support these modules, but would like to::
 
-    import http.server, http.cookies, http.cookiejar
+    import http.cookies, http.cookiejar
     import dbm
     import dbm.dumb
     import dbm.gnu
@@ -66,7 +66,7 @@ We don't currently support these modules, but would like to::
 
 Notes
 -----
-This module only supports Python 2.6 and Python 3.1+.
+This module only supports Python 2.6, Python 2.7, and Python 3.1+.
 
 The following renames are already supported on Python 2.7 without any
 additional work from us::
@@ -76,7 +76,7 @@ additional work from us::
     StringIO.StringIO -> io.StringIO
     Bytes.BytesIO -> io.BytesIO
 
-Old things that can perhaps be fixed for people by futurize.py::
+Old things that can one day be fixed automatically by futurize.py::
 
   string.uppercase -> string.ascii_uppercase   # works on either Py2.7 or Py3+
   sys.maxint -> sys.maxsize      # but this isn't identical

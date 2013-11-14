@@ -13,6 +13,7 @@ Contents:
    faq
    changelog
    credits
+   reference
 
 Indices and tables
 ------------------

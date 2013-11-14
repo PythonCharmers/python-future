@@ -26,13 +26,12 @@ Why upgrade to Python 3?
 
 Python 2.7 is the end of the Python 2 line. (See `PEP 404
 <http://www.python.org/peps/pep-0404/>`_.) The language and standard
-libraries are improving only in Python 3.x. Python 3.3 is a better
-language and better set of standard libraries than Python 2.x in almost
-every way.
+libraries are improving only in Python 3.x.
 
-Python 3 is cleaner, less warty, and easier to learn than Python 2. It
-has better memory efficiency, easier Unicode handling, and powerful new
-features like function annotations and the `asyncio
+Python 3.3 is a better language and better set of standard libraries than
+Python 2.x in almost every way. Python 3 is cleaner, less warty, and easier to
+learn than Python 2. It has better memory efficiency, easier Unicode handling,
+and powerful new features like function annotations and the `asyncio
 <https://pypi.python.org/pypi/asyncio>`_ module.
 
 .. Unicode handling is also much easier. For example, see `this page
@@ -233,7 +232,7 @@ converts either Py2 or Py3 code into (almost) standard Python 3 code,
 with ``future`` as a run-time dependency.    
 
 Because ``future`` provides more backported Py3 behaviours from ``six``,
-the code resulting from ``futurize`` should be more likely to work
+the code resulting from ``futurize`` is more likely to work
 identically on both Py3 and Py2 with less additional manual porting
 effort.
 
@@ -294,7 +293,8 @@ Can I help?
 -----------
 
 Yes please :) We welcome bug reports, additional tests, pull requests,
-and stories of either success or failure with using it.
+and stories of either success or failure with using it. Help with the fixers
+for the ``futurize`` script is particularly welcome.
 
 
 Where is the repo?
