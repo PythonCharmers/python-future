@@ -134,18 +134,31 @@ def disallow_types(argnums, disallowed_types):
     """
 
     def decorator(function):
+
         @functools.wraps(function)
         def wrapper(*args, **kwargs):
+            # These imports are just for this decorator, and are defined here
+            # to prevent circular imports:
+            from .newbytes import newbytes
+            from .newint import newint
+            from .newstr import newstr
+
             errmsg = "argument can't be {0}"
             for (argnum, mytype) in zip(argnums, disallowed_types):
+                # Handle the case where the type is passed as a string like 'newbytes'.
+                if isinstance(mytype, str) or isinstance(mytype, bytes):
+                    mytype = locals()[mytype]
+
                 # Only restrict kw args only if they are passed:
                 if len(args) <= argnum:
                     break
+
                 # Here we use type() rather than isinstance() because
                 # __instancecheck__ is being overridden. E.g.
                 # isinstance(b'abc', newbytes) is True on Py2.
                 if type(args[argnum]) == mytype:
                     raise TypeError(errmsg.format(mytype))
+
             return function(*args, **kwargs)
         return wrapper
     return decorator
@@ -159,7 +172,7 @@ def no(mytype, argnums=(1,)):
     Example use:
 
     >>> class newstr(object):
-    ...     @no(bytes)
+    ...     @no('bytes')
     ...     def __add__(self, other):
     ...          pass
 
@@ -167,6 +180,9 @@ def no(mytype, argnums=(1,)):
     Traceback (most recent call last):
       ...
     TypeError: argument can't be bytes
+
+    The object can also be passed directly, but passing the string helps
+    to prevent circular import problems.
     """
     if isinstance(argnums, Integral):
         argnums = (argnums,)

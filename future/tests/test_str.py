@@ -161,9 +161,12 @@ class TestStr(unittest.TestCase):
 
     def test_str_join_bytes(self):
         s = str('ABCD')
-        byte_strings = [b'EFGH', u'IJKL']
+        byte_strings1 = [b'EFGH', u'IJKL']
+        self.assertEqual(s.join(byte_strings1), u'EFGHABCDIJKL')
+
+        byte_strings2 = [bytes(b'EFGH'), u'IJKL']
         with self.assertRaises(TypeError):
-            s.join(byte_strings)
+            s.join(byte_strings2)
 
     def test_str_replace(self):
         s = str('ABCD')
@@ -195,8 +198,10 @@ class TestStr(unittest.TestCase):
     def test_str_contains_something(self):
         s = str('ABCD')
         self.assertTrue('A' in s)
+        if utils.PY2:
+            self.assertTrue(b'A' in s)
         with self.assertRaises(TypeError):
-            b'A' in s                  
+            bytes(b'A') in s                  
         with self.assertRaises(TypeError):
             65 in s                                 # unlike bytes
 
@@ -230,29 +235,43 @@ class TestStr(unittest.TestCase):
         with self.assertRaises(TypeError) as cm:
             s.startswith(65)
 
+    def test_join(self):
+        sep = str('-')
+        self.assertEqual(sep.join('abcd'), 'a-b-c-d')
+        if utils.PY2:
+            sep.join(b'abcd')
+        with self.assertRaises(TypeError) as cm:
+            sep.join(bytes(b'abcd'))
+
     def test_endswith(self):
         s = str('abcd')
         self.assertTrue(s.endswith('d'))
         self.assertTrue(s.endswith(('b', 'd')))
         self.assertTrue(s.endswith(str('cd')))
         self.assertFalse(s.endswith(('A', 'B')))
-
+        if utils.PY2:
+            self.assertFalse(s.endswith(b'D'))
+            self.assertTrue(s.endswith((b'D', b'd')))
         with self.assertRaises(TypeError) as cm:
             s.endswith(65)
         with self.assertRaises(TypeError) as cm:
-            s.endswith([b'D'])
+            s.endswith((bytes(b'D'),))
 
     def test_split(self):
         s = str('ABCD')
         self.assertEqual(s.split('B'), ['A', 'CD'])
+        if utils.PY2:
+            self.assertEqual(s.split(b'B'), ['A', 'CD'])
         with self.assertRaises(TypeError) as cm:
-            s.split(b'B')
+            s.split(bytes(b'B'))
 
     def test_rsplit(self):
         s = str('ABCD')
         self.assertEqual(s.rsplit('B'), ['A', 'CD'])
+        if utils.PY2:
+            self.assertEqual(s.rsplit(b'B'), ['A', 'CD'])
         with self.assertRaises(TypeError) as cm:
-            s.rsplit(b'B')
+            s.rsplit(bytes(b'B'))
 
     def test_eq_bytes(self):
         s = str('ABCD')
@@ -260,12 +279,20 @@ class TestStr(unittest.TestCase):
         self.assertNotEqual(s, b)
         self.assertNotEqual(str(''), bytes(b''))
         native_s = 'ABCD'
-        self.assertNotEqual(b, native_s)
-        # Fails:
-        # self.assertNotEqual(native_s, b)
         native_b = b'ABCD'
-        self.assertNotEqual(native_b, s)
-        self.assertNotEqual(s, native_b)
+        self.assertFalse(b == native_s)
+        self.assertTrue(b != native_s)
+
+        # Fails on Py2:
+        # self.assertNotEqual(native_s, b)
+        # with no obvious way to change this.
+
+        # For backward compatibility with broken string-handling code in
+        # Py2 libraries, we allow the following:
+
+        if utils.PY2:
+            self.assertTrue(native_b == s)
+            self.assertFalse(s != native_b)
 
     def test_eq(self):
         s = str('ABCD')
@@ -273,7 +300,10 @@ class TestStr(unittest.TestCase):
         self.assertEqual(s, 'ABCD')
         self.assertEqual(s, s)
         self.assertTrue(u'ABCD' == s)
-        self.assertFalse(b'ABCD' == s)
+        if utils.PY2:
+            self.assertTrue(b'ABCD' == s)
+        else:
+            self.assertFalse(b'ABCD' == s)
         self.assertFalse(bytes(b'ABCD') == s)
 
     def test_ne(self):
@@ -283,7 +313,10 @@ class TestStr(unittest.TestCase):
         self.assertNotEqual(s, 5)
         self.assertNotEqual(2.7, s)
         self.assertNotEqual(s, ['A', 'B', 'C', 'D'])
-        self.assertTrue(b'ABCD' != s)
+        if utils.PY2:
+            self.assertFalse(b'ABCD' != s)
+        else:
+            self.assertTrue(b'ABCD' != s)
         self.assertTrue(bytes(b'ABCD') != s)
 
     def test_cmp(self):
