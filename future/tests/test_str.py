@@ -21,7 +21,7 @@ class TestStr(unittest.TestCase):
 
     def test_os_path_join(self):
         """
-        Issue #...: can't os.path.join(u'abc', str(u'def'))
+        Issue #15: can't os.path.join(u'abc', str(u'def'))
         """
         self.assertEqual(os.path.join(u'abc', str(u'def')),
                          u'abc{}def'.format(os.sep))
@@ -123,8 +123,9 @@ class TestStr(unittest.TestCase):
     def test_str_plus_bytes(self):
         s = str(u'ABCD')
         b = b'EFGH'
-        with self.assertRaises(TypeError):
-            s + b
+        # We allow this now:
+        # with self.assertRaises(TypeError):
+        #     s + b
         # str objects don't have an __radd__ method, so the following
         # does not raise a TypeError. Is this a problem?
         # with self.assertRaises(TypeError):
@@ -171,9 +172,9 @@ class TestStr(unittest.TestCase):
         self.assertTrue(isinstance(c, str))
 
         with self.assertRaises(TypeError):
-            s.replace(b'A', u'F')
+            s.replace(bytes(b'A'), u'F')
         with self.assertRaises(TypeError):
-            s.replace(u'A', b'F')
+            s.replace(u'A', bytes(b'F'))
 
     def test_str_partition(self):
         s1 = str('ABCD')
@@ -210,17 +211,22 @@ class TestStr(unittest.TestCase):
         with self.assertRaises(TypeError):
             s.index(67)
         with self.assertRaises(TypeError):
-            s.index(b'C')
+            s.index(bytes(b'C'))
 
     def test_startswith(self):
         s = str('abcd')
         self.assertTrue(s.startswith('a'))
         self.assertTrue(s.startswith(('a', 'd')))
         self.assertTrue(s.startswith(str('ab')))
+        if utils.PY2:
+            # We allow this, because e.g. Python 2 os.path.join concatenates
+            # its arg with a byte-string '/' indiscriminately.
+            self.assertFalse(s.startswith(b'A'))
+            self.assertTrue(s.startswith(b'a'))
         with self.assertRaises(TypeError) as cm:
-            s.startswith(b'A')
+            self.assertFalse(s.startswith(bytes(b'A')))
         with self.assertRaises(TypeError) as cm:
-            s.startswith((b'A', b'B'))
+            s.startswith((bytes(b'A'), bytes(b'B')))
         with self.assertRaises(TypeError) as cm:
             s.startswith(65)
 
