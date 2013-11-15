@@ -367,6 +367,28 @@ class TestFuturizeStage1(CodeHandler):
         '''
         self.unchanged(code, stages=[1])
 
+    @unittest.expectedFailure
+    def test_absolute_import_changes(self):
+        """
+        Implicit relative imports should be converted to absolute or explicit
+        relative imports correctly.
+
+        Issue #16 (with porting bokeh/bbmodel.py)
+        """
+        with open('specialmodels.py', 'w') as f:
+            f.write('pass')
+
+        before = """
+        import specialmodels.pandasmodel
+        specialmodels.pandasmodel.blah()
+        """
+        after = """
+        from __future__ import absolute_import
+        from .specialmodels import pandasmodel
+        pandasmodel.blah()
+        """
+        self.convert_check(before, after, stages=[1])
+
     def test_safe_futurize_imports(self):
         """
         The standard library module names should not be changed until stage 2
