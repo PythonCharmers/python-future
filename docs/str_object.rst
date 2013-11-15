@@ -33,27 +33,43 @@ Then, for example, the following code has the same effect on Py2 as on Py3::
 
     These raise TypeErrors:
 
-    >>> b'B' in s
+    >>> bytes(b'B') in s
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     TypeError: 'in <string>' requires string as left operand, not <type 'str'>
 
-    >>> s.find(b'A')
+    >>> s.find(bytes(b'A'))
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     TypeError: argument can't be <type 'str'>
 
-Various other comparisons between strings and other types return a result
-in Py2 but raise a TypeError in Py3. For example, this is permissible on
-Py2::
+Various other operations that mix strings and bytes or other types are
+permitted on Py2 with the :class:`newstr`` class even though they are
+illegal with Python 3. For example::
 
-    >>> u'u' > 10
-    True
+    >>> s2 = b'/' + str('ABCD')
+    >>> s2
+    '/ABCD'
+    >>> type(s2)
+    future.builtins.backports.newstr.newstr
 
-    >>> u'u' <= b'u'
-    True
+This is allowed for compatibility with parts of the Python 2 standard
+library and various third-party libraries that mix byte-strings and unicode
+strings loosely. One example is ``os.path.join`` on Python 2, which
+attempts to add the byte-string ``b'/'`` to its arguments, whether or not
+they are unicode. (See ``posixpath.py``.) Another example is the
+:func:`escape` function in Django 1.4's :mod:`django.utils.html`.
 
-On Py3, these raise TypeErrors.
+
+.. For example, this is permissible on Py2::
+.. 
+..     >>> u'u' > 10
+..     True
+.. 
+..     >>> u'u' <= b'u'
+..     True
+.. 
+.. On Py3, these raise TypeErrors.
 
 In most other ways, these :class:`str` objects on Py2 have the same
 behaviours as Python 3's :class:`str`::
@@ -63,21 +79,21 @@ behaviours as Python 3's :class:`str`::
     >>> assert list(s) == ['A', 'B', 'C', 'D']
     >>> assert s.split('B') == ['A', 'CD']
 
-If you must ensure identical use of (unicode) strings across Py3 and Py2 in a
-single-source codebase, you can wrap string literals in a :func:`~str` call, as
-follows::
-    
-    from __future__ import unicode_literals
-    from future.builtins import *
-    
-    # ...
-
-    s = str('This absolutely must behave like a Py3 string')
-
-    # ...
-
-Most of the time this is unnecessary, but the stricter type-checking of the
-``future.builtins.str`` object is useful for ensuring the same consistent
-separation between unicode and byte strings on Py2 as on Py3. This is
-important when writing protocol handlers, for example.
+.. If you must ensure identical use of (unicode) strings across Py3 and Py2 in a
+.. single-source codebase, you can wrap string literals in a :func:`~str` call, as
+..  follows::
+..     
+..     from __future__ import unicode_literals
+..     from future.builtins import *
+..     
+..     # ...
+.. 
+..     s = str('This absolutely must behave like a Py3 string')
+.. 
+..     # ...
+.. 
+.. Most of the time this is unnecessary, but the stricter type-checking of the
+.. ``future.builtins.str`` object is useful for ensuring the same consistent
+.. separation between unicode and byte strings on Py2 as on Py3. This is
+.. important when writing protocol handlers, for example.
 
