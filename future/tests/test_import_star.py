@@ -31,14 +31,14 @@ class TestImportStar(unittest.TestCase):
     def test_namespace_pollution_locals(self):
         if utils.PY3:
             self.assertEqual(len(new_locals), 0,
-                             'namespace pollution: {}'.format(new_locals))
+                             'namespace pollution: {0}'.format(new_locals))
         else:
             pass   # maybe check that no new symbols are introduced
 
     def test_namespace_pollution_globals(self):
         if utils.PY3:
             self.assertEqual(len(new_globals), 0,
-                             'namespace pollution: {}'.format(new_globals))
+                             'namespace pollution: {0}'.format(new_globals))
         else:
             pass   # maybe check that no new symbols are introduced
 

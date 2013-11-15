@@ -147,7 +147,7 @@ class TestFuturizeSimple(CodeHandler):
     
     @unittest.skip('not implemented yet')
     def test_download_pypi_package_and_test(self, package_name='future'):
-        URL = 'http://pypi.python.org/pypi/{}/json'
+        URL = 'http://pypi.python.org/pypi/{0}/json'
         
         import requests
         r = requests.get(URL.format(package_name))
@@ -246,7 +246,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         before = """
         import urllib
 
-        URL = 'http://pypi.python.org/pypi/{}/json'
+        URL = 'http://pypi.python.org/pypi/future/json'
         package_name = 'future'
         r = urllib.urlopen(URL.format(package_name))
         data = r.read()
@@ -254,7 +254,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         after = """
         import urllib.request
         
-        URL = 'http://pypi.python.org/pypi/{}/json'
+        URL = 'http://pypi.python.org/pypi/future/json'
         package_name = 'future'
         r = urllib.request.urlopen(URL.format(package_name))
         data = r.read()

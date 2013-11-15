@@ -29,7 +29,7 @@ replaced_builtins = '''filter map zip
                        ascii chr hex input oct open
                        bytes int range round str super'''.split()
 
-expression = '|'.join(["name='{}'".format(name) for name in replaced_builtins])
+expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtins])
 
 
 class FixFutureBuiltins(fixer_base.BaseFix):
@@ -38,7 +38,7 @@ class FixFutureBuiltins(fixer_base.BaseFix):
 
     PATTERN = """
               power<
-                 ({}) trailer< '(' args=[any] ')' >
+                 ({0}) trailer< '(' args=[any] ')' >
               rest=any* >
               """.format(expression)
 

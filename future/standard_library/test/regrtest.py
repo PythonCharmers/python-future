@@ -360,7 +360,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
             print(json.dumps(result))
             sys.exit(0)
         else:
-            print(("No handler for option {}.  Please "
+            print(("No handler for option {0}.  Please "
                 "report this as a bug at http://bugs.python.org.").format(o), file=sys.stderr)
             sys.exit(1)
     if single and fromfile:
@@ -612,7 +612,7 @@ def main(tests=None, testdir=None, verbose=0, quiet=False,
             print(count(len(bad), "test"), "failed:")
             printlist(bad)
         if environment_changed:
-            print("{} altered the execution environment:".format(
+            print("{0} altered the execution environment:".format(
                 count(len(environment_changed), "test")))
             printlist(environment_changed)
     if skipped and not quiet:
@@ -855,11 +855,11 @@ class saved_test_environment(object):
                 restore(original)
                 if not self.quiet:
                     print((
-                          "Warning -- {} was modified by {}".format(
+                          "Warning -- {0} was modified by {1}".format(
                                                  name, self.testname)), file=sys.stderr)
                     if self.verbose > 1:
                         print((
-                              "  Before: {}\n  After:  {} ".format(
+                              "  Before: {0}\n  After:  {1} ".format(
                                                   original, current)), file=sys.stderr)
             # XXX (ncoghlan): for most resources (e.g. sys.path) identity
             # matters at least as much as value. For others (e.g. cwd),
@@ -1552,7 +1552,7 @@ if __name__ == '__main__':
     # Define a writable temp dir that will be used as cwd while running
     # the tests. The name of the dir includes the pid to allow parallel
     # testing (see the -j option).
-    TESTCWD = 'test_python_{}'.format(os.getpid())
+    TESTCWD = 'test_python_{0}'.format(os.getpid())
 
     TESTCWD = os.path.join(TEMPDIR, TESTCWD)
 

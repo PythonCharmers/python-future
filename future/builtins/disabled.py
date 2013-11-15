@@ -54,7 +54,7 @@ def disabled_function(name):
         A function disabled by the ``future`` module. This function is
         no longer a builtin in Python 3.
         '''
-        raise NameError('obsolete Python 2 builtin {} is disabled'.format(name))
+        raise NameError('obsolete Python 2 builtin {0} is disabled'.format(name))
     return disabled
 
 

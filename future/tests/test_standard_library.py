@@ -197,7 +197,7 @@ class TestStandardLibraryRenames(CodeHandler):
     def test_urllib_request(self):
         import urllib.request
         from pprint import pprint
-        URL = 'http://pypi.python.org/pypi/{}/json'
+        URL = 'http://pypi.python.org/pypi/{0}/json'
         package = 'future'
         r = urllib.request.urlopen(URL.format(package))
         # pprint(r.read().decode('utf-8'))

@@ -319,7 +319,7 @@ Content-Type: text/html; charset=iso-8859-1
         self.fakehttp(b"HTTP/1.0 200 OK\r\n\r\nHello!")
         try:
             userpass = "a b:c d"
-            url = "http://{}@python.org/".format(userpass)
+            url = "http://{0}@python.org/".format(userpass)
             fakehttp_wrapper = http.client.HTTPConnection
             authorization = ("Authorization: Basic %s\r\n" %
                              b64encode(userpass.encode("ASCII")).decode("ASCII"))
