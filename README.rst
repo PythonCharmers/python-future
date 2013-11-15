@@ -1,29 +1,32 @@
-future: clean single-source support for Python 3 and 2
-======================================================
+future: an easier, safer, cleaner upgrade path to Python 3
+==========================================================
 
 
 Overview
---------
+========
 
 ``future`` is the missing compatibility layer between Python 3 and Python
 2. It allows you to maintain a single, clean Python 3.x-compatible
 codebase with minimal cruft and run it easily on Python 2 without further
 modification.
 
+``future`` comes with ``futurize``, a script that helps you to transition
+to supporting both Python 2 and 3 in a single codebase, module by module.
+
+
 Features
 --------
 
--   backports or remappings for 15 builtins with different semantics on
-    Py3 versus Py2
--   supports the reorganized Py3 standard library interface
--   220+ unit tests
--   clean on Py3: ``future`` imports and decorators have no effect on Py3
-    (and no namespace pollution)
--   ``futurize`` script for automatic conversion from either Py2 or Py3
-    to a clean single-source codebase compatible with both Py3 and Py2
+-   provides backports and remappings for 15 builtins with different
+    semantics on Py3 versus Py2
+-   provides backports and remappings from the Py3 standard library
+-   300+ unit tests
+-   ``futurize`` script based on ``2to3``, ``3to2`` and parts of
+    ``python-modernize`` for automatic conversion from either Py2 or Py3 to a
+    clean single-source codebase compatible with Python 2.6+ and Python 3.3+.
 -   a consistent set of utility functions and decorators selected from
-    Py2/3 compatibility interfaces from projects like six, IPython,
-    Jinja2, Django, and Pandas.
+    Py2/3 compatibility interfaces from projects like ``six``, ``IPython``,
+    ``Jinja2``, ``Django``, and ``Pandas``.
 
 
 Code examples
@@ -37,11 +40,11 @@ together with Python's built-in ``__future__`` module like this::
     from future import standard_library
     from future.builtins import *
     
-followed by standard Python 3 code. The imports allow this code to run
-unchanged on Python 3 and Python 2.7.
+followed by standard Python 3 code. The imports have no effect on Python
+3 but allow the code to run mostly unchanged on Python 3 and Python 2.6/2.7.
 
-For example, after these imports, this code runs identically on Python 3
-and 2.7::
+For example, this code behaves the same way on Python 2.6/2.7 after these
+imports as it normally does on Python 3::
     
     # Support for renamed standard library modules via import hooks
     from http.client import HttpConnection
@@ -59,20 +62,23 @@ and 2.7::
 
     # Backported Py3 str object
     s = str(u'ABCD')
-    assert s != b'ABCD'
+    assert s != bytes(b'ABCD')
     assert isinstance(s.encode('utf-8'), bytes)
     assert isinstance(b.decode('utf-8'), str)
     assert repr(s) == 'ABCD'      # consistent repr with Py3 (no u prefix)
     # These raise TypeErrors:
-    # b'B' in s
-    # s.find(b'A')
-
-    # Common gotchas in Py3/2 str/bytes compatibility are addressed:
-    assert bytes(b'') != str('')
+    # bytes(b'B') in s
+    # s.find(bytes(b'A'))
 
     # Extra arguments for the open() function
     f = open('japanese.txt', encoding='utf-8', errors='replace')
     
+    # New simpler super() function:
+    class VerboseList(list):
+        def append(self, item):
+            print('Adding an item')
+            super().append(item)
+
     # New iterable range object with slicing support
     for i in range(10**15)[:10]:
         pass
@@ -80,12 +86,6 @@ and 2.7::
     # Other iterators: map, zip, filter
     my_iter = zip(range(3), ['a', 'b', 'c'])
     assert my_iter != list(my_iter)
-    
-    # New simpler super() function:
-    class VerboseList(list):
-        def append(self, item):
-            print('Adding an item')
-            super().append(item)
     
     # The round() function behaves as it does in Python 3, using
     # "Banker's Rounding" to the nearest even last digit:
@@ -95,11 +95,12 @@ and 2.7::
     name = input('What is your name? ')
     print('Hello ' + name)
 
-    # To disable obsolete Py2 builtins removed from Py3, use this:
-    from future.builtins.disabled import *
-    # Then these raise NameErrors on both Py2 and Py3:
-    # apply(), cmp(), coerce(), reduce(), xrange(), etc.
-    
+    # Compatible output from isinstance() across Py2/3:
+    assert isinstance(2**64, int)        # long integers
+    assert isinstance(u'blah', str)
+    assert isinstance('blah', str)       # with unicode_literals in effect
+    assert isinstance(b'bytestring', bytes)
+
 
 Documentation
 -------------
@@ -121,8 +122,8 @@ Credits
           - The ``python_2_unicode_compatible`` decorator is from
             Django. The ``implements_iterator`` and ``with_metaclass``
             decorators are from Jinja2.
-          - Documentation is generated using ``sphinx`` using an
-            adaptation of Armin Ronacher's stylesheets from Jinja2.
+          - Documentation is generated using ``sphinx`` using
+            ``sphinx_bootstrap_theme``.
 
 
 Licensing
