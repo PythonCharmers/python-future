@@ -3,14 +3,10 @@
 What else you need to know
 **************************
 
-``future`` cannot completely close the gap between Python 3 and Python 2
-with just the right :ref:`imports`. The following points require some
-additional work.
+The following points are important to know about when writing Python 2/3
+compatible code.
 
 .. _what-else-essentials:
-
-Essentials
-==========
 
 .. include:: bytes_object.rst
 .. include:: str_object.rst
@@ -23,15 +19,8 @@ Essentials
 
 .. _what-else-advanced:
 
-Advanced
-========
-
 .. include:: bind_method.rst
 .. include:: metaclasses.rst
 
 ..
-    Standard library
-    ================
-
-.. include:: stdlib_incompatibilities.rst
 

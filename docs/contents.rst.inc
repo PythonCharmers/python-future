@@ -10,6 +10,7 @@ Contents:
    imports
    automatic_conversion
    porting
+   standard_library_incompatibilities
    faq
    changelog
    credits

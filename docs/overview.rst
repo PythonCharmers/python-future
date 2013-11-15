@@ -8,6 +8,8 @@ Overview
 codebase with minimal cruft and run it easily on Python 2 without further
 modification.
 
+``future`` comes with ``futurize``, a script that helps you to transition
+to supporting both Python 2 and 3 in a single codebase, module by module.
 
 .. _features:
 
@@ -20,10 +22,10 @@ Features
 -   300+ unit tests
 -   ``futurize`` script based on ``2to3``, ``3to2`` and parts of
     ``python-modernize`` for automatic conversion from either Py2 or Py3 to a
-    clean single-source codebase compatible with both Py3 and Py2
+    clean single-source codebase compatible with Python 2.6+ and Python 3.3+.
 -   a consistent set of utility functions and decorators selected from
-    Py2/3 compatibility interfaces from projects like six, IPython,
-    Jinja2, Django, and Pandas.
+    Py2/3 compatibility interfaces from projects like ``six``, ``IPython``,
+    ``Jinja2``, ``Django``, and ``Pandas``.
 
 
 .. _code-examples:
@@ -42,8 +44,8 @@ together with Python's built-in ``__future__`` module like this::
 followed by standard Python 3 code. The imports have no effect on Python
 3 but allow the code to run mostly unchanged on Python 3 and Python 2.6/2.7.
 
-For example, after these imports, this code runs identically on Python 3
-and 2.6/2.7::
+For example, this code behaves the same way on Python 2.6/2.7 after these
+imports as it normally does on Python 3::
     
     # Support for renamed standard library modules via import hooks
     from http.client import HttpConnection
@@ -61,13 +63,13 @@ and 2.6/2.7::
 
     # Backported Py3 str object
     s = str(u'ABCD')
-    assert s != b'ABCD'
+    assert s != bytes(b'ABCD')
     assert isinstance(s.encode('utf-8'), bytes)
     assert isinstance(b.decode('utf-8'), str)
     assert repr(s) == 'ABCD'      # consistent repr with Py3 (no u prefix)
     # These raise TypeErrors:
-    # b'B' in s
-    # s.find(b'A')
+    # bytes(b'B') in s
+    # s.find(bytes(b'A'))
 
     # Extra arguments for the open() function
     f = open('japanese.txt', encoding='utf-8', errors='replace')

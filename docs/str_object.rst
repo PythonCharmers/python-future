@@ -14,7 +14,7 @@ There are also other differences, such as the ``repr`` of unicode strings in
 Py2 having a ``u'...'`` prefix, versus simply ``'...'``, and the removal of
 the :func:`str.decode` method in Py3.
 
-``future`` contains a backport of the :mod:`str` object from Python 3 which
+:mod:`future` contains a backport of the :mod:`str` object from Python 3 which
 inherits from the Python 2 :class:`unicode` class but has customizations to
 improve compatibility with Python 3's :class:`str` object. You can use it as
 follows::

@@ -9,7 +9,7 @@ is because the Python 2 :class:`bytes` object is simply an alias for
 Python 2's :class:`str`, rather than a true implementation of the Python
 3 :class:`bytes` object, which is substantially different.
 
-``future`` contains a backport of the :mod:`bytes` object from Python 3
+:mod:`future` contains a backport of the :mod:`bytes` object from Python 3
 which passes most of the Python 3 tests for :mod:`bytes`. (See
 ``future/tests/test_bytes.py`` in the source tree.) You can use it as
 follows::
@@ -86,7 +86,7 @@ and Py2 strings.
         FAILED (failures=31, errors=55, skipped=1)
         --------------------------------------------------------------
     
-    Using ``future``'s backported :class:`bytes` object passes most of
+    Using :mod:`future`'s backported :class:`bytes` object passes most of
     the same Python 3.3 tests on Py2, except those requiring specific
     wording in exception messages.
     
