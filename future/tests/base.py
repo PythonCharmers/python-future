@@ -19,7 +19,7 @@ if "check_output" not in dir(subprocess): # duck punch it in!
             cmd = kwargs.get("args")
             if cmd is None:
                 cmd = popenargs[0]
-            raise CalledProcessError(retcode, cmd)
+            raise subprocess.CalledProcessError(retcode, cmd)
         return output
     subprocess.check_output = f
 

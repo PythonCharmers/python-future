@@ -8,6 +8,7 @@ python:
 # before_install:
 #   - sudo apt-get install -qq libpython2.7-testsuite libpython3.3-testsuite
 # No dependencies currently unless using Python 2.6.
-install: pip install -r requirements_py26.txt --use-mirrors
+install:
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then pip install -r requirements_py26.txt --use-mirrors; fi
 # command to run tests, e.g. python setup.py test
 script:  python setup.py test

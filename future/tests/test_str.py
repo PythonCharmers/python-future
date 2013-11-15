@@ -24,7 +24,7 @@ class TestStr(unittest.TestCase):
         Issue #15: can't os.path.join(u'abc', str(u'def'))
         """
         self.assertEqual(os.path.join(u'abc', str(u'def')),
-                         u'abc{}def'.format(os.sep))
+                         u'abc{0}def'.format(os.sep))
 
     def test_str_encode_utf8(self):
         b = str(TEST_UNICODE_STR).encode('utf-8')
