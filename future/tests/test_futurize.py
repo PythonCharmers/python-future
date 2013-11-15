@@ -45,7 +45,6 @@ class TestFuturizeSimple(CodeHandler):
         from future.builtins import bytes
         from future.builtins import filter
         from future.builtins import input
-        from future.builtins import isinstance
         from future.builtins import map
         from future.builtins import open
         from future.builtins import range

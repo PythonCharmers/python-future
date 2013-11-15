@@ -141,6 +141,9 @@ def disallow_types(argnums, disallowed_types):
                 # Only restrict kw args only if they are passed:
                 if len(args) <= argnum:
                     break
+                # Here we use type() rather than isinstance() because
+                # __instancecheck__ is being overridden. E.g.
+                # isinstance(b'abc', newbytes) is True on Py2.
                 if type(args[argnum]) == mytype:
                     raise TypeError(errmsg.format(mytype))
             return function(*args, **kwargs)
