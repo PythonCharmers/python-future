@@ -7,10 +7,6 @@ What's new
 What's new in version 0.9
 =========================
 
-Looser type-checking for the backported ``str`` object?
--------------------------------------------------------
-
-This is to work around some bugs / sloppiness in the Python 2 standard library.
 
 ``isinstance`` checks supported natively with backported types
 --------------------------------------------------------------
@@ -20,6 +16,7 @@ to operate with the backported ``int``, ``bytes`` and ``str``.
 ``isinstance`` checks with the backported types now work correctly by
 default; we achieve this through overriding the ``__instancecheck__``
 method of metaclasses of the backported types.
+
 
 ``futurize``: minimal imports by default
 ----------------------------------------
@@ -33,16 +30,29 @@ and ``from future.builtins import *`` imports to every module. (This even
 applies to an empty ``__init__.py`` file.
 
 
+Looser type-checking for the backported ``str`` object
+------------------------------------------------------
+
+Now the ``future.builtins.str`` object behaves more like the Python 2
+``unicode`` object with regard to type-checking. This is to work around some
+bugs / sloppiness in the Python 2 standard library involving mixing of
+byte-strings and unicode strings, such as ``os.path.join`` in ``posixpath.py``.
+
+``future.builtins.str`` still raises the expected ``TypeError`` exceptions from
+Python 3 when attempting to mix it with ``future.builtins.bytes``.
+
+
 suspend_hooks() context manager added to ``future.standard_library``
 --------------------------------------------------------------------
 
 Pychecker (as of v0.6.1)'s ``checker.py`` attempts to import the ``builtins``
 module as a way of determining whether Python 3 is running. Since this
 succeeds when ``from future import standard_library`` is in effect, this
-check does not work and the wrong value for pychecker's internal ``PY2``
+check does not work and pychecker sets the wrong value for its internal ``PY2``
 flag is set.
 
-To work around this, ``future`` now provides the following context manager::
+To work around this, ``future`` now provides a context manager called
+``suspend_hooks`` that can be used as follows::
 
     from future import standard_library
     ...
