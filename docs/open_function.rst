@@ -8,19 +8,19 @@ contents as (unicode) strings unless the binary (``b``) flag is passed, as in::
     
     open(filename, 'rb')
 
-in which case it returns a Py3 :class:`bytes` object.
+in which case its methods like :func:`read` return Py3 :class:`bytes` objects.
 
-``future.builtins`` provides a compatible ``open`` function on Py2,
-which uses the ``open`` backport available in the standard library :mod:`io`
-module on Py2.6+.
+``future.builtins`` provides an ``open`` function on Py2 that is mostly
+compatible with that on Python 3 (e.g. it offers keyword arguments like
+``encoding``). This maps to the ``open`` backport available in the standard
+library :mod:`io` module on Py2.6 and Py2.7.
 
-When porting code from Python 2, be aware of the different return types from
-methods such as :func:`read()` from the file object that ``open`` returns.
-
-Note that the output of :func:`read()` etc. is not automatically cast to the
-appropriate ``future.builtins.bytes`` or ``future.builtins.str`` type. If you
-need the stricter type-checking of Py3 on Py2 as well, you can cast it
-explicitly as follows::
+One difference to be aware of between the Python 3 ``open`` and
+``future.builtins.open`` on Python 2 is that the return types of methods such
+as :func:`read()` from the file object that ``open`` returns are not
+automatically cast to the appropriate ``future.builtins.bytes`` or
+``future.builtins.str`` types. If you need the returned data to behave the same
+way on Py2 as on Py3, you can cast it explicitly as follows::
 
     from __future__ import unicode_literals
     from future.builtins import *

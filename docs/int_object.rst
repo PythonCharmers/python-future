@@ -20,10 +20,10 @@ Python 2::
 
 ``future`` includes a backport of Python 3's ``int`` that
 is a subclass of Python 2's ``long`` with the same representation
-behaviour as Python 3's ``int``. To ensure an integer is long compatibly both
-Py3 and Py2, cast it like this::
+behaviour as Python 3's ``int``. To ensure an integer is long compatibly with
+both Py3 and Py2, cast it like this::
 
-    >>> from future.builtins import *
+    >>> from future.builtins import int
     >>> must_be_a_long_integer = int(1234)
 
 The backported ``int`` object helps with writing doctests and simplifies code

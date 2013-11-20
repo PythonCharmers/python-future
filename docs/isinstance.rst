@@ -40,7 +40,7 @@ After importing the builtins from ``future``, all these tests pass on
 Python 2 as on Python 3::
 
     >>> from __future__ import unicode_literals
-    >>> from future.builtins import *
+    >>> from future.builtins import bytes, int, str
 
     >>> assert isinstance(10, int)
     >>> assert isinstance(10**100, int)

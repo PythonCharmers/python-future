@@ -44,8 +44,8 @@ Then, for example, the following code has the same effect on Py2 as on Py3::
     TypeError: argument can't be <type 'str'>
 
 Various other operations that mix strings and bytes or other types are
-permitted on Py2 with the :class:`newstr`` class even though they are
-illegal with Python 3. For example::
+permitted on Py2 with the :class:`future.builtins.str` class even though they
+are illegal with Python 3. For example::
 
     >>> s2 = b'/' + str('ABCD')
     >>> s2
@@ -71,8 +71,8 @@ they are unicode. (See ``posixpath.py``.) Another example is the
 .. 
 .. On Py3, these raise TypeErrors.
 
-In most other ways, these :class:`str` objects on Py2 have the same
-behaviours as Python 3's :class:`str`::
+In most other ways, these :class:`future.builtins.str` objects on Py2 have the
+same behaviours as Python 3's :class:`str`::
 
     >>> s = str('ABCD')
     >>> assert repr(s) == 'ABCD'      # consistent repr with Py3 (no u prefix)
