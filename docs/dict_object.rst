@@ -1,0 +1,6 @@
+.. _dict-object:
+
+dict
+----
+
+
