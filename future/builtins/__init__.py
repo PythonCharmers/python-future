@@ -12,10 +12,11 @@ See the docs for these modules for more information::
 """
 
 from future.builtins.iterators import (filter, map, zip)
-# The isinstance import is unneeded. For backward-compatibility with
-# future v0.8 only.
+# The isinstance import is no longer needed. We provide it only for
+# backward-compatibility with future v0.8.2. It will be removed in future v1.0.
 from future.builtins.misc import (ascii, chr, hex, input, isinstance, oct, open)
-from future.builtins.backports import (bytes, int, range, round, str, super)
+from future.builtins.backports import (bytes, dict, int, range, round, str,
+                                       super)
 from future import utils
 
 if not utils.PY3:
@@ -25,7 +26,7 @@ if not utils.PY3:
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
                'ascii', 'chr', 'hex', 'input', 'isinstance', 'oct', 'open',
-               'bytes', 'int', 'range', 'round', 'str', 'super',
+               'bytes', 'dict', 'int', 'range', 'round', 'str', 'super',
               ]
 
 else:

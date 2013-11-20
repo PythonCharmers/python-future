@@ -36,4 +36,5 @@ etc. functions from :mod:`future.utils`::
     both = viewvalues(d1) | viewvalues(d2)
 
 For Python 2.6 compatibility, the functions ``iteritems`` etc. are also
-available in :mod:`future.utils`.
+available in :mod:`future.utils`. These are equivalent to the functions in
+``six``.

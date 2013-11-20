@@ -2,6 +2,32 @@ What's new
 **********
 
 
+.. whats-new-0.10:
+
+What's new in version 0.10
+==========================
+
+Backported ``dict`` type
+------------------------
+
+``future.builtins`` now provides a Python 2 ``dict`` subclass whose
+:func:`keys`, :func:`values`, and :func:`items` methods produce
+memory-efficient iterators. On Python 2.7, these also have the same set-like
+view behaviour as on Python 3. This can streamline code needing to iterate over
+large dictionaries. For example::
+
+    from __future__ import print_function
+    from future.builtins import dict, range
+    
+    squares = dict({i: i**2 for i in range(10**7)})
+
+    assert not isinstance(d.items(), list)
+    # Because items() is memory-efficient, so is this:
+    square_roots = dict((i_squared, i) for (i, i_squared) in squares.items())
+
+For more information, see :ref:`dict-object`.
+
+
 .. whats-new-0.9:
 
 What's new in version 0.9
@@ -16,6 +42,8 @@ to operate with the backported ``int``, ``bytes`` and ``str``.
 ``isinstance`` checks with the backported types now work correctly by
 default; we achieve this through overriding the ``__instancecheck__``
 method of metaclasses of the backported types.
+
+For more information, see :ref:`isinstance-calls`.
 
 
 ``futurize``: minimal imports by default
@@ -110,6 +138,16 @@ deprecated.
 
 Summary of all changes
 ======================
+
+v0.10:
+  * New backported ``dict`` object with set-like ``keys``, ``values``, ``items``
+
+v0.9:
+  * :func:`isinstance` hack removed in favour of ``__instancecheck__`` on the
+    metaclasses of the backported types
+  * ``futurize`` now only adds necessary imports by default
+  * Looser type-checking by ``future.builtins.str`` when combining with Py2
+    native byte-strings.
 
 v0.8.3:
   * New ``--all-imports`` option to ``futurize``

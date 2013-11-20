@@ -213,6 +213,7 @@ def issubset(list1, list2):
 if utils.PY3:
     import builtins
     bytes = builtins.bytes
+    dict = builtins.dict
     int = builtins.int
     range = builtins.range
     round = builtins.round
@@ -221,9 +222,10 @@ if utils.PY3:
     __all__ = []
 else:
     from .newbytes import newbytes as bytes
+    from .newdict import newdict as dict
     from .newint import newint as int
     from .newrange import newrange as range
     from .newround import newround as round
     from .newstr import newstr as str
     from .newsuper import newsuper as super
-    __all__ = ['bytes', 'int', 'range', 'round', 'str', 'super']
+    __all__ = ['bytes', 'dict', 'int', 'range', 'round', 'str', 'super']
