@@ -131,11 +131,11 @@ class newint(with_metaclass(BaseNewInt, long)):
 
     def __divmod__(self, other):
         result = super(newint, self).__divmod__(other)
-        return (newsuper(result[0]), newsuper(result[1]))
+        return (newint(result[0]), newint(result[1]))
 
     def __rdivmod__(self, other):
         result = super(newint, self).__rdivmod__(other)
-        return (newsuper(result[0]), newsuper(result[1]))
+        return (newint(result[0]), newint(result[1]))
 
     def __pow__(self, other):
         return newint(super(newint, self).__pow__(other))
