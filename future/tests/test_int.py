@@ -9,6 +9,7 @@ from future.builtins import *
 from future.tests.base import unittest
 
 import sys
+import random
 from test import support
 
 
@@ -401,9 +402,20 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(int(b'a\r\n', 16), 10)
         self.assertEqual(int(bytes(b'a\r\n'), 16), 10)
 
+    def test_divmod(self):
+        """
+        Test int.__divmod__
+        """
+        vals = [10**i for i in range(0, 20)]
+        for i in range(200):
+            x = random.choice(vals)
+            y = random.choice(vals)
+            assert divmod(int(x), int(y)) == divmod(x, y)
 
-# def test_main():
-#     support.run_unittest(IntTestCases)
+            negx = -x
+            negy = -y
+            assert divmod(int(x), int(y)) == divmod(x, y)
+
 
 if __name__ == "__main__":
     # test_main()
