@@ -28,6 +28,15 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after)
 
+    def test_tobytes(self):
+        before = r"""
+        s = '1234'
+        """
+        after = r"""
+        s = b'1234'
+        """
+        self.convert_check(before, after, tobytes=True)
+
     def test_import_builtins(self):
         before = """
         a = raw_input()

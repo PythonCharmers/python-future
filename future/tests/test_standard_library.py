@@ -10,6 +10,7 @@ from future.tests.base import unittest
 import sys
 import tempfile
 import os
+import copy
 
 from future.standard_library import RENAMES, REPLACED_MODULES
 from future.tests.base import CodeHandler
@@ -40,6 +41,10 @@ class TestStandardLibraryRenames(CodeHandler):
                 self.assertEqual(oldmod, newmod)
 
     def test_suspend_hooks(self):
+        """
+        Code like the try/except block here appears in Pyflakes v0.6.1. This
+        method tests whether suspend_hooks() works as advertised.
+        """
         example_PY2_check = False
         with standard_library.suspend_hooks():
             # An example of fragile import code that we don't want to break:
@@ -56,7 +61,13 @@ class TestStandardLibraryRenames(CodeHandler):
 
     def test_disable_hooks(self):
         example_PY2_check = False
+
+        standard_library.enable_hooks()
+        old_meta_path = copy.copy(sys.meta_path)
+
         standard_library.disable_hooks()
+        self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
+
         # An example of fragile import code that we don't want to break:
         try:
             import builtins
@@ -69,6 +80,7 @@ class TestStandardLibraryRenames(CodeHandler):
         standard_library.enable_hooks()
         # The import should succeed again now:
         import builtins
+        self.assertTrue(len(old_meta_path) == len(sys.meta_path))
 
     @unittest.skipIf(utils.PY3, 'not testing for old urllib on Py3')
     def test_old_urllib_import(self):

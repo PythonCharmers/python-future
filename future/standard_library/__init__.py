@@ -88,7 +88,7 @@ Not available on Py2.6:
 
 """
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import
 
 import sys
 import logging
@@ -202,6 +202,16 @@ class WarnOnImport(object):
 
 
 class RenameImport(object):
+    """
+    A class for import hooks mapping Py3 module names etc. to the Py2 equivalents.
+    """
+    # Different RenameImport classes are created when importing this module from
+    # different source files. This causes isinstance(hook, RenameImport) checks
+    # to produce inconsistent results. We add this RENAMER attribute here so
+    # disable_hooks() and enable_hooks() can find instances of these classes
+    # easily:
+    RENAMER = True
+
     def __init__(self, old_to_new):
         '''
         Pass in a dictionary-like object mapping from old names to new
@@ -209,9 +219,9 @@ class RenameImport(object):
         '''
         self.old_to_new = old_to_new
         both = set(old_to_new.keys()) & set(old_to_new.values())
-        # print(both)
-        assert len(both) == 0, \
-               'Ambiguity in renaming (handler not implemented'
+        assert (len(both) == 0 and
+                len(set(old_to_new.values())) == len(old_to_new.values())), \
+               'Ambiguity in renaming (handler not implemented)'
         self.new_to_old = dict((new, old) for (old, new) in old_to_new.items())
  
     def find_module(self, fullname, path=None):
@@ -315,9 +325,6 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
         ]
 
 
-_old_sys_meta_path = sys.meta_path
-
-
 def enable_hooks():
     if utils.PY3:
         return
@@ -327,12 +334,18 @@ def enable_hooks():
         obj = getattr(oldmod, oldobjname)
         setattr(newmod, newobjname, obj)
 
-    sys.meta_path = [RenameImport(RENAMES)]
+    # Add it unless it's there already
+    newhook = RenameImport(RENAMES)
+    if not any([hasattr(hook, 'RENAMER') for hook in sys.meta_path]):
+        sys.meta_path.append(newhook)
 
 
 def disable_hooks():
     if not utils.PY3:
-        sys.meta_path = _old_sys_meta_path
+        # Loop backwards, so deleting items keeps the ordering:
+        for i, hook in list(enumerate(sys.meta_path))[::-1]:
+            if hasattr(hook, 'RENAMER'):
+                del sys.meta_path[i]
 
 
 @contextlib.contextmanager

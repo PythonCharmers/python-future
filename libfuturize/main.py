@@ -122,13 +122,9 @@ def main(args=None):
     refactor_stdin = False
     flags = {}
     options, args = parser.parse_args(args)
-    if options.tobytes:
-        raise NotImplementedError('the fixer for this is not yet written. '
-                          'Please open an issue on:\n'
-                          '   https://github.com/PythonCharmers/python-future\n'
-                          'if you need it.')
     if options.from3:
         assert not (options.stage1 or options.stage2)
+        assert not options.tobytes
         fixer_pkg = 'libfuturize.fixes3'
         avail_fixes = libfuturize_3fix_names
         flags["print_function"] = True
@@ -147,6 +143,9 @@ def main(args=None):
             avail_fixes.update(lib2to3_fix_names_stage2)
             avail_fixes.update(libfuturize_2fix_names_stage2)
 
+    if options.tobytes:
+        avail_fixes.add('libfuturize.fixes2.fix_bytes')
+        avail_fixes.remove('libfuturize.fixes2.fix_bytes')
     if not options.write and options.no_diffs:
         warn("not writing files and not printing diffs; that's not very useful")
     if not options.write and options.nobackups:
