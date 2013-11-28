@@ -411,12 +411,10 @@ class IntTestCases(unittest.TestCase):
             x = random.choice(vals)
             y = random.choice(vals)
             assert divmod(int(x), int(y)) == divmod(x, y)
-
-            negx = -x
-            negy = -y
-            assert divmod(int(x), int(y)) == divmod(x, y)
+            assert divmod(int(-x), int(y)) == divmod(-x, y)
+            assert divmod(int(x), int(-y)) == divmod(x, -y)
+            assert divmod(int(-x), int(-y)) == divmod(-x, -y)
 
 
 if __name__ == "__main__":
-    # test_main()
     unittest.main()
