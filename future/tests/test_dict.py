@@ -66,6 +66,8 @@ class TestDict(unittest.TestCase):
             assert not isinstance(d.values(), list)
             assert not isinstance(d.items(), list)
 
+    @unittest.skipIf(sys.version_info[:2] == (2, 6),
+             'set-like behaviour of dict methods is only available in Py2.7+')
     def test_set_like_behaviour(self):
         d1, d2 = self.d1, self.d2
         assert d1.keys() & d2.keys() == set()
