@@ -7,6 +7,9 @@ What's new
 What's new in version 0.10
 ==========================
 
+More robust implementation of standard_library.disable_hooks() and enable_hooks()
+---------------------------------------------------------------------------------
+
 Backported ``dict`` type
 ------------------------
 
