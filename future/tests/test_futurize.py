@@ -28,7 +28,11 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after)
 
+    @unittest.expectedFailure
     def test_tobytes(self):
+        """
+        Not implemented yet.
+        """
         before = r"""
         s = '1234'
         """
