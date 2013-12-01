@@ -30,6 +30,10 @@ large dictionaries. For example::
 
 For more information, see :ref:`dict-object`.
 
+Bugfixes
+--------
+- To newint.__divmod__
+
 
 .. whats-new-0.9:
 
