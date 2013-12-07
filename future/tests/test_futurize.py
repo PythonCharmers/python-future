@@ -28,16 +28,38 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after)
 
-    @unittest.expectedFailure
     def test_tobytes(self):
         """
-        Not implemented yet.
+        The --tobytes option converts all UNADORNED string literals 'abcd' to b'abcd'.
+        It does apply to multi-line strings but doesn't apply if it's a raw
+        string, because ur'abcd' is a SyntaxError on Python 2 and br'abcd' is a
+        SyntaxError on Python 3.
         """
         before = r"""
-        s = '1234'
+        s0 = '1234'
+        s1 = '''5678
+        '''
+        s2 = "9abc"
+        # Unchanged:
+        s3 = r'1234'
+        s4 = R"defg"
+        s5 = u'hijk'
+        s6 = u"lmno"
+        s7 = b'lmno'
+        s8 = b"pqrs"
         """
         after = r"""
-        s = b'1234'
+        s0 = b'1234'
+        s1 = b'''5678
+        '''
+        s2 = b"9abc"
+        # Unchanged:
+        s3 = r'1234'
+        s4 = R"defg"
+        s5 = u'hijk'
+        s6 = u"lmno"
+        s7 = b'lmno'
+        s8 = b"pqrs"
         """
         self.convert_check(before, after, tobytes=True)
 
