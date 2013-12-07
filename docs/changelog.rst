@@ -4,11 +4,8 @@ What's new
 
 .. whats-new-0.10:
 
-What's new in version 0.10
-==========================
-
-More robust implementation of standard_library.disable_hooks() and enable_hooks()
----------------------------------------------------------------------------------
+What's new in version 0.10.x
+============================
 
 Backported ``dict`` type
 ------------------------
@@ -32,13 +29,15 @@ For more information, see :ref:`dict-object`.
 
 Bugfixes
 --------
-- To newint.__divmod__
+- Fixed newint.__divmod__
+- Improved robustness of :func:`disable_hooks` and :func:`enable_hooks()` in :mod:`future.standard_library`
+- v0.10.1: Fixed broken ``pip install future`` on Py3
 
 
 .. whats-new-0.9:
 
-What's new in version 0.9
-=========================
+What's new in version 0.9.x
+===========================
 
 
 ``isinstance`` checks supported natively with backported types
