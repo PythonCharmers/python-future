@@ -2,6 +2,41 @@ What's new
 **********
 
 
+.. whats-new-0.11:
+
+What's new in version 0.11
+==========================
+
+More robust implementation of standard_library hooks
+----------------------------------------------------
+
+``future.standard_library`` now no longer installs import hooks by default.
+These were bleeding into surrounding code, causing incompatibilities with
+modules like ``requests`` (issue #19). 
+
+Now ``future.standard_library`` provides the context manager
+``enable_hooks()``. Use it as follows::
+
+    >>> from future import standard_library
+    >>> with standard_library.enable_hooks():
+    ...     import queue
+    ...     import socketserver
+    ...     from http.client import HTTPConnection
+    >>> import requests
+    >>> # etc.
+
+If you prefer, the following imports are also available directly::
+
+    >>> from future.standard_library import queue
+    >>> from future.standard_library import socketserver
+    >>> from future.standard_library.http.client import HTTPConnection
+
+
+As usual, this has no effect on Python 3.
+
+*Note*: this is a backward-incompatible change.
+
+
 .. whats-new-0.10:
 
 What's new in version 0.10.x

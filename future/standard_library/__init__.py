@@ -31,11 +31,11 @@ names on Python 2.)
 
 To turn off the import hooks, use::
 
-    standard_library.disable_hooks()
+    standard_library.remove_hooks()
 
 and to turn it on again, use::
 
-    standard_library.enable_hooks()
+    standard_library.install_hooks()
 
 This is a cleaner alternative to this idiom (see
 http://docs.pythonsprints.com/python3_porting/py-porting.html)::
@@ -102,6 +102,7 @@ from future import utils
 #   pickle (fast one)
 #   dbm
 #   urllib
+#   test
 
 # These ones are new (i.e. no problem)
 #   http
@@ -208,7 +209,7 @@ class RenameImport(object):
     # Different RenameImport classes are created when importing this module from
     # different source files. This causes isinstance(hook, RenameImport) checks
     # to produce inconsistent results. We add this RENAMER attribute here so
-    # disable_hooks() and enable_hooks() can find instances of these classes
+    # remove_hooks() and install_hooks() can find instances of these classes
     # easily:
     RENAMER = True
 
@@ -325,7 +326,53 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
         ]
 
 
-def enable_hooks():
+class enable_hooks(object):
+    """
+    Acts as a context manager. Use like this:
+    
+    >>> from future import standard_library
+    >>> with standard_library.enable_hooks():
+    ...     import http.client
+    >>> import requests     # incompatible with ``future``'s standard library hooks
+    """
+    def __enter__(self):
+        print('Entering CM')
+        self.hooks_were_installed = detect_hooks()
+        install_hooks()
+        return self
+
+    def __exit__(self, *args):
+        print('Exiting CM')
+        if not self.hooks_were_installed:
+            remove_hooks()
+
+
+class suspend_hooks(object):
+    """
+    Acts as a context manager. Use like this:
+    
+    >>> from future import standard_library
+    >>> standard_library.install_hooks()
+    >>> import http.client
+    >>> # ...
+    >>> with standard_library.suspend_hooks():
+    >>>     import requests     # incompatible with ``future``'s standard library hooks
+
+    If the hooks were disabled before the context, they are not installed when
+    the context is left.
+    """
+    def __enter__(self):
+        self.hooks_were_installed = detect_hooks()
+        remove_hooks()
+        return self
+    def __exit__(self, *args):
+        if not self.hooks_were_installed:
+            install_hooks()
+
+
+def install_hooks():
+    print('sys.meta_path was: {}'.format(sys.meta_path))
+    print('Installing hooks ...')
     if utils.PY3:
         return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
@@ -336,28 +383,58 @@ def enable_hooks():
 
     # Add it unless it's there already
     newhook = RenameImport(RENAMES)
-    if not any([hasattr(hook, 'RENAMER') for hook in sys.meta_path]):
+    if not detect_hooks():
         sys.meta_path.append(newhook)
+    print('sys.meta_path is now: {}'.format(sys.meta_path))
 
 
-def disable_hooks():
+def remove_hooks():
+    """
+    Use to remove the ``future.standard_library`` import hooks.
+    """
+    print('sys.meta_path was: {}'.format(sys.meta_path))
+    print('Uninstalling hooks ...')
     if not utils.PY3:
         # Loop backwards, so deleting items keeps the ordering:
         for i, hook in list(enumerate(sys.meta_path))[::-1]:
             if hasattr(hook, 'RENAMER'):
                 del sys.meta_path[i]
+    print('sys.meta_path is now: {}'.format(sys.meta_path))
 
 
-@contextlib.contextmanager
-def suspend_hooks():
-    disable_hooks()
-    try:
-        yield
-    except Exception as e:
-        raise e
-    finally:
-        enable_hooks()
+def disable_hooks():
+    """
+    Deprecated. Use remove_hooks() instead. This will be removed by
+    ``future`` v1.0.
+    """
+    remove_hooks()
 
 
-if not utils.PY3:
-    enable_hooks()
+def detect_hooks():
+    """
+    Returns True if the import hooks are installed, False if not.
+    """
+    print('Detecting hooks ...')
+    present = any([hasattr(hook, 'RENAMER') for hook in sys.meta_path])
+    if present:
+        print('Detected.')
+    else:
+        print('Not detected.')
+    return present
+
+
+# Now import the modules:
+with enable_hooks():
+    for (oldname, newname) in RENAMES.items():
+        if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
+            continue
+        if newname in REPLACED_MODULES:
+            # Skip this check for e.g. the stdlib's ``test`` module,
+            # which we have replaced completely.
+            continue
+        newmod = __import__(newname)
+        globals()[newname] = newmod
+
+
+# if not utils.PY3:
+#     install_hooks()
