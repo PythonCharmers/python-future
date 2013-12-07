@@ -63,6 +63,32 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after, tobytes=True)
 
+    @unittest.expectedFailure
+    def test_izip(self):
+        before = """
+        from itertools import izip
+        for (a, b) in izip([1, 3, 5], [2, 4, 6]):
+            pass
+        """
+        after = """
+        from __future__ import unicode_literals
+        from future.builtins import zip
+        for (a, b) in zip([1, 3, 5], [2, 4, 6]):
+            pass
+        """
+        self.convert_check(before, after, stages=(1, 2), ignore_imports=False)
+
+    @unittest.expectedFailure
+    def test_no_unneeded_list_calls(self):
+        """
+        TODO: get this working
+        """
+        code = """
+        for (a, b) in zip(range(3), range(3, 6)):
+            pass
+        """
+        self.unchanged(code)
+
     def test_import_builtins(self):
         before = """
         a = raw_input()
