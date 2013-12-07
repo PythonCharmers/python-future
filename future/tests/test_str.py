@@ -162,7 +162,9 @@ class TestStr(unittest.TestCase):
     def test_str_join_bytes(self):
         s = str('ABCD')
         byte_strings1 = [b'EFGH', u'IJKL']
-        self.assertEqual(s.join(byte_strings1), u'EFGHABCDIJKL')
+        # We allow this on Python 2 for compatibility with old libraries:
+        if utils.PY2:
+            self.assertEqual(s.join(byte_strings1), u'EFGHABCDIJKL')
 
         byte_strings2 = [bytes(b'EFGH'), u'IJKL']
         with self.assertRaises(TypeError):
