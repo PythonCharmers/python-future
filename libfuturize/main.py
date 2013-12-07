@@ -56,11 +56,12 @@ prefixes and have all unadorned '' strings converted to byte-strings, use this:
 
   $ futurize --stage2 --tobytes mypython2script.py
 
+Note that this even includes docstrings.
+
 Separate stages are not available (or needed) when converting from Python 3.
 """
 
 from __future__ import (absolute_import, print_function, unicode_literals)
-from future import standard_library
 from future.builtins import *
 
 import sys
@@ -145,7 +146,6 @@ def main(args=None):
 
     if options.tobytes:
         avail_fixes.add('libfuturize.fixes2.fix_bytes')
-        avail_fixes.remove('libfuturize.fixes2.fix_bytes')
     if not options.write and options.no_diffs:
         warn("not writing files and not printing diffs; that's not very useful")
     if not options.write and options.nobackups:
