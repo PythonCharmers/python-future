@@ -4,8 +4,11 @@ Tests for the various utility functions and classes in ``future.utils``
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
+import sys
 from future.builtins import *
-from future.utils import old_div, istext, isbytes, native, PY2, PY3, native_str
+from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
+                         native_str, reraise)
+
 
 from numbers import Integral
 from future.tests.base import unittest
@@ -95,6 +98,40 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(isbytes(self.b2))
         self.assertFalse(isbytes(self.s))
         self.assertFalse(isbytes(self.s2))
+
+    def test_reraise(self):
+        def valerror():
+            try:
+                raise ValueError("Apples!")
+            except Exception as e:
+                reraise(e)
+
+        self.assertRaises(ValueError, valerror)
+
+        def with_value():
+            reraise(IOError, "This is an error")
+
+        self.assertRaises(IOError, with_value)
+
+        try:
+            with_value()
+        except IOError as e:
+            self.assertEqual(str(e), "This is an error")
+
+        def with_traceback():
+            try:
+                raise ValueError("An error")
+            except Exception as e:
+                _, _, traceback = sys.exc_info()
+                reraise(IOError, str(e), traceback)
+
+        self.assertRaises(IOError, with_traceback)
+
+        try:
+            with_traceback()
+        except IOError as e:
+            self.assertEqual(str(e), "An error")
+
 
 
 if __name__ == '__main__':
