@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Python-Future'
-copyright = u'2013, Python Charmers Pty Ltd, Australia'
+copyright = u'2013-2014, Python Charmers Pty Ltd, Australia'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
