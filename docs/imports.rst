@@ -16,7 +16,7 @@ include the following imports at the top of every module::
 On Python 3, ``from future import *`` imports only two symbols: the modules
 ``standard_library`` and ``utils``. No builtin functions are affected.
 
-On Python 2, this import line also shadows 17 builtins (listed below) to
+On Python 2, this import line also shadows 16 builtins (listed below) to
 provide their Python 3 semantics.
 
 
@@ -37,7 +37,7 @@ together with these module imports when necessary::
 The advantage of this form is that on Python 3, the ``from future.builtins
 import *`` line has zero effect and zero namespace pollution.
 
-On Python 2, ``from future.builtins import *`` shadows the same 17 builtins
+On Python 2, ``from future.builtins import *`` shadows the same builtins
 (see below) as with ``from future import *``.
 
 
@@ -49,15 +49,16 @@ Explicit imports
 If you prefer fully explicit imports, the most common set is::
     
     from future import standard_library, utils
-    from future.builtins import (filter, map, zip,
+    from future.builtins import (bytes, int, range, round, str, super,
                                  ascii, chr, hex, input, oct, open,
-                                 bytes, int, range, round, str, super)
+                                 filter, map, zip)
 
-(All the replaced builtins are also available in the ``future`` namespace.)
+All the replaced builtins are also available in the ``future`` namespace.
 
 The disadvantage of importing only some of the builtins is that it
 increases the risk of introducing Py2/3 portability bugs as your code
-evolves over time.
+evolves over time. Be especially aware of ``input``, which could expose a
+security vulnerability on Python 2 without the ``future`` import.
 
 Also, a technical distinction is that unlike the ``import *`` forms above,
 these explicit imports do actually change ``locals()``; this is equivalent
@@ -73,9 +74,9 @@ docs for these modules:
 
 The internal API is currently as follows::
 
-    from future.builtins.iterators import filter, map, zip
-    from future.builtins.misc import ascii, chr, hex, input, oct, open
     from future.builtins.backports import bytes, int, range, round, str, super
+    from future.builtins.misc import ascii, chr, hex, input, oct, open
+    from future.builtins.iterators import filter, map, zip
 
 (Please note that this internal API is evolving and may not be stable
 between different versions of ``future``.)

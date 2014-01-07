@@ -14,19 +14,18 @@ It is designed to be used as follows::
                             print_function, unicode_literals)
     from future import *
 
-or with explicit imports::
+or explicitly as::
 
-    from future.builtins import (filter, map, zip,
+    from future.builtins import (bytes, int, range, round, str, super,
                                  ascii, chr, hex, input, oct, open,
-                                 bytes, int, range, round, str, super)
+                                 filter, map, zip)
 
 followed by predominantly standard, idiomatic Python 3 code that then runs
 similarly on Python 2.6/2.7 and Python 3.3+.
 
-On Python 3, the import lines have zero effect.
-
-On Python 2, the import lines shadow all the builtins with different
-behaviour in Python 3 versus 2 to provide their Python 3 semantics.
+The imports have no effect on Python 3. On Python 2, they shadow the
+corresponding builtins, which normally have different semantics on Python 3
+versus 2, to provide their Python 3 semantics.
 
 
 Standard library reorganization
@@ -87,10 +86,13 @@ The software is distributed under an MIT licence. See LICENSE.txt.
 from future import standard_library, utils
 from future.builtins import *
 
+__title__ = 'future'
+__author__ = 'Ed Schofield'
+__license__ = 'MIT'
+__copyright__ = 'Copyright 2014 Python Charmers Pty Ltd'
 __ver_major__ = 0
 __ver_minor__ = 11
 __ver_patch__ = 0
 __ver_sub__ = ''
 __version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
                               __ver_patch__, __ver_sub__)
-
