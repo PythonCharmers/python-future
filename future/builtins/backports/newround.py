@@ -2,6 +2,9 @@
 ``python-future``: pure Python implementation of Python 3 round().
 """
  
+from future.utils import PYPY
+
+
 def newround(number, ndigits=None):
     """
     See Python 3 documentation: uses Banker's Rounding.
@@ -29,6 +32,11 @@ def newround(number, ndigits=None):
     if ndigits < 0:
         raise NotImplementedError('negative ndigits not supported yet')
     exponent = Decimal('10') ** (-ndigits)
+
+    if PYPY:
+        # Work around issue #24: round() breaks on PyPy with NumPy's types
+        if 'numpy' in repr(type(number)):
+            number = float(number)
     d = Decimal.from_float(number).quantize(exponent,
                                             rounding=ROUND_HALF_EVEN)
     if return_int:
