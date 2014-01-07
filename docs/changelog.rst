@@ -36,6 +36,18 @@ As usual, this has no effect on Python 3.
 
 *Note*: this is a backward-incompatible change.
 
+Simpler imports
+---------------
+
+It is now possible to import builtins directly from the ``future``
+namespace as follows::
+
+    >>> from future import *
+    
+or just those you need::
+
+    >>> from future import open, str
+
 
 .. whats-new-0.10:
 
@@ -48,8 +60,8 @@ Backported ``dict`` type
 ``future.builtins`` now provides a Python 2 ``dict`` subclass whose
 :func:`keys`, :func:`values`, and :func:`items` methods produce
 memory-efficient iterators. On Python 2.7, these also have the same set-like
-view behaviour as on Python 3. This can streamline code needing to iterate over
-large dictionaries. For example::
+view behaviour as on Python 3. This can streamline code needing to iterate
+over large dictionaries. For example::
 
     from __future__ import print_function
     from future.builtins import dict, range

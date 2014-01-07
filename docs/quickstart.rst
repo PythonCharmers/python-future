@@ -26,7 +26,6 @@ Start each module with these lines::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
-    from future import standard_library
     from future.builtins import *
 
 Then write standard Python 3 code. The :mod:`future` package will
@@ -44,19 +43,12 @@ module::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
-    from future import standard_library
     from future.builtins import *
     
 and converts a few Python 3-only constructs to a form compatible with
 both Py3 and Py2. Most remaining Python 3 code should simply work on
 Python 2.
 
-For a realistic example, you can see the included `backported
-http.client module
-<https://github.com/PythonCharmers/python-future/blob/master/future/standard_library/http/client.py>`_,
-and look at the diff between this and the Python 3.3 module (e.g.
-``/usr/lib/python3.3/http/client.py``). 
- 
 See :ref:`backwards-conversion` for more details.
 
 
@@ -80,37 +72,40 @@ be accessed under their Python 3 names and locations in Python 2::
     
     from future import standard_library
     
-    import socketserver
-    import queue
-    import configparser
-    import test.support
-    import html.parser
-    from collections import UserList
-    from itertools import filterfalse, zip_longest
-    from http.client import HttpConnection
-    # and other moved modules and definitions
+    with standard_library.enable_hooks():
+        import socketserver
+        import queue
+        import configparser
+        import test.support
+        import html.parser
+        from collections import UserList
+        from itertools import filterfalse, zip_longest
+        from http.client import HttpConnection
+        # and other moved modules and definitions
 
 :mod:`future` also includes backports for these stdlib modules from Py3
 that were heavily refactored versus Py2::
     
-    import html
-    import html.entities
-    import html.parser
+    with standard_library.enable_hooks():
+        import html
+        import html.entities
+        import html.parser
 
-    import http
-    import http.client
-    import http.server
+        import http
+        import http.client
+        import http.server
 
 These modules are currently not supported, but we aim to support them in
 the future::
     
-    import http.cookies
-    import http.cookiejar
+    with standard_library.enable_hooks():
+        import http.cookies
+        import http.cookiejar
 
-    import urllib
-    import urllib.parse
-    import urllib.request
-    import urllib.error
+        import urllib
+        import urllib.parse
+        import urllib.request
+        import urllib.error
 
 If you need one of these, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.

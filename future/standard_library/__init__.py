@@ -239,7 +239,8 @@ class RenameImport(object):
         elif name in self.new_to_old:
             # New name. Look up the corresponding old (Py2) name:
             name = self.new_to_old[name]
-        module = self._find_and_load_module(name)
+        with suspend_hooks():
+            module = self._find_and_load_module(name)
         sys.modules[name] = module
         return module
  
@@ -424,17 +425,17 @@ def detect_hooks():
 
 
 # Now import the modules:
-with enable_hooks():
-    for (oldname, newname) in RENAMES.items():
-        if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
-            continue
-        if newname in REPLACED_MODULES:
-            # Skip this check for e.g. the stdlib's ``test`` module,
-            # which we have replaced completely.
-            continue
-        newmod = __import__(newname)
-        globals()[newname] = newmod
+# with enable_hooks():
+#     for (oldname, newname) in RENAMES.items():
+#         if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
+#             continue
+#         if newname in REPLACED_MODULES:
+#             # Skip this check for e.g. the stdlib's ``test`` module,
+#             # which we have replaced completely.
+#             continue
+#         newmod = __import__(newname)
+#         globals()[newname] = newmod
 
 
-# if not utils.PY3:
-#     install_hooks()
+if not utils.PY3:
+    install_hooks()
