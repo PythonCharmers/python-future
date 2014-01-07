@@ -47,9 +47,9 @@ class TestStandardLibraryRenames(CodeHandler):
         """
         example_PY2_check = False
         with standard_library.suspend_hooks():
-            # An example of fragile import code that we don't want to break:
+            # An example of code that we don't want to break:
             try:
-                import builtins
+                import builtins     # fragile check for Python 3.x
             except ImportError:
                 example_PY2_check = True
         if utils.PY2:
@@ -59,13 +59,14 @@ class TestStandardLibraryRenames(CodeHandler):
         # The import should succeed again now:
         import builtins
 
-    def test_disable_hooks(self):
+    def test_remove_hooks(self):
         example_PY2_check = False
 
-        standard_library.enable_hooks()
+        standard_library.install_hooks()
         old_meta_path = copy.copy(sys.meta_path)
+        import builtins
 
-        standard_library.disable_hooks()
+        standard_library.remove_hooks()
         self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
 
         # An example of fragile import code that we don't want to break:
@@ -77,10 +78,32 @@ class TestStandardLibraryRenames(CodeHandler):
             self.assertTrue(example_PY2_check)
         else:
             self.assertFalse(example_PY2_check)
-        standard_library.enable_hooks()
+        standard_library.install_hooks()
         # The import should succeed again now:
         import builtins
         self.assertTrue(len(old_meta_path) == len(sys.meta_path))
+
+    def test_remove_hooks2(self):
+        """
+        This verifies that modules like http.client are no longer accessible after
+        disabling import hooks, even if they have been previously imported.
+        
+        The reason for this test is that Python caches imported modules in sys.modules.
+        """
+        standard_library.remove_hooks()
+        try:
+            from . import verify_remove_hooks_affects_imported_modules
+        except RuntimeError as e:
+            self.fail(e.message)
+        finally:
+            standard_library.install_hooks()
+
+    def test_requests(self):
+        """
+        GitHub issue #19: conflict with ``requests``
+        """
+        # The below should succeed while ``requests`` is installed:
+        from . import verify_requests_is_not_broken
 
     @unittest.skipIf(utils.PY3, 'not testing for old urllib on Py3')
     def test_old_urllib_import(self):
@@ -143,23 +166,23 @@ class TestStandardLibraryRenames(CodeHandler):
         self.assertEqual(list(zip_longest(a, b)),
                          [(1, 2), (2, 4), (None, 6)])
 
-    def test_import_from_module(self):
-        """
-        Tests whether e.g. "import socketserver" succeeds in a module
-        imported by another module.
-        """
-        code1 = '''
-                from future import standard_library
-                import importme2
-                '''
-        code2 = '''
-                import socketserver
-                print('Import succeeded!')
-                '''
-        self._write_test_script(code1, 'importme1.py')
-        self._write_test_script(code2, 'importme2.py')
-        output = self._run_test_script('importme1.py')
-        print(output)
+    # def test_import_from_module(self):
+    #     """
+    #     Tests whether e.g. "import socketserver" succeeds in a module
+    #     imported by another module. We do not want it to!
+    #     """
+    #     code1 = '''
+    #             from future import standard_library
+    #             import importme2
+    #             '''
+    #     code2 = '''
+    #             import socketserver
+    #             print('Import succeeded!')
+    #             '''
+    #     self._write_test_script(code1, 'importme1.py')
+    #     self._write_test_script(code2, 'importme2.py')
+    #     output = self._run_test_script('importme1.py')
+    #     print(output)
 
     def test_configparser(self):
         import configparser

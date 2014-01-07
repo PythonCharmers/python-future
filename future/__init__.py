@@ -1,8 +1,10 @@
 """
-future: Easy, safe support for Python 2/3 compatibility
+future: Easy, safe support for Python 3/2 compatibility
 =======================================================
 
-``future`` is the missing compatibility layer between Python 2 and Python 3. It allows you to use a single, clean Python 3.x-compatible codebase to support both Python 2 and Python 3 with minimal overhead.
+``future`` is the missing compatibility layer between Python 3 and Python
+2. It allows you to use a single, clean Python 3.x-compatible codebase to
+support both Python 3 and Python 2 with minimal overhead.
 
 Notable projects that use ``future`` for Python 2/3 compatibility are `Mezzanine <http://mezzanine.jupo.org/>`_ and `xlwt-future <https://pypi.python.org/pypi/xlwt-future>`_.
 
@@ -10,23 +12,38 @@ It is designed to be used as follows::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
-    from future import standard_library
-    from future.builtins import *     # or explicit imports: str, int, bytes,
-                                      # open, super, range, zip, input, etc.
-    
-followed by predominantly standard, idiomatic Python 3 code that then runs similarly on Python 2.6/2.7 and Python 3.3+.
+    from future import *
 
-On Python 3, the import lines have zero effect (and zero namespace
-pollution).
+or explicitly as::
 
-On Python 2, ``from future import standard_library`` installs
-import hooks to allow renamed and moved standard library modules to be
-imported from their new Py3 locations. On Python 2, the ``from future.builtins import *`` line shadows all builtins with different behaviour in Python 3 versus 2 to provide their Python 3 semantics.
+    from future.builtins import (bytes, int, range, round, str, super,
+                                 ascii, chr, hex, input, oct, open,
+                                 filter, map, zip)
+
+followed by predominantly standard, idiomatic Python 3 code that then runs
+similarly on Python 2.6/2.7 and Python 3.3+.
+
+The imports have no effect on Python 3. On Python 2, they shadow the
+corresponding builtins, which normally have different semantics on Python 3
+versus 2, to provide their Python 3 semantics.
+
+
+Standard library reorganization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``from future import standard_library`` provides a context-manager called
+``enable_hooks`` that installs import hooks (PEP 3108) to allow renamed and
+moved standard library modules to be imported from their new Py3 locations.
 
 
 Automatic conversion
 --------------------
-An included script called `futurize <http://python-future.org/automatic_conversion.html>`_ aids in converting code (from either Python 2 or Python 3) to code compatible with both platforms. It is similar to ``python-modernize`` but goes further in providing Python 3 compatibility through the use of the backported types and builtin functions in ``future``.
+An included script called `futurize
+<http://python-future.org/automatic_conversion.html>`_ aids in converting
+code (from either Python 2 or Python 3) to code compatible with both
+platforms. It is similar to ``python-modernize`` but goes further in
+providing Python 3 compatibility through the use of the backported types
+and builtin functions in ``future``.
 
 
 Documentation
@@ -66,13 +83,16 @@ The software is distributed under an MIT licence. See LICENSE.txt.
 
 """
 
-# No namespace pollution
-__all__ = []
+from future import standard_library, utils
+from future.builtins import *
 
+__title__ = 'future'
+__author__ = 'Ed Schofield'
+__license__ = 'MIT'
+__copyright__ = 'Copyright 2014 Python Charmers Pty Ltd'
 __ver_major__ = 0
-__ver_minor__ = 10
-__ver_patch__ = 1
+__ver_minor__ = 11
+__ver_patch__ = 0
 __ver_sub__ = ''
 __version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
                               __ver_patch__, __ver_sub__)
-

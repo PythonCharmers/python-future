@@ -2,6 +2,62 @@ What's new
 **********
 
 
+.. whats-new-0.11:
+
+What's new in version 0.11
+==========================
+
+More robust implementation of standard_library hooks
+----------------------------------------------------
+
+``future.standard_library`` now no longer installs import hooks by default.
+These were bleeding into surrounding code, causing incompatibilities with
+modules like ``requests`` (issue #19). 
+
+Now ``future.standard_library`` provides the context manager
+``enable_hooks()``. Use it as follows::
+
+    >>> from future import standard_library
+    >>> with standard_library.enable_hooks():
+    ...     import queue
+    ...     import socketserver
+    ...     from http.client import HTTPConnection
+    >>> import requests
+    >>> # etc.
+
+If you prefer, the following imports are also available directly::
+
+    >>> from future.standard_library import queue
+    >>> from future.standard_library import socketserver
+    >>> from future.standard_library.http.client import HTTPConnection
+
+
+As usual, this has no effect on Python 3.
+
+*Note*: this is a backward-incompatible change.
+
+Simpler imports
+---------------
+
+It is now possible to import builtins directly from the ``future``
+namespace as follows::
+
+    >>> from future import *
+    
+or just those you need::
+
+    >>> from future import open, str
+
+
+Deprecated isinstance removed
+-----------------------------
+
+``future`` v0.8.2 briefly introduced a replacement for the ``isinstance``
+builtin. This was then removed and its use was deprecated as of v0.9.0.
+The alias for the builtin ``isinstance`` has now been removed from
+``future.builtins``.
+
+
 .. whats-new-0.10:
 
 What's new in version 0.10.x
@@ -13,8 +69,8 @@ Backported ``dict`` type
 ``future.builtins`` now provides a Python 2 ``dict`` subclass whose
 :func:`keys`, :func:`values`, and :func:`items` methods produce
 memory-efficient iterators. On Python 2.7, these also have the same set-like
-view behaviour as on Python 3. This can streamline code needing to iterate over
-large dictionaries. For example::
+view behaviour as on Python 3. This can streamline code needing to iterate
+over large dictionaries. For example::
 
     from __future__ import print_function
     from future.builtins import dict, range
