@@ -11,20 +11,6 @@ The builtin functions are:
 - ``input`` (equivalent to ``raw_input`` on Py2)
 - ``open`` (equivalent to io.open on Py2)
 
-This function is also defined specially:
-
-- ``isinstance``
-
-to be compatible with the backported ``int``, ``str``, and ``bytes`` types of
-``future.builtins``.
-
-Examples::
-
-    # Compatible output from isinstance() across Py2/3:
-    assert isinstance(2**63, int)        # long integers
-    assert isinstance(u'blah', str)
-    assert isinstance('blah', str)       # with unicode_literals in effect
-
 
 input()
 -------
@@ -54,9 +40,6 @@ if utils.PY2:
     from __builtin__ import unichr as chr
     import __builtin__
 
-    # Only for backward compatibility with future v0.8.2
-    isinstance = __builtin__.isinstance
-
     # The following seems like a good idea, but it may be a bit
     # paranoid and the implementation may be fragile:
 
@@ -72,7 +55,7 @@ if utils.PY2:
     # In case some code wants to import 'callable' portably from Py3.0/3.1:
     callable = __builtin__.callable
 
-    __all__ = ['ascii', 'chr', 'hex', 'input', 'isinstance', 'oct', 'open']
+    __all__ = ['ascii', 'chr', 'hex', 'input', 'oct', 'open']
 
 else:
     import builtins
@@ -80,8 +63,6 @@ else:
     chr = builtins.chr
     hex = builtins.hex
     input = builtins.input
-    # Only for backward compatibility with future v0.8.2:
-    isinstance = builtins.isinstance
     oct = builtins.oct
     open = builtins.open
 

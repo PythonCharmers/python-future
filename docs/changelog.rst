@@ -49,6 +49,15 @@ or just those you need::
     >>> from future import open, str
 
 
+Deprecated isinstance removed
+-----------------------------
+
+``future`` v0.8.2 briefly introduced a replacement for the ``isinstance``
+builtin. This was then removed and its use was deprecated as of v0.9.0.
+The alias for the builtin ``isinstance`` has now been removed from
+``future.builtins``.
+
+
 .. whats-new-0.10:
 
 What's new in version 0.10.x
