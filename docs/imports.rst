@@ -120,4 +120,100 @@ standard feature of Python, see the following docs:
 These are all available in Python 2.6 and up, and enabled by default in Python 3.x.
 
 
+unicode_literals
+~~~~~~~~~~~~~~~~
+
+There are different opinions in the community about whether it is advisable
+to import ``unicode_literals`` from ``__future__`` in a Python 2/3
+compatible codebase. ``future`` can be used with or without
+``unicode_literals`` imports, although the ``futurize`` script does imply a
+preference for this by making this change at stage 2 of conversion.
+
+To avoid confusion, we recommend using ``unicode_literals`` everywhere
+across a code-base or not at all.
+
+This section summarizes the pros and cons.
+
+Advantages of using unicode_literals
+------------------------------------
+
+1. String literals are unicode on Python 3. Making them unicode on Python 2
+   leads to more consistency of the code across the two runtimes. Most
+   unintended uses of unicode strings (such as attempts to put them into
+   WSGI dictionaries) will cause issues on both Python 3 and 2, making it
+   more obvious where a conversion such as an ``s.encode()`` call is
+   required.
+
+2. If support for Python 3.2 is required (e.g. for Ubuntu 12.04 LTS or
+   Debian wheezy), ``u''`` prefixes are a ``SyntaxError``, making
+   ``unicode_literals`` the only option for a Python 2/3 compatible
+   codebase.
+
+3. Code without ``u''`` prefixes is cleaner, one of the claimed advantages
+   of Python 3.
+
+4. The diff for a Python 2 -> 2/3 port may be smaller and easier to review
+   with ``unicode_literals`` than by adding ``u''`` prefixes to every string
+   literal.
+  
+
+Disadvantages of using unicode_literals
+---------------------------------------
+
+1. This is a larger-scale change than adding explicit ``u''`` prefixes to
+   all strings that should be Unicode. It may introduce more regressions on
+   Python 2 that require more time to find and fix.
+
+2. If a codebase already explicitly marks up all text with ``u''`` prefixes,
+   and if only Python 3.3+ is to be supported, the diff for a patch that
+   removes this markup would be larger and noisier. However, note that the
+   ``futurize`` script takes advantage of PEP 414 and does not remove
+   explicit ``u''`` prefixes that already exist.
+
+3. Turning on ``unicode_literals`` converts even docstrings to unicode, but
+   Pydoc breaks with unicode docstrings containing non-ASCII characters for
+   Python versions < 2.7.7. (Fix committed in Jan 2014.)::
+
+       >>> def f():
+       ...     u"Author: Martin von Löwis"
+       
+       >>> help(f)
+       
+       /Users/schofield/Install/anaconda/python.app/Contents/lib/python2.7/pydoc.pyc in pipepager(text, cmd)
+          1376     pipe = os.popen(cmd, 'w')
+          1377     try:
+       -> 1378         pipe.write(text)
+          1379         pipe.close()
+          1380     except IOError:
+       
+       UnicodeEncodeError: 'ascii' codec can't encode character u'\xf6' in position 71: ordinal not in range(128)
+
+
+Others' perspectives
+--------------------
+
+The following `quote <https://groups.google.com/forum/#!topic/django-developers/2ddIWdicbNY>`_ is from Aymeric Augustin on 23 August 2012 regarding
+why he chose ``unicode_literals`` for the port of Django to a Python
+2/3-compatible codebase.
+
+"... I'd like to explain why this PEP [PEP 414, which allows explicit
+``u''`` prefixes for unicode literals on Python 3.3+] is at odds with the
+porting philosophy I've applied to Django, and why I would have vetoed
+taking advantage of it.
+
+"I believe that aiming for a Python 2 codebase with Python 3
+compatibility hacks is a counter-productive way to port a project. You
+end up with all the drawbacks of Python 2 (including the legacy `u`
+prefixes) and none of the advantages Python 3 (especially the sane
+string handling).
+
+"Working to write Python 3 code, with legacy compatibility for Python
+2, is much more rewarding. Of course it takes more effort, but the
+results are much cleaner and much more maintainable. It's really about
+looking towards the future or towards the past.
+
+"I understand the reasons why PEP 414 was proposed and why it was
+accepted. It makes sense for legacy software that is minimally
+maintained. I hope nobody puts Django in this category!"
+
 
