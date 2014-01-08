@@ -6,25 +6,9 @@ Imports
 future imports
 ~~~~~~~~~~~~~~
 
-The easiest way to provide Py2/3 compatibility using ``future`` is to
-include the following imports at the top of every module::
-
-    from __future__ import (absolute_import, division,
-                            print_function, unicode_literals)
-    from future import *
-
-On Python 3, ``from future import *`` imports only two symbols: the modules
-``standard_library`` and ``utils``. No builtin functions are affected.
-
-On Python 2, this import line also shadows 16 builtins (listed below) to
-provide their Python 3 semantics.
-
-
-More explicit imports
-~~~~~~~~~~~~~~~~~~~~~
-
-If you wish to be avoid namespace pollution on Python 3, an alternative set
-of imports is::
+If you don't mind namespace pollution on Python 2, the easiest way to provide
+Py2/3 compatibility using ``future`` is to include the following imports at the
+top of every module::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
@@ -34,11 +18,13 @@ together with these module imports when necessary::
     
     from future import standard_library, utils
 
-The advantage of this form is that on Python 3, the ``from future.builtins
-import *`` line has zero effect and zero namespace pollution.
+On Python 3, ``from future.builtins import *`` line has zero effect and zero
+namespace pollution.
 
-On Python 2, ``from future.builtins import *`` shadows the same builtins
-(see below) as with ``from future import *``.
+On Python 2, this import line shadows 16 builtins (listed below) to
+provide their Python 3 semantics.
+
+See :ref:`unicode-literals` for more details about this import.
 
 
 .. _explicit-imports:
@@ -46,7 +32,8 @@ On Python 2, ``from future.builtins import *`` shadows the same builtins
 Explicit imports
 ~~~~~~~~~~~~~~~~
 
-If you prefer fully explicit imports, the most common set is::
+If you prefer explicit imports (e.g. to use automated code-analysis tools), the
+most common imports are::
     
     from future import standard_library, utils
     from future.builtins import (bytes, int, range, round, str, super,
@@ -57,10 +44,10 @@ All the replaced builtins are also available in the ``future`` namespace.
 
 The disadvantage of importing only some of the builtins is that it
 increases the risk of introducing Py2/3 portability bugs as your code
-evolves over time. Be especially aware of ``input``, which could expose a
+evolves over time. Be especially aware of ``input()``, which could expose a
 security vulnerability on Python 2 without the ``future`` import.
 
-Also, a technical distinction is that unlike the ``import *`` forms above,
+One further technical distinction is that unlike the ``import *`` form above,
 these explicit imports do actually change ``locals()``; this is equivalent
 to typing ``filter = filter; map = map`` etc. for each builtin.
 
@@ -78,8 +65,8 @@ The internal API is currently as follows::
     from future.builtins.misc import ascii, chr, hex, input, oct, open
     from future.builtins.iterators import filter, map, zip
 
-(Please note that this internal API is evolving and may not be stable
-between different versions of ``future``.)
+Please note that this internal API is evolving and may not be stable
+between different versions of ``future``.
 
 
 .. _obsolete-builtins:
@@ -103,7 +90,7 @@ This is equivalent to::
 Running ``futurize`` over code that uses these Python 2 builtins does not
 import the disabled versions; instead, it replaces them with their
 equivalent Python 3 forms and then adds ``future`` imports to resurrect
-Python 2 support.
+Python 2 support, as described in :ref:`forwards-conversion-stage2`.
 
 
 __future__ imports
@@ -120,12 +107,14 @@ standard feature of Python, see the following docs:
 These are all available in Python 2.6 and up, and enabled by default in Python 3.x.
 
 
+.. _unicode-literals:
+
 unicode_literals
 ~~~~~~~~~~~~~~~~
 
-There are different opinions in the community about whether it is advisable
+There is some contention in the community about whether it is advisable
 to import ``unicode_literals`` from ``__future__`` in a Python 2/3
-compatible codebase. ``future`` can be used with or without
+compatible codebase. The ``future`` package can be used with or without
 ``unicode_literals`` imports, although the ``futurize`` script does imply a
 preference for this by making this change at stage 2 of conversion.
 
@@ -138,7 +127,7 @@ Advantages of using unicode_literals
 ------------------------------------
 
 1. String literals are unicode on Python 3. Making them unicode on Python 2
-   leads to more consistency of the code across the two runtimes. Most
+   leads to more consistency of your string types the two runtimes. Most
    unintended uses of unicode strings (such as attempts to put them into
    WSGI dictionaries) will cause issues on both Python 3 and 2, making it
    more obvious where a conversion such as an ``s.encode()`` call is
@@ -152,9 +141,9 @@ Advantages of using unicode_literals
 3. Code without ``u''`` prefixes is cleaner, one of the claimed advantages
    of Python 3.
 
-4. The diff for a Python 2 -> 2/3 port may be smaller and easier to review
-   with ``unicode_literals`` than by adding ``u''`` prefixes to every string
-   literal.
+4. The diff for a Python 2 -> 2/3 port may be smaller, less noisy, and easier
+   to review with ``unicode_literals`` than if an explicit ``u''`` prefix is added
+   to every unadorned string literal.
   
 
 Disadvantages of using unicode_literals
@@ -162,13 +151,15 @@ Disadvantages of using unicode_literals
 
 1. This is a larger-scale change than adding explicit ``u''`` prefixes to
    all strings that should be Unicode. It may introduce more regressions on
-   Python 2 that require more time to find and fix.
+   Python 2 that require more initial investment of time to find and fix.
 
 2. If a codebase already explicitly marks up all text with ``u''`` prefixes,
-   and if only Python 3.3+ is to be supported, the diff for a patch that
-   removes this markup would be larger and noisier. However, note that the
-   ``futurize`` script takes advantage of PEP 414 and does not remove
-   explicit ``u''`` prefixes that already exist.
+   and if support for Python versions 3.0-3.2 can be dropped, then
+   removing the existing ``u''`` prefixes and replacing these with
+   ``unicode_literals`` imports (the porting approach Django used) would
+   introduce more noise into the patch and make it more difficult to review.
+   However, note that the ``futurize`` script takes advantage of PEP 414 and
+   does not remove explicit ``u''`` prefixes that already exist.
 
 3. Turning on ``unicode_literals`` converts even docstrings to unicode, but
    Pydoc breaks with unicode docstrings containing non-ASCII characters for
@@ -215,5 +206,4 @@ looking towards the future or towards the past.
 "I understand the reasons why PEP 414 was proposed and why it was
 accepted. It makes sense for legacy software that is minimally
 maintained. I hope nobody puts Django in this category!"
-
 

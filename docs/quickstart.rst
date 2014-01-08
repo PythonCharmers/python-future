@@ -22,7 +22,7 @@ If you would prefer the latest development version, it is available `here <https
 If you are writing code from scratch
 ------------------------------------
 
-Start each module with these lines::
+The easiest way is to start each module with these lines::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
@@ -41,9 +41,13 @@ To offer backward compatibility with Python 2, you can use the ``futurize``
 script with the ``--from3`` parameter. This adds these lines at the top of each
 module::
 
-    from __future__ import (absolute_import, division,
-                            print_function, unicode_literals)
-    from future.builtins import *
+    from __future__ import absolute_import
+    from __future__ import division
+    from __future__ import print_function
+    from __future__ import unicode_literals
+    from future.builtins import open
+    from future.builtins import str
+    # etc., as needed
     
 and converts a few Python 3-only constructs to a form compatible with
 both Py3 and Py2. Most remaining Python 3 code should simply work on
@@ -122,8 +126,10 @@ Utilities
 :mod:`future` also provides some useful functions and decorators to ease
 backward compatibility with Py2 in the :mod:`future.utils` module. These
 are a selection of the most useful functions from ``six`` and various
-home-grown Py2/3 compatibility modules from various Python projects,
-such as Jinja2, Pandas, IPython, and Django.
+home-grown Py2/3 compatibility modules from popular Python projects, such as
+Jinja2, Pandas, IPython, and Django. The goal is to consolidate these in one
+place, tested and documented, obviating the need for every project to repeat
+this work.
 
 Examples::
 

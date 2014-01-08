@@ -87,8 +87,7 @@ on Python 3::
     # Compatible output from isinstance() across Py2/3:
     assert isinstance(2**64, int)        # long integers
     assert isinstance(u'blah', str)
-    assert isinstance('blah', str)       # with unicode_literals in effect
-    assert isinstance(b'bytestring', bytes)
+    assert isinstance('blah', str)       # if unicode_literals is in effect
 
 There is also support for renamed standard library modules in the form of a context manager that provides import hooks::
 

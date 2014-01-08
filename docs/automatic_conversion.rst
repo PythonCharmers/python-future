@@ -3,20 +3,21 @@
 Automatic conversion with ``futurize``
 ======================================
 
-The ``future`` source tree includes an experimental script called
-``futurize`` to aid in making either Python 2 code or Python 3 code
-compatible with both platforms using the :mod:`future` module. It is
-based on 2to3 and uses fixers from ``lib2to3``, ``lib3to2``, and
-``python-modernize``.
+The ``future`` source tree includes a script called ``futurize`` to aid in
+making either Python 2 code or Python 3 code compatible with both platforms
+using the :mod:`future` module. It is based on 2to3 and uses fixers from
+``lib2to3``, ``lib3to2``, and ``python-modernize``.
 
-For Python 2 code (the default), it runs the code through all the
-appropriate 2to3 fixers to turn it into valid Python 3 code, and then
-adds ``__future__`` and ``future`` package imports. For Python 3 code
-(with the ``--from3`` command-line option), it fixes Py3-only syntax
-(e.g.  metaclasses) and adds ``__future__`` and ``future`` imports to the
-top of each module. In both cases, the result should be relatively clean
-Py3-style code semantics that (hopefully) runs unchanged on both Python 2
-and Python 3.
+For Python 2 code (the default), it runs the code through all the appropriate
+2to3 fixers to turn it into valid Python 3 code, and then adds ``__future__``
+and ``future`` package imports.
+
+For conversions from Python 3 code (with the ``--from3`` command-line option),
+it fixes Py3-only syntax (e.g.  metaclasses) and adds ``__future__`` and
+``future`` imports to the top of each module.
+
+In both cases, the result should be relatively clean Py3-style code
+that runs mostly unchanged on both Python 2 and Python 3.
 
 .. _forwards-conversion:
 
@@ -58,10 +59,11 @@ Run with::
 	futurize --stage1
 
 This applies fixes that modernize Python 2 code without changing the effect of
-the code. With luck, this will not introduce any bugs into the code. The
-changes are those that bring the Python code up-to-date without breaking Py2
-compatibility. The resulting code will be perfectly good Python 2.x code plus
-``__future__`` imports from the following set::
+the code. With luck, this will not introduce any bugs into the code, or will at
+least be trivial to fix. The changes are those that bring the Python code
+up-to-date without breaking Py2 compatibility. The resulting code will be
+modern Python 2.6-compatible code plus ``__future__`` imports from the
+following set::
 
     from __future__ import absolute_import
     from __future__ import division
@@ -70,6 +72,9 @@ compatibility. The resulting code will be perfectly good Python 2.x code plus
 Only those ``__future__`` imports deemed necessary will be added unless
 the ``--all-imports`` command-line option is passed to ``futurize``, in
 which case they are all added.
+
+The ``from __future__ import unicode_literals`` declaration is not added
+during stage 1.
 
 The changes include::
 
@@ -86,21 +91,82 @@ Implicit relative imports fixed, e.g.::
     + from __future__ import absolute_import
     + from . import mymodule
 
-The ``from __future__ import unicode_literals`` declaration is not yet added
-during stage 1.
-
 .. and all unprefixed string literals '...' gain a b prefix to be b'...'.
 
 .. (This last step can be prevented using --no-bytes-literals if you already have b'...' markup in your code, whose meaning would otherwise be lost.)
 
-Stage 1 does not add any ``future`` imports. The output of stage 1 will
-probably not (yet) run on Python 3. 
+Stage 1 does not add any imports from the ``future`` package. The output of
+stage 1 will probably not (yet) run on Python 3. 
 
-The idea is that this stage will create the majority of the lines in the
-``diff`` for the entire porting process, but without introducing any bugs. It
-should be uncontroversial and safe to apply to every Python 2 package. The
-subsequent patches introducing Python 3 compatibility should then be shorter
-and easier to review.
+The goal for this stage is to create most of the ``diff`` for the entire
+porting process, but without introducing any bugs. It should be uncontroversial
+and safe to apply to every Python 2 package. The subsequent patches introducing
+Python 3 compatibility should then be shorter and easier to review.
+
+
+.. _forwards-conversion-stage2:
+
+Stage 2: Py3-style code with ``future`` wrappers for Py2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Run with::
+
+    futurize —-stage2 myfolder/*.py
+
+This stage adds a dependency on the ``future`` package. The goal for stage 2
+is to make further mostly safe changes to the Python 2 code to use Python
+3-style code that then still runs on Python 2 with the help of the appropriate
+builtins and utilities in ``future``.
+
+For example::
+
+    name = raw_input('What is your name?\n')
+
+    for k, v in d.iteritems():
+        assert isinstance(v, basestring)
+
+    class MyClass(object):
+        def __unicode__(self):
+            return u'My object'
+        def __str__(self):
+            return unicode(self).encode('utf-8')
+
+would be converted by Stage 2 to this code::
+
+    from future.builtins import input
+    from future.builtins import str
+    from future.utils import iteritems, python_2_unicode_compatible
+
+    name = input('What is your name?\n')
+
+    for k, v in iteritems(d):
+        assert isinstance(v, (str, bytes))
+
+    @python_2_unicode_compatible
+    class MyClass(object):
+        def __str__(self):
+            return u'My object'
+
+Stage 2 also renames standard-library imports to their Py3 names and adds this import::
+
+    from future import standard_library
+
+For example::
+
+    import ConfigParser
+    import 
+
+All strings are then unicode (on Py2 as on Py3) unless explicitly marked with a ``b''`` prefix.
+
+Ideally the output of this stage should not be a ``SyntaxError`` on either
+Python 3 or Python 2.
+
+After this, you can run your tests on Python 3 and make further code changes
+until they pass on Python 3.
+
+The next step would be manually adding wrappers from ``future`` to re-enable
+Python 2 compatibility. See :ref:`what-else` for more info.
+
 
 
 .. _forwards-conversion-text:
@@ -108,7 +174,7 @@ and easier to review.
 Separating text from bytes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-After applying stage 1, the recommended step is to decide which of your Python
+After applying stage 2, the recommended step is to decide which of your Python
 2 strings represent binary data and to prefix all byte-string literals for binary
 data with ``b`` like ``b'\x00ABCD'``.
 
@@ -117,12 +183,12 @@ prefixes will use Python 3's ``str`` type (or the backported ``str`` object
 from ``future`` on Python 2).
 
 
-.. _forwards-conversion-stage2:
+.. _forwards-conversion-stage3:
 
-Stage 2: Py3 code with ``future`` wrappers for Py2
+Stage 3: Py3 code with ``future`` wrappers for Py2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The goal for this step is to get the tests passing first on Py3 and then on Py2
+The goal for this stage is to get the tests passing first on Py3 and then on Py2
 again with the help of the ``future`` package.
 
 Run with::
