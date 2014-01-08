@@ -49,8 +49,17 @@ or just those you need::
     >>> from future import open, str
 
 
-Deprecated isinstance removed
------------------------------
+Utility functions for raising exceptions with a traceback portably
+------------------------------------------------------------------
+
+The functions ``raise_with_traceback()`` and ``raise_`` were added to
+``future.utils`` to offer either the Python 3.x or Python 2.x behaviour
+for raising exceptions. Thanks to Joel Tratner for the contribution of
+these.
+
+
+Deprecated ``isinstance`` replacement removed
+---------------------------------------------
 
 ``future`` v0.8.2 briefly introduced a replacement for the ``isinstance``
 builtin. This was then removed and its use was deprecated as of v0.9.0.
