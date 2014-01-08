@@ -3,12 +3,12 @@
 Imports
 =======
 
-future imports
-~~~~~~~~~~~~~~
+Star imports
+~~~~~~~~~~~~
 
 If you don't mind namespace pollution on Python 2, the easiest way to provide
-Py2/3 compatibility using ``future`` is to include the following imports at the
-top of every module::
+Py2/3 compatibility for new code using ``future`` is to include the following
+imports at the top of every module::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
@@ -32,20 +32,21 @@ See :ref:`unicode-literals` for more details about this import.
 Explicit imports
 ~~~~~~~~~~~~~~~~
 
-If you prefer explicit imports (e.g. to use automated code-analysis tools), the
-most common imports are::
+Explicit forms of the imports are often preferred and are necessary for using
+some automated code-analysis tools.
+
+The most common imports from ``future`` are::
     
     from future import standard_library, utils
     from future.builtins import (bytes, int, range, round, str, super,
                                  ascii, chr, hex, input, oct, open,
                                  filter, map, zip)
 
-All the replaced builtins are also available in the ``future`` namespace.
-
 The disadvantage of importing only some of the builtins is that it
 increases the risk of introducing Py2/3 portability bugs as your code
-evolves over time. Be especially aware of ``input()``, which could expose a
-security vulnerability on Python 2 without the ``future`` import.
+evolves over time. Be especially aware of not importing ``input``, which could
+expose a security vulnerability on Python 2 if Python 3's semantics are
+expected.
 
 One further technical distinction is that unlike the ``import *`` form above,
 these explicit imports do actually change ``locals()``; this is equivalent
