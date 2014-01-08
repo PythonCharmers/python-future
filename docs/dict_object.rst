@@ -32,7 +32,7 @@ new Py3 set-like behaviour.
 Memory-efficiency and alternatives
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you already have native dictionaries, the downside to wrapping them in a
+If you already have large native dictionaries, the downside to wrapping them in a
 ``dict`` call is that memory is copied (on both Py3 and with
 ``future.builtins.dict``). For example::
 
@@ -44,8 +44,14 @@ If dictionary methods like ``values`` and ``items`` are called only once, this
 obviously negates the memory benefits the overridden methods offer with not
 creating temporary lists.
 
-One alternative is to stick with standard Python 3 code in your Py2/3
-compatible codebase::
+The memory-efficient (and CPU-efficient) alternatives are either::
+
+- to construct a dictionary from an iterator -- as above with the generator expression ``dict((i, i**2) for i in range(10**7)``;
+- to construct an empty dictionary with a ``dict()`` call using ``future.builtins.dict`` (rather than ``{}``) and update it incrementally;
+- to use 
+
+If your dictionaries are small or performance is not critical, you can of course stick
+with standard Python 3 code in your Py2/3 compatible codebase::
     
     # Assuming d is a native dict ...
 
@@ -63,7 +69,8 @@ In this case there will be memory overhead of list creation for each call of
 
 If your dictionaries are large, or if you want to use the Python 3
 set-like behaviour on both Py3 and Python 2.7, then you can instead use the
-``viewkeys`` etc. functions from :mod:`future.utils`::
+``viewkeys`` etc. functions from :mod:`future.utils`, passing in regular
+dictionaries::
 
     from future.utils import viewkeys, viewvalues, viewitems
 
@@ -80,5 +87,5 @@ set-like behaviour on both Py3 and Python 2.7, then you can instead use the
 For Python 2.6 compatibility, the functions ``iteritems`` etc. are also
 available in :mod:`future.utils`. These are equivalent to the functions of the
 same names in ``six``, which is equivalent to calling the ``iteritems`` etc.
-methods on Python 2, but also works on Python 3.
+methods on Python 2, or to calling ``items`` etc. on Python 3.
 
