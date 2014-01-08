@@ -15,13 +15,16 @@ deprecated in favour of the names ``install_hooks()`` and
 ``remove_hooks()``.
 
 
-Utility functions for raising exceptions with a traceback portably
-------------------------------------------------------------------
+Utility functions raise_ and exec_
+----------------------------------
 
-The functions ``raise_with_traceback()`` and ``raise_`` were added to
-``future.utils`` to offer either the Python 3.x or Python 2.x behaviour
-for raising exceptions. Thanks to Joel Tratner for the contribution of
-these.
+The functions ``raise_with_traceback()`` and ``raise_()`` were
+added to ``future.utils`` to offer either the Python 3.x or Python 2.x
+behaviour for raising exceptions. Thanks to Joel Tratner for the
+contribution of these. ``future.utils.reraise()`` is now deprecated.
+
+A portable ``exec_()`` function has been added to ``future.utils`` from
+``six``.
 
 
 .. whats-new-0.10:

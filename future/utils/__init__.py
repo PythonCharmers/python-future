@@ -328,11 +328,31 @@ if PY3:
         if exc.__traceback__ is not tb:
             raise exc.with_traceback(tb)
 
+    def raise_with_traceback(exc, traceback=Ellipsis):
+        if traceback == Ellipsis:
+            _, _, traceback = sys.exc_info()
+        raise exc.with_traceback(traceback)
+
 else:
     exec('''
 def raise_(tp, value=None, tb=None):
     raise tp, value, tb
+
+def raise_with_traceback(exc, traceback=Ellipsis):
+    if traceback == Ellipsis:
+        _, _, traceback = sys.exc_info()
+    raise exc, None, traceback
 '''.strip())
+
+
+raise_with_traceback.__doc__ = (
+"""Raise exception with existing traceback.
+If traceback is not passed, uses sys.exc_info() to get traceback."""
+)
+
+
+# Deprecated alias for backward compatibility with ``future`` versions < 0.11:
+reraise = raise_
 
 
 def implements_iterator(cls):
