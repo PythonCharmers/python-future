@@ -7,7 +7,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import sys
 from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
-                         native_str, reraise)
+                         native_str, raise_)
 
 
 from numbers import Integral
@@ -99,17 +99,17 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(isbytes(self.s))
         self.assertFalse(isbytes(self.s2))
 
-    def test_reraise(self):
+    def test_raise_(self):
         def valerror():
             try:
                 raise ValueError("Apples!")
             except Exception as e:
-                reraise(e)
+                raise_(e)
 
         self.assertRaises(ValueError, valerror)
 
         def with_value():
-            reraise(IOError, "This is an error")
+            raise_(IOError, "This is an error")
 
         self.assertRaises(IOError, with_value)
 
@@ -123,7 +123,7 @@ class TestUtils(unittest.TestCase):
                 raise ValueError("An error")
             except Exception as e:
                 _, _, traceback = sys.exc_info()
-                reraise(IOError, str(e), traceback)
+                raise_(IOError, str(e), traceback)
 
         self.assertRaises(IOError, with_traceback)
 

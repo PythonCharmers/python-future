@@ -313,10 +313,11 @@ def getexception():
 
 
 if PY3:
-    def reraise(tp, value=None, tb=None):
+    def raise_(tp, value=None, tb=None):
         """
-        Create a raise_ method that allows re-raising exceptions with the cls
-        value and traceback on Python2 & Python3.
+        A function that matches the Python 2.x ``raise`` statement. This
+        allows re-raising exceptions with the cls value and traceback on
+        Python 2 and 3.
         """
         if value is not None and isinstance(tp, Exception):
             raise TypeError("instance exception may not have a separate value")
@@ -329,7 +330,7 @@ if PY3:
 
 else:
     exec('''
-def reraise(tp, value=None, tb=None):
+def raise_(tp, value=None, tb=None):
     raise tp, value, tb
 '''.strip())
 
