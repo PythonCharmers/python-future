@@ -312,17 +312,26 @@ def getexception():
     return sys.exc_info()[1]
 
 
+if PY3:
+    def reraise(tp, value=None, tb=None):
+        """
+        Create a raise_ method that allows re-raising exceptions with the cls
+        value and traceback on Python2 & Python3.
+        """
+        if value is not None and isinstance(tp, Exception):
+            raise TypeError("instance exception may not have a separate value")
+        if value is not None:
+            exc = tp(value)
+        else:
+            exc = tp
+        if exc.__traceback__ is not tb:
+            raise exc.with_traceback(tb)
+
+else:
+    exec('''
 def reraise(tp, value=None, tb=None):
-    """
-    Create a raise_ method that allows re-raising exceptions with the cls
-    value and traceback on Python2 & Python3.
-    """
-    if PY3:
-        if value.__traceback__ is not tb:
-            raise value.with_traceback(tb)
-        raise value
-    else:
-        exec('def reraise(tp, value=None, tb=None):\n raise tp, value, tb')
+    raise tp, value, tb
+'''.strip())
 
 
 def implements_iterator(cls):
