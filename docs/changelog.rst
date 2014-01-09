@@ -7,15 +7,40 @@ What's new
 What's new in version 0.11
 ==========================
 
-More robust implementation of standard_library hooks
-----------------------------------------------------
+``past`` package
+----------------
+
+The python-future project now provides a ``past`` package in addition to the
+``future`` package. The structure reflects that of ``future``, with
+``past.builtins`` and ``past.utils``.
+
+The primary purpose of ``past`` is to ease module-by-module upgrades to
+codebases from Python 2. It can also help with enabling Python 2 libraries to
+support Python 3 without breaking the API they provide. (For example, user code
+may expect these libraries to pass them Python 2's 8-bit strings, rather than
+Python 3's ``bytes`` object.)
+
+Currently ``past.builtins`` provides forward-ports of Python 2's ``str`` and
+``dict`` objects, ``basestring``, and list-producing iterator functions.
+
+
+No import hooks by default with ``future.standard_library``
+-----------------------------------------------------------
 
 ``future.standard_library`` now no longer installs import hooks by default.
 These were bleeding into surrounding code, causing incompatibilities with
 modules like ``requests`` (issue #19). 
 
-Now ``future.standard_library`` provides the context manager
-``enable_hooks()``. Use it as follows::
+*Note*: this is a backward-incompatible change.
+
+This feature may be resurrected in a later version if a safe implementation can be found.
+
+
+New context manager for standard_library hooks
+----------------------------------------------
+
+``future.standard_library`` provides a new context manager called
+``enable_hooks``. Use it as follows::
 
     >>> from future import standard_library
     >>> with standard_library.enable_hooks():
@@ -25,16 +50,8 @@ Now ``future.standard_library`` provides the context manager
     >>> import requests
     >>> # etc.
 
-If you prefer, the following imports are also available directly::
-
-    >>> from future.standard_library import queue
-    >>> from future.standard_library import socketserver
-    >>> from future.standard_library.http.client import HTTPConnection
-
-
 As usual, this has no effect on Python 3.
 
-*Note*: this is a backward-incompatible change.
 
 Simpler imports
 ---------------
@@ -58,8 +75,8 @@ for raising exceptions. Thanks to Joel Tratner for the contribution of
 these.
 
 
-Deprecated ``isinstance`` replacement removed
----------------------------------------------
+Deprecated ``isinstance`` removed
+---------------------------------
 
 ``future`` v0.8.2 briefly introduced a replacement for the ``isinstance``
 builtin. This was then removed and its use was deprecated as of v0.9.0.

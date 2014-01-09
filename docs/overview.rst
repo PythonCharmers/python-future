@@ -3,26 +3,36 @@
 Overview
 ========
 
-``future`` is the missing compatibility layer between Python 3 and Python
-2. It allows you to maintain a single, clean Python 3.x-compatible
-codebase with minimal cruft and run it easily on Python 2 mostly unchanged.
+``python-future`` is the missing compatibility layer between Python 3 and Python
+2.
 
-``future`` comes with ``futurize``, a script that helps you to transition
-to supporting both Python 2 and 3 in a single codebase, module by module.
+It allows you to maintain a single, clean Python 3.x-compatible codebase with
+minimal cruft and run it easily on Python 2 mostly unchanged.
+
+It also provides a tools designed to help with module-by-module upgrades (e.g.
+of libraries) from Python 2 to a compatible 2/3 codebase without breaking the
+existing API.
+
+``python-future`` comes with ``futurize``, a customized 2to3-based script that
+helps you to transition to supporting both Python 2 and 3 in a single codebase,
+module by module, from either Python 2 or Python 3.
 
 .. _features:
 
 Features
 --------
 
--   provides backports and remappings for 16 builtins with different
-    semantics on Py3 versus Py2
--   provides backports and remappings from the Py3 standard library
+-   ``future`` package provides backports and remappings for 16 builtins with
+    different semantics on Py3 versus Py2
+-   ``future`` package provides backports and remappings from the Py3 standard
+    library
+-   ``past`` package provides forward-ports of Python 2 types and resurrects
+    some Python 2 builtins (to aid with per-module code migrations)
 -   300+ unit tests
 -   ``futurize`` script based on ``2to3``, ``3to2`` and parts of
-    ``python-modernize`` for automatic conversion from either Py2 or Py3 to a
+    ``python-modernize``, for automatic conversion from either Py2 or Py3 to a
     clean single-source codebase compatible with Python 2.6+ and Python 3.3+.
--   a consistent set of utility functions and decorators selected from
+-   a comprehensive set of utility functions and decorators selected from
     Py2/3 compatibility interfaces from projects like ``six``, ``IPython``,
     ``Jinja2``, ``Django``, and ``Pandas``.
 
