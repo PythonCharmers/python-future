@@ -3,19 +3,16 @@
 Overview
 ========
 
-``python-future`` is the missing compatibility layer between Python 3 and Python
-2.
 
-It allows you to maintain a single, clean Python 3.x-compatible codebase with
-minimal cruft and run it easily on Python 2 mostly unchanged.
+``python-future`` is the missing compatibility layer between Python 3 and
+Python 2. It allows you to maintain a single, clean Python 3.x-compatible
+codebase with minimal cruft and run it easily on Python 2 mostly unchanged.
 
-It also provides a tools designed to help with module-by-module upgrades (e.g.
-of libraries) from Python 2 to a compatible 2/3 codebase without breaking the
-existing API.
+It provides ``future`` and ``past`` packages with backports and forward ports
+of features from Python 3 and 2. It also comes with ``futurize``, a customized
+2to3-based script that helps you to transition to supporting both Python 2 and
+3 in a single codebase, module by module, from either Python 2 or Python 3.
 
-``python-future`` comes with ``futurize``, a customized 2to3-based script that
-helps you to transition to supporting both Python 2 and 3 in a single codebase,
-module by module, from either Python 2 or Python 3.
 
 .. _features:
 
