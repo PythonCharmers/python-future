@@ -48,8 +48,6 @@ namespace pollution.
 On Python 2, this import line shadows 16 builtins (listed below) to
 provide their Python 3 semantics.
 
-See :ref:`unicode-literals` for more details about this import.
-
 
 .. _explicit-imports:
 
@@ -117,15 +115,13 @@ unicode_literals
 ~~~~~~~~~~~~~~~~
 
 The ``future`` package can be used with or without ``unicode_literals``
-imports, although the ``futurize`` script does imply a preference for this by
-making this change at stage 2 of conversion.
+imports.
 
 There is some contention in the community about whether it is advisable
 to import ``unicode_literals`` from ``__future__`` in a Python 2/3
-compatible codebase.
-
-To avoid confusion, we recommend using ``unicode_literals`` everywhere
-across a code-base or not at all, instead of turning on for only some modules.
+compatible codebase. To avoid confusion, we recommend using
+``unicode_literals`` everywhere across a code-base or not at all, instead of
+turning on for only some modules.
 
 If you use ``unicode_literals``, testing and debugging your code with
 *Python 3* first is probably the easiest way to fix your code. After this,
@@ -178,7 +174,6 @@ Drawbacks
 
        ### Module: mypaths.py
 
-       from __future__ import unicode_literals
        ...
        def unix_style_path(path):
            return path.replace('\\', '/')
@@ -186,18 +181,18 @@ Drawbacks
 
        ### User code:
 
-       >>> path1 = b'\\Users\\Ed'
+       >>> path1 = '\\Users\\Ed'
        >>> unix_style_path(path1)
        u'/Users/ed'
 
-   On Python 2, adding the ``unicode_literals`` import has changed the return type
-   of the ``unix_style_path`` function from ``str`` to ``unicode``, which was
-   probably unintended.
+   On Python 2, adding a ``unicode_literals`` import to ``mypaths.py`` would
+   change the return type of the ``unix_style_path`` function from ``str`` to
+   ``unicode``, which is difficult to anticipate and probably unintended.
    
-   The counterargument is that this code is simply broken, in a portability
+   The counterargument is that this code is broken, in a portability
    sense; we see this from Python 3 raising a ``TypeError`` upon passing the
-   function a byte-string. The code needs to be changed anyway to distinguish
-   between byte-strings and unicode strings.
+   function a byte-string. The code needs to be changed to make explicit
+   whether the ``path`` argument is to be a byte string or a unicode string.
 
 3. With ``unicode_literals`` in effect, there is no way to specify a native
    string literal (``str`` type on both platforms). This can be worked around as follows::
@@ -213,11 +208,10 @@ Drawbacks
    although this incurs a performance penalty (a function call and, on Py3, a
    ``decode`` method call.)
 
-   This is somewhat awkward because various Python standard library APIs
-   require a native string to be passed on both Py2 and Py3. (See
-   :ref:`stdlib-incompatibilities`_) for some examples. Another example is the
-   WSGI spec, which requires header values to be the ``str`` type on both Py2
-   and Py3. 
+   This is somewhat awkward because various Python library APIs
+   (standard and non-standard) require a native string to be passed on both Py2
+   and Py3. (See :ref:`stdlib-incompatibilities`_ for some examples. WSGI
+   dictionaries are another.)
 
 3. If a codebase already explicitly marks up all text with ``u''`` prefixes,
    and if support for Python versions 3.0-3.2 can be dropped, then
@@ -244,6 +238,10 @@ Drawbacks
           1380     except IOError:
        
        UnicodeEncodeError: 'ascii' codec can't encode character u'\xf6' in position 71: ordinal not in range(128)
+
+See `this Stack Overflow thread
+<http://stackoverflow.com/questions/809796/any-gotchas-using-unicode-literals-in-python-2-6>`_
+for other gotchas.
 
 
 Others' perspectives
@@ -294,7 +292,11 @@ strange side effects in Python 2 (and thanks Armin for raising the issue). This
 is one of the key reasons I backed Armin's PEP 414."
 - Nick Coghlan
 
-"Yeah, one of the nuisances of the WSGI spec is that the header values IIRC are the str or StringType on both py2 and py3. With unicode_literals this causes hard-to-spot bugs, as some WSGI servers might be more tolerant than others, but usually using unicode in python 2 for WSGI headers will cause the response to fail"
+"Yeah, one of the nuisances of the WSGI spec is that the header values IIRC are
+the str or StringType on both py2 and py3. With unicode_literals this causes
+hard-to-spot bugs, as some WSGI servers might be more tolerant than others, but
+usually using unicode in python 2 for WSGI headers will cause the response to
+fail."
 - Antti Haapala
 
 
