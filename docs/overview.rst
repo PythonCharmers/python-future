@@ -37,8 +37,7 @@ together with Python's built-in ``__future__`` module. For example, this
 code behaves the same way on Python 2.6/2.7 after these imports as it does
 on Python 3::
     
-    from __future__ import (absolute_import, division,
-                            print_function, unicode_literals)
+    from __future__ import absolute_import, division, print_function
     from future import bytes, str, open, super, zip, round, input, int
 
     # Backported Py3 bytes object

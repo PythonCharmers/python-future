@@ -22,7 +22,7 @@ If you would prefer the latest development version, it is available `here <https
 If you are writing code from scratch
 ------------------------------------
 
-The easiest way is to start each module with these lines::
+The easiest way is to start each new module with these lines::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
