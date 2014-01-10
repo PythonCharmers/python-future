@@ -22,7 +22,7 @@ Credits
 Licensing
 ---------
 The software is distributed under an MIT licence. The text is as follows
-(from LICENSE.txt):
+(from LICENSE.txt)::
 
     Copyright (c) 2013-2014 Python Charmers Pty Ltd, Australia
     

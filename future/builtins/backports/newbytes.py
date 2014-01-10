@@ -2,19 +2,7 @@
 Pure-Python implementation of a Python 3-like bytes object for Python 2.
 
 Why do this? Without it, the Python 2 bytes object is a very, very
-different beast to the Python 3 bytes object. Running the
-test_bytes_from_py33.py script from the Python 3.3 test suite using
-Python 2 with its default str-aliased bytes object (after the appropriate
-import fixes, and using the backported test.support module) yields this:
-    ------------------------------------------------------------------
-    Ran 203 tests in 0.214s
-    
-    FAILED (failures=31, errors=55, skipped=1)
-    ------------------------------------------------------------------
-when running
-
-    $ python -m future.tests.test_bytes_from_py33
-
+different beast to the Python 3 bytes object.
 """
 
 from collections import Iterable

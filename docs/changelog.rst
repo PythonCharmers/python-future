@@ -14,8 +14,8 @@ More robust implementation of standard_library hooks
 These were bleeding into surrounding code, causing incompatibilities with
 modules like ``requests`` (issue #19). 
 
-Now ``future.standard_library`` provides the context manager
-``enable_hooks()``. Use it as follows::
+``future.standard_library`` now provides a context manager
+``enable_hooks``. Use it as follows::
 
     >>> from future import standard_library
     >>> with standard_library.enable_hooks():
@@ -25,28 +25,31 @@ Now ``future.standard_library`` provides the context manager
     >>> import requests
     >>> # etc.
 
-If you prefer, the following imports are also available directly::
+``future.standard_library`` still also supports the ``install_hooks`` and
+``remove_hooks`` functions as an alternative.
 
-    >>> from future.standard_library import queue
-    >>> from future.standard_library import socketserver
-    >>> from future.standard_library.http.client import HTTPConnection
+.. If you prefer, the following imports are also available directly::
+.. 
+..     >>> from future.standard_library import queue
+..     >>> from future.standard_library import socketserver
+..     >>> from future.standard_library.http.client import HTTPConnection
 
 
-As usual, this has no effect on Python 3.
+As usual, these have no effect on Python 3.
 
 *Note*: this is a backward-incompatible change.
 
-Simpler imports
----------------
-
-It is now possible to import builtins directly from the ``future``
-namespace as follows::
-
-    >>> from future import *
-    
-or just those you need::
-
-    >>> from future import open, str
+.. Simpler imports
+.. ---------------
+.. 
+.. It is now possible to import builtins directly from the ``future``
+.. namespace as follows::
+.. 
+..     >>> from future import *
+..     
+.. or just those you need::
+.. 
+..     >>> from future import open, str
 
 
 Utility functions for raising exceptions with a traceback portably

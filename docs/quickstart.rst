@@ -90,7 +90,6 @@ be accessed under their Python 3 names and locations in Python 2::
 :mod:`future` also includes backports for these stdlib modules from Py3
 that were heavily refactored versus Py2::
     
-    with standard_library.enable_hooks():
         import html
         import html.entities
         import html.parser
@@ -102,7 +101,6 @@ that were heavily refactored versus Py2::
 These modules are currently not supported, but we aim to support them in
 the future::
     
-    with standard_library.enable_hooks():
         import http.cookies
         import http.cookiejar
 
