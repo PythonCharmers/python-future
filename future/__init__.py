@@ -83,8 +83,8 @@ The software is distributed under an MIT licence. See LICENSE.txt.
 
 """
 
-from future import standard_library, utils
-from future.builtins import *
+# from future import standard_library, utils
+# from future.builtins import *
 
 __title__ = 'future'
 __author__ = 'Ed Schofield'
