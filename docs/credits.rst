@@ -14,8 +14,10 @@ Credits
             decorators are from Jinja2.
           - The ``exec_`` function and some others in ``future.utils``
             are from the ``six`` module by Benjamin Peterson.
-          - Documentation is generated using ``sphinx`` using an
-            adaptation of Armin Ronacher's stylesheets from Jinja2.
+          - The ``raise_`` and ``raise_with_traceback`` functions were
+            contributed by Jeff Tratner.
+          - Documentation is generated with ``sphinx`` using the
+            ``sphinx-bootstrap`` theme.
 
 .. _licence:
 

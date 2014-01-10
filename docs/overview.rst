@@ -18,7 +18,7 @@ Features
 -   provides backports and remappings for 16 builtins with different
     semantics on Py3 versus Py2
 -   provides backports and remappings from the Py3 standard library
--   300+ unit tests
+-   330+ unit tests
 -   ``futurize`` script based on ``2to3``, ``3to2`` and parts of
     ``python-modernize`` for automatic conversion from either Py2 or Py3 to a
     clean single-source codebase compatible with Python 2.6+ and Python 3.3+.

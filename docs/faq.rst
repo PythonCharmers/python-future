@@ -117,10 +117,11 @@ Maturity
 Is it tested?
 -------------
 
-``future`` currently has 300+ unit tests.  In general, the ``future`` package
-itself is in good shape, whereas the ``futurize`` script for automatic porting
-is incomplete and imperfect. (Chances are it will require some manual cleanup
-afterwards.)
+``future`` is used by ``mezzanine``, among other projects. Currently
+``future`` has 330+ unit tests.  In general, the ``future`` package
+itself is in good shape, whereas the ``futurize`` script for automatic
+porting is incomplete and imperfect. (Chances are it will require some
+manual cleanup afterwards.)
     
 Is the API stable?
 ------------------

@@ -47,21 +47,12 @@ Credits
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
-:Others:  - The backported ``super()`` and ``range()`` functions are
-            derived from Ryan Kelly's ``magicsuper`` module and Dan
-            Crosta's ``xrange`` module.
-          - The ``futurize`` script uses ``lib2to3`` and fixers from
-            Joe Amenta's ``lib3to2`` and Armin Ronacher's ``python-modernize``.
-          - The ``python_2_unicode_compatible`` decorator is from
-            Django. The ``implements_iterator`` and ``with_metaclass``
-            decorators are from Jinja2.
-          - Documentation is generated using ``sphinx`` and styled using
-            ``sphinx-bootstrap-theme``.
+:Others:  See docs/credits.rst or http://python-future.org/credits.html
 
 
 Licensing
 ---------
-Copyright 2013 Python Charmers Pty Ltd, Australia.
+Copyright 2013-2014 Python Charmers Pty Ltd, Australia.
 The software is distributed under an MIT licence. See LICENSE.txt.
 
 """
