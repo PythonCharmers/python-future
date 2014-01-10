@@ -476,6 +476,24 @@ def native(obj):
         return obj
 
 
+# Implementation of exec_ is from ``six``:
+if PY3:
+    import builtins
+    exec_ = getattr(builtins, "exec")
+else:
+    def exec_(code, globs=None, locs=None):
+        """Execute code in a namespace."""
+        if globs is None:
+            frame = sys._getframe(1)
+            globs = frame.f_globals
+            if locs is None:
+                locs = frame.f_locals
+            del frame
+        elif locs is None:
+            locs = globs
+        exec("""exec code in globs, locs""")
+
+
 def old_div(a, b):
     """
     Equivalent to ``a / b`` on Python 2 without ``from __future__ import
