@@ -339,6 +339,8 @@ def install_hooks():
     if not any([hasattr(hook, 'RENAMER') for hook in sys.meta_path]):
         sys.meta_path.append(newhook)
 
+# Deprecated: for backward compatibility with version 0.10:
+enable_hooks = install_hooks
 
 def remove_hooks():
     if not utils.PY3:
@@ -347,19 +349,19 @@ def remove_hooks():
             if hasattr(hook, 'RENAMER'):
                 del sys.meta_path[i]
 
-# For backward compatibility with version 0.10:
+# Deprecated: for backward compatibility with version 0.10:
 disable_hooks = remove_hooks
 
 
 @contextlib.contextmanager
 def suspend_hooks():
-    disable_hooks()
+    remove_hooks()
     try:
         yield
     except Exception as e:
         raise e
     finally:
-        enable_hooks()
+        install_hooks()
 
 
 if not utils.PY3:

@@ -60,6 +60,10 @@ class TestStandardLibraryRenames(CodeHandler):
         import builtins
 
     def test_disable_hooks(self):
+        """
+        Tests the old (deprecated) names. These deprecated aliases should be
+        removed by version 1.0
+        """
         example_PY2_check = False
 
         standard_library.enable_hooks()
@@ -78,6 +82,32 @@ class TestStandardLibraryRenames(CodeHandler):
         else:
             self.assertFalse(example_PY2_check)
         standard_library.enable_hooks()
+        # The import should succeed again now:
+        import builtins
+        self.assertTrue(len(old_meta_path) == len(sys.meta_path))
+
+    def test_remove_hooks(self):
+        """
+        As above, but with the new names
+        """
+        example_PY2_check = False
+
+        standard_library.install_hooks()
+        old_meta_path = copy.copy(sys.meta_path)
+
+        standard_library.remove_hooks()
+        self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
+
+        # An example of fragile import code that we don't want to break:
+        try:
+            import builtins
+        except ImportError:
+            example_PY2_check = True
+        if utils.PY2:
+            self.assertTrue(example_PY2_check)
+        else:
+            self.assertFalse(example_PY2_check)
+        standard_library.install_hooks()
         # The import should succeed again now:
         import builtins
         self.assertTrue(len(old_meta_path) == len(sys.meta_path))
