@@ -2,10 +2,32 @@ What's new
 **********
 
 
+.. whats-new-0.10.2:
+
+What's new in version 0.10.2
+============================
+
+Refactoring of standard_library hooks
+-------------------------------------
+
+The functions ``enable_hooks()`` and ``disable_hooks()`` have been
+deprecated in favour of the names ``install_hooks()`` and
+``remove_hooks()``.
+
+
+Utility functions for raising exceptions with a traceback portably
+------------------------------------------------------------------
+
+The functions ``raise_with_traceback()`` and ``raise_`` were added to
+``future.utils`` to offer either the Python 3.x or Python 2.x behaviour
+for raising exceptions. Thanks to Joel Tratner for the contribution of
+these.
+
+
 .. whats-new-0.10:
 
-What's new in version 0.10.x
-============================
+What's new in version 0.10
+==========================
 
 Backported ``dict`` type
 ------------------------
@@ -13,8 +35,8 @@ Backported ``dict`` type
 ``future.builtins`` now provides a Python 2 ``dict`` subclass whose
 :func:`keys`, :func:`values`, and :func:`items` methods produce
 memory-efficient iterators. On Python 2.7, these also have the same set-like
-view behaviour as on Python 3. This can streamline code needing to iterate over
-large dictionaries. For example::
+view behaviour as on Python 3. This can streamline code needing to iterate
+over large dictionaries. For example::
 
     from __future__ import print_function
     from future.builtins import dict, range

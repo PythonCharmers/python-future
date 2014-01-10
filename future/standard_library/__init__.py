@@ -31,11 +31,11 @@ names on Python 2.)
 
 To turn off the import hooks, use::
 
-    standard_library.disable_hooks()
+    standard_library.remove_hooks()
 
 and to turn it on again, use::
 
-    standard_library.enable_hooks()
+    standard_library.install_hooks()
 
 This is a cleaner alternative to this idiom (see
 http://docs.pythonsprints.com/python3_porting/py-porting.html)::

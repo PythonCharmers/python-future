@@ -5,8 +5,7 @@ Overview
 
 ``future`` is the missing compatibility layer between Python 3 and Python
 2. It allows you to maintain a single, clean Python 3.x-compatible
-codebase with minimal cruft and run it easily on Python 2 without further
-modification.
+codebase with minimal cruft and run it easily on Python 2 mostly unchanged.
 
 ``future`` comes with ``futurize``, a script that helps you to transition
 to supporting both Python 2 and 3 in a single codebase, module by module.
@@ -16,7 +15,7 @@ to supporting both Python 2 and 3 in a single codebase, module by module.
 Features
 --------
 
--   provides backports and remappings for 15 builtins with different
+-   provides backports and remappings for 16 builtins with different
     semantics on Py3 versus Py2
 -   provides backports and remappings from the Py3 standard library
 -   300+ unit tests
@@ -34,24 +33,12 @@ Code examples
 -------------
 
 ``future`` is designed to be imported at the top of each Python module
-together with Python's built-in ``__future__`` module like this::
-
-    from __future__ import (absolute_import, division,
-                            print_function, unicode_literals)
-    from future import standard_library
-    from future.builtins import *
+together with Python's built-in ``__future__`` module. For example, this
+code behaves the same way on Python 2.6/2.7 after these imports as it does
+on Python 3::
     
-followed by standard Python 3 code. The imports have no effect on Python
-3 but allow the code to run mostly unchanged on Python 3 and Python 2.6/2.7.
-
-For example, this code behaves the same way on Python 2.6/2.7 after these
-imports as it normally does on Python 3::
-    
-    # Support for renamed standard library modules via import hooks
-    from http.client import HttpConnection
-    from itertools import filterfalse
-    import html.parser
-    import queue
+    from __future__ import absolute_import, division, print_function
+    from future import bytes, str, open, super, zip, round, input, int
 
     # Backported Py3 bytes object
     b = bytes(b'ABCD')
@@ -99,8 +86,20 @@ imports as it normally does on Python 3::
     # Compatible output from isinstance() across Py2/3:
     assert isinstance(2**64, int)        # long integers
     assert isinstance(u'blah', str)
-    assert isinstance('blah', str)       # with unicode_literals in effect
-    assert isinstance(b'bytestring', bytes)
+    assert isinstance('blah', str)       # if unicode_literals is in effect
+
+There is also support for renamed standard library modules in the form of import hooks::
+
+    from future import standard_library
+
+    from http.client import HttpConnection
+    from itertools import filterfalse
+    import html.parser
+    import queue
+
+To disable these at the end of a module, use::
+
+    standard_library.remove_hooks()
 
 
 Next steps

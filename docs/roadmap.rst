@@ -22,8 +22,8 @@ futurize script
 future package
 --------------
 
-- Add more tests for bytes ... preferably all from test_bytes.py in Py3.3.
-- Add disable_hooks() and enable_hooks() as functions in the
+- [Done] Add more tests for bytes ... preferably all from test_bytes.py in Py3.3.
+- [Done] Add remove_hooks() and install_hooks() as functions in the
   :mod:`future.standard_library` module. (See the uprefix module for how
   to do this.)
 

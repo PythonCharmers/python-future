@@ -39,16 +39,17 @@ then the fifth test fails too::
 After importing the builtins from ``future``, all these tests pass on
 Python 2 as on Python 3::
 
-    >>> from __future__ import unicode_literals
     >>> from future.builtins import bytes, int, str
 
     >>> assert isinstance(10, int)
     >>> assert isinstance(10**100, int)
     >>> assert isinstance(b'my byte-string', bytes)
     >>> assert isinstance(u'unicode string 1', str)
-    >>> assert isinstance('unicode string 2', str)
 
-Note that the last test requires that ``unicode_literals`` be imported to succeed.
+However, note that the last test requires that ``unicode_literals`` be imported to succeed.::
+
+    >>> from __future__ import unicode_literals
+    >>> assert isinstance('unicode string 2', str)
 
 This works because the backported types ``int``, ``bytes`` and ``str``
 have metaclasses that override ``__instancecheck__``. See `PEP 3119
