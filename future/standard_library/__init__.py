@@ -208,7 +208,7 @@ class RenameImport(object):
     # Different RenameImport classes are created when importing this module from
     # different source files. This causes isinstance(hook, RenameImport) checks
     # to produce inconsistent results. We add this RENAMER attribute here so
-    # disable_hooks() and enable_hooks() can find instances of these classes
+    # remove_hooks() and install_hooks() can find instances of these classes
     # easily:
     RENAMER = True
 
@@ -325,7 +325,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
         ]
 
 
-def enable_hooks():
+def install_hooks():
     if utils.PY3:
         return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
@@ -340,12 +340,15 @@ def enable_hooks():
         sys.meta_path.append(newhook)
 
 
-def disable_hooks():
+def remove_hooks():
     if not utils.PY3:
         # Loop backwards, so deleting items keeps the ordering:
         for i, hook in list(enumerate(sys.meta_path))[::-1]:
             if hasattr(hook, 'RENAMER'):
                 del sys.meta_path[i]
+
+# For backward compatibility with version 0.10:
+disable_hooks = remove_hooks
 
 
 @contextlib.contextmanager
@@ -360,4 +363,4 @@ def suspend_hooks():
 
 
 if not utils.PY3:
-    enable_hooks()
+    install_hooks()
