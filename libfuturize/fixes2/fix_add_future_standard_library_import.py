@@ -19,4 +19,4 @@ class FixAddFutureStandardLibraryImport(fixer_base.BaseFix):
     def transform(self, node, results):
         # TODO: add a blank line between any __future__ imports and this?
         touch_import_top(u'future', u'standard_library', node)
-
+        # TODO: also add standard_library.install_hooks()
