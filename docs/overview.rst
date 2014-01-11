@@ -91,6 +91,7 @@ on Python 3::
 There is also support for renamed standard library modules in the form of import hooks::
 
     from future import standard_library
+    standard_library.install_hooks()
 
     from http.client import HttpConnection
     from itertools import filterfalse

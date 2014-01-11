@@ -75,6 +75,7 @@ via import hooks, allowing almost all moved standard library modules to
 be accessed under their Python 3 names and locations in Python 2::
     
     from future import standard_library
+    standard_library.install_hooks()
     
     import socketserver
     import queue
@@ -110,6 +111,11 @@ the future::
 
 If you need one of these, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.
+
+It is a good idea to disable the import hooks again after use, with::
+
+    standard_library.remove_hooks()
+
 
 For more information on interfaces that have changed in the standard library
 between Python 2 and Python 3, see :ref:`stdlib-incompatibilities`.
