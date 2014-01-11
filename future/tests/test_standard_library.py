@@ -12,7 +12,6 @@ import tempfile
 import os
 import copy
 
-from future.standard_library import RENAMES, REPLACED_MODULES
 from future.tests.base import CodeHandler
 
 
@@ -21,6 +20,7 @@ class TestStandardLibraryRenames(CodeHandler):
     def setUp(self):
         self.interpreter = 'python'
         self.tempdir = tempfile.mkdtemp() + os.path.sep
+        standard_library.install_hooks()
 
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
@@ -28,10 +28,10 @@ class TestStandardLibraryRenames(CodeHandler):
         Tests whether all of the old imports in RENAMES are accessible
         under their new names.
         """
-        for (oldname, newname) in RENAMES.items():
+        for (oldname, newname) in standard_library.RENAMES.items():
             if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
                 continue
-            if newname in REPLACED_MODULES:
+            if newname in standard_library.REPLACED_MODULES:
                 # Skip this check for e.g. the stdlib's ``test`` module,
                 # which we have replaced completely.
                 continue
@@ -66,11 +66,14 @@ class TestStandardLibraryRenames(CodeHandler):
         """
         example_PY2_check = False
 
-        standard_library.enable_hooks()
+        standard_library.enable_hooks()   # deprecated name
         old_meta_path = copy.copy(sys.meta_path)
 
         standard_library.disable_hooks()
-        self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
+        if utils.PY2:
+            self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
+        else:
+            self.assertTrue(len(old_meta_path) == len(sys.meta_path))
 
         # An example of fragile import code that we don't want to break:
         try:
@@ -96,7 +99,10 @@ class TestStandardLibraryRenames(CodeHandler):
         old_meta_path = copy.copy(sys.meta_path)
 
         standard_library.remove_hooks()
-        self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
+        if utils.PY2:
+            self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
+        else:
+            self.assertTrue(len(old_meta_path) == len(sys.meta_path))
 
         # An example of fragile import code that we don't want to break:
         try:
@@ -308,3 +314,4 @@ class TestStandardLibraryRenames(CodeHandler):
 
 if __name__ == '__main__':
     unittest.main()
+    standard_library.remove_hooks()
