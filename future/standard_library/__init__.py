@@ -337,13 +337,13 @@ class hooks(object):
     >>> import requests     # incompatible with ``future``'s standard library hooks
     """
     def __enter__(self):
-        print('Entering CM')
+        # print('Entering CM')
         self.hooks_were_installed = detect_hooks()
         install_hooks()
         return self
 
     def __exit__(self, *args):
-        print('Exiting CM')
+        # print('Exiting CM')
         if not self.hooks_were_installed:
             remove_hooks()
 
@@ -372,8 +372,8 @@ class suspend_hooks(object):
 
 
 def install_hooks():
-    print('sys.meta_path was: {}'.format(sys.meta_path))
-    print('Installing hooks ...')
+    # print('sys.meta_path was: {}'.format(sys.meta_path))
+    # print('Installing hooks ...')
     if utils.PY3:
         return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
@@ -386,7 +386,7 @@ def install_hooks():
     newhook = RenameImport(RENAMES)
     if not detect_hooks():
         sys.meta_path.append(newhook)
-    print('sys.meta_path is now: {}'.format(sys.meta_path))
+    # print('sys.meta_path is now: {}'.format(sys.meta_path))
 
 
 def enable_hooks():
@@ -401,14 +401,14 @@ def remove_hooks():
     """
     Use to remove the ``future.standard_library`` import hooks.
     """
-    print('sys.meta_path was: {}'.format(sys.meta_path))
-    print('Uninstalling hooks ...')
+    # print('sys.meta_path was: {}'.format(sys.meta_path))
+    # print('Removing hooks ...')
     if not utils.PY3:
         # Loop backwards, so deleting items keeps the ordering:
         for i, hook in list(enumerate(sys.meta_path))[::-1]:
             if hasattr(hook, 'RENAMER'):
                 del sys.meta_path[i]
-    print('sys.meta_path is now: {}'.format(sys.meta_path))
+    # print('sys.meta_path is now: {}'.format(sys.meta_path))
 
 
 def disable_hooks():
