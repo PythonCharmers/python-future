@@ -141,8 +141,8 @@ Benefits
 --------
 
 1. String literals are unicode on Python 3. Making them unicode on Python 2
-   leads to more consistency of your string types the two runtimes. This can
-   make it easier to understand and debug your code.
+   leads to more consistency of your string types across the two
+   runtimes. This can make it easier to understand and debug your code.
    
 2. Code without ``u''`` prefixes is cleaner, one of the claimed advantages
    of Python 3. Even though some unicode strings would require a function
