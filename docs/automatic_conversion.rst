@@ -3,20 +3,21 @@
 Automatic conversion with ``futurize``
 ======================================
 
-The ``future`` source tree includes an experimental script called
-``futurize`` to aid in making either Python 2 code or Python 3 code
-compatible with both platforms using the :mod:`future` module. It is
-based on 2to3 and uses fixers from ``lib2to3``, ``lib3to2``, and
-``python-modernize``.
+The ``future`` source tree includes a script called ``futurize`` to aid in
+making either Python 2 code or Python 3 code compatible with both platforms
+using the :mod:`future` module. It is based on 2to3 and uses fixers from
+``lib2to3``, ``lib3to2``, and ``python-modernize``.
 
-For Python 2 code (the default), it runs the code through all the
-appropriate 2to3 fixers to turn it into valid Python 3 code, and then
-adds ``__future__`` and ``future`` package imports. For Python 3 code
-(with the ``--from3`` command-line option), it fixes Py3-only syntax
-(e.g.  metaclasses) and adds ``__future__`` and ``future`` imports to the
-top of each module. In both cases, the result should be relatively clean
-Py3-style code semantics that (hopefully) runs unchanged on both Python 2
-and Python 3.
+For Python 2 code (the default), it runs the code through all the appropriate
+2to3 fixers to turn it into valid Python 3 code, and then adds ``__future__``
+and ``future`` package imports.
+
+For conversions from Python 3 code (with the ``--from3`` command-line option),
+it fixes Py3-only syntax (e.g.  metaclasses) and adds ``__future__`` and
+``future`` imports to the top of each module.
+
+In both cases, the result should be relatively clean Py3-style code
+that runs mostly unchanged on both Python 2 and Python 3.
 
 .. _forwards-conversion:
 
@@ -58,10 +59,11 @@ Run with::
 	futurize --stage1
 
 This applies fixes that modernize Python 2 code without changing the effect of
-the code. With luck, this will not introduce any bugs into the code. The
-changes are those that bring the Python code up-to-date without breaking Py2
-compatibility. The resulting code will be perfectly good Python 2.x code plus
-``__future__`` imports from the following set::
+the code. With luck, this will not introduce any bugs into the code, or will at
+least be trivial to fix. The changes are those that bring the Python code
+up-to-date without breaking Py2 compatibility. The resulting code will be
+modern Python 2.6-compatible code plus ``__future__`` imports from the
+following set::
 
     from __future__ import absolute_import
     from __future__ import division
@@ -70,6 +72,9 @@ compatibility. The resulting code will be perfectly good Python 2.x code plus
 Only those ``__future__`` imports deemed necessary will be added unless
 the ``--all-imports`` command-line option is passed to ``futurize``, in
 which case they are all added.
+
+The ``from __future__ import unicode_literals`` declaration is not added
+during stage 1.
 
 The changes include::
 
@@ -129,16 +134,18 @@ Run with::
 
     futurize —-stage2 myfolder/*.py
 
-This adds three further imports::
+This adds these further imports to each module::
 
     from __future__ import unicode_literals
     from future import standard_library
-    from future.builtins import *
+    from future.builtins import open
+    from future.builtins import str   # etc. for the builtins used in the module
 
-to each module and makes other changes needed to support Python 3, such as
+and makes other changes needed to support Python 3, such as
 renaming standard-library imports to their Py3 names.
 
-All strings are then unicode (on Py2 as on Py3) unless explicitly marked with a ``b''`` prefix.
+All strings are then implicitly unicode (on Py2 as on Py3) unless they were previously
+explicitly marked with a ``b''`` prefix.
 
 Ideally the output of this stage should not be a ``SyntaxError`` on either
 Python 3 or Python 2.
