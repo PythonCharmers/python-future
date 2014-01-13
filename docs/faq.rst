@@ -65,7 +65,8 @@ Here are some quotes:
   difficulties associated with the Python 3 transition (like
   distinguishing their 8-bit text strings from their binary data). They
   shouldn't be punished with additional code changes ..." from `PEP 414
-  <http://www.python.org/dev/peps/pep-0414/>`_ by Nick Coghlan.
+  <http://www.python.org/dev/peps/pep-0414/>`_ by Armin Ronacher and Nick
+  Coghlan.
 
 
 Can't I just roll my own Py2/3 compatibility layer?
