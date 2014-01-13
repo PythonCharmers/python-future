@@ -240,12 +240,12 @@ effort.
 
 
 Platform and version support
-----------------------------
+============================
 
 .. _supported-versions:
 
 Which versions of Python does ``future`` support?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------------
 
 Python 2.6, 2.7, and 3.3+ only.
 
@@ -257,8 +257,9 @@ close the remaining gap between Python 3 and 2.6 / 2.7.
 
 Python 3.2 could perhaps be supported too, although the illegal unicode
 literal ``u'...'`` syntax may be inconvenient to work around. The Py3.2
-userbase is very small, however. Please let us know via GitHub issue #29
-if you would like to see Py3.2 support.
+userbase is very small, however. Please let us know via GitHub `issue #29
+<https://github.com/PythonCharmers/python-future/issues/29>`_ if you
+would like to see Py3.2 support.
 
 
 Do you support Pypy?
