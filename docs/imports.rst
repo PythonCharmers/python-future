@@ -151,14 +151,14 @@ Benefits
    would be much lower than with using ``u''`` prefixes in the absence of
    ``unicode_literals``.
 
-3. The diff for a Python 2 -> 2/3 port may be smaller, less noisy, and
-   easier to review with ``unicode_literals`` than if an explicit ``u''``
-   prefix is added to every unadorned string literal.
+3. The diff for port to a Python 2/3-compatible codebase may be smaller,
+   less noisy, and easier to review with ``unicode_literals`` than if an
+   explicit ``u''`` prefix is added to every unadorned string literal.
 
 4. If support for Python 3.2 is required (e.g. for Ubuntu 12.04 LTS or
    Debian wheezy), ``u''`` prefixes are a ``SyntaxError``, making
    ``unicode_literals`` the only option for a Python 2/3 compatible
-   codebase.
+   codebase. [However, ``future`` doesn't support Python 3.0-3.2 anyway.]
 
 
 Drawbacks
