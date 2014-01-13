@@ -256,9 +256,9 @@ Py2/3 compatible code. ``future`` leverages these features and aims to
 close the remaining gap between Python 3 and 2.6 / 2.7.
 
 Python 3.2 could perhaps be supported too, although the illegal unicode
-literal ``u'...'`` syntax may be a drawback. The Py3.2 userbase is
-very small, however. Please let us know if you would like to see Py3.2
-support.
+literal ``u'...'`` syntax may be inconvenient to work around. The Py3.2
+userbase is very small, however. Please let us know via GitHub issue #29
+if you would like to see Py3.2 support.
 
 
 Do you support Pypy?
