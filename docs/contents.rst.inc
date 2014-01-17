@@ -6,8 +6,8 @@ Contents:
 
    overview
    quickstart
-   imports
    what_else
+   imports
    automatic_conversion
    porting
    standard_library_incompatibilities

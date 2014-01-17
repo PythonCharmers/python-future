@@ -7,51 +7,9 @@ Python 3 dictionaries have ``.keys()``, ``.values()``, and ``.items()``
 methods which return memory-efficient set-like iterator objects, not lists.
 (See `PEP 3106 <http://www.python.org/dev/peps/pep-3106/>`_.)
 
-``future.builtins`` provides a Python 2 ``dict`` subclass whose :func:`keys`,
-:func:`values`, and :func:`items` methods return iterators. On Python 2.7,
-these iterators have the same set-like view behaviour as dictionaries in
-Python 3. This can streamline code needing to iterate over large dictionaries.
-For example::
-
-    from __future__ import print_function
-    from future.builtins import dict, range
-    
-    # Memory-efficient construction:
-    d = dict((i, i**2) for i in range(10**7))
-    
-    assert not isinstance(d.items(), list)
-    
-    # Because items() is memory-efficient, so is this:
-    d2 = dict((i_squared, i) for (i, i_squared) in d.items())
-
-
-On Python 2.6, these methods currently return iterators that do not support the
-new Py3 set-like behaviour.
-
-
-Memory-efficiency and alternatives
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you already have large native dictionaries, the downside to wrapping them in a
-``dict`` call is that memory is copied (on both Py3 and with
-``future.builtins.dict``). For example::
-
-    # Currently, this allocates and then frees a large amount of temporary
-    # memory:
-    d = dict({i: i**2 for i in range(10**7)})
-
-If dictionary methods like ``values`` and ``items`` are called only once, this
-obviously negates the memory benefits the overridden methods offer with not
-creating temporary lists.
-
-The memory-efficient (and CPU-efficient) alternatives are either::
-
-- to construct a dictionary from an iterator -- as above with the generator expression ``dict((i, i**2) for i in range(10**7)``;
-- to construct an empty dictionary with a ``dict()`` call using ``future.builtins.dict`` (rather than ``{}``) and update it incrementally;
-- to use 
-
-If your dictionaries are small or performance is not critical, you can of course stick
-with standard Python 3 code in your Py2/3 compatible codebase::
+If your dictionaries are small, performance is not critical, and you don't need
+the set-like behaviour of iterator objects from Python 3, you can of course
+stick with standard Python 3 code in your Py2/3 compatible codebase::
     
     # Assuming d is a native dict ...
 
@@ -64,13 +22,61 @@ with standard Python 3 code in your Py2/3 compatible codebase::
     for value in d.values():
         # code here
 
-In this case there will be memory overhead of list creation for each call of
+In this case there will be memory overhead of list creation for each call to
 ``items``, ``values`` or ``keys``.
 
-If your dictionaries are large, or if you want to use the Python 3
-set-like behaviour on both Py3 and Python 2.7, then you can instead use the
-``viewkeys`` etc. functions from :mod:`future.utils`, passing in regular
-dictionaries::
+For improved efficiency, ``future.builtins`` provides a Python 2 ``dict``
+subclass whose :func:`keys`, :func:`values`, and :func:`items` methods return
+iterators on all versions of Python >= 2.6. On Python 2.7, these iterators also
+have the same set-like view behaviour as dictionaries in Python 3. This can
+streamline code that iterates over large dictionaries. For example::
+
+    from __future__ import print_function
+    from future.builtins import dict, range
+    
+    # Memory-efficient construction:
+    d = dict((i, i**2) for i in range(10**7))
+    
+    assert not isinstance(d.items(), list)
+    
+    # Because items() is memory-efficient, so is this:
+    d2 = dict((v, k) for (k, v) in d.items())
+
+
+On Python 2.6, these methods currently return iterators but do not support the
+new Py3 set-like behaviour.
+
+As usual, on Python 3 ``future.builtins.dict`` is just the built-in ``dict``
+class.
+
+
+Memory-efficiency and alternatives
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you already have large native dictionaries, the downside to wrapping them in
+a ``dict`` call is that memory is copied (on both Py3 and with
+``future.builtins.dict``). For example::
+
+    # Currently, this allocates and then frees a large amount of temporary
+    # memory:
+    d = dict({i: i**2 for i in range(10**7)})
+
+If dictionary methods like ``values`` and ``items`` are called only once, this
+obviously negates the memory benefits offered by the overridden methods through
+not creating temporary lists.
+
+The memory-efficient (and CPU-efficient) alternatives are:
+
+- to construct a dictionary from an iterator. The above line could use a
+  generator like this::
+
+      d = dict((i, i**2) for i in range(10**7)
+
+- to construct an empty dictionary with a ``dict()`` call using
+  ``future.builtins.dict`` (rather than ``{}``) and then update it;
+
+- to use the ``viewitems`` etc. functions from :mod:`future.utils`, passing in
+  regular dictionaries::
 
     from future.utils import viewkeys, viewvalues, viewitems
 
