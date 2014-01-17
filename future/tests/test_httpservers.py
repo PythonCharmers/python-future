@@ -10,9 +10,9 @@ Josip Dzolonga, and Michael Otteneder for the 2007/08 GHOP contest.
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future import standard_library
 from future.builtins import *
 
+from future import standard_library
 from http.server import BaseHTTPRequestHandler, HTTPServer, \
      SimpleHTTPRequestHandler, CGIHTTPRequestHandler
 from http import server
@@ -27,6 +27,7 @@ import shutil
 # Use this instead:
 import urllib
 import http.client
+standard_library.remove_hooks()
 import tempfile
 from io import BytesIO
 

@@ -65,7 +65,8 @@ Here are some quotes:
   difficulties associated with the Python 3 transition (like
   distinguishing their 8-bit text strings from their binary data). They
   shouldn't be punished with additional code changes ..." from `PEP 414
-  <http://www.python.org/dev/peps/pep-0414/>`_ by Nick Coghlan.
+  <http://www.python.org/dev/peps/pep-0414/>`_ by Armin Ronacher and Nick
+  Coghlan.
 
 
 Can't I just roll my own Py2/3 compatibility layer?
@@ -117,10 +118,11 @@ Maturity
 Is it tested?
 -------------
 
-``future`` currently has 300+ unit tests.  In general, the ``future`` package
-itself is in good shape, whereas the ``futurize`` script for automatic porting
-is incomplete and imperfect. (Chances are it will require some manual cleanup
-afterwards.)
+``future`` is used by ``mezzanine``, among other projects. Currently
+``future`` has 330+ unit tests.  In general, the ``future`` package
+itself is in good shape, whereas the ``futurize`` script for automatic
+porting is incomplete and imperfect. (Chances are it will require some
+manual cleanup afterwards.)
     
 Is the API stable?
 ------------------
@@ -238,12 +240,12 @@ effort.
 
 
 Platform and version support
-----------------------------
+============================
 
 .. _supported-versions:
 
 Which versions of Python does ``future`` support?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------------
 
 Python 2.6, 2.7, and 3.3+ only.
 
@@ -254,9 +256,10 @@ Py2/3 compatible code. ``future`` leverages these features and aims to
 close the remaining gap between Python 3 and 2.6 / 2.7.
 
 Python 3.2 could perhaps be supported too, although the illegal unicode
-literal ``u'...'`` syntax may be a drawback. The Py3.2 userbase is
-very small, however. Please let us know if you would like to see Py3.2
-support.
+literal ``u'...'`` syntax may be inconvenient to work around. The Py3.2
+userbase is very small, however. Please let us know via GitHub `issue #29
+<https://github.com/PythonCharmers/python-future/issues/29>`_ if you
+would like to see Py3.2 support.
 
 
 Do you support Pypy?

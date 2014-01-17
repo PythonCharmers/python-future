@@ -195,16 +195,18 @@ Run with::
 
     futurize —-stage2 myfolder/*.py
 
-This adds three further imports::
+This adds these further imports to each module::
 
     from __future__ import unicode_literals
     from future import standard_library
-    from future.builtins import *
+    from future.builtins import open
+    from future.builtins import str   # etc. for the builtins used in the module
 
-to each module and makes other changes needed to support Python 3, such as
+and makes other changes needed to support Python 3, such as
 renaming standard-library imports to their Py3 names.
 
-All strings are then unicode (on Py2 as on Py3) unless explicitly marked with a ``b''`` prefix.
+All strings are then implicitly unicode (on Py2 as on Py3) unless they were previously
+explicitly marked with a ``b''`` prefix.
 
 Ideally the output of this stage should not be a ``SyntaxError`` on either
 Python 3 or Python 2.

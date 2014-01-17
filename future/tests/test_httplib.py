@@ -7,12 +7,13 @@ tests. The adaptations are to cope with the unicode_literals syntax.
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future import standard_library
 from future.builtins import *
 from future import utils
 from future.tests.base import unittest
 
+from future import standard_library
 from http import client
+standard_library.remove_hooks()
 import array
 import io
 import socket

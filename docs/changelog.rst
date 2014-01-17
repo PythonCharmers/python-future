@@ -95,10 +95,55 @@ over large dictionaries. For example::
 
 For more information, see :ref:`dict-object`.
 
+
+Refactoring of standard_library hooks (v0.10.2)
+-----------------------------------------------
+
+There is a new context manager ``future.standard_library.hooks``. Use it like
+this::
+
+    from future import standard_library
+    with standard_library.hooks():
+        import queue
+        import configserver
+        # etc.
+
+If not using this decorator, it is now encouraged to add an explicit call to
+``standard_library.install_hooks()`` as follows::
+
+    from future import standard_library
+    standard_library.install_hooks()
+    
+    import queue
+    import html
+    import http.client
+    # etc.
+
+and to remove the hooks afterwards with::
+
+    standard_library.remove_hooks()
+
+The functions ``install_hooks()`` and ``remove_hooks()`` were previously
+called ``enable_hooks()`` and ``disable_hooks()``. The old names are
+still available as aliases.
+
+
+Utility functions raise_ and exec_
+----------------------------------
+
+The functions ``raise_with_traceback()`` and ``raise_()`` were
+added to ``future.utils`` to offer either the Python 3.x or Python 2.x
+behaviour for raising exceptions. Thanks to Joel Tratner for the
+contribution of these. ``future.utils.reraise()`` is now deprecated.
+
+A portable ``exec_()`` function has been added to ``future.utils`` from
+``six``.
+
+
 Bugfixes
 --------
 - Fixed newint.__divmod__
-- Improved robustness of :func:`disable_hooks` and :func:`enable_hooks()` in :mod:`future.standard_library`
+- Improved robustness of installing and removing import hooks in :mod:`future.standard_library`
 - v0.10.1: Fixed broken ``pip install future`` on Py3
 
 

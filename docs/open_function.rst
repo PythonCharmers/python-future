@@ -19,7 +19,7 @@ One difference to be aware of between the Python 3 ``open`` and
 ``future.builtins.open`` on Python 2 is that the return types of methods such
 as :func:`read()` from the file object that ``open`` returns are not
 automatically cast from native bytes or unicode strings on Python 2 to the
-appropriate ``future.builtins.bytes`` or ``future.builtins.str`` types. If you
+corresponding ``future.builtins.bytes`` or ``future.builtins.str`` types. If you
 need the returned data to behave the exactly same way on Py2 as on Py3, you can
 cast it explicitly as follows::
 

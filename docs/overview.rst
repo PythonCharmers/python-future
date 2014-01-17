@@ -18,7 +18,7 @@ Features
 -   provides backports and remappings for 16 builtins with different
     semantics on Py3 versus Py2
 -   provides backports and remappings from the Py3 standard library
--   300+ unit tests
+-   330+ unit tests
 -   ``futurize`` script based on ``2to3``, ``3to2`` and parts of
     ``python-modernize`` for automatic conversion from either Py2 or Py3 to a
     clean single-source codebase compatible with Python 2.6+ and Python 3.3+.
@@ -88,15 +88,19 @@ on Python 3::
     assert isinstance(u'blah', str)
     assert isinstance('blah', str)       # if unicode_literals is in effect
 
-There is also support for renamed standard library modules in the form of a context manager that provides import hooks::
+There is also support for renamed standard library modules in the form of import hooks::
 
     from future import standard_library
+    standard_library.install_hooks()
 
-    with standard_library.enable_hooks():
-        from http.client import HttpConnection
-        from itertools import filterfalse
-        import html.parser
-        import queue
+    from http.client import HttpConnection
+    from itertools import filterfalse
+    import html.parser
+    import queue
+
+To disable these at the end of a module, use::
+
+    standard_library.remove_hooks()
 
 
 Next steps

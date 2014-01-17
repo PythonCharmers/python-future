@@ -327,23 +327,23 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
         ]
 
 
-class enable_hooks(object):
+class hooks(object):
     """
     Acts as a context manager. Use like this:
     
     >>> from future import standard_library
-    >>> with standard_library.enable_hooks():
+    >>> with standard_library.hooks():
     ...     import http.client
     >>> import requests     # incompatible with ``future``'s standard library hooks
     """
     def __enter__(self):
-        print('Entering CM')
+        # print('Entering CM')
         self.hooks_were_installed = detect_hooks()
         install_hooks()
         return self
 
     def __exit__(self, *args):
-        print('Exiting CM')
+        # print('Exiting CM')
         if not self.hooks_were_installed:
             remove_hooks()
 
@@ -367,13 +367,13 @@ class suspend_hooks(object):
         remove_hooks()
         return self
     def __exit__(self, *args):
-        if not self.hooks_were_installed:
+        if self.hooks_were_installed:
             install_hooks()
 
 
 def install_hooks():
-    print('sys.meta_path was: {}'.format(sys.meta_path))
-    print('Installing hooks ...')
+    # print('sys.meta_path was: {}'.format(sys.meta_path))
+    # print('Installing hooks ...')
     if utils.PY3:
         return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
@@ -386,21 +386,29 @@ def install_hooks():
     newhook = RenameImport(RENAMES)
     if not detect_hooks():
         sys.meta_path.append(newhook)
-    print('sys.meta_path is now: {}'.format(sys.meta_path))
+    # print('sys.meta_path is now: {}'.format(sys.meta_path))
+
+
+def enable_hooks():
+    """
+    Deprecated. Use install_hooks() instead. This will be removed by
+    ``future`` v1.0.
+    """
+    install_hooks()
 
 
 def remove_hooks():
     """
     Use to remove the ``future.standard_library`` import hooks.
     """
-    print('sys.meta_path was: {}'.format(sys.meta_path))
-    print('Uninstalling hooks ...')
+    # print('sys.meta_path was: {}'.format(sys.meta_path))
+    # print('Removing hooks ...')
     if not utils.PY3:
         # Loop backwards, so deleting items keeps the ordering:
         for i, hook in list(enumerate(sys.meta_path))[::-1]:
             if hasattr(hook, 'RENAMER'):
                 del sys.meta_path[i]
-    print('sys.meta_path is now: {}'.format(sys.meta_path))
+    # print('sys.meta_path is now: {}'.format(sys.meta_path))
 
 
 def disable_hooks():
@@ -415,17 +423,17 @@ def detect_hooks():
     """
     Returns True if the import hooks are installed, False if not.
     """
-    print('Detecting hooks ...')
+    # print('Detecting hooks ...')
     present = any([hasattr(hook, 'RENAMER') for hook in sys.meta_path])
-    if present:
-        print('Detected.')
-    else:
-        print('Not detected.')
+    # if present:
+    #     print('Detected.')
+    # else:
+    #     print('Not detected.')
     return present
 
 
 # Now import the modules:
-# with enable_hooks():
+# with hooks():
 #     for (oldname, newname) in RENAMES.items():
 #         if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
 #             continue

@@ -20,7 +20,7 @@ Features
 -   provides backports and remappings for 15 builtins with different
     semantics on Py3 versus Py2
 -   provides backports and remappings from the Py3 standard library
--   300+ unit tests
+-   330+ unit tests
 -   ``futurize`` script based on ``2to3``, ``3to2`` and parts of
     ``python-modernize`` for automatic conversion from either Py2 or Py3 to a
     clean single-source codebase compatible with Python 2.6+ and Python 3.3+.
@@ -33,24 +33,12 @@ Code examples
 -------------
 
 ``future`` is designed to be imported at the top of each Python module
-together with Python's built-in ``__future__`` module like this::
-
-    from __future__ import (absolute_import, division,
-                            print_function, unicode_literals)
-    from future import standard_library
-    from future.builtins import *
+together with Python's built-in ``__future__`` module. For example, this
+code behaves the same way on Python 2.6/2.7 after these imports as it does
+on Python 3::
     
-followed by standard Python 3 code. The imports have no effect on Python
-3 but allow the code to run mostly unchanged on Python 3 and Python 2.6/2.7.
-
-For example, this code behaves the same way on Python 2.6/2.7 after these
-imports as it normally does on Python 3::
-    
-    # Support for renamed standard library modules via import hooks
-    from http.client import HttpConnection
-    from itertools import filterfalse
-    import html.parser
-    import queue
+    from __future__ import absolute_import, division, print_function
+    from future import bytes, str, open, super, zip, round, input, int
 
     # Backported Py3 bytes object
     b = bytes(b'ABCD')
@@ -98,8 +86,21 @@ imports as it normally does on Python 3::
     # Compatible output from isinstance() across Py2/3:
     assert isinstance(2**64, int)        # long integers
     assert isinstance(u'blah', str)
-    assert isinstance('blah', str)       # with unicode_literals in effect
-    assert isinstance(b'bytestring', bytes)
+    assert isinstance('blah', str)       # if unicode_literals is in effect
+
+There is also support for renamed standard library modules in the form of import hooks::
+
+    from future import standard_library
+    standard_library.install_hooks()
+
+    from http.client import HttpConnection
+    from itertools import filterfalse
+    import html.parser
+    import queue
+
+To disable these at the end of a module, use::
+
+    standard_library.remove_hooks()
 
 
 Documentation
@@ -114,16 +115,7 @@ Credits
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
-:Others:  - The backported ``super()`` and ``range()`` functions are
-            derived from Ryan Kelly's ``magicsuper`` module and Dan
-            Crosta's ``xrange`` module.
-          - The ``futurize`` script uses ``lib2to3``, ``lib3to2``, and
-            parts of Armin Ronacher's ``python-modernize`` code.
-          - The ``python_2_unicode_compatible`` decorator is from
-            Django. The ``implements_iterator`` and ``with_metaclass``
-            decorators are from Jinja2.
-          - Documentation is generated using ``sphinx`` using
-            ``sphinx_bootstrap_theme``.
+:Others:  See http://python-future.org/credits.html
 
 
 Licensing

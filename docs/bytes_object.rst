@@ -33,17 +33,14 @@ strict separation of unicode strings and byte strings as Python 3's
       File "<stdin>", line 1, in <module>
     TypeError: sequence item 0: expected bytes, found unicode string
 
-Various other comparisons between byte-strings and other types return a result
-in Py2 but raise a TypeError in Py3. For example, this is permissible on
-Py2::
+    >>> b == u'ABCD'
+    False
 
-    >>> b'u' > 10
-    True
+    >>> b < u'abc'
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: unorderable types: bytes() and <type 'unicode'>
 
-    >>> b'u' <= u'u'
-    True
-
-On Py3, these raise TypeErrors.
 
 In most other ways, these :class:`bytes` objects have identical
 behaviours to Python 3's :class:`bytes`::
@@ -57,7 +54,7 @@ Currently the easiest way to ensure identical behaviour of byte-strings
 in a Py2/3 codebase is to wrap all byte-string literals ``b'...'`` in a
 :func:`~bytes` call as follows::
     
-    from future.builtins import *
+    from future.builtins import bytes
     
     # ...
 

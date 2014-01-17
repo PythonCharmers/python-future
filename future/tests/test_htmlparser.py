@@ -11,6 +11,9 @@ from future import standard_library
 from future.builtins import *
 
 from test import support
+
+standard_library.remove_hooks()
+
 import pprint
 import unittest
 import sys

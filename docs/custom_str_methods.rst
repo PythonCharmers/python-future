@@ -18,7 +18,7 @@ Py2 and define ``__str__`` to encode it as utf-8::
             return u'Unicode string: \u5b54\u5b50'
     a = MyClass()
 
-    # This then prints the Chinese characters for Confucius:
+    # This then prints the name of a Chinese philosopher:
     print(a)
 
 This decorator is identical to the decorator of the same name in

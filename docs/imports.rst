@@ -29,8 +29,11 @@ These are all available in Python 2.6 and up, and enabled by default in Python 3
 
 .. _star-imports:
 
-Star imports
-~~~~~~~~~~~~
+future imports
+~~~~~~~~~~~~~~
+
+Implicit imports
+----------------
 
 If you don't mind namespace pollution on Python 2, the easiest way to provide
 Py2/3 compatibility for new code using ``future`` is to include the following
@@ -52,10 +55,10 @@ provide their Python 3 semantics.
 .. _explicit-imports:
 
 Explicit imports
-~~~~~~~~~~~~~~~~
+----------------
 
 Explicit forms of the imports are often preferred and are necessary for using
-some automated code-analysis tools.
+certain automated code-analysis tools.
 
 The most common imports from ``future`` are::
     
@@ -71,8 +74,8 @@ expose a security vulnerability on Python 2 if Python 3's semantics are
 expected.
 
 One further technical distinction is that unlike the ``import *`` form above,
-these explicit imports do actually change ``locals()``; this is equivalent
-to typing ``bytes = bytes; int = int`` etc. for each builtin.
+these explicit imports do actually modify ``locals()`` on Py3; this is
+equivalent to typing ``bytes = bytes; int = int`` etc. for each builtin.
 
 The internal API is currently as follows::
 
@@ -88,7 +91,7 @@ not be stable between different versions of ``future``.
 .. _obsolete-builtins:
 
 Obsolete Python 2 builtins
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 Twelve Python 2 builtins have been removed from Python 3. To aid with
 porting code to Python 3 module by module, you can use the following
@@ -121,7 +124,7 @@ There is some contention in the community about whether it is advisable
 to import ``unicode_literals`` from ``__future__`` in a Python 2/3
 compatible codebase.
 
-It is more compelling to use ``unicode_literals`` when back-porting
+In general, it is more compelling to use ``unicode_literals`` when back-porting
 new or existing Python 3 code to Python 2/3. For porting existing Python 2
 code to 2/3, explicitly marking up all unicode string literals with ``u''``
 prefixes helps to avoid unintentionally changing an existing Python 2 API.
@@ -141,24 +144,24 @@ Benefits
 --------
 
 1. String literals are unicode on Python 3. Making them unicode on Python 2
-   leads to more consistency of your string types the two runtimes. This can
-   make it easier to understand and debug your code.
+   leads to more consistency of your string types across the two
+   runtimes. This can make it easier to understand and debug your code.
    
 2. Code without ``u''`` prefixes is cleaner, one of the claimed advantages
    of Python 3. Even though some unicode strings would require a function
    call to invert them to native strings for some Python 2 APIs (see
    :ref:`stdlib-incompatibilities`), the incidence of these function calls
-   would be much lower than with using ``u''`` prefixes in the absence of
-   ``unicode_literals``.
+   would usually be much lower than the incidence of ``u''`` prefixes for text
+   strings in the absence of ``unicode_literals``.
 
-3. The diff for a Python 2 -> 2/3 port may be smaller, less noisy, and
-   easier to review with ``unicode_literals`` than if an explicit ``u''``
-   prefix is added to every unadorned string literal.
+3. The diff for port to a Python 2/3-compatible codebase may be smaller,
+   less noisy, and easier to review with ``unicode_literals`` than if an
+   explicit ``u''`` prefix is added to every unadorned string literal.
 
 4. If support for Python 3.2 is required (e.g. for Ubuntu 12.04 LTS or
    Debian wheezy), ``u''`` prefixes are a ``SyntaxError``, making
    ``unicode_literals`` the only option for a Python 2/3 compatible
-   codebase.
+   codebase. [However, ``future`` doesn't support Python 3.0-3.2 anyway.]
 
 
 Drawbacks
@@ -191,13 +194,14 @@ Drawbacks
 
        >>> path1 = '\\Users\\Ed'
        >>> unix_style_path(path1)
-       u'/Users/ed'
+       '/Users/ed'
 
    On Python 2, adding a ``unicode_literals`` import to ``mypaths.py`` would
    change the return type of the ``unix_style_path`` function from ``str`` to
-   ``unicode``, which is difficult to anticipate and probably unintended.
+   ``unicode`` in the user code, which is difficult to anticipate and probably
+   unintended.
    
-   The counterargument is that this code is broken, in a portability
+   The counter-argument is that this code is broken, in a portability
    sense; we see this from Python 3 raising a ``TypeError`` upon passing the
    function a byte-string. The code needs to be changed to make explicit
    whether the ``path`` argument is to be a byte string or a unicode string.
@@ -231,7 +235,8 @@ Drawbacks
 
 4. Turning on ``unicode_literals`` converts even docstrings to unicode, but
    Pydoc breaks with unicode docstrings containing non-ASCII characters for
-   Python versions < 2.7.7. (Fix committed in Jan 2014.)::
+   Python versions < 2.7.7. (`Fix
+   committed <http://bugs.python.org/issue1065986#msg207403>`_ in Jan 2014.)::
 
        >>> def f():
        ...     u"Author: Martin von Löwis"
@@ -258,9 +263,12 @@ Others' perspectives
 In favour of ``unicode_literals``
 *********************************
 
-The following `quote <https://groups.google.com/forum/#!topic/django-developers/2ddIWdicbNY>`_ is from Aymeric Augustin on 23 August 2012 regarding
-why he chose ``unicode_literals`` for the port of Django to a Python
-2/3-compatible codebase.:
+Django recommends importing ``unicode_literals`` as its top `porting tip <https://docs.djangoproject.com/en/dev/topics/python3/#unicode-literals>`_ for
+migrating Django extension modules to Python 3.  The following `quote
+<https://groups.google.com/forum/#!topic/django-developers/2ddIWdicbNY>`_ is
+from Aymeric Augustin on 23 August 2012 regarding why he chose
+``unicode_literals`` for the port of Django to a Python 2/3-compatible
+codebase.:
 
     "... I'd like to explain why this PEP [PEP 414, which allows explicit
     ``u''`` prefixes for unicode literals on Python 3.3+] is at odds with

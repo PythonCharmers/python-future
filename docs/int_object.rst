@@ -65,8 +65,3 @@ Without ``future`` (or with ``future`` < 0.7), this might be::
         else:
             return list(map(long, data))
 
-
-Note that ``future.builtins`` defines :func:`isinstance` specially to handle
-Python 2's short integers as well as the backported Py3-like ``int``.  See
-:ref:`isinstance-calls`.
-

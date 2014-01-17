@@ -4,14 +4,14 @@ int tests from Py3.3
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future import standard_library, utils
+from future import standard_library
 from future.builtins import *
 from future.tests.base import unittest
 
 import sys
 import random
 from test import support
-
+standard_library.remove_hooks()
 
 L = [
         ('0', 0),
