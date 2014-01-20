@@ -15,6 +15,38 @@ Why Python 3?
   Unicode representation (PEP 393))
 - Exception chaining
 
+Why are Unicode strings better on Python 3?
+-------------------------------------------
+
+- it is not the default string type (you have to prefix the string
+with a u to get Unicode);
+
+- it is missing some functionality, e.g. casefold;
+
+- there are two distinct implementations, narrow builds and wide builds;
+
+- wide builds take up to four times more memory per string as needed;
+
+- narrow builds take up to two times more memory per string as needed;
+
+- worse, narrow builds have very naive (possibly even "broken")
+handling of code points in the Supplementary Multilingual Planes.
+
+The unicode string type in Python 3 is better because:
+
+- it is the default string type;
+
+- it includes more functionality;
+
+- starting in Python 3.3, it gets rid of the distinction between
+narrow and wide builds;
+
+- which reduces the memory overhead of strings by up to a factor
+of four in many cases;
+
+- and fixes the issue of SMP code points.
+
+(quote from a mailing list post by Steve D'Aprano on 2014-01-17).
 
 
 New features
