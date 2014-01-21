@@ -1,0 +1,5 @@
+(build|dist|__pycache__)/
+MANIFEST
+\.(log|pyc)$
+
+
