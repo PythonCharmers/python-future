@@ -6,8 +6,8 @@ Tests for the Py2-like class:`basestring` type.
 from __future__ import absolute_import, unicode_literals, print_function
 import os
 
-from future import utils
-from future.tests.base import unittest
+from past import utils
+from past.tests.base import unittest
 from past.builtins import basestring, str as oldstr
 
 

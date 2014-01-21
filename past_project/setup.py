@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+
+import os
+import sys
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+import past
+
+
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist upload')
+    sys.exit()
+
+NAME = "past"
+PACKAGES = ["past",
+            "past.builtins",
+            "past.builtins.types",
+            "past.utils",
+            "past.tests",
+            # "libpasteurize",
+            # "libpasteurize.fixes2",
+            # "libpasteurize.fixes3"
+           ]
+PACKAGE_DATA = {'': [
+                     'README.rst',
+                     'LICENSE.txt',
+                     # 'pasteurize.py',
+                     'discover_tests.py',
+                     # 'check_rst.sh'
+                    ]}
+REQUIRES = []
+VERSION = past.__version__
+DESCRIPTION = "[Experimental] Run Python 2 code from Python 3. Do not use!"
+LONG_DESC = past.__doc__
+AUTHOR = "Ed Schofield"
+AUTHOR_EMAIL = "ed@pythoncharmers.com"
+URL="https://github.com/PythonCharmers/python-future"
+LICENSE = "MIT"
+KEYWORDS = "past future python3 python2 migration backport six 2to3 pasteurize modernize"
+CLASSIFIERS = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.6",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.3",
+    "License :: OSI Approved",
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+]
+
+setup_kwds = {}
+
+setup(name=NAME,
+      version=VERSION,
+      author=AUTHOR,
+      author_email=AUTHOR_EMAIL,
+      url=URL,
+      description=DESCRIPTION,
+      long_description=LONG_DESC,
+      license=LICENSE,
+      keywords=KEYWORDS,
+      # entry_points={
+      #     'console_scripts': [
+      #         'pasteurize = libpasteurize.main:main'
+      #     ]
+      # },
+      packages=PACKAGES,
+      package_data=PACKAGE_DATA,
+      include_package_data=True,
+      install_requires=REQUIRES,
+      classifiers=CLASSIFIERS,
+      test_suite = "discover_tests",
+      **setup_kwds
+     )
+

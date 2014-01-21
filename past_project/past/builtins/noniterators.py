@@ -20,7 +20,7 @@ The list-producing functions this brings in are::
 from __future__ import division, absolute_import, print_function
 
 import itertools
-from future.utils import PY3
+from past.utils import PY3
 
 if PY3:
     import builtins

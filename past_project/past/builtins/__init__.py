@@ -1,9 +1,8 @@
 from past.builtins.noniterators import (filter, map, range, zip)
 # from past.builtins.misc import (ascii, chr, hex, input, oct, open, raw_input, unichr)
-# from past.builtins.types import (basestring, dict, str, unicode)
-from past.builtins.types import basestring, dict, str
+from past.builtins.types import basestring, dict, str   #, unicode
 
-from future import utils
+from past import utils
 
 
 if utils.PY3:

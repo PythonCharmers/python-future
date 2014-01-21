@@ -7,8 +7,8 @@ from __future__ import absolute_import, unicode_literals, print_function
 import os
 import sys
 
-from future import utils
-from future.tests.base import unittest
+from past import utils
+from past.tests.base import unittest
 from past.builtins import dict
 
 

@@ -5,8 +5,7 @@ Pure-Python implementation of a Python 2-like str object for Python 3.
 from collections import Iterable
 from numbers import Integral
 
-from future.utils import PY2, with_metaclass
-from future.builtins.backports import no, issubset
+from past.utils import PY2, with_metaclass
 
 
 _builtin_bytes = bytes

@@ -13,7 +13,7 @@ Example use:
 
 import sys
 
-from future.utils import with_metaclass, PY2
+from past.utils import with_metaclass, PY2
 
 if PY2:
     str = unicode

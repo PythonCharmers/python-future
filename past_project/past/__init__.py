@@ -6,7 +6,10 @@ past: an implementation of Python 2 constructs in Python 3
 ``past`` is a package to aid with Python 2/3 compatibility. Whereas ``future``
 contains backports of Python 3 constructs to Python 2, ``past`` provides
 implementations of some Python 2 constructs in Python 3. It is intended to be
-used sparingly, primarily for libraries:
+used sparingly, as a way of running old Python 2 code from Python 3 until it is
+ported properly.
+
+Potential uses for libraries:
 
 - as a step in porting a Python 2 codebase to Python 3 (e.g. with the ``futurize`` script)
 - to provide Python 3 support for previously Python 2-only libraries with the
@@ -19,15 +22,15 @@ used sparingly, primarily for libraries:
 
 Here are some examples that run identically on Python 3 and 2::
 
-    >>> from past.builtins import str as py2str
+    >>> from past.builtins import str as oldstr
 
-    >>> confucius = py2str(b'\xe5\xad\x94\xe5\xad\x90')
+    >>> philosopher = oldstr(u'\u5b54\u5b50'.encode('utf-8'))
     >>> # This now behaves like a Py2 byte-string on both Py2 and Py3.
     >>> # For example, indexing returns a Python 2-like string object, not
     >>> # an integer:
-    >>> confucius[0]
+    >>> philosopher[0]
     '\xe5'
-    >>> type(confucius[0])
+    >>> type(philosopher[0])
     <past.builtins.oldstr>
 
     >>> # The div() function behaves like Python 2's / operator
@@ -61,13 +64,24 @@ Here are some examples that run identically on Python 3 and 2::
     ...     pass
 
 
+The intention is for it to provide import hooks in the future so you can do::
+
+    >>> from past import magic
+    >>> magic.install_hooks()
+
+    >>> import mypy2module
+
+and use Python 2-only modules from Python 3 until the authors have upgraded
+their code. For example::
+    
+    >>> mypy2module.func_taking_py2_string(oldstr(b'abcd'))
+
 
 Credits
 -------
 
 :Author:  Ed Schofield
-:Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
-          Ltd, Singapore. http://pythoncharmers.com
+:Sponsor: Python Charmers Pty Ltd, Australia: http://pythoncharmers.com
 
 
 Licensing
@@ -84,10 +98,9 @@ __author__ = 'Ed Schofield'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2014 Python Charmers Pty Ltd'
 __ver_major__ = 0
-__ver_minor__ = 11
-__ver_patch__ = 0
-__ver_sub__ = '-dev'
+__ver_minor__ = 0
+__ver_patch__ = 1
+__ver_sub__ = ''
 __version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
                               __ver_patch__, __ver_sub__)
-
 

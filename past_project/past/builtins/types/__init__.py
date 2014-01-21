@@ -1,4 +1,4 @@
-from future import utils
+from past import utils
 
 if utils.PY2:
     import __builtin__

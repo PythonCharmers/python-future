@@ -3,7 +3,7 @@ A dict subclass for Python 3 that behaves like Python 2's dict
 
 Example use:
 
->>> from future.builtins import dict
+>>> from past.builtins import dict
 >>> d1 = dict()    # instead of {} for an empty dict
 >>> d2 = dict(key1='value1', key2='value2')
 
@@ -18,7 +18,7 @@ methods for iterkeys, itervalues, iteritems, and viewkeys etc.
 
 import sys
 
-from future.utils import with_metaclass
+from past.utils import with_metaclass
 
 
 _builtin_dict = dict
@@ -88,7 +88,7 @@ class olddict(with_metaclass(BaseOldDict, _builtin_dict)):
         
     def __native__(self):
         """
-        Hook for the future.utils.native() function
+        Hook for the past.utils.native() function
         """
         return super(oldbytes, self)
 
