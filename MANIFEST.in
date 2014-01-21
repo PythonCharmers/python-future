@@ -2,7 +2,6 @@ include README.rst
 include futurize.py
 include discover_tests.py
 include LICENSE.txt
-include ChangeLog.txt
 include docs/*.py
 include docs/*.txt
 include docs/*.rst
