@@ -43,7 +43,8 @@ logger = logging.getLogger(__name__)
 myfixes = (list(fixes2.libfuturize_2fix_names_stage1) +
            list(fixes2.lib2to3_fix_names_stage1) +
            list(fixes2.libfuturize_2fix_names_stage2) +
-           list(fixes2.lib2to3_fix_names_stage2))
+           list(fixes2.lib2to3_fix_names_stage2))  # +
+           # list(fixes2.libfuturize_2suspend_hooks))
 
 # There are two possible grammars: with or without the print statement.
 # Hence we have two possible refactoring tool implementations.
@@ -67,6 +68,11 @@ _rtp = RefactoringTool(myfixes, {'print_function': True})
 #     _syslibprefix = getattr(sys, 'base_prefix', sys.prefix)
 
 class Py2Fixer(object):
+    # See the comments on :class:future.standard_library.RenameImport.
+    # We add this attribute here so remove_hooks() and install_hooks() can
+    # unambiguously detect whether the import hook is installed:
+    PY2FIXER = True
+
     def __init__(self):
         self.found = None
 
@@ -89,7 +95,6 @@ class Py2Fixer(object):
         return self
 
     def transform(self, source):
-        # pdb.set_trace()
         # print('Running transform() ...')
         # This implementation uses lib2to3,
         # you can override and use something else
@@ -158,6 +163,7 @@ class Py2Fixer(object):
                             with open(self.pathname) as f:
                                 source = f.read()
 
+                        # pdb.set_trace()
                         source = self.transform(source)
 
                         code = compile(source, self.pathname, 'exec')
@@ -191,8 +197,61 @@ def install_hooks():
     # could return the hook when there are ways of configuring it
     #return _hook
 
+
 def remove_hooks():
-    # pdb.set_trace()
     if _hook in sys.meta_path:
         sys.meta_path.remove(_hook)
+
+
+def detect_hooks():
+    """
+    Returns True if the import hooks are installed, False if not.
+    """
+    return _hook in sys.meta_path
+    # present = any([hasattr(hook, 'PY2FIXER') for hook in sys.meta_path])
+    # return present
+
+
+class enable_hooks(object):
+    """
+    Acts as a context manager. Use like this:
+    
+    >>> from future import autoconvert
+    >>> with autoconvert.enable_hooks():
+    ...     import mypy2module
+    >>> import requests        # py2/3 compatible anyway
+    >>> # etc.
+    """
+    def __enter__(self):
+        self.hooks_were_installed = detect_hooks()
+        install_hooks()
+        return self
+
+    def __exit__(self, *args):
+        if not self.hooks_were_installed:
+            remove_hooks()
+
+
+class suspend_hooks(object):
+    """
+    Acts as a context manager. Use like this:
+    
+    >>> from future import autoconvert
+    >>> autoconvert.install_hooks()
+    >>> import http.client
+    >>> # ...
+    >>> with autoconvert.suspend_hooks():
+    >>>     import requests     # or others that support Py2/3
+
+    If the hooks were disabled before the context, they are not installed when
+    the context is left.
+    """
+    def __enter__(self):
+        self.hooks_were_installed = detect_hooks()
+        remove_hooks()
+        return self
+    def __exit__(self, *args):
+        if self.hooks_were_installed:
+            install_hooks()
+
 
