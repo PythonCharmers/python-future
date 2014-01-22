@@ -1,19 +1,17 @@
 """
-This module contains backports of new or changed functionality from
-Python 3 to Python 2:
+This module contains backports the data types that were significantly changed
+in the transition from Python 2 to Python 3.
 
 - an implementation of Python 3's bytes object (pure Python subclass of
   Python 2's builtin 8-bit str type)
 - an implementation of Python 3's str object (pure Python subclass of
   Python 2's builtin unicode type)
 - a backport of the range iterator from Py3 with slicing support
-- the magic zero-argument super() function
-- the new round() behaviour
 
 It is used as follows::
 
     from __future__ import division, absolute_import, print_function
-    from future.builtins.backports import str, bytes, range, super, round
+    from future.builtins.types import bytes, dict, int, range, str
 
 to bring in the new semantics for these functions from Python 3. And
 then, for example::
@@ -54,6 +52,15 @@ and::
             print('Adding an item')
             super().append(item)        # new simpler super() function
 
+For more information:
+---------------------
+
+- future.builtins.types.newbytes
+- future.builtins.types.newdict
+- future.builtins.types.newint
+- future.builtins.types.newrange
+- future.builtins.types.newstr
+
 
 Notes
 =====
@@ -76,11 +83,6 @@ round()
 Python 3 modifies the behaviour of ``round()`` to use "Banker's Rounding".
 See http://stackoverflow.com/a/10825998_. See the ``newround`` module
 docstring for more details.
-
-
-TODO:
------
-- Check int() ??
 
 """
 
@@ -216,16 +218,13 @@ if utils.PY3:
     dict = builtins.dict
     int = builtins.int
     range = builtins.range
-    round = builtins.round
     str = builtins.str
-    super = builtins.super
     __all__ = []
 else:
     from .newbytes import newbytes as bytes
     from .newdict import newdict as dict
     from .newint import newint as int
     from .newrange import newrange as range
-    from .newround import newround as round
     from .newstr import newstr as str
-    from .newsuper import newsuper as super
-    __all__ = ['bytes', 'dict', 'int', 'range', 'round', 'str', 'super']
+    __all__ = ['bytes', 'dict', 'int', 'range', 'str']
+

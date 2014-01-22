@@ -4,17 +4,19 @@ builtins into Py2. Has no effect on Py3.
 
 See the docs for these modules for more information::
 
+- future.builtins.types
 - future.builtins.iterators
-- future.builtins.backports
+- future.builtins.newsuper
+- future.builtins.newround
 - future.builtins.misc
 - future.builtins.disabled
 
 """
 
 from future.builtins.iterators import (filter, map, zip)
-from future.builtins.misc import (ascii, chr, hex, input, oct, open)
-from future.builtins.backports import (bytes, dict, int, range, round, str,
-                                       super)
+from future.builtins.misc import (ascii, chr, hex, input, oct, open,
+                                  round, super)
+from future.builtins.types import (bytes, dict, int, range, str)
 from future import utils
 
 if not utils.PY3:
@@ -23,8 +25,8 @@ if not utils.PY3:
     
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
-               'ascii', 'chr', 'hex', 'input', 'oct', 'open',
-               'bytes', 'dict', 'int', 'range', 'round', 'str', 'super',
+               'ascii', 'chr', 'hex', 'input', 'oct', 'open', 'round', 'super',
+               'bytes', 'dict', 'int', 'range', 'str',
               ]
 
 else:

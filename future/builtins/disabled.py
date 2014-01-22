@@ -19,11 +19,11 @@ NameError exceptions when called.
 Note that both ``input()`` and ``raw_input()`` are among the disabled
 functions (in this module). Although ``input()`` exists as a builtin in
 Python 3, the Python 2 ``input()`` builtin is unsafe to use because it
-can lead to shell injection. Therefore we shadow it by default, in case
-someone forgets to import our replacement ``input()`` somehow and expects
-Python 3 semantics.
+can lead to shell injection. Therefore we shadow it by default upon ``from
+future.builtins.disabled import *``, in case someone forgets to import our
+replacement ``input()`` somehow and expects Python 3 semantics.
 
-See the ``future.builtins.backports`` module for a working version of
+See the ``future.builtins.misc`` module for a working version of
 ``input`` with Python 3 semantics.
 
 (Note that callable() is not among the functions disabled; this was

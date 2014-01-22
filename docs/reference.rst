@@ -35,8 +35,10 @@ future.utils Interface
 Backported types
 ================
 
-.. autoclass:: future.builtins.backports.newbytes
-.. autoclass:: future.builtins.backports.newstr
-.. autoclass:: future.builtins.backports.newint
+.. autoclass:: future.builtins.types.newbytes
+.. autoclass:: future.builtins.types.newdict
+.. autoclass:: future.builtins.types.newint
+.. autoclass:: future.builtins.types.newrange
+.. autoclass:: future.builtins.types.newstr
 
 

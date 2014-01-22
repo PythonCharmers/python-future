@@ -51,7 +51,7 @@ are illegal with Python 3. For example::
     >>> s2
     '/ABCD'
     >>> type(s2)
-    future.builtins.backports.newstr.newstr
+    future.builtins.types.newstr.newstr
 
 This is allowed for compatibility with parts of the Python 2 standard
 library and various third-party libraries that mix byte-strings and unicode

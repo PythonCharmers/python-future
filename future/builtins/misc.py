@@ -1,6 +1,6 @@
 """
-A module that brings in equivalents of the new and modified Python 3
-builtins into Py2. Has no effect on Py3.
+A module that brings in equivalents of various modified Python 3 builtins
+into Py2. Has no effect on Py3.
 
 The builtin functions are:
 
@@ -10,6 +10,8 @@ The builtin functions are:
 - ``chr`` (equivalent to ``unichr`` on Py2)
 - ``input`` (equivalent to ``raw_input`` on Py2)
 - ``open`` (equivalent to io.open on Py2)
+- ``super`` (backport of Py3's magic zero-argument super() function
+- ``round`` (new "Banker's Rounding" behaviour from Py3)
 
 
 input()
@@ -30,7 +32,6 @@ Fortunately, ``input()`` seems to be seldom used in the wild in Python
 
 """
 
-from future.builtins.backports.newint import newint
 from future import utils
 
 
@@ -40,22 +41,22 @@ if utils.PY2:
     from __builtin__ import unichr as chr
     import __builtin__
 
-    # The following seems like a good idea, but it may be a bit
-    # paranoid and the implementation may be fragile:
-
-    # Python 2's input() is unsafe and MUST not be able to be used
+    # Warning: Python 2's input() is unsafe and MUST not be able to be used
     # accidentally by someone who expects Python 3 semantics but forgets
-    # to import it on Python 2. So we delete it from __builtin__. We
-    # keep a copy though:
-    __builtin__._oldinput = __builtin__.input
-    delattr(__builtin__, 'input')
+    # to import it on Python 2. Versions of ``future`` prior to 0.11
+    # deleted it from __builtin__.  Now we have reverted to the default
+    # behaviour. Just be careful.
 
     input = raw_input
 
-    # In case some code wants to import 'callable' portably from Py3.0/3.1:
-    callable = __builtin__.callable
+    from future.builtins.newround import newround as round
+    from future.builtins.newsuper import newsuper as super
 
-    __all__ = ['ascii', 'chr', 'hex', 'input', 'oct', 'open']
+    # ``future`` doesn't support Py3.0/3.1. If we ever did, we'd add this:
+    #     callable = __builtin__.callable
+
+    __all__ = ['ascii', 'chr', 'hex', 'input', 'oct', 'open',
+               'round', 'super']
 
 else:
     import builtins
@@ -65,15 +66,18 @@ else:
     input = builtins.input
     oct = builtins.oct
     open = builtins.open
+    round = builtins.round
+    super = builtins.super
 
     __all__ = []
 
-    # From Pandas, for Python versions 3.0 and 3.1 only. The callable()
-    # function was removed from Py3.0 and 3.1 and reintroduced into Py3.2.
-    try:
-        # callable reintroduced in later versions of Python
-        callable = builtins.callable
-    except AttributeError:
-        def callable(obj):
-            return any("__call__" in klass.__dict__ for klass in type(obj).__mro__)
-        __all__.append('callable')
+    # The callable() function was removed from Py3.0 and 3.1 and
+    # reintroduced into Py3.2+. ``future`` doesn't support Py3.0/3.1. If we ever
+    # did, we'd add this:
+    # try:
+    #     callable = builtins.callable
+    # except AttributeError:
+    #     # Definition from Pandas
+    #     def callable(obj):
+    #         return any("__call__" in klass.__dict__ for klass in type(obj).__mro__)
+    #     __all__.append('callable')
