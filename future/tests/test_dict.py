@@ -9,6 +9,7 @@ from future import utils
 from future.tests.base import unittest
 
 import os
+import sys
 
 class TestDict(unittest.TestCase):
     def setUp(self):
