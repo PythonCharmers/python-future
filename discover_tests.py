@@ -35,13 +35,13 @@ def exclude_tests(suite, blacklist):
         'test_another_test_that_should_be_skipped'
     ]
     """
-
     new_suite = unittest.TestSuite()
     
     for test_group in suite._tests:
         for test in test_group:
             if not hasattr(test, '_tests'):
                 # e.g. ModuleImportFailure
+                new_suite.addTest(test)
                 continue
             for subtest in test._tests:
                 method = subtest._testMethodName
@@ -49,3 +49,4 @@ def exclude_tests(suite, blacklist):
                     setattr(test, method, getattr(SkipCase(), 'runTest'))
             new_suite.addTest(test)
     return new_suite
+
