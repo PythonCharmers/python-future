@@ -7,6 +7,46 @@ What's new
 What's new in version 0.11
 ==========================
 
+``future.autoconvert`` module
+-----------------------------
+
+``future`` now provides import hooks that auto-convert Python 2 code to Python 3 syntax and semantics upon import. Use it like this::
+
+    >>> from future.autoconvert import install_hooks
+    >>> install_hooks()
+    
+    >>> import mypy2module
+
+This works with Python 2 code such as the following::
+
+    ### mypy2module.py
+    import ConfigParser
+    import HTMLParser
+
+    # Print statements are converted transparently to functions
+    print 'Hello from a print statement'
+     
+    # xrange is supported:
+    total = 0
+    for i in xrange(10):
+        total += i
+    print 'Total is: %d' % total
+    
+    # Functions like range, reduce, map, filter, and dict.items() are
+    # supported:
+    assert isinstance(range(10), list)
+    d = {'a': 1, 'b': 2}
+    assert d.keys() == ['a', 'b']
+    assert isinstance(d.items(), list)
+    
+    # Standard library imports are available from their old names:
+    import ConfigParser
+
+    # The exec statement is supported:
+    exec 'total += 1'
+    print 'Total is now: %d' % total
+
+
 ``past`` package
 ----------------
 
@@ -22,6 +62,17 @@ Python 3's ``bytes`` object.)
 
 Currently ``past.builtins`` provides forward-ports of Python 2's ``str`` and
 ``dict`` objects, ``basestring``, and list-producing iterator functions.
+
+input() not disabled on Py2
+---------------------------
+
+    # The following seems like a good idea, but it may be a bit
+    # paranoid and the implementation may be fragile:
+
+    # Warning: Python 2's input() is unsafe and MUST not be able to be used
+    # accidentally by someone who expects Python 3 semantics but forgets
+    # to import it on Python 2. So we delete it from __builtin__. We
+    # keep a copy though:
 
 
 No import hooks by default with ``future.standard_library``
@@ -97,18 +148,9 @@ for raising exceptions. Thanks to Joel Tratner for the contribution of
 these.
 
 
-Deprecated ``isinstance`` removed
----------------------------------
-
-``future`` v0.8.2 briefly introduced a replacement for the ``isinstance``
-builtin. This was then removed and its use was deprecated as of v0.9.0.
-The alias for the builtin ``isinstance`` has now been removed from
-``future.builtins``.
-
-
 .. whats-new-0.10:
 
-What's new in version 0.10.x
+What's new in version 0.10
 ============================
 
 Backported ``dict`` type
