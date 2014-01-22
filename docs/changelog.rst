@@ -87,15 +87,6 @@ modules like ``requests`` (issue #19).
 This feature may be resurrected in a later version if a safe implementation can be found.
 
 
-Deprecated ``isinstance`` removed
----------------------------------
-
-``future`` v0.8.2 briefly introduced a replacement for the ``isinstance``
-builtin. This was then removed and its use was deprecated as of v0.9.0.
-The alias for the builtin ``isinstance`` has now been removed from
-``future.builtins``.
-
-
 Internal changes
 ----------------
 

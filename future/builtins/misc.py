@@ -14,6 +14,9 @@ The builtin functions are:
 - ``super`` (backport of Py3's magic zero-argument super() function
 - ``round`` (new "Banker's Rounding" behaviour from Py3)
 
+``isinstance`` is also currently exported for backwards compatibility
+with v0.8.2, although this has been deprecated since v0.9.
+
 
 input()
 -------
@@ -42,11 +45,14 @@ if utils.PY2:
     from __builtin__ import unichr as chr
     import __builtin__
 
+    # Only for backward compatibility with future v0.8.2:
+    isinstance = __builtin__.isinstance
+
     # Warning: Python 2's input() is unsafe and MUST not be able to be used
     # accidentally by someone who expects Python 3 semantics but forgets
     # to import it on Python 2. Versions of ``future`` prior to 0.11
-    # deleted it from __builtin__.  Now we have reverted to the default
-    # behaviour. Just be careful.
+    # deleted it from __builtin__.  Now we keep in __builtin__ but shadow
+    # the name like all others. Just be sure to import ``input``.
 
     input = raw_input
 
@@ -57,7 +63,7 @@ if utils.PY2:
     # ``future`` doesn't support Py3.0/3.1. If we ever did, we'd add this:
     #     callable = __builtin__.callable
 
-    __all__ = ['ascii', 'chr', 'hex', 'input', 'next',
+    __all__ = ['ascii', 'chr', 'hex', 'input', 'isinstance', 'next',
                'oct', 'open', 'round', 'super']
 
 else:
@@ -67,6 +73,8 @@ else:
     hex = builtins.hex
     input = builtins.input
     next = builtins.next
+    # Only for backward compatibility with future v0.8.2:
+    isinstance = builtins.isinstance
     oct = builtins.oct
     open = builtins.open
     round = builtins.round
