@@ -79,9 +79,26 @@ class TestStandardLibraryRenames(CodeHandler):
         else:
             self.assertFalse(example_PY2_check)
         standard_library.install_hooks()
-        # The import should succeed again now:
+
+        # Imports should succeed again now:
         import builtins
+        import configparser
+        self.assertTrue(standard_library.detect_hooks())
         self.assertTrue(len(old_meta_path) == len(sys.meta_path))
+
+    def test_detect_hooks(self):
+        """
+        Tests whether the future.standard_library.detect_hooks is doing
+        its job.
+        """
+        standard_library.install_hooks()
+        self.assertTrue(standard_library.detect_hooks())
+
+        old_meta_path = copy.copy(sys.meta_path)
+
+        standard_library.remove_hooks()
+        self.assertTrue(len(old_meta_path) + 1 == len(sys.meta_path))
+        self.assertFalse(standard_library.detect_hooks())
 
     def test_remove_hooks2(self):
         """
@@ -145,7 +162,6 @@ class TestStandardLibraryRenames(CodeHandler):
         Tests whether sys.maxsize is available.
         """
         from sys import maxsize
-        print(maxsize)
         self.assertTrue(maxsize > 0)
 
     def test_itertools_filterfalse(self):
