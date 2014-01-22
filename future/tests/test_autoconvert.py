@@ -11,11 +11,10 @@ import pprint
 from subprocess import Popen, PIPE
 
 from past import utils
-from past.tests.base import unittest
 from past.builtins import basestring, str as oldstr
-from past.magic import install_hooks, remove_hooks
 
-from future.tests.base import CodeHandler
+from future.autoconvert import install_hooks, remove_hooks
+from future.tests.base import unittest, CodeHandler
 
 
 class TestHooked(unittest.TestCase):
@@ -26,7 +25,7 @@ class TestHooked(unittest.TestCase):
         remove_hooks()
 
     def write_and_import(self, code, modulename='mymodule'):
-        assert '.py' not in modulename
+        self.assertTrue('.py' not in modulename)
         filename = modulename + '.py'
         with open(filename, 'w') as f:
             f.write(textwrap.dedent(code).strip())
@@ -54,14 +53,14 @@ class TestHooked(unittest.TestCase):
             finished = True
         """
         printer = self.write_and_import(code, 'printer')
-        assert printer.finished == True
+        self.assertTrue(printer.finished)
 
     def test_exec_statement(self):
         code = """
             exec 'x = 5 + 2'
         """
         module = self.write_and_import(code, 'execer')
-        assert module.x == 7
+        self.assertEqual(module.x, 7)
         
     @unittest.expectedFailure
     def test_div(self):
@@ -69,7 +68,7 @@ class TestHooked(unittest.TestCase):
         x = 3 / 2
         """
         module = self.write_and_import(code, 'div')
-        assert module.x == 1
+        self.assertEqual(module.x, 1)
 
     def test_stdlib(self):
         """
@@ -81,10 +80,9 @@ class TestHooked(unittest.TestCase):
         import collections    # check that normal ones succeed too
         """
         module = self.write_and_import(code, 'stdlib')
-        assert 'SafeConfigParser' in dir(module.configparser)
-        assert 'endendtag' in dir(module.html.parser)
-        assert issubclass(module.collections.defaultdict, dict)
-
+        self.assertTrue('SafeConfigParser' in dir(module.configparser))
+        self.assertTrue('endendtag' in dir(module.html.parser))
+        self.assertTrue(issubclass(module.collections.defaultdict, dict))
 
     def test_import_future_standard_library(self):
         code = """
@@ -93,36 +91,51 @@ class TestHooked(unittest.TestCase):
         import configparser
         """
         module = self.write_and_import(code, 'future_standard_library')
-        assert 'configparser' in dir(module)
+        self.assertTrue('configparser' in dir(module))
 
-    def test_import_builtins(self):
+    def test_import_builtin_functions(self):
         code = """
         # a = raw_input()
         b = open('test_builtins.py')
+
         def is_even(x):
             return x % 2 == 0
         c = filter(is_even, range(10))
+
         def double(x):
             return x * 2
         d = map(double, c)
+
         e = isinstance('abcd', str)
+
         for g in xrange(10**3):
             pass
+
+        # super(MyClass, self)
+        """
+        module = self.write_and_import(code, 'test_builtin_functions')
+        self.assertTrue(hasattr(module.b, 'readlines'))
+        self.assertTrue(isinstance(module.c, list))
+        self.assertEqual(module.c, [0, 2, 4, 6, 8])
+        self.assertEqual(module.d, [0, 4, 8, 12, 16])
+        self.assertTrue(module.e)
+
+    @unittest.expectedFailure
+    def test_import_builtin_types(self):
+        code = """
         s1 = 'abcd'
         s2 = u'abcd'
         b1 = b'abcd'
-        # super(MyClass, self)
+        b2 = s2.encode('utf-8')
+        d1 = {}
+        d2 = dict((i, i**2) for i in range(10))
+        i1 = 1923482349324234L
+        i2 = 1923482349324234
         """
-        module = self.write_and_import(code, 'test_builtins')
-        import pdb; pdb.set_trace()
-        assert hasattr(module.b, 'readlines')
-        assert isinstance(module.c, list)
-        assert module.c == [0, 2, 4, 6, 8]
-        assert module.d == [0, 4, 8, 12, 16]
-        assert module.e == True
-        assert isinstance(module.s1, oldstr)
-        # assert isinstance(s2, oldunicode)
-        assert isinstance(module.b1, oldstr)
+        module = self.write_and_import(code, 'test_builtin_types')
+        self.assertTrue(isinstance(module.s1, oldstr))
+        # self.assertTrue(isinstance(s2, oldunicode))
+        self.assertTrue(isinstance(module.b1, oldstr))
 
     def test_xrange(self):
         code = '''
@@ -131,7 +144,7 @@ class TestHooked(unittest.TestCase):
             total += i
         '''
         module = self.write_and_import(code, 'xrange')
-        assert module.total == 45
+        self.assertEqual(module.total, 45)
 
     def test_exception_syntax(self):
         """
@@ -145,7 +158,7 @@ class TestHooked(unittest.TestCase):
             value += ': success!'
         """
         module = self.write_and_import(code, 'exceptions')
-        assert module.value == 'string: success!'
+        self.assertEqual(module.value, 'string: success!')
 
  
 # class TestFuturizeSimple(CodeHandler):
