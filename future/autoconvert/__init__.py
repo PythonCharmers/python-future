@@ -1,8 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-An import hook that fixes Python 2 code to Python 2/3 safely.
+future.autoconvert
+==================
 
-Currently only converts print statements to print functions ;)
+The ``future.autoconvert`` package provides an import hook for Python 3 which
+runs ``futurize`` fixers over Python 2 code on import to convert print statements into
+functions, etc.
+
+It is intended to assist users when porting Python 2.x code to 3.x.
+
+Usage
+-----
+
+Once installed on the path, the import hook is invoked as follows:
+
+    >>> from future import autoconvert
+    >>> autoconvert.install_hooks()
+
+You can unregister the hook by
+
+    >>> autoconvert.remove_hooks()
+
 
 Inspired by ``uprefix`` by Vinay M. Sajip.
 """
@@ -18,7 +36,7 @@ import pdb
 
 from libfuturize import fixes2
 
-__version__ = '0.0.1'
+__version__ = '0.1.0'
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +71,7 @@ class Py2Fixer(object):
         self.found = None
 
     def find_module(self, fullname, path=None):
-        print('Running find_module ...')
+        # print('Running find_module ...')
         if '.' in fullname:
             parent, child = fullname.rsplit('.', 1)
             if path is None:
@@ -72,6 +90,7 @@ class Py2Fixer(object):
 
     def transform(self, source):
         # pdb.set_trace()
+        # print('Running transform() ...')
         # This implementation uses lib2to3,
         # you can override and use something else
         # if that's better for you
@@ -89,7 +108,7 @@ class Py2Fixer(object):
         return str(tree)[:-1] # remove added newline
 
     def load_module(self, fullname):
-        print('Running load_module ...')
+        # print('Running load_module ...')
         if fullname in sys.modules:
             mod = sys.modules[fullname]
         else:
@@ -166,8 +185,8 @@ _hook = Py2Fixer()
 def install_hooks():
     # pdb.set_trace()
     enable = sys.version_info[0] >= 3   # enabled for all 3.x
-    #enable = (3, 0) <= sys.version_info[:2] < (3, 3)   # enabled for 3.0 - 3.2
-    if _hook not in sys.meta_path:   # was: if enable and _hook not in ...
+    # enable = (3, 0) <= sys.version_info[:2]            # enabled for 3.0+
+    if enable and _hook not in sys.meta_path:   # was: if enable and _hook not in ...
         sys.meta_path.insert(0, _hook)
     # could return the hook when there are ways of configuring it
     #return _hook
