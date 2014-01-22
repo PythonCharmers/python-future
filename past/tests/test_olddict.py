@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tests for the resurrected Py2-like class:`dict` class.
+Tests for the resurrected Py2-like class:`dict` type.
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
@@ -276,6 +276,7 @@ class Py2DictTest(unittest.TestCase):
                 return BogonIter()
             def __getitem__(self, key):
                 return key
+        import pdb; pdb.set_trace()
         self.assertRaises(Exc, d.update, FailingUserDict())
 
         class FailingUserDict:

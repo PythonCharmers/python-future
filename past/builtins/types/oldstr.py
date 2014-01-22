@@ -96,19 +96,19 @@ class oldstr(with_metaclass(BaseOldStr, _builtin_bytes)):
     #     return super(newbytes, cls).__new__(cls, value)
         
     def __repr__(self):
-        s = super().__repr__()   # e.g. b'abc'
+        s = super(oldstr, self).__repr__()   # e.g. b'abc'
         return s[1:]
 
     def __str__(self):
-        s = super().__str__()   # e.g. "b'abc'" or "b'abc\\ndef'
+        s = super(oldstr, self).__str__()   # e.g. "b'abc'" or "b'abc\\ndef'
         # TODO: fix this:
         return collapse_double_backslashes(s[2:-1])      # e.g. 'abc'    or 'abc\ndef'
 
     def __getitem__(self, y):
         if isinstance(y, Integral):
-            return super().__getitem__(slice(y, y+1))
+            return super(oldstr, self).__getitem__(slice(y, y+1))
         else:
-            return super().__getitem__(y)
+            return super(oldstr, self).__getitem__(y)
 
     def __getslice__(self, *args):
         return self.__getitem__(slice(*args))

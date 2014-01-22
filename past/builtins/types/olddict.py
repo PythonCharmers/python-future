@@ -38,19 +38,19 @@ class olddict(with_metaclass(BaseOldDict, _builtin_dict)):
     viewkeys = _builtin_dict.keys
 
     def keys(self):
-        return list(super().keys())
+        return list(super(olddict, self).keys())
 
     itervalues = _builtin_dict.values
     viewvalues = _builtin_dict.values
 
     def values(self):
-        return list(super().values())
+        return list(super(olddict, self).values())
 
     iteritems = _builtin_dict.items
     viewitems = _builtin_dict.items
 
     def items(self):
-        return list(super().items())
+        return list(super(olddict, self).items())
 
     def has_key(self, k):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tests for the resurrected Py2-like 8-bit string object
+Tests for the resurrected Py2-like 8-bit string type.
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
