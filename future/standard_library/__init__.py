@@ -367,7 +367,7 @@ class suspend_hooks(object):
         remove_hooks()
         return self
     def __exit__(self, *args):
-        if not self.hooks_were_installed:
+        if self.hooks_were_installed:
             install_hooks()
 
 
