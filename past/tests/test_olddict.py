@@ -278,11 +278,11 @@ class Py2DictTest(unittest.TestCase):
                 return BogonIter()
             def __getitem__(self, key):
                 return key
-        import pdb; pdb.set_trace()
         self.assertRaises(Exc, d.update, FailingUserDict())
 
         class FailingUserDict:
             def keys(self):
+                @implements_iterator
                 class BogonIter:
                     def __init__(self):
                         self.i = ord('a')
@@ -299,6 +299,7 @@ class Py2DictTest(unittest.TestCase):
                 raise Exc
         self.assertRaises(Exc, d.update, FailingUserDict())
 
+        @implements_iterator
         class badseq(object):
             def __iter__(self):
                 return self
@@ -341,6 +342,7 @@ class Py2DictTest(unittest.TestCase):
 
         self.assertRaises(Exc, baddict1.fromkeys, [1])
 
+        @implements_iterator
         class BadSeq(object):
             def __iter__(self):
                 return self
