@@ -6,18 +6,20 @@ See the docs for these modules for more information::
 
 - future.builtins.types
 - future.builtins.iterators
-- future.builtins.newsuper
+- future.builtins.newnext
 - future.builtins.newround
+- future.builtins.newsuper
 - future.builtins.misc
 - future.builtins.disabled
 
 """
 
 from future.builtins.iterators import (filter, map, zip)
-from future.builtins.misc import (ascii, chr, hex, input, oct, open,
-                                  round, super)
+from future.builtins.misc import (ascii, chr, hex, input, next, oct,
+                                  open, round, super)
 from future.builtins.types import (bytes, dict, int, range, str)
 from future import utils
+
 
 if not utils.PY3:
     # We only import names that shadow the builtins on Py2. No other namespace
@@ -25,8 +27,8 @@ if not utils.PY3:
     
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
-               'ascii', 'chr', 'hex', 'input', 'oct', 'open', 'round', 'super',
-               'bytes', 'dict', 'int', 'range', 'str',
+               'ascii', 'chr', 'hex', 'input', 'next', 'oct', 'open', 'round',
+               'super', 'bytes', 'dict', 'int', 'range', 'str',
               ]
 
 else:

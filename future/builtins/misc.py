@@ -9,6 +9,7 @@ The builtin functions are:
 - ``oct`` (from Py2's future_builtins module)
 - ``chr`` (equivalent to ``unichr`` on Py2)
 - ``input`` (equivalent to ``raw_input`` on Py2)
+- ``next`` (calls ``__next__`` if it exists, else ``next`` method)
 - ``open`` (equivalent to io.open on Py2)
 - ``super`` (backport of Py3's magic zero-argument super() function
 - ``round`` (new "Banker's Rounding" behaviour from Py3)
@@ -49,14 +50,15 @@ if utils.PY2:
 
     input = raw_input
 
+    from future.builtins.newnext import newnext as next
     from future.builtins.newround import newround as round
     from future.builtins.newsuper import newsuper as super
 
     # ``future`` doesn't support Py3.0/3.1. If we ever did, we'd add this:
     #     callable = __builtin__.callable
 
-    __all__ = ['ascii', 'chr', 'hex', 'input', 'oct', 'open',
-               'round', 'super']
+    __all__ = ['ascii', 'chr', 'hex', 'input', 'next',
+               'oct', 'open', 'round', 'super']
 
 else:
     import builtins
@@ -64,6 +66,7 @@ else:
     chr = builtins.chr
     hex = builtins.hex
     input = builtins.input
+    next = builtins.next
     oct = builtins.oct
     open = builtins.open
     round = builtins.round

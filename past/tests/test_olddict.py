@@ -7,6 +7,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import os
 import sys
 
+from future.utils import implements_iterator
 from past import utils
 from past.tests.base import unittest
 from past.builtins import dict
@@ -263,6 +264,7 @@ class Py2DictTest(unittest.TestCase):
 
         class FailingUserDict:
             def keys(self):
+                @implements_iterator
                 class BogonIter:
                     def __init__(self):
                         self.i = 1
