@@ -90,8 +90,9 @@ class TestStandardLibraryRenames(CodeHandler):
         # Imports should succeed again now:
         import builtins
         import configparser
-        self.assertTrue(standard_library.detect_hooks())
-        self.assertTrue(len(old_meta_path) == len(sys.meta_path))
+        if utils.PY2:
+            self.assertTrue(standard_library.detect_hooks())
+            self.assertTrue(len(old_meta_path) == len(sys.meta_path))
 
     def test_remove_hooks2(self):
         """
@@ -128,13 +129,15 @@ class TestStandardLibraryRenames(CodeHandler):
         its job.
         """
         standard_library.install_hooks()
-        self.assertTrue(standard_library.detect_hooks())
+        if utils.PY2:
+            self.assertTrue(standard_library.detect_hooks())
 
         old_meta_path = copy.copy(sys.meta_path)
 
         standard_library.remove_hooks()
-        self.assertTrue(len(old_meta_path) + 1 == len(sys.meta_path))
-        self.assertFalse(standard_library.detect_hooks())
+        if utils.PY2:
+            self.assertTrue(len(old_meta_path) + 1 == len(sys.meta_path))
+            self.assertFalse(standard_library.detect_hooks())
 
     @unittest.skipIf(utils.PY3, 'not testing for old urllib on Py3')
     def test_old_urllib_import(self):

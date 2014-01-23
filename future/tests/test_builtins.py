@@ -9,12 +9,17 @@ from future.tests.base import unittest
 
 import sys
 import textwrap
+import tempfile
+import os
 from subprocess import Popen, PIPE
 from numbers import Integral
 from decimal import Decimal
 
 
 class TestBuiltins(unittest.TestCase):
+    def setUp(self):
+        self.tempdir = tempfile.mkdtemp() + os.path.sep
+
     def test_super(self):
         class verbose_list(list):
             '''
@@ -147,9 +152,9 @@ class TestBuiltins(unittest.TestCase):
         name = input()
         greet(name)
         '''
-        with open('mytestscript.py', 'w') as f:
+        with open(self.dir + 'input_test_script.py', 'w') as f:
             f.write(textwrap.dedent(code))
-        p1 = Popen([interpreter, 'mytestscript.py'], stdout=PIPE, stdin=PIPE, stderr=None)
+        p1 = Popen([interpreter, 'input_test_script.py'], stdout=PIPE, stdin=PIPE, stderr=None)
         (stdout, stderr) = p1.communicate(b'Ed')
         # print(stdout)
         # print(stderr)

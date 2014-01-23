@@ -8,6 +8,8 @@ import os
 import textwrap
 import sys
 import pprint
+import tempfile
+import os
 from subprocess import Popen, PIPE
 
 from past import utils
@@ -19,6 +21,7 @@ from future.tests.base import unittest, CodeHandler
 
 class TestHooked(unittest.TestCase):
     def setUp(self):
+        self.tempdir = tempfile.mkdtemp() + os.path.sep
         install_hooks()
 
     def tearDown(self):
@@ -27,7 +30,7 @@ class TestHooked(unittest.TestCase):
     def write_and_import(self, code, modulename='mymodule'):
         self.assertTrue('.py' not in modulename)
         filename = modulename + '.py'
-        with open(filename, 'w') as f:
+        with open(self.tempdir + filename, 'w') as f:
             f.write(textwrap.dedent(code).strip())
 
         # meta_path_len = len(sys.meta_path)
@@ -36,6 +39,8 @@ class TestHooked(unittest.TestCase):
         # assert len(sys.meta_path) == 1 + meta_path_len
         # print('sys.meta_path is: {}'.format(sys.meta_path))
         module = None
+
+        sys.path.insert(0, self.tempdir)
         try:
             module = __import__(modulename)
         except SyntaxError:
@@ -45,6 +50,7 @@ class TestHooked(unittest.TestCase):
         finally:
             remove_hooks()
             print('Hooks removed')
+            sys.path.remove(self.tempdir)
         return module
  
     def test_print_statement(self):

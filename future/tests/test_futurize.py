@@ -2,6 +2,7 @@
 from __future__ import absolute_import, division, print_function
 
 import pprint
+import tempfile
 from subprocess import Popen, PIPE
 import os
 
@@ -14,6 +15,8 @@ class TestFuturizeSimple(CodeHandler):
     tests for whether they can be passed to ``futurize`` and immediately
     run under both Python 2 again and Python 3.
     """
+    def setUp(self):
+        self.tempdir = tempfile.mkdtemp() + os.path.sep
 
     @unittest.expectedFailure
     def test_problematic_string(self):
@@ -435,7 +438,7 @@ class TestFuturizeStage1(CodeHandler):
 
         Issue #16 (with porting bokeh/bbmodel.py)
         """
-        with open('specialmodels.py', 'w') as f:
+        with open(tempdir + 'specialmodels.py', 'w') as f:
             f.write('pass')
 
         before = """
