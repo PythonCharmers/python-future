@@ -15,11 +15,11 @@ from subprocess import Popen, PIPE
 from past import utils
 from past.builtins import basestring, str as oldstr
 
-from future.autoconvert import install_hooks, remove_hooks
+from future.translation import install_hooks, remove_hooks
 from future.tests.base import unittest, CodeHandler
 
 
-class TestHooked(unittest.TestCase):
+class TestTranslate(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         install_hooks()
@@ -31,12 +31,12 @@ class TestHooked(unittest.TestCase):
         s1 = '/home/user/anaconda/envs/future3/lib/python3.3/lib-dynload/math.cpython-33m.so'
         s2 = '/home/user/anaconda/envs/future3/lib/python3.3/urllib/__init__.py'
         c =  '/home/user/anaconda/envs/future3/lib/python3.3/'
-        self.assertEqual(c, autoconvert.common_substring(s1, s2))
+        self.assertEqual(c, translation.common_substring(s1, s2))
 
         s1 = r'C:\Users\Fred Flintstone\Python3.3\lib\something'
         s2 = r'C:\Users\Fred Flintstone\Python3.3\lib\somethingelse'
         c =  r'C:\Users\Fred Flintstone\Python3.3\lib' + '\\'
-        self.assertEqual(c, autoconvert.common_substring(s1, s2))
+        self.assertEqual(c, translation.common_substring(s1, s2))
 
     def write_and_import(self, code, modulename='mymodule'):
         self.assertTrue('.py' not in modulename)

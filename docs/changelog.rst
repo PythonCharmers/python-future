@@ -7,67 +7,80 @@ What's new
 What's new in version 0.11
 ==========================
 
-``future.autoconvert`` module
------------------------------
+Tranparent translation of Python 2 modules upon import
+------------------------------------------------------
 
-``future`` now provides an experimental ``autoconvert`` package to help
+``future`` now provides an experimental ``translation`` package to help
 with importing and using old Python 2 modules in a Python 3 environment.
 
 This is implemented using import hooks that attempt to automatically
-convert Python 2 code to Python 3 syntax and semantics upon import. Use
+translate Python 2 code to Python 3 syntax and semantics upon import. Use
 it in Python 3 like this::
 
-    >>> from future.autoconvert import install_hooks
-    >>> install_hooks()
+    $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
+    $ python3
     
-    >>> import mypy2module
-
-This will successfully translate, import and run Python 2 code such as
-the following::
-
-    ### mypy2module.py
-
-    # Print statements are converted transparently to functions
-    print 'Hello from a print statement'
-     
-    # xrange is supported:
-    total = 0
-    for i in xrange(10):
-        total += i
-    print 'Total is: %d' % total
+Then, to use it, pass in a whitelist of module name prefixes to the
+``autotranslate()`` function. Example::
     
-    # Dictionary methods like .keys() and .items() are supported and
-    # return lists as on Python 2:
-    d = {'a': 1, 'b': 2}
-    assert d.keys() == ['a', 'b']
-    assert isinstance(d.items(), list)
-    
-    # Functions like range, reduce, map, filter are not yet supported:
-    # assert isinstance(range(10), list)
+    >>> from future import autotranslate
+    >>> autotranslate('plotrique')
+    >>> import plotrique
 
-    # The exec statement is supported:
-    exec 'total += 1'
-    print 'Total is now: %d' % total
+..     >>> from future.translation import install_hooks
+..     >>> install_hooks()
+..     >>> import mypy2module
+.. 
+.. This will successfully translate, import and run Python 2 code such as
+.. the following::
+.. 
+..     ### mypy2module.py
+.. 
+..     # Print statements are converted transparently to functions
+..     print 'Hello from a print statement'
+..      
+..     # xrange is supported:
+..     total = 0
+..     for i in xrange(10):
+..         total += i
+..     print 'Total is: %d' % total
+..     
+..     # Dictionary methods like .keys() and .items() are supported and
+..     # return lists as on Python 2:
+..     d = {'a': 1, 'b': 2}
+..     assert d.keys() == ['a', 'b']
+..     assert isinstance(d.items(), list)
+..     
+..     # Functions like range, reduce, map, filter are not yet supported:
+..     # assert isinstance(range(10), list)
+.. 
+..     # The exec statement is supported:
+..     exec 'total += 1'
+..     print 'Total is now: %d' % total
+.. 
+..     # Long integers are supported:
+..     k = 1234983424324L
+..     print 'k + 1 = %d' % k
+.. 
+..     # Currently renamed standard library modules are not supported:
+..     # import ConfigParser
+..     # import urllib2
 
-    # Long integers are supported:
-    k = 1234983424324L
-    print 'k + 1 = %d' % k
 
-    # Currently renamed standard library modules are not supported:
-    # import ConfigParser
-    # import urllib2
-
-
-The attributes of the module are then accessible normally from Python 3.
-For example::
-    
-    # This Python 3 code works
-    >>> type(mypy2module.d)
-    
+.. The attributes of the module are then accessible normally from Python 3.
+.. For example::
+..     
+..     # This Python 3 code works
+..     >>> type(mypy2module.d)
 
 
-This is a "last resort"; ideally Python 2 code should be ported properly
-to a Python 2/3 compatible codebase using a tool like ``futurize``.
+This is intended to help you migrate to Python 3 without the need for all
+your code's dependencies to support Python 3 yet. It should be used as a
+"last resort"; ideally Python 2-only dependencies should be ported
+properly to a Python 2/3 compatible codebase using a tool like
+``futurize`` and the changes should be pushed to the upstream project.
+
+For more information, see :ref:`translation`.
 
 
 ``past`` package
@@ -81,8 +94,8 @@ One purpose of ``past`` is to ease module-by-module upgrades to
 codebases from Python 2. It can also help with enabling Python 2 libraries to
 support Python 3 without breaking the API they provide. (For example, user code
 may expect these libraries to pass them Python 2's 8-bit strings, rather than
-Python 3's ``bytes`` object.) It is used internally by the
-``future.autoconvert`` package to help with importing and using old
+Python 3's ``bytes`` object.) In the future it will be used internally by the
+``future.translation`` package to help with importing and using old
 Python 2 modules in a Python 3 environment.
 
 Currently ``past.builtins`` provides forward-ports of Python 2's ``str`` and

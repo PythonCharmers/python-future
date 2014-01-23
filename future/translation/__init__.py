@@ -1,28 +1,35 @@
 # -*- coding: utf-8 -*-
 """
-future.autoconvert
+future.translation
 ==================
 
-The ``future.autoconvert`` package provides an import hook for Python 3 which
-runs ``futurize`` fixers over Python 2 code on import to convert print statements into
-functions, etc.
+The ``future.translation`` package provides an import hook for Python 3 which
+transparently runs ``futurize`` fixers over Python 2 code on import to convert
+print statements into functions, etc.
 
-It is intended to assist users when porting Python 2.x code to 3.x.
+It is intended to assist users in migrating to Python 3.x even if some
+dependencies still only support Python 2.x.
 
 Usage
 -----
 
-Once installed on the path, the import hook is invoked as follows:
+Once your Py2 package is installed in the usual module search path, the import
+hook is invoked as follows:
 
-    >>> from future import autoconvert
-    >>> autoconvert.install_hooks()
+    >>> from future import autotranslate
+    >>> autotranslate('mypackagename')
 
-You can unregister the hook by
+Or:
 
-    >>> autoconvert.remove_hooks()
+    >>> autotranslate(['mypackage1', 'mypackage2'])
 
+You can unregister the hook using::
 
-Based on ``uprefix`` by Vinay M. Sajip.
+    >>> from future.translation import remove_hooks
+    >>> remove_hooks()
+
+Author: Ed Schofield. 
+Inspired by and based on ``uprefix`` by Vinay M. Sajip.
 """
 
 import imp
@@ -44,8 +51,7 @@ logger.setLevel(logging.DEBUG)
 myfixes = (list(fixes2.libfuturize_2fix_names_stage1) +
            list(fixes2.lib2to3_fix_names_stage1) +
            list(fixes2.libfuturize_2fix_names_stage2) +
-           list(fixes2.lib2to3_fix_names_stage2))  # +
-           # list(fixes2.libfuturize_2suspend_hooks))
+           list(fixes2.lib2to3_fix_names_stage2))
 
 
 # There are two possible grammars: with or without the print statement.
@@ -212,6 +218,11 @@ def detect_python2(source, pathname):
 
 
 class Py2Fixer(object):
+    """
+    An import hook class that uses lib2to3 for source-to-source translation of
+    Py2 code to Py3.
+    """
+
     # See the comments on :class:future.standard_library.RenameImport.
     # We add this attribute here so remove_hooks() and install_hooks() can
     # unambiguously detect whether the import hook is installed:
@@ -296,7 +307,7 @@ class Py2Fixer(object):
             else:
                 convert = False
             if not convert:
-                logging.debug('Excluded {} from autoconversion'.format(fullname))
+                logging.debug('Excluded {} from translation'.format(fullname))
                 mod = imp.load_module(fullname, *self.found)
             else:
                 logging.debug('Autoconverting {} ...'.format(fullname))
@@ -381,6 +392,7 @@ class Py2Fixer(object):
 
 _hook = Py2Fixer()
 
+
 def install_hooks(include_paths=(), exclude_paths=()):
     if isinstance(include_paths, str):
         include_paths = (include_paths,)
@@ -389,12 +401,11 @@ def install_hooks(include_paths=(), exclude_paths=()):
     _hook.include(include_paths)
     _hook.exclude(exclude_paths)
     # _hook.debug = debug
-    # pdb.set_trace()
     enable = sys.version_info[0] >= 3   # enabled for all 3.x
-    # enable = (3, 0) <= sys.version_info[:2]            # enabled for 3.0+
-    if enable and _hook not in sys.meta_path:   # was: if enable and _hook not in ...
-        sys.meta_path.insert(0, _hook)
-    # could return the hook when there are ways of configuring it
+    if enable and _hook not in sys.meta_path:
+        sys.meta_path.insert(0, _hook)  # insert at beginning. This could be made a parameter
+
+    # We could return the hook when there are ways of configuring it
     #return _hook
 
 
@@ -416,8 +427,8 @@ class enable_hooks(object):
     """
     Acts as a context manager. Use like this:
     
-    >>> from future import autoconvert
-    >>> with autoconvert.enable_hooks():
+    >>> from future import translation
+    >>> with translation.enable_hooks():
     ...     import mypy2module
     >>> import requests        # py2/3 compatible anyway
     >>> # etc.
@@ -436,11 +447,11 @@ class suspend_hooks(object):
     """
     Acts as a context manager. Use like this:
     
-    >>> from future import autoconvert
-    >>> autoconvert.install_hooks()
+    >>> from future import translation
+    >>> translation.install_hooks()
     >>> import http.client
     >>> # ...
-    >>> with autoconvert.suspend_hooks():
+    >>> with translation.suspend_hooks():
     >>>     import requests     # or others that support Py2/3
 
     If the hooks were disabled before the context, they are not installed when
@@ -453,5 +464,4 @@ class suspend_hooks(object):
     def __exit__(self, *args):
         if self.hooks_were_installed:
             install_hooks()
-
 

@@ -41,10 +41,11 @@ Features
 -   ``past`` package provides forward-ports of Python 2 types and resurrects
     some Python 2 builtins (to aid with per-module code migrations)
 
--   [Experimental] ``future.autoconvert`` module supports importing and
-    using Python 2 modules on Python 3. This feature is still in alpha
-    and needs further development to support a full range of real-world
-    Python 2 modules.
+-   [Experimental] ``future.translation`` module supports transparent
+    translation of Python 2 modules upon import to Python 3.  This
+    feature is still in alpha and needs further development to support a
+    full range of real-world Python 2 modules. The API might also change
+    in later versions.
 
 
 Code examples
