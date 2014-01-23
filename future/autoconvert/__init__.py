@@ -22,23 +22,24 @@ You can unregister the hook by
     >>> autoconvert.remove_hooks()
 
 
-Inspired by ``uprefix`` by Vinay M. Sajip.
+Based on ``uprefix`` by Vinay M. Sajip.
 """
 
 import imp
-from lib2to3.pgen2.parse import ParseError
-from lib2to3.refactor import RefactoringTool
 import logging
 import marshal
 import os
 import sys
-import pdb
+import copy
+from lib2to3.pgen2.parse import ParseError
+from lib2to3.refactor import RefactoringTool
 
 from libfuturize import fixes2
 
 __version__ = '0.1.0'
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 myfixes = (list(fixes2.libfuturize_2fix_names_stage1) +
            list(fixes2.lib2to3_fix_names_stage1) +
@@ -46,26 +47,169 @@ myfixes = (list(fixes2.libfuturize_2fix_names_stage1) +
            list(fixes2.lib2to3_fix_names_stage2))  # +
            # list(fixes2.libfuturize_2suspend_hooks))
 
+
 # There are two possible grammars: with or without the print statement.
 # Hence we have two possible refactoring tool implementations.
-# _rt = RefactoringTool(['libfuturize.fixes2.fix_print_with_import'])
 _rt = RefactoringTool(myfixes)
 _rtp = RefactoringTool(myfixes, {'print_function': True})
 
+# 
+# We detect whether the code is Py2 or Py3 by applying certain lib2to3 fixers
+# to it. If the diff is empty, it's Python 3 code.
+
+py2_detect_fixers = [
+# From stage 1:
+    'lib2to3.fixes.fix_apply',
+    # 'lib2to3.fixes.fix_dict',        # TODO: add support for utils.viewitems() etc. and move to stage2
+    'lib2to3.fixes.fix_except',
+    'lib2to3.fixes.fix_execfile',
+    'lib2to3.fixes.fix_exitfunc',
+    'lib2to3.fixes.fix_funcattrs',
+    'lib2to3.fixes.fix_filter',
+    'lib2to3.fixes.fix_has_key',
+    'lib2to3.fixes.fix_idioms',
+    'lib2to3.fixes.fix_import',    # makes any implicit relative imports explicit. (Use with ``from __future__ import absolute_import)
+    'lib2to3.fixes.fix_intern',
+    'lib2to3.fixes.fix_isinstance',
+    'lib2to3.fixes.fix_methodattrs',
+    'lib2to3.fixes.fix_ne',
+    'lib2to3.fixes.fix_numliterals',    # turns 1L into 1, 0755 into 0o755
+    'lib2to3.fixes.fix_paren',
+    'lib2to3.fixes.fix_print',
+    'lib2to3.fixes.fix_raise',   # uses incompatible with_traceback() method on exceptions
+    'lib2to3.fixes.fix_renames',
+    'lib2to3.fixes.fix_reduce',
+    # 'lib2to3.fixes.fix_set_literal',  # this is unnecessary and breaks Py2.6 support
+    'lib2to3.fixes.fix_repr',
+    'lib2to3.fixes.fix_standarderror',
+    'lib2to3.fixes.fix_sys_exc',
+    'lib2to3.fixes.fix_throw',
+    'lib2to3.fixes.fix_tuple_params',
+    'lib2to3.fixes.fix_types',
+    'lib2to3.fixes.fix_ws_comma',
+    'lib2to3.fixes.fix_xreadlines',
+
+# From stage 2:
+    'lib2to3.fixes.fix_basestring',
+    # 'lib2to3.fixes.fix_buffer',    # perhaps not safe. Test this.
+    # 'lib2to3.fixes.fix_callable',  # not needed in Py3.2+
+    # 'lib2to3.fixes.fix_dict',        # TODO: add support for utils.viewitems() etc.
+    'lib2to3.fixes.fix_exec',
+    # 'lib2to3.fixes.fix_future',    # we don't want to remove __future__ imports
+    'lib2to3.fixes.fix_getcwdu',
+    # 'lib2to3.fixes.fix_imports',   # called by libfuturize.fixes2.fix_future_standard_library
+    # 'lib2to3.fixes.fix_imports2',  # we don't handle this yet (dbm)
+    # 'lib2to3.fixes.fix_input',
+    # 'lib2to3.fixes.fix_itertools',
+    # 'lib2to3.fixes.fix_itertools_imports',
+    'lib2to3.fixes.fix_long',
+    # 'lib2to3.fixes.fix_map',
+    # 'lib2to3.fixes.fix_metaclass', # causes SyntaxError in Py2! Use the one from ``six`` instead
+    'lib2to3.fixes.fix_next',
+    'lib2to3.fixes.fix_nonzero',     # TODO: add a decorator for mapping __bool__ to __nonzero__
+    # 'lib2to3.fixes.fix_operator',    # we will need support for this by e.g. extending the Py2 operator module to provide those functions in Py3
+    'lib2to3.fixes.fix_raw_input',
+    # 'lib2to3.fixes.fix_unicode',   # strips off the u'' prefix, which removes a potentially helpful source of information for disambiguating unicode/byte strings
+    # 'lib2to3.fixes.fix_urllib',
+    'lib2to3.fixes.fix_xrange',
+    # 'lib2to3.fixes.fix_zip',
+]
+
+
+_rt_py2_detect = RefactoringTool(py2_detect_fixers)
+_rtp_py2_detect = RefactoringTool(py2_detect_fixers,
+                                  {'print_function': True})
+
+
 #
 # We need to find a prefix for the standard library, as we don't want to
-# process any files there (they will already be Python 3, and so won't have
-# u prefixes anyway.
+# process any files there (they will already be Python 3).
 #
-# In a non-pythonv virtualenv, sys.real_prefix points to the installed Python.
-# In a pythonv venv, sys.base_prefix points to the installed Python.
-# Outside a virtual environment, sys.prefix points to the installed Python.
-#
+# The following method is used by Sanjay Vinip in uprefix. This fails for
+# ``conda`` environments:
+#     # In a non-pythonv virtualenv, sys.real_prefix points to the installed Python.
+#     # In a pythonv venv, sys.base_prefix points to the installed Python.
+#     # Outside a virtual environment, sys.prefix points to the installed Python.
 
-# if hasattr(sys, 'real_prefix'):
-#     _syslibprefix = sys.real_prefix
-# else:
-#     _syslibprefix = getattr(sys, 'base_prefix', sys.prefix)
+#     if hasattr(sys, 'real_prefix'):
+#         _syslibprefix = sys.real_prefix
+#     else:
+#         _syslibprefix = getattr(sys, 'base_prefix', sys.prefix)
+
+# Instead, we use the portion of the path common to both the stdlib modules
+# ``math`` and ``urllib``.
+
+import os, sys
+def splitall(path):
+    """
+    Split a path into all components. From Python Cookbook.
+    """
+    allparts = []
+    while True:
+        parts = os.path.split(path)
+        if parts[0] == path:  # sentinel for absolute paths
+            allparts.insert(0, parts[0])
+            break
+        elif parts[1] == path: # sentinel for relative paths
+            allparts.insert(0, parts[1])
+            break
+        else:
+            path = parts[0]
+            allparts.insert(0, parts[1])
+    return allparts
+
+
+def common_substring(s1, s2):
+    """
+    Returns the longest common substring to the two strings, starting from the
+    left.
+    """
+    chunks = []
+    path1 = splitall(s1)
+    path2 = splitall(s2)
+    for (dir1, dir2) in zip(path1, path2):
+        if dir1 != dir2:
+            break
+        chunks.append(dir1)
+    return os.path.join(*chunks)
+
+import math
+import urllib
+_stdlibprefix = common_substring(math.__file__, urllib.__file__)
+
+
+def detect_python2(source, pathname):
+    """
+    Returns a bool indicating whether we think the code is Py2
+    """
+    try:
+        tree = _rt_py2_detect.refactor_string(source, pathname)
+    except ParseError as e:
+        if e.msg != 'bad input' or e.value != '=':
+            raise
+        tree = _rtp.refactor_string(source, pathname)
+
+    if source != str(tree)[:-1]:   # remove added newline
+        # The above fixers made changes, so we conclude it's Python 2 code
+        logging.debug('Detected Python 2 code: {}'.format(pathname))
+        with open('/tmp/original_code.py', 'w') as f:
+            f.write('### Original code (detected as py2): %s\n%s' % 
+                    (pathname, source))
+        with open('/tmp/py2_detection_code.py', 'w') as f:
+            f.write('### Code after running py3 detection (from %s)\n%s' % 
+                    (pathname, str(tree)[:-1]))
+        return True
+    else:
+        logging.debug('Detected Python 3 code: {}'.format(pathname))
+        with open('/tmp/original_code.py', 'w') as f:
+            f.write('### Original code (detected as py3): %s\n%s' % 
+                    (pathname, source))
+        try:
+            os.remove('/tmp/futurize_code.py')
+        except OSError:
+            pass
+        return False
+
 
 class Py2Fixer(object):
     # See the comments on :class:future.standard_library.RenameImport.
@@ -75,9 +219,28 @@ class Py2Fixer(object):
 
     def __init__(self):
         self.found = None
+        self.base_exclude_paths = ['future']
+        self.exclude_paths = copy.copy(self.base_exclude_paths)
+        self.include_paths = []
+
+    def include(self, paths):
+        """
+        Pass in a sequence of module names such as 'plotrique.plotting' that,
+        if present at the leftmost side of the full module filename, would
+        specify the module to be transformed from Py2 to Py3.
+        """
+        self.include_paths += paths
+
+    def exclude(self, paths):
+        """
+        Pass in a sequence of strings such as 'future/__init__.py' that, if
+        present at the rightmost side of the full module filename, would cause
+        the module not to undergo any source transformation.
+        """
+        self.exclude_paths += paths
 
     def find_module(self, fullname, path=None):
-        # print('Running find_module ...')
+        logging.debug('Running find_module: {}...'.format(fullname))
         if '.' in fullname:
             parent, child = fullname.rsplit('.', 1)
             if path is None:
@@ -95,7 +258,6 @@ class Py2Fixer(object):
         return self
 
     def transform(self, source):
-        # print('Running transform() ...')
         # This implementation uses lib2to3,
         # you can override and use something else
         # if that's better for you
@@ -113,21 +275,31 @@ class Py2Fixer(object):
         return str(tree)[:-1] # remove added newline
 
     def load_module(self, fullname):
-        # print('Running load_module ...')
+        logging.debug('Running load_module for {}...'.format(fullname))
         if fullname in sys.modules:
             mod = sys.modules[fullname]
         else:
             if self.kind in (imp.PY_COMPILED, imp.C_EXTENSION, imp.C_BUILTIN,
                              imp.PY_FROZEN):
                 convert = False
-            # elif self.pathname.startswith(_syslibprefix):
-            #     convert = False
-            # in theory, other paths could be configured to be excluded here, too
-            else:
+            elif (self.pathname.startswith(_stdlibprefix)
+                  and 'site-packages' not in self.pathname):
+                # We assume it's a stdlib package in this case. Is this too brittle?
+                # Please file a bug report at https://github.com/PythonCharmers/python-future
+                # if so.
+                convert = False
+            # in theory, other paths could be configured to be excluded here too
+            elif any([fullname.startswith(path) for path in self.exclude_paths]):
+                convert = False
+            elif any([fullname.startswith(path) for path in self.include_paths]):
                 convert = True
+            else:
+                convert = False
             if not convert:
+                logging.debug('Excluded {} from autoconversion'.format(fullname))
                 mod = imp.load_module(fullname, *self.found)
             else:
+                logging.debug('Autoconverting {} ...'.format(fullname))
                 mod = imp.new_module(fullname)
                 sys.modules[fullname] = mod
 
@@ -135,11 +307,26 @@ class Py2Fixer(object):
                 mod.__file__ = self.pathname
                 mod.__name__ = fullname
                 mod.__loader__ = self
-                mod.__package__ = '.'.join(fullname.split('.')[:-1])
+
+                # This:
+                #     mod.__package__ = '.'.join(fullname.split('.')[:-1])
+                # seems to result in "SystemError: Parent module '' not loaded,
+                # cannot perform relative import" for a package's __init__.py
+                # file. We use the approach below. Another option to try is the
+                # minimal load_module pattern from the PEP 302 text instead.
+
+                # Is the test in the next line more or less robust than the
+                # following one? Presumably less ...
+                # ispkg = self.pathname.endswith('__init__.py')
                 
                 if self.kind == imp.PKG_DIRECTORY:
                     mod.__path__ = [ os.path.dirname(self.pathname) ]
-                #else, regular module
+                    mod.__package__ = fullname
+                else:
+                    #else, regular module
+                    mod.__path__ = []
+                    mod.__package__ = fullname.rpartition('.')[0]
+                    
                 try:
                     cachename = imp.cache_from_source(self.pathname)
                     if not os.path.exists(cachename):
@@ -148,6 +335,8 @@ class Py2Fixer(object):
                         sourcetime = os.stat(self.pathname).st_mtime
                         cachetime = os.stat(cachename).st_mtime
                         update_cache = cachetime < sourcetime
+                    # # Force update_cache to work around a problem with it being treated as Py3 code???
+                    # update_cache = True
                     if not update_cache:
                         with open(cachename, 'rb') as f:
                             data = f.read()
@@ -163,10 +352,14 @@ class Py2Fixer(object):
                             with open(self.pathname) as f:
                                 source = f.read()
 
-                        # pdb.set_trace()
-                        source = self.transform(source)
+                        if detect_python2(source, self.pathname):
+                            source = self.transform(source)
+                            with open('/tmp/futurized_code.py', 'w') as f:
+                                f.write('### Futurized code (from %s)\n%s' % 
+                                        (self.pathname, source))
 
                         code = compile(source, self.pathname, 'exec')
+
                         dirname = os.path.dirname(cachename)
                         if not os.path.exists(dirname):
                             os.makedirs(dirname)
@@ -188,7 +381,14 @@ class Py2Fixer(object):
 
 _hook = Py2Fixer()
 
-def install_hooks():
+def install_hooks(include_paths=(), exclude_paths=()):
+    if isinstance(include_paths, str):
+        include_paths = (include_paths,)
+    if isinstance(exclude_paths, str):
+        exclude_paths = (exclude_paths,)
+    _hook.include(include_paths)
+    _hook.exclude(exclude_paths)
+    # _hook.debug = debug
     # pdb.set_trace()
     enable = sys.version_info[0] >= 3   # enabled for all 3.x
     # enable = (3, 0) <= sys.version_info[:2]            # enabled for 3.0+

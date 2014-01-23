@@ -27,6 +27,17 @@ class TestHooked(unittest.TestCase):
     def tearDown(self):
         remove_hooks()
 
+    def test_common_substring(self):
+        s1 = '/home/user/anaconda/envs/future3/lib/python3.3/lib-dynload/math.cpython-33m.so'
+        s2 = '/home/user/anaconda/envs/future3/lib/python3.3/urllib/__init__.py'
+        c =  '/home/user/anaconda/envs/future3/lib/python3.3/'
+        self.assertEqual(c, autoconvert.common_substring(s1, s2))
+
+        s1 = r'C:\Users\Fred Flintstone\Python3.3\lib\something'
+        s2 = r'C:\Users\Fred Flintstone\Python3.3\lib\somethingelse'
+        c =  r'C:\Users\Fred Flintstone\Python3.3\lib' + '\\'
+        self.assertEqual(c, autoconvert.common_substring(s1, s2))
+
     def write_and_import(self, code, modulename='mymodule'):
         self.assertTrue('.py' not in modulename)
         filename = modulename + '.py'
@@ -99,10 +110,10 @@ class TestHooked(unittest.TestCase):
         module = self.write_and_import(code, 'future_standard_library')
         self.assertTrue('configparser' in dir(module))
 
-    def test_import_builtin_functions(self):
+    def test_old_builtin_functions(self):
         code = """
         # a = raw_input()
-        b = open('test_builtins.py')
+        # b = open('some_file_on_all_platforms')
 
         def is_even(x):
             return x % 2 == 0
