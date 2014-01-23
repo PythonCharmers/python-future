@@ -179,9 +179,9 @@ def common_substring(s1, s2):
         chunks.append(dir1)
     return os.path.join(*chunks)
 
-import math
-import urllib
-_stdlibprefix = common_substring(math.__file__, urllib.__file__)
+# import math
+# import urllib
+# _stdlibprefix = common_substring(math.__file__, urllib.__file__)
 
 
 def detect_python2(source, pathname):
@@ -293,12 +293,12 @@ class Py2Fixer(object):
             if self.kind in (imp.PY_COMPILED, imp.C_EXTENSION, imp.C_BUILTIN,
                              imp.PY_FROZEN):
                 convert = False
-            elif (self.pathname.startswith(_stdlibprefix)
-                  and 'site-packages' not in self.pathname):
-                # We assume it's a stdlib package in this case. Is this too brittle?
-                # Please file a bug report at https://github.com/PythonCharmers/python-future
-                # if so.
-                convert = False
+            # elif (self.pathname.startswith(_stdlibprefix)
+            #       and 'site-packages' not in self.pathname):
+            #     # We assume it's a stdlib package in this case. Is this too brittle?
+            #     # Please file a bug report at https://github.com/PythonCharmers/python-future
+            #     # if so.
+            #     convert = False
             # in theory, other paths could be configured to be excluded here too
             elif any([fullname.startswith(path) for path in self.exclude_paths]):
                 convert = False
