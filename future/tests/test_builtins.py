@@ -152,7 +152,7 @@ class TestBuiltins(unittest.TestCase):
         name = input()
         greet(name)
         '''
-        with open(self.dir + 'input_test_script.py', 'w') as f:
+        with open(self.tempdir + 'input_test_script.py', 'w') as f:
             f.write(textwrap.dedent(code))
         p1 = Popen([interpreter, 'input_test_script.py'], stdout=PIPE, stdin=PIPE, stderr=None)
         (stdout, stderr) = p1.communicate(b'Ed')

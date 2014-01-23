@@ -17,6 +17,7 @@ class TestFuturizeSimple(CodeHandler):
     """
     def setUp(self):
         self.tempdir = tempfile.mkdtemp() + os.path.sep
+        super(TestFuturizeSimple, self).setUp()
 
     @unittest.expectedFailure
     def test_problematic_string(self):
