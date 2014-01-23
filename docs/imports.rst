@@ -6,7 +6,7 @@ Imports
 .. ___future__-imports:
 
 __future__ imports
-~~~~~~~~~~~~~~~~~~
+------------------
 
 To write a Python 2/3 compatible codebase, the first step is to add this line
 to the top of each module::
@@ -30,10 +30,10 @@ These are all available in Python 2.6 and up, and enabled by default in Python 3
 .. _star-imports:
 
 future imports
-~~~~~~~~~~~~~~
+--------------
 
 Implicit imports
-----------------
+~~~~~~~~~~~~~~~~
 
 If you don't mind namespace pollution on Python 2, the easiest way to provide
 Py2/3 compatibility for new code using ``future`` is to include the following
@@ -55,7 +55,7 @@ provide their Python 3 semantics.
 .. _explicit-imports:
 
 Explicit imports
-----------------
+~~~~~~~~~~~~~~~~
 
 Explicit forms of the imports are often preferred and are necessary for using
 certain automated code-analysis tools.
@@ -88,10 +88,109 @@ docs for these modules. Please note that this internal API is evolving and may
 not be stable between different versions of ``future``.
 
 
+.. _translation:
+
+Importing Python 2-only dependencies on Python 3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``future`` now provides an experimental ``translation`` package to help
+with importing and using old Python 2 modules in a Python 3 environment.
+
+This is implemented using PEP 414 import hooks together with fixers from
+``lib2to3`` and ``libfuturize`` (included with ``python-future``) that
+attempt to automatically translate Python 2 code to Python 3 syntax and
+semantics upon import.
+
+*Note* This feature is still in alpha and needs further development to support a
+full range of real-world Python 2 modules. Also be aware that the API for
+this package might change considerably in later versions.
+
+Here is how to use it::
+
+    $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
+    $ python3
+    
+Then pass in a whitelist of module name prefixes to the
+``future.autotranslate()`` function. Example::
+    
+    >>> from future import autotranslate
+    >>> autotranslate('plotrique')
+    >>> import plotrique
+
+Here is a more explicit example::
+
+    >>> from future.translation import install_hooks
+    >>> install_hooks()
+    >>> import mypy2module
+
+This will translate, import and run Python 2 code such as the following::
+
+    ### File: mypy2module.py
+
+    # Print statements are translated transparently to functions:
+    print 'Hello from a print statement'
+     
+    # xrange() is translated to Py3's range():
+    total = 0
+    for i in xrange(10):
+        total += i
+    print 'Total is: %d' % total
+    
+    # Dictionary methods like .keys() and .items() are supported and
+    # return lists as on Python 2:
+    d = {'a': 1, 'b': 2}
+    assert d.keys() == ['a', 'b']
+    assert isinstance(d.items(), list)
+    
+    # Functions like range, reduce, map, filter also return lists:
+    assert isinstance(range(10), list)
+
+    # The exec statement is supported:
+    exec 'total += 1'
+    print 'Total is now: %d' % total
+
+    # Long integers are supported:
+    k = 1234983424324L
+    print 'k + 1 = %d' % k
+
+    # Most renamed standard library modules are supported:
+    import ConfigParser
+    import HTMLParser
+    import urllib
+
+
+The attributes of the module are then accessible normally from Python 3.
+For example::
+    
+    # This Python 3 code works
+    >>> type(mypy2module.d)
+    builtins.dict
+
+This is a standard Python 3 data type, so, when called from Python 3 code,
+``keys()`` returns a view, not a list::
+
+    >>> type(mypy2module.d.keys())
+    builtins.dict_keys
+
+
+.. _translation-limitations
+
+Known limitations of ``future.translation``
+*******************************************
+
+The source translation feature offered by the ``future.translation``
+package has the same limitations as the ``futurize`` script (see
+:ref:`futurize-limitations`). Help developing and testing this further
+would be particularly welcome.
+
+Please report any bugs you find on the ``python-future`` `bug tracker
+<https://github.com/PythonCharmers/python-future/>`_.
+
+
 .. _obsolete-builtins:
 
 Obsolete Python 2 builtins
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Twelve Python 2 builtins have been removed from Python 3. To aid with
 porting code to Python 3 module by module, you can use the following
@@ -115,7 +214,7 @@ Python 2 support, as described in :ref:`forwards-conversion-stage2`.
 .. _unicode-literals:
 
 Should I import unicode_literals?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 The ``future`` package can be used with or without ``unicode_literals``
 imports.
@@ -141,7 +240,7 @@ This section summarizes the benefits and drawbacks of using
 ``unicode_literals``.
 
 Benefits
---------
+~~~~~~~~
 
 1. String literals are unicode on Python 3. Making them unicode on Python 2
    leads to more consistency of your string types across the two
@@ -165,7 +264,7 @@ Benefits
 
 
 Drawbacks
----------
+~~~~~~~~~
 
 1. Adding ``unicode_literals`` to a module amounts to a "global flag day" for
    that module, changing the data types of all strings in the module at once.
@@ -258,7 +357,7 @@ for other gotchas.
 
 
 Others' perspectives
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 In favour of ``unicode_literals``
 *********************************

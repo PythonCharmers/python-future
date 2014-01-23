@@ -7,71 +7,25 @@ What's new
 What's new in version 0.11
 ==========================
 
-Tranparent translation of Python 2 modules upon import
-------------------------------------------------------
+Auto-translation of Python 2 modules upon import
+------------------------------------------------
 
 ``future`` now provides an experimental ``translation`` package to help
 with importing and using old Python 2 modules in a Python 3 environment.
 
 This is implemented using import hooks that attempt to automatically
 translate Python 2 code to Python 3 syntax and semantics upon import. Use
-it in Python 3 like this::
+it like this::
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     $ python3
     
-Then, to use it, pass in a whitelist of module name prefixes to the
-``autotranslate()`` function. Example::
+Then pass in a whitelist of module name prefixes to the
+``future.autotranslate()`` function. Example::
     
     >>> from future import autotranslate
     >>> autotranslate('plotrique')
     >>> import plotrique
-
-..     >>> from future.translation import install_hooks
-..     >>> install_hooks()
-..     >>> import mypy2module
-.. 
-.. This will successfully translate, import and run Python 2 code such as
-.. the following::
-.. 
-..     ### mypy2module.py
-.. 
-..     # Print statements are converted transparently to functions
-..     print 'Hello from a print statement'
-..      
-..     # xrange is supported:
-..     total = 0
-..     for i in xrange(10):
-..         total += i
-..     print 'Total is: %d' % total
-..     
-..     # Dictionary methods like .keys() and .items() are supported and
-..     # return lists as on Python 2:
-..     d = {'a': 1, 'b': 2}
-..     assert d.keys() == ['a', 'b']
-..     assert isinstance(d.items(), list)
-..     
-..     # Functions like range, reduce, map, filter are not yet supported:
-..     # assert isinstance(range(10), list)
-.. 
-..     # The exec statement is supported:
-..     exec 'total += 1'
-..     print 'Total is now: %d' % total
-.. 
-..     # Long integers are supported:
-..     k = 1234983424324L
-..     print 'k + 1 = %d' % k
-.. 
-..     # Currently renamed standard library modules are not supported:
-..     # import ConfigParser
-..     # import urllib2
-
-
-.. The attributes of the module are then accessible normally from Python 3.
-.. For example::
-..     
-..     # This Python 3 code works
-..     >>> type(mypy2module.d)
 
 
 This is intended to help you migrate to Python 3 without the need for all

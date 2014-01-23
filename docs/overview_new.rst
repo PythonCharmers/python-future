@@ -10,9 +10,8 @@ codebase with minimal cruft and run it easily on Python 2 mostly unchanged.
 
 It provides ``future`` and ``past`` packages with backports and forward ports
 of features from Python 3 and 2. It also comes with ``futurize``, a customized
-2to3-based script that helps you to convert code easily to supporting
-both Python 2 and 3 in a single codebase, module by module, from either
-Python 2 or Python 3.
+2to3-based script that helps you to transition to supporting both Python 2 and
+3 in a single codebase, module by module, from either Python 2 or Python 3.
 
 
 .. _features:
@@ -36,9 +35,6 @@ Features
 -   a comprehensive set of utility functions and decorators selected from
     Py2/3 compatibility interfaces from projects like ``six``, ``IPython``,
     ``Jinja2``, ``Django``, and ``Pandas``.
-
--   ``future.translation`` package supports transparent translation of
-    Python 2 modules to Python 3 upon import. [Experimental] 
 
 -   ``past`` package provides forward-ports of Python 2 types and resurrects
     some Python 2 builtins (to aid with per-module code migrations)
@@ -105,7 +101,6 @@ on Python 3::
     assert isinstance(u'blah', str)
     assert isinstance('blah', str)       # if unicode_literals is in effect
 
-
 There is also support for renamed standard library modules in the form of import hooks::
 
     from future import standard_library
@@ -119,44 +114,6 @@ There is also support for renamed standard library modules in the form of import
 To disable these at the end of a module, use::
 
     standard_library.remove_hooks()
-
-
-There is also a context manager version which removes the hooks at the
-end of the block::
-
-    from future import standard_library
-
-    with standard_library.enable_hooks():
-        from http.client import HttpConnection
-        from itertools import filterfalse
-        import html.parser
-        import queue
-
-
-Automatic translation
----------------------
-
-``future`` can now automatically and transparently translate some Python
-2 modules to Python 3 upon import. For example, here is how to use a
-Python 2-only package called ``plotrique`` on Python 3. First install
-it::
-
-    $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
-    
-(or use ``pip`` if this points to your Py3 environment.)
-
-Then pass a whitelist of module name prefixes to the ``autotranslate()`` function.
-Example::
-    
-    $ python3
-
-    >>> from future import autotranslate
-    >>> autotranslate('plotrique')
-    >>> import plotrique
-
-Note: this feature is still in alpha and needs more testing and
-development to support a full range of real-world Python 2 modules.
-
 
 
 Next steps

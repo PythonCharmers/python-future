@@ -123,6 +123,34 @@ For more information on interfaces that have changed in the standard library
 between Python 2 and Python 3, see :ref:`stdlib-incompatibilities`.
 
 
+.. _py2-dependencies:
+
+Python 2-only dependencies
+--------------------------
+
+``future`` can now automatically and transparently translate some Python
+2 modules to Python 3 upon import. If you have dependencies that support
+only Python 2, you can try the following recipe. First, install the Python
+2-only package into your Python 3 environment::
+
+    $ pip3 install mypackagename --no-compile   # to ignore SyntaxErrors
+    
+(or use ``pip`` if this points to your Py3 environment.)
+
+Then add the following code at the top of your (Py3 or Py2/3-compatible)
+code::
+
+    from future import autotranslate
+    autotranslate('mypackagename')
+    import mypackagename
+
+This feature is experimental, and we would appreciate your feedback on
+how well this works or doesn't work for you. Please file an issue `here
+<https://github.com/PythonCharmers/python-future>`_ or post to the
+`python-porting
+<https://mail.python.org/mailman/listinfo/python-porting>`_ mailing list.
+
+
 .. _utilities-guide:
 
 Utilities
