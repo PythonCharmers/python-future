@@ -438,7 +438,7 @@ def isnewbytes(obj):
     """
     # TODO: generalize this so that it works with subclasses of newbytes
     # Import is here to avoid circular imports:
-    from future.builtins.backports.newbytes import newbytes
+    from future.builtins.types.newbytes import newbytes
     return type(obj) == newbytes
 
 

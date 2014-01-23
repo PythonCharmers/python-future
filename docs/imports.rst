@@ -79,8 +79,8 @@ equivalent to typing ``bytes = bytes; int = int`` etc. for each builtin.
 
 The internal API is currently as follows::
 
-    from future.builtins.backports import bytes, int, range, round, str, super
-    from future.builtins.misc import ascii, chr, hex, input, oct, open
+    from future.builtins.types import bytes, int, range, str
+    from future.builtins.misc import ascii, chr, hex, input, oct, open, round, super
     from future.builtins.iterators import filter, map, zip
 
 To understand the details of the backported builtins on Python 2, see the

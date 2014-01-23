@@ -21,13 +21,13 @@ from libfuturize.fixer_util import touch_import_top
 
 # All builtins are:
 #     from future.builtins.iterators import (filter, map, zip)
-#     from future.builtins.misc import (ascii, chr, hex, input, isinstance, oct, open)
-#     from future.builtins.backports import (bytes, int, range, round, str, super)
+#     from future.builtins.misc import (ascii, chr, hex, input, isinstance, oct, open, round, super)
+#     from future.builtins.types import (bytes, dict, int, range, str)
 # We don't need isinstance any more.
 
 replaced_builtins = '''filter map zip
-                       ascii chr hex input oct open
-                       bytes int range round str super'''.split()
+                       ascii chr hex input oct open round super
+                       bytes dict int range str'''.split()
 
 expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtins])
 

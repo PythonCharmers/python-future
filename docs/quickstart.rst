@@ -47,6 +47,7 @@ module::
     from __future__ import unicode_literals
     from future.builtins import open
     from future.builtins import str
+    from past.utils import div
     # etc., as needed
     
 and converts a few Python 3-only constructs to a form compatible with
@@ -128,12 +129,12 @@ Utilities
 ---------
 
 :mod:`future` also provides some useful functions and decorators to ease
-backward compatibility with Py2 in the :mod:`future.utils` module. These
-are a selection of the most useful functions from ``six`` and various
-home-grown Py2/3 compatibility modules from popular Python projects, such as
-Jinja2, Pandas, IPython, and Django. The goal is to consolidate these in one
-place, tested and documented, obviating the need for every project to repeat
-this work.
+backward compatibility with Py2 in the :mod:`future.utils` and
+:mod:`past.utils` modules. These are a selection of the most useful functions
+from ``six`` and various home-grown Py2/3 compatibility modules from popular
+Python projects, such as Jinja2, Pandas, IPython, and Django. The goal is to
+consolidate these in one place, tested and documented, obviating the need for
+every project to repeat this work.
 
 Examples::
 

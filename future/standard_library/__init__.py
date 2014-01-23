@@ -401,14 +401,12 @@ def remove_hooks():
     """
     Use to remove the ``future.standard_library`` import hooks.
     """
-    # print('sys.meta_path was: {}'.format(sys.meta_path))
-    # print('Removing hooks ...')
+    # print('Uninstalling hooks ...')
     if not utils.PY3:
         # Loop backwards, so deleting items keeps the ordering:
         for i, hook in list(enumerate(sys.meta_path))[::-1]:
             if hasattr(hook, 'RENAMER'):
                 del sys.meta_path[i]
-    # print('sys.meta_path is now: {}'.format(sys.meta_path))
 
 
 def disable_hooks():

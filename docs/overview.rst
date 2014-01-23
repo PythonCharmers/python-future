@@ -3,28 +3,46 @@
 Overview
 ========
 
-``future`` is the missing compatibility layer between Python 3 and Python
-2. It allows you to maintain a single, clean Python 3.x-compatible
+
+``python-future`` is the missing compatibility layer between Python 3 and
+Python 2. It allows you to maintain a single, clean Python 3.x-compatible
 codebase with minimal cruft and run it easily on Python 2 mostly unchanged.
 
-``future`` comes with ``futurize``, a script that helps you to transition
-to supporting both Python 2 and 3 in a single codebase, module by module.
+It provides ``future`` and ``past`` packages with backports and forward ports
+of features from Python 3 and 2. It also comes with ``futurize``, a customized
+2to3-based script that helps you to transition to supporting both Python 2 and
+3 in a single codebase, module by module, from either Python 2 or Python 3.
+
 
 .. _features:
 
 Features
 --------
 
--   provides backports and remappings for 16 builtins with different
-    semantics on Py3 versus Py2
--   provides backports and remappings from the Py3 standard library
+-   ``future`` package provides backports and remappings for 16 builtins with
+    different semantics on Py3 versus Py2
+
+-   ``future`` package provides backports and remappings from the Py3 standard
+    library
+
 -   330+ unit tests
--   ``futurize`` script based on ``2to3``, ``3to2`` and parts of
-    ``python-modernize`` for automatic conversion from either Py2 or Py3 to a
-    clean single-source codebase compatible with Python 2.6+ and Python 3.3+.
--   a consistent set of utility functions and decorators selected from
+
+-   ``futurize`` script based on ``2to3`` and parts of ``3to2`` and
+    ``python-modernize``, for automatic conversion from either Py2 or Py3
+    to a clean single-source codebase compatible with Python 2.6+ and
+    Python 3.3+.
+
+-   a comprehensive set of utility functions and decorators selected from
     Py2/3 compatibility interfaces from projects like ``six``, ``IPython``,
     ``Jinja2``, ``Django``, and ``Pandas``.
+
+-   ``past`` package provides forward-ports of Python 2 types and resurrects
+    some Python 2 builtins (to aid with per-module code migrations)
+
+-   [Experimental] ``future.autoconvert`` module supports importing and
+    using Python 2 modules on Python 3. This feature is still in alpha
+    and needs further development to support a full range of real-world
+    Python 2 modules.
 
 
 .. _code-examples:
@@ -88,6 +106,7 @@ on Python 3::
     assert isinstance(u'blah', str)
     assert isinstance('blah', str)       # if unicode_literals is in effect
 
+
 There is also support for renamed standard library modules in the form of import hooks::
 
     from future import standard_library
@@ -101,6 +120,18 @@ There is also support for renamed standard library modules in the form of import
 To disable these at the end of a module, use::
 
     standard_library.remove_hooks()
+
+
+There is also a context manager version which removes the hooks at the
+end of the block::
+
+    from future import standard_library
+
+    with standard_library.enable_hooks():
+        from http.client import HttpConnection
+        from itertools import filterfalse
+        import html.parser
+        import queue
 
 
 Next steps

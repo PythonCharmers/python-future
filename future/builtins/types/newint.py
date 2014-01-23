@@ -9,7 +9,7 @@ They are very similar. The most notable difference is:
 
 from numbers import Integral
 
-from future.builtins.backports.newbytes import newbytes
+from future.builtins.types.newbytes import newbytes
 from future.utils import PY3, isint, istext, isbytes, with_metaclass
 
 

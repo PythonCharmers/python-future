@@ -7,26 +7,145 @@ What's new
 What's new in version 0.11
 ==========================
 
-More robust implementation of standard_library hooks
-----------------------------------------------------
+``future.autoconvert`` module
+-----------------------------
 
-``future.standard_library`` now no longer installs import hooks by default.
-These were bleeding into surrounding code, causing incompatibilities with
-modules like ``requests`` (issue #19). 
+``future`` now provides an experimental ``autoconvert`` package to help
+with importing and using old Python 2 modules in a Python 3 environment.
 
-``future.standard_library`` now provides a context manager
-``enable_hooks``. Use it as follows::
+This is implemented using import hooks that attempt to automatically
+convert Python 2 code to Python 3 syntax and semantics upon import. Use
+it in Python 3 like this::
+
+    >>> from future.autoconvert import install_hooks
+    >>> install_hooks()
+    
+    >>> import mypy2module
+
+This will successfully translate, import and run Python 2 code such as
+the following::
+
+    ### mypy2module.py
+
+    # Print statements are converted transparently to functions
+    print 'Hello from a print statement'
+     
+    # xrange is supported:
+    total = 0
+    for i in xrange(10):
+        total += i
+    print 'Total is: %d' % total
+    
+    # Dictionary methods like .keys() and .items() are supported and
+    # return lists as on Python 2:
+    d = {'a': 1, 'b': 2}
+    assert d.keys() == ['a', 'b']
+    assert isinstance(d.items(), list)
+    
+    # Functions like range, reduce, map, filter are not yet supported:
+    # assert isinstance(range(10), list)
+
+    # The exec statement is supported:
+    exec 'total += 1'
+    print 'Total is now: %d' % total
+
+    # Long integers are supported:
+    k = 1234983424324L
+    print 'k + 1 = %d' % k
+
+    # Currently renamed standard library modules are not supported:
+    # import ConfigParser
+    # import urllib2
+
+
+The attributes of the module are then accessible normally from Python 3.
+For example::
+    
+    # This Python 3 code works
+    >>> type(mypy2module.d)
+    
+
+
+This is a "last resort"; ideally Python 2 code should be ported properly
+to a Python 2/3 compatible codebase using a tool like ``futurize``.
+
+
+``past`` package
+----------------
+
+The python-future project now provides a ``past`` package in addition to the
+``future`` package. The structure reflects that of ``future``, with
+``past.builtins`` and ``past.utils``.
+
+One purpose of ``past`` is to ease module-by-module upgrades to
+codebases from Python 2. It can also help with enabling Python 2 libraries to
+support Python 3 without breaking the API they provide. (For example, user code
+may expect these libraries to pass them Python 2's 8-bit strings, rather than
+Python 3's ``bytes`` object.) It is used internally by the
+``future.autoconvert`` package to help with importing and using old
+Python 2 modules in a Python 3 environment.
+
+Currently ``past.builtins`` provides forward-ports of Python 2's ``str`` and
+``dict`` objects, ``basestring``, and list-producing iterator functions.
+
+
+input() no longer disabled globally on Py2
+------------------------------------------
+
+Previous versions of ``future`` deleted the ``input()`` function from
+``__builtin__`` on Python 2 as a security measure. This was because
+Python 2's ``input()`` function allows arbitrary code execution and could
+present a security vulnerability on Python 2 if someone expects Python 3
+semantics but forgets to import ``input`` from ``future.builtins``. This
+behaviour has been reverted, in the interests of broadening the
+compatibility of ``future`` with other Python 2 modules.
+
+Please remember to import ``input`` from ``future.builtins`` if you use
+``input()`` in a Python 2/3 compatible codebase.
+
+
+.. Deprecated feature: import hooks installed by default with ``from future import standard_library``
+.. --------------------------------------------------------------------------------------------------
+.. 
+.. By version 1.0 of ``future``, importing ``future.standard_library`` will
+.. no longer install import hooks by default.
+.. These were bleeding into surrounding code, causing incompatibilities with
+.. modules like ``requests`` (issue #19). 
+
+.. *Note*: this is a backward-incompatible change.
+
+.. This feature may be resurrected in a later version if a safe implementation can be found.
+
+
+Internal changes
+----------------
+
+The internal ``future.builtins.backports`` module has been renamed to
+``future.builtins.types``. This will change the ``repr`` of ``future``
+types but not their use.
+
+
+.. whats-new-0.10.2:
+
+What's new in version 0.10.2
+============================
+
+New context manager for standard_library hooks
+----------------------------------------------
+
+``future.standard_library`` provides a new context manager called
+``hooks``. Use it as follows::
 
     >>> from future import standard_library
-    >>> with standard_library.enable_hooks():
+    >>> with standard_library.hooks():
     ...     import queue
     ...     import socketserver
     ...     from http.client import HTTPConnection
     >>> import requests
     >>> # etc.
 
-``future.standard_library`` still also supports the ``install_hooks`` and
-``remove_hooks`` functions as an alternative.
+``future.standard_library`` also supports explicit calls to the
+``install_hooks`` and ``remove_hooks`` functions as an alternative.
 
 .. If you prefer, the following imports are also available directly::
 .. 
@@ -35,9 +154,8 @@ modules like ``requests`` (issue #19).
 ..     >>> from future.standard_library.http.client import HTTPConnection
 
 
-As usual, these have no effect on Python 3.
+As usual, this feature has no effect on Python 3.
 
-*Note*: this is a backward-incompatible change.
 
 .. Simpler imports
 .. ---------------
@@ -61,19 +179,10 @@ for raising exceptions. Thanks to Joel Tratner for the contribution of
 these.
 
 
-Deprecated ``isinstance`` replacement removed
----------------------------------------------
-
-``future`` v0.8.2 briefly introduced a replacement for the ``isinstance``
-builtin. This was then removed and its use was deprecated as of v0.9.0.
-The alias for the builtin ``isinstance`` has now been removed from
-``future.builtins``.
-
-
 .. whats-new-0.10:
 
-What's new in version 0.10.x
-============================
+What's new in version 0.10
+==========================
 
 Backported ``dict`` type
 ------------------------

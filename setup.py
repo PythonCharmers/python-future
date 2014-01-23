@@ -17,13 +17,19 @@ if sys.argv[-1] == 'publish':
 NAME = "future"
 PACKAGES = ["future",
             "future.builtins",
-            "future.builtins.backports",
+            "future.builtins.types",
             "future.tests",
             "future.standard_library",
             "future.standard_library.html",
             "future.standard_library.http",
             "future.standard_library.test",
             "future.utils",
+            "future.autoconvert",
+            "past",
+            "past.builtins",
+            "past.builtins.types",
+            "past.utils",
+            "past.tests",
             "libfuturize",
             "libfuturize.fixes2",
             "libfuturize.fixes3"]
@@ -42,7 +48,7 @@ AUTHOR = "Ed Schofield"
 AUTHOR_EMAIL = "ed@pythoncharmers.com"
 URL="https://github.com/PythonCharmers/python-future"
 LICENSE = "MIT"
-KEYWORDS = "future python3 migration backport six 2to3 futurize modernize"
+KEYWORDS = "future python3 migration backport six 2to3 futurize modernize past"
 CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 2.6",

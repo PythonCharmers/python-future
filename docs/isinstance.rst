@@ -76,7 +76,7 @@ to use it. (The output showing is from Py2)::
     >>> a
     100000000000000000000
     >>> type(a)
-    future.builtins.backports.newint.newint
+    future.builtins.types.newint.newint
     >>> native(a)
     100000000000000000000L
     >>> type(native(a))
@@ -84,7 +84,7 @@ to use it. (The output showing is from Py2)::
     
     >>> b = bytes(b'ABC')
     >>> type(b)
-    future.builtins.backports.newbytes.newbytes
+    future.builtins.types.newbytes.newbytes
     >>> native(b)
     'ABC'
     >>> type(native(b))
@@ -92,7 +92,7 @@ to use it. (The output showing is from Py2)::
     
     >>> s = str(u'ABC')
     >>> type(s)
-    future.builtins.backports.newstr.newstr
+    future.builtins.types.newstr.newstr
     >>> native(s)
     u'ABC'
     >>> type(native(s))

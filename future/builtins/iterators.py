@@ -36,17 +36,17 @@ from __future__ import division, absolute_import, print_function
 
 import itertools
 from future import utils
-from future.builtins.backports import range
+from future.builtins.types import range
 
 if not utils.PY3:
+    filter = itertools.ifilter
     map = itertools.imap
     zip = itertools.izip
-    filter = itertools.ifilter
-    __all__ = ['range', 'map', 'zip', 'filter']
+    __all__ = ['filter', 'map', 'range', 'zip']
 else:
     import builtins
+    filter = builtins.filter
     map = builtins.map
     zip = builtins.zip
-    filter = builtins.filter
     __all__ = []
 
