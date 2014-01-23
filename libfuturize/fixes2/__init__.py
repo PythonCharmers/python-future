@@ -80,6 +80,6 @@ libfuturize_2fix_names_stage2 = set([
    # TODO: add int(33243) calls for what used to be 33243L
     'libfuturize.fixes2.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing
     'libfuturize.fixes2.fix_unicode_keep_u',
-    'libfuturize.fixes2.fix_unicode_literals_import',
+    # 'libfuturize.fixes2.fix_unicode_literals_import',
 ])
 
