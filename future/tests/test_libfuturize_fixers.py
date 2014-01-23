@@ -9,7 +9,6 @@ Based on lib2to3/tests/test_fixers.py
 import sys
 import os
 import os.path
-import re
 from itertools import chain
 from textwrap import dedent
 from operator import itemgetter
