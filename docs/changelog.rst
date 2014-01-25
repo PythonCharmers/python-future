@@ -7,6 +7,9 @@ What's new
 What's new in version 0.11
 ==========================
 
+There are several major new features in version 0.11. 
+
+
 Auto-translation of Python 2 modules upon import
 ------------------------------------------------
 
@@ -56,6 +59,14 @@ Currently ``past.builtins`` provides forward-ports of Python 2's ``str`` and
 ``dict`` objects, ``basestring``, and list-producing iterator functions.
 
 
+Separate ``pasteurize`` script
+------------------------------
+
+The functionality from ``futurize --from3`` is now in a separate script called
+``pasteurize``. Use ``pasteurize`` when converting from Python 3 code to Python
+2/3 compatible source.
+
+
 input() no longer disabled globally on Py2
 ------------------------------------------
 
@@ -71,17 +82,26 @@ Please remember to import ``input`` from ``future.builtins`` if you use
 ``input()`` in a Python 2/3 compatible codebase.
 
 
-.. Deprecated feature: import hooks installed by default with ``from future import standard_library``
-.. --------------------------------------------------------------------------------------------------
-.. 
-.. By version 1.0 of ``future``, importing ``future.standard_library`` will
-.. no longer install import hooks by default.
-.. These were bleeding into surrounding code, causing incompatibilities with
-.. modules like ``requests`` (issue #19). 
+Deprecated feature: auto-installation of standard-library import hooks
+----------------------------------------------------------------------
 
-.. *Note*: this is a backward-incompatible change.
+By version 1.0 of ``future``, importing ``future.standard_library`` will
+no longer install import hooks by default.
+These were bleeding into surrounding code, causing incompatibilities with
+modules like ``requests`` (issue #19). 
 
-.. This feature may be resurrected in a later version if a safe implementation can be found.
+Instead, install the import hooks explicitly as follows::
+    
+    from future import standard_library
+    standard_library.install_hooks()
+
+and uninstall them after your import statements using::
+
+    standard_library.remove_hooks()
+
+*Note*: this will be a backward-incompatible change.
+
+This feature may be resurrected in a later version if a safe implementation can be found.
 
 
 Internal changes
@@ -90,6 +110,7 @@ Internal changes
 The internal ``future.builtins.backports`` module has been renamed to
 ``future.builtins.types``. This will change the ``repr`` of ``future``
 types but not their use.
+
 
 
 .. whats-new-0.10.2:

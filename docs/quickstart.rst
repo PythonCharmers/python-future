@@ -37,8 +37,8 @@ See :ref:`what-else` for more details.
 To convert existing Python 3 code
 ---------------------------------
 
-To offer backward compatibility with Python 2, you can use the ``futurize``
-script with the ``--from3`` parameter. This adds these lines at the top of each
+To offer backward compatibility with Python 2 from your Python 3 code,
+you can use the ``pasteurize`` script. This adds these lines at the top of each
 module::
 
     from __future__ import absolute_import
@@ -78,38 +78,37 @@ be accessed under their Python 3 names and locations in Python 2::
     from future import standard_library
     standard_library.install_hooks()
     
-    with standard_library.enable_hooks():
-        import socketserver
-        import queue
-        import configparser
-        import test.support
-        import html.parser
-        from collections import UserList
-        from itertools import filterfalse, zip_longest
-        from http.client import HttpConnection
-        # and other moved modules and definitions
+    import socketserver
+    import queue
+    import configparser
+    import test.support
+    import html.parser
+    from collections import UserList
+    from itertools import filterfalse, zip_longest
+    from http.client import HttpConnection
+    # and other moved modules and definitions
 
 :mod:`future` also includes backports for these stdlib modules from Py3
 that were heavily refactored versus Py2::
     
-        import html
-        import html.entities
-        import html.parser
+    import html
+    import html.entities
+    import html.parser
 
-        import http
-        import http.client
-        import http.server
+    import http
+    import http.client
+    import http.server
 
-These modules are currently not supported, but we aim to support them in
+The following modules are currently not supported, but we aim to support them in
 the future::
     
-        import http.cookies
-        import http.cookiejar
+    import http.cookies
+    import http.cookiejar
 
-        import urllib
-        import urllib.parse
-        import urllib.request
-        import urllib.error
+    import urllib
+    import urllib.parse
+    import urllib.request
+    import urllib.error
 
 If you need one of these, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.

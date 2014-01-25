@@ -47,8 +47,8 @@ Also:
 Notes
 -----
 - Ensure you are using new-style classes on Py2. Py3 doesn't require
-  inheritance from ``object`` for this, but Py2 does. ``futurize
-  --from3`` adds this back in automatically, but ensure you do this too
+  inheritance from ``object`` for this, but Py2 does. ``pasteurize``
+  adds this back in automatically, but ensure you do this too
   when writing your classes, otherwise weird breakage when e.g. calling
   ``super()`` may occur.
 

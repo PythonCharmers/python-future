@@ -1,27 +1,27 @@
 .. _automatic-conversion:
 
-Automatic conversion with ``futurize``
-======================================
+Automatic conversion to Py2/3 with ``futurize`` and ``pasteurize``
+==================================================================
 
-The ``future`` source tree includes a script called ``futurize`` to aid in
-making either Python 2 code or Python 3 code compatible with both platforms
-using the :mod:`future` module. It is based on 2to3 and uses fixers from
-``lib2to3``, ``lib3to2``, and ``python-modernize``.
+The ``future`` source tree includes scripts called ``futurize`` and
+``pasteurize`` to aid in making Python 2 code or Python 3 code compatible with
+both platforms (Py2&3) using the :mod:`future` module. It is based on 2to3 and
+uses fixers from ``lib2to3``, ``lib3to2``, and ``python-modernize``.
 
-For Python 2 code (the default), it runs the code through all the appropriate
-2to3 fixers to turn it into valid Python 3 code, and then adds ``__future__``
-and ``future`` package imports.
+``futurize`` passes Python 2 code through all the appropriate fixers to turn it
+into valid Python 3 code, and then adds ``__future__`` and ``future`` package
+imports.
 
-For conversions from Python 3 code (with the ``--from3`` command-line option),
-it fixes Py3-only syntax (e.g.  metaclasses) and adds ``__future__`` and
-``future`` imports to the top of each module.
+For conversions from Python 3 code to Py2/3, use the ``pasteurize`` script
+instead. This converts Py3-only constructs (e.g. new metaclass syntax) and adds
+``__future__`` and ``future`` imports to the top of each module.
 
-In both cases, the result should be relatively clean Py3-style code
-that runs mostly unchanged on both Python 2 and Python 3.
+In both cases, the result should be relatively clean Py3-style code that runs
+mostly unchanged on both Python 2 and Python 3.
 
 .. _forwards-conversion:
 
-Forwards: 2 to both
+Futurize: 2 to both
 --------------------
 
 For example, running ``futurize`` turns this Python 2 code::
@@ -44,9 +44,13 @@ into this code which runs on both Py2 and Py3::
     print('Hello', end=' ')
 
 
-To write out all the changes to your Python files that ``futurize`` suggests, use the ``-w`` flag.
+To write out all the changes to your Python files that ``futurize`` suggests,
+use the ``-w`` flag.
 
-For complex projects, it may be better to divide the porting into two stages. Stage 1 is for "safe" changes that modernize the code but do not break Python 2.6 compatibility or introduce a depdendency on the ``future`` package. Stage 2 is to complete the process.
+For complex projects, it may be better to divide the porting into two stages.
+Stage 1 is for "safe" changes that modernize the code but do not break Python
+2.6 compatibility or introduce a depdendency on the ``future`` package. Stage 2
+is to complete the process.
 
 
 .. _forwards-conversion-stage1:
@@ -220,10 +224,10 @@ Python 2 compatibility. See :ref:`what-else` for more info.
 
 .. _backwards-conversion:
 
-Backwards: 3 to both
+Pasteurize: 3 to both
 --------------------
 
-Running ``futurize --from3`` turns this Python 3 code::
+Running ``pasteurize -w mypy3module.py`` turns this Python 3 code::
     
     import configparser
     
@@ -242,34 +246,34 @@ into this code which runs on both Py2 and Py3::
         pass
     print('Hello', end=None)
 
-Notice that in both this case and when converting from Py2 above,
-``futurize`` creates a new-style class on both Python versions and
-imports the renamed stdlib module under its Py3 name.
+Notice that both ``futurize`` and ``pasteurize`` create explicit new-style
+classes that inherit from ``object`` on both Python versions, and both 
+refer to stdlib modules (as well as builtins) under their Py3 names.
 
-``futurize --from3`` also handles the following Python 3 features:
+``pasteurize`` also handles the following Python 3 features:
 
 - keyword-only arguments
 - metaclasses (using :func:`~future.utils.with_metaclass`)
 - extended tuple unpacking (PEP 3132)
 
-To handle function annotations (PEP 3107), see
-:ref:`func_annotations`.
+To handle function annotations (PEP 3107), see :ref:`func_annotations`.
 
 
-How well does ``futurize`` work?
---------------------------------
+How well do ``futurize`` and ``pasteurize`` work?
+-------------------------------------------------
 
-It is still incomplete and makes mistakes, like 2to3, on which it is
+They are still incomplete and make some mistakes, like 2to3, on which it is
 based.
 
-Nevertheless, ``futurize`` is useful to automate much of the work
-of porting, particularly the boring repetitive text substitutions. It
-also helps to flag which parts of the code require attention.
+Nevertheless, ``futurize`` and ``pasteurize`` are useful to automate much of the
+work of porting, particularly the boring repetitive text substitutions. They also
+help to flag which parts of the code require attention.
 
 Please report bugs on `GitHub
 <https://github.com/PythonCharmers/python-future/>`_.
 
-Contributions to ``futurize`` are particularly welcome! Please see :ref:`contributing`.
+Contributions to the ``lib2to3``-based fixers for ``futurize`` and
+``pasteurize`` are particularly welcome! Please see :ref:`contributing`.
 
 
 .. _futurize-limitations

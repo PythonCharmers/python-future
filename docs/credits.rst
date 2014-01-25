@@ -7,8 +7,9 @@ Credits
 :Others:  - The backported ``super()`` and ``range()`` functions are
             derived from Ryan Kelly's ``magicsuper`` module and Dan
             Crosta's ``xrange`` module.
-          - The ``futurize`` script uses ``lib2to3``, ``lib3to2``, and
-            parts of Armin Ronacher's ``python-modernize`` code.
+          - The ``futurize`` and ``pasteurize`` scripts use ``lib2to3``,
+            ``lib3to2``, and parts of Armin Ronacher's ``python-modernize``
+            code.
           - The ``python_2_unicode_compatible`` decorator is from
             Django. The ``implements_iterator`` and ``with_metaclass``
             decorators are from Jinja2.
