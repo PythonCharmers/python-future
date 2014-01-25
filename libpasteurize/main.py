@@ -1,51 +1,27 @@
 """
-futurize: automatic conversion to clean 2&3 code using ``python-future``
-======================================================================
+pasteurize: automatic conversion of Python 3 code to clean 2&3 code
+===================================================================
 
-Like Armin Ronacher's modernize.py, ``futurize`` attempts to produce clean
-standard Python 3 code that runs on both Py2 and Py3.
+``pasteurize`` attempts to convert existing Python 3 code into
+source-compatible Python 2 and 3 code.
 
-One pass
---------
+Use it like this on Python 3 code:
 
-Use it like this on Python 2 code:
+  $ pasteurize --verbose mypython3script.py
 
-  $ futurize --verbose mypython2script.py
+This removes any Py3-only syntax (e.g. new metaclasses) and adds these
+import lines:
 
-This will attempt to port the code to standard Py3 code that also
-provides Py2 compatibility with the help of the right imports from
-``future``. To write the changes to disk, use the -w flag.
+    from __future__ import absolute_import
+    from __future__ import division
+    from __future__ import print_function
+    from __future__ import unicode_literals
+    from future import standard_library
+    from future.builtins import *
 
 To write changes to the files, use the -w flag.
 
-Two stages
-----------
-
-The ``futurize`` script can also be called in two separate stages. First:
-
-  $ futurize --stage1 mypython2script.py
-
-This produces more modern Python 2 code that is not yet compatible with Python
-3. The tests should still run and the diff should be uncontroversial to apply to
-most Python projects that are willing to drop support for Python 2.5 and lower.
-
-After this, the recommended approach is to explicitly mark all strings that must
-be byte-strings with a b'' prefix, and then invoke the second stage with:
-
-  $ futurize --stage2 mypython2script.py
-
-This implicitly turns all unadorned string literals into unicode strings (Py3
-str) and makes the additional changes needed to support Python 3. This stage
-introduces a dependency on ``future`` to restore Py2 support.
-
-If you would prefer instead to mark all your text strings explicitly with u''
-prefixes and have all unadorned '' strings converted to byte-strings, use this:
-
-  $ futurize --stage2 --tobytes mypython2script.py
-
-Note that this even includes docstrings.
-
-Separate stages are not available (or needed) when converting from Python 3.
+It also adds any other wrappers needed for Py2/3 compatibility.
 """
 
 from __future__ import (absolute_import, print_function, unicode_literals)
@@ -58,10 +34,7 @@ import optparse
 from lib2to3.main import main, warn, StdoutRefactoringTool
 from lib2to3 import refactor
 
-from libfuturize.fixes import (lib2to3_fix_names_stage1,
-                               lib2to3_fix_names_stage2,
-                               libfuturize_fix_names_stage1,
-                               libfuturize_fix_names_stage2)
+from libpasteurize.fixes import fix_names
 
 
 def main(args=None):
@@ -75,14 +48,6 @@ def main(args=None):
                       help="Adds all __future__ and future imports to each module")
     parser.add_option("-d", "--doctests_only", action="store_true",
                       help="Fix up doctests only")
-    parser.add_option("-b", "--tobytes", action="store_true",
-                      help="Convert all unadorned string literals to bytes objects")
-    parser.add_option("-1", "--stage1", action="store_true",
-                      help="Modernize Python 2 code only; no compatibility with Python 3 (or dependency on ``future``)")
-    parser.add_option("-2", "--stage2", action="store_true",
-                      help="Take modernized (stage1) code and add a dependency on ``future`` to provide Py3 compatibility.")
-    parser.add_option("-0", "--both-stages", action="store_true",
-                      help="Apply both stages 1 and 2")
     parser.add_option("-f", "--fix", action="append", default=[],
                       help="Each FIX specifies a transformation; default: all")
     parser.add_option("-j", "--processes", action="store", default=1,
@@ -106,22 +71,10 @@ def main(args=None):
     refactor_stdin = False
     flags = {}
     options, args = parser.parse_args(args)
-    fixer_pkg = 'libfuturize.fixes'
-    avail_fixes = set()
-    if not (options.stage1 or options.stage2):
-        options.both_stages = True
-    else:
-        assert options.both_stages is None
-        options.both_stages = False
-    if options.stage1 or options.both_stages:
-        avail_fixes.update(lib2to3_fix_names_stage1)
-        avail_fixes.update(libfuturize_fix_names_stage1)
-    if options.stage2 or options.both_stages:
-        avail_fixes.update(lib2to3_fix_names_stage2)
-        avail_fixes.update(libfuturize_fix_names_stage2)
+    fixer_pkg = 'libfuturize.fixes3'
+    avail_fixes = libfuturize_3fix_names
+    flags["print_function"] = True
 
-    if options.tobytes:
-        avail_fixes.add('libfuturize.fixes.fix_bytes')
     if not options.write and options.no_diffs:
         warn("not writing files and not printing diffs; that's not very useful")
     if not options.write and options.nobackups:
@@ -143,10 +96,6 @@ def main(args=None):
             print("Can't write to stdin.", file=sys.stderr)
             return 2
 
-    # Is this ever necessary?
-    # if options.print_function:
-    #     flags["print_function"] = True
-
     # Set up logging handler
     level = logging.DEBUG if options.verbose else logging.INFO
     logging.basicConfig(format='%(name)s: %(message)s', level=level)
@@ -161,7 +110,7 @@ def main(args=None):
     # further.)
     extra_fixes = set()
     if options.all_imports:
-        prefix = 'libfuturize.fixes.'
+        prefix = 'libfuturize.fixes2.'
         if options.stage1:
             extra_fixes.add(prefix +
                             'fix_add__future__imports_except_unicode_literals')

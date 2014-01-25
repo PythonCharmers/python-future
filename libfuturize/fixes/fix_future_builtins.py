@@ -26,7 +26,7 @@ from libfuturize.fixer_util import touch_import_top
 # We don't need isinstance any more.
 
 replaced_builtins = '''filter map zip
-                       ascii chr hex input oct open round super
+                       ascii chr hex input next oct open round super
                        bytes dict int range str'''.split()
 
 expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtins])
@@ -34,7 +34,7 @@ expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtins])
 
 class FixFutureBuiltins(fixer_base.BaseFix):
     BM_compatible = True
-    run_order = 8
+    run_order = 9
 
     PATTERN = """
               power<
@@ -43,6 +43,7 @@ class FixFutureBuiltins(fixer_base.BaseFix):
               """.format(expression)
 
     def transform(self, node, results):
+        import pdb; pdb.set_trace()
         name = results["name"]
         touch_import_top(u'future.builtins', name.value, node)
         # name.replace(Name(u"input", prefix=name.prefix))

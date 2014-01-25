@@ -31,12 +31,14 @@ PACKAGES = ["future",
             "past.utils",
             "past.tests",
             "libfuturize",
-            "libfuturize.fixes2",
-            "libfuturize.fixes3"]
+            "libfuturize.fixes",
+            "libpasteurize",
+            "libpasteurize.fixes"]
 PACKAGE_DATA = {'': [
                      'README.rst',
                      'LICENSE.txt',
                      'futurize.py',
+                     'pasteurize.py',
                      'discover_tests.py',
                      'check_rst.sh'
                     ]}
@@ -48,7 +50,7 @@ AUTHOR = "Ed Schofield"
 AUTHOR_EMAIL = "ed@pythoncharmers.com"
 URL="https://github.com/PythonCharmers/python-future"
 LICENSE = "MIT"
-KEYWORDS = "future python3 migration backport six 2to3 futurize modernize past"
+KEYWORDS = "future python3 migration backport six 2to3 futurize modernize past pasteurize"
 CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 2.6",
@@ -75,6 +77,7 @@ setup(name=NAME,
       entry_points={
           'console_scripts': [
               'futurize = libfuturize.main:main'
+              'pasteurize = libpasteurize.main:main'
           ]
       },
       packages=PACKAGES,
