@@ -12,7 +12,7 @@ Contents:
    porting
    standard_library_incompatibilities
    faq
-   changelog
+   whatsnew
    credits
    reference
 
