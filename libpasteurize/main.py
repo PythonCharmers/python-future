@@ -72,7 +72,7 @@ def main(args=None):
     flags = {}
     options, args = parser.parse_args(args)
     fixer_pkg = 'libpasteurize.fixes'
-    avail_fixes = libpasteurize_fix_names
+    avail_fixes = fix_names
     flags["print_function"] = True
 
     if not options.write and options.no_diffs:

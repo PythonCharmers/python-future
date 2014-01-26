@@ -91,7 +91,8 @@ __version__ = "0.6"
 
 __all__ = ["HTTPServer", "BaseHTTPRequestHandler"]
 
-import html
+with standard_library.hooks():
+    import html
 import email.message
 import email.parser
 import http.client

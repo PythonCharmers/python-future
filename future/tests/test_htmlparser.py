@@ -10,16 +10,15 @@ from __future__ import (absolute_import, print_function, unicode_literals)
 from future import standard_library
 from future.builtins import *
 
-from test import support
-
-standard_library.remove_hooks()
+with standard_library.hooks():
+    from test import support
+    import html.parser
 
 import pprint
 import unittest
 import sys
 
-import html.parser
-print(html.parser.__doc__, file=sys.stderr)
+# print(html.parser.__doc__, file=sys.stderr)
 
 
 class EventCollector(html.parser.HTMLParser):

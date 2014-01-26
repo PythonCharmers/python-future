@@ -4,7 +4,6 @@ Fixer for complicated imports
 
 from lib2to3 import fixer_base
 from lib2to3.fixer_util import Name, String, FromImport, Newline, Comma
-from ..fixer_util import token, syms, Leaf, Node, Star, indentation, ImportAsName
 from libfuturize.fixer_util import touch_import_top
 
 

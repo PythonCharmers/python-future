@@ -142,9 +142,33 @@ class TestBuiltins(unittest.TestCase):
         self.assertEqual(round(123.551, -3), 0.0)
 
 
-###
+##############################################################
 # Below here are the tests from Py3.3'2 test_builtin.py module
-###
+##############################################################
+
+with standard_library.hooks():
+    import ast
+    import builtins
+    import collections
+    import io
+    import locale
+    import os
+    import pickle
+    import platform
+    import random
+    import sys
+    import traceback
+    import types
+    import unittest
+    import warnings
+    from operator import neg
+    from test.support import TESTFN, unlink,  run_unittest, check_warnings
+    try:
+        import pty, signal
+    except ImportError:
+        pty = signal = None
+
+
 
 class Squares:
 
