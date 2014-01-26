@@ -15,37 +15,36 @@ from subprocess import Popen, PIPE
 from past import utils
 from past.builtins import basestring, str as oldstr
 
-from future.translation import install_hooks, remove_hooks
+from past.translation import install_hooks, remove_hooks, common_substring
 from future.tests.base import unittest, CodeHandler
 
 
 class TestTranslate(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.mkdtemp() + os.path.sep
-        install_hooks()
 
-    def tearDown(self):
-        remove_hooks()
+    # def tearDown(self):
+    #     remove_hooks()
 
     def test_common_substring(self):
         s1 = '/home/user/anaconda/envs/future3/lib/python3.3/lib-dynload/math.cpython-33m.so'
         s2 = '/home/user/anaconda/envs/future3/lib/python3.3/urllib/__init__.py'
-        c =  '/home/user/anaconda/envs/future3/lib/python3.3/'
-        self.assertEqual(c, translation.common_substring(s1, s2))
+        c =  '/home/user/anaconda/envs/future3/lib/python3.3'
+        self.assertEqual(c, common_substring(s1, s2))
 
-        s1 = r'C:\Users\Fred Flintstone\Python3.3\lib\something'
-        s2 = r'C:\Users\Fred Flintstone\Python3.3\lib\somethingelse'
-        c =  r'C:\Users\Fred Flintstone\Python3.3\lib' + '\\'
-        self.assertEqual(c, translation.common_substring(s1, s2))
+        s1 = r'/Users/Fred Flintstone/Python3.3/lib/something'
+        s2 = r'/Users/Fred Flintstone/Python3.3/lib/somethingelse'
+        c =  r'/Users/Fred Flintstone/Python3.3/lib'
+        self.assertEqual(c, common_substring(s1, s2))
 
     def write_and_import(self, code, modulename='mymodule'):
         self.assertTrue('.py' not in modulename)
         filename = modulename + '.py'
         with open(self.tempdir + filename, 'w') as f:
-            f.write(textwrap.dedent(code).strip())
+            f.write(textwrap.dedent(code).strip() + '\n')
 
         # meta_path_len = len(sys.meta_path)
-        install_hooks()
+        install_hooks(modulename)
         print('Hooks installed')
         # assert len(sys.meta_path) == 1 + meta_path_len
         # print('sys.meta_path is: {}'.format(sys.meta_path))
@@ -102,6 +101,9 @@ class TestTranslate(unittest.TestCase):
         self.assertTrue(issubclass(module.collections.defaultdict, dict))
 
     def test_import_future_standard_library(self):
+        """
+        Does futurized Py3-like code like this work under autotranslation??
+        """
         code = """
         from future import standard_library
         standard_library.install_hooks()
@@ -113,7 +115,9 @@ class TestTranslate(unittest.TestCase):
     def test_old_builtin_functions(self):
         code = """
         # a = raw_input()
-        # b = open('some_file_on_all_platforms')
+        import sys
+        b = open(sys.executable, 'rb')
+        b.close()
 
         def is_even(x):
             return x % 2 == 0
