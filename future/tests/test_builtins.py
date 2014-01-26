@@ -2,9 +2,9 @@
 Tests to make sure the behaviour of the builtins is sensible and correct.
 """
 
-from __future__ import absolute_import, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 from future.builtins import *
-from future.utils import PY3
+from future.utils import PY3, exec_
 from future.tests.base import unittest
 
 import sys
@@ -434,11 +434,11 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, compile)
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'badmode')
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'single', 0xff)
-        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec')
-        self.assertRaises(TypeError, compile, 'pass', '?', 'exec',
+        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec_')
+        self.assertRaises(TypeError, compile, 'pass', '?', 'exec_',
                           mode='eval', source='0', filename='tmp')
         compile('print("\xe5")\n', '', 'exec')
-        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec')
+        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec_')
         self.assertRaises(ValueError, compile, str('a = 1'), 'f', 'bad')
 
         # test the optimize argument
@@ -465,7 +465,7 @@ class BuiltinTest(unittest.TestCase):
             codeobjs.append(compile(tree, "<test>", "exec", optimize=optval))
             for code in codeobjs:
                 ns = {}
-                exec(code, ns)
+                exec_(code, ns)
                 rv = ns['f']()
                 self.assertEqual(rv, (debugval, docstring))
 
@@ -656,14 +656,14 @@ class BuiltinTest(unittest.TestCase):
                 return 1 # used to be 'a' but that's no longer an error
         self.assertRaises(TypeError, eval, 'dir()', globals(), C())
 
-    def test_exec(self):
+    def test_exec_(self):
         g = {}
-        exec('z = 1', g)
+        exec_('z = 1', g)
         if '__builtins__' in g:
             del g['__builtins__']
         self.assertEqual(g, {'z': 1})
 
-        exec('z = 1+1', g)
+        exec_('z = 1+1', g)
         if '__builtins__' in g:
             del g['__builtins__']
         self.assertEqual(g, {'z': 2})
@@ -673,7 +673,7 @@ class BuiltinTest(unittest.TestCase):
         with check_warnings():
             warnings.filterwarnings("ignore", "global statement",
                     module="<string>")
-            exec('global a; a = 1; b = 2', g, l)
+            exec_('global a; a = 1; b = 2', g, l)
         if '__builtins__' in g:
             del g['__builtins__']
         if '__builtins__' in l:
@@ -684,15 +684,15 @@ class BuiltinTest(unittest.TestCase):
         code = compile("print('Hello World!')", "", "exec")
         # no builtin function
         self.assertRaisesRegex(NameError, "name 'print' is not defined",
-                               exec, code, {'__builtins__': {}})
+                               exec_, code, {'__builtins__': {}})
         # __builtins__ must be a mapping type
         self.assertRaises(TypeError,
-                          exec, code, {'__builtins__': 123})
+                          exec_, code, {'__builtins__': 123})
 
         # no __build_class__ function
         code = compile("class A: pass", "", "exec")
         self.assertRaisesRegex(NameError, "__build_class__ not found",
-                               exec, code, {'__builtins__': {}})
+                               exec_, code, {'__builtins__': {}})
 
         class frozendict_error(Exception):
             pass
@@ -705,20 +705,20 @@ class BuiltinTest(unittest.TestCase):
         frozen_builtins = frozendict(__builtins__)
         code = compile("__builtins__['superglobal']=2; print(superglobal)", "test", "exec")
         self.assertRaises(frozendict_error,
-                          exec, code, {'__builtins__': frozen_builtins})
+                          exec_, code, {'__builtins__': frozen_builtins})
 
         # read-only globals
         namespace = frozendict({})
         code = compile("x=1", "test", "exec")
         self.assertRaises(frozendict_error,
-                          exec, code, namespace)
+                          exec_, code, namespace)
 
     def test_exec_redirected(self):
         savestdout = sys.stdout
         sys.stdout = None # Whatever that cannot flush()
         try:
             # Used to raise SystemError('error return without exception set')
-            exec('a')
+            exec_('a')
         except NameError:
             pass
         finally:
@@ -970,7 +970,7 @@ class BuiltinTest(unittest.TestCase):
             "max(1, 2, key=1)",             # keyfunc is not callable
             ):
             try:
-                exec(stmt, globals())
+                exec_(stmt, globals())
             except TypeError:
                 pass
             else:
@@ -1012,7 +1012,7 @@ class BuiltinTest(unittest.TestCase):
             "min(1, 2, key=1)",             # keyfunc is not callable
             ):
             try:
-                exec(stmt, globals())
+                exec_(stmt, globals())
             except TypeError:
                 pass
             else:
