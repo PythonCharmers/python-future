@@ -27,7 +27,7 @@ http://wwwsearch.sf.net/):
                MSIECookieJar
 
 """
-from __future__ import (absolute_import, division)  # , unicode_literals)
+from __future__ import (absolute_import, division)
 from future import standard_library
 # from future.builtins import *
 
@@ -45,7 +45,8 @@ except ImportError:
     import dummy_threading as _threading
 # Instead of this: import httplib
 # Import this new-style one:
-import http.client  # only for the default HTTP port
+with standard_library.hooks():
+    import http.client  # only for the default HTTP port
 from calendar import timegm
 
 debug = False   # set to True to enable debugging via the logging module

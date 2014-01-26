@@ -39,7 +39,8 @@ class TestBuiltins(unittest.TestCase):
     def test_isinstance_int(self):
         """
         Redefining ``int`` to a ``long`` subclass on Py2 makes this
-        test fail unless isinstance() is defined appropriately:
+        test fail unless __instancecheck__() is defined appropriately (or
+        isinstance is redefined, as we used to do ...)
         """
         self.assertTrue(isinstance(0, int))
         self.assertTrue(isinstance(int(1), int))
@@ -146,6 +147,7 @@ class TestBuiltins(unittest.TestCase):
 # Below here are the tests from Py3.3'2 test_builtin.py module
 ##############################################################
 
+from future import standard_library
 with standard_library.hooks():
     import ast
     import builtins
@@ -445,8 +447,9 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(ValueError, chr, 0x00110000)
         self.assertRaises((OverflowError, ValueError), chr, 2**32)
 
-    def test_cmp(self):
-        self.assertTrue(not hasattr(builtins, "cmp"))
+    # We disable this test, because __builtin__ becomes builtins on Py2
+    # def test_cmp(self):
+    #     self.assertTrue(not hasattr(builtins, "cmp"))
 
     def test_compile(self):
         compile('print(1)\n', '', 'exec')
@@ -459,11 +462,11 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, compile)
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'badmode')
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'single', 0xff)
-        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec_')
-        self.assertRaises(TypeError, compile, 'pass', '?', 'exec_',
+        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec')
+        self.assertRaises(TypeError, compile, 'pass', '?', 'exec',
                           mode='eval', source='0', filename='tmp')
         compile('print("\xe5")\n', '', 'exec')
-        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec_')
+        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec')
         self.assertRaises(ValueError, compile, str('a = 1'), 'f', 'bad')
 
         # test the optimize argument
@@ -819,7 +822,7 @@ class BuiltinTest(unittest.TestCase):
         class X:
             def __hash__(self):
                 return 2**100
-        self.assertEqual(type(hash(X())), int)
+        self.assertTrue(isinstance(hash(X()), int))
         class Z(int):
             def __hash__(self):
                 return self
@@ -1339,7 +1342,9 @@ class BuiltinTest(unittest.TestCase):
 
     def test_round(self):
         self.assertEqual(round(0.0), 0.0)
-        self.assertEqual(type(round(0.0)), int)
+        # Was: self.assertEqual(type(round(0.0)), int)
+        # Now:
+        self.assertTrue(isinstance(round(0.0), int))
         self.assertEqual(round(1.0), 1.0)
         self.assertEqual(round(10.0), 10.0)
         self.assertEqual(round(1000000000.0), 1000000000.0)
@@ -1383,10 +1388,16 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(round(0), 0)
         self.assertEqual(round(8), 8)
         self.assertEqual(round(-8), -8)
-        self.assertEqual(type(round(0)), int)
-        self.assertEqual(type(round(-8, -1)), int)
-        self.assertEqual(type(round(-8, 0)), int)
-        self.assertEqual(type(round(-8, 1)), int)
+        # Was:
+        # self.assertEqual(type(round(0)), int)
+        # self.assertEqual(type(round(-8, -1)), int)
+        # self.assertEqual(type(round(-8, 0)), int)
+        # self.assertEqual(type(round(-8, 1)), int)
+        # Now:
+        self.assertTrue(isinstance(round(0), int))
+        self.assertTrue(isinstance(round(-8, -1), int))
+        self.assertTrue(isinstance(round(-8, 0), int))
+        self.assertTrue(isinstance(round(-8, 1), int))
 
         # test new kwargs
         self.assertEqual(round(number=-8.0, ndigits=-1), -10.0)

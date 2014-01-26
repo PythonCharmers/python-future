@@ -9,8 +9,9 @@ from future.builtins import *
 import string
 import sys
 import struct
-from test import support
-from collections import UserList
+with standard_library.hooks():
+    from test import support
+    from collections import UserList
 import _testcapi
 
 class Sequence(object):

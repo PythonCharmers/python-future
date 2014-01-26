@@ -93,9 +93,9 @@ __all__ = ["HTTPServer", "BaseHTTPRequestHandler"]
 
 with standard_library.hooks():
     import html
+    import http.client
 import email.message
 import email.parser
-import http.client
 import io
 import mimetypes
 import os

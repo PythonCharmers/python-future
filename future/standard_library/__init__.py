@@ -6,6 +6,7 @@ names.
 It is designed to be used as follows::
 
     from future import standard_library
+    standard_library.install_hooks()
 
 And then these normal Py3 imports work on both Py3 and Py2::
 

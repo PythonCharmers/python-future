@@ -20,6 +20,7 @@ class TestStandardLibraryRenames(CodeHandler):
     def setUp(self):
         self.interpreter = 'python'
         standard_library.install_hooks()
+        super(TestStandardLibraryRenames, self).setUp()
 
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_all(self):

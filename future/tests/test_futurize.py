@@ -81,6 +81,19 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after, stages=(1, 2), ignore_imports=False)
 
+    def test_UserList(self):
+        before = """
+        from UserList import UserList
+        a = UserList([1, 3, 5])
+        assert len(a) == 3
+        """
+        after = """
+        from collections import UserList
+        a = UserList([1, 3, 5])
+        assert len(a) == 3
+        """
+        self.convert_check(before, after, stages=(1, 2), ignore_imports=True)
+
     @unittest.expectedFailure
     def test_no_unneeded_list_calls(self):
         """

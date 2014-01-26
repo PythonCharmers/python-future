@@ -15,7 +15,8 @@ from __future__ import (absolute_import, division,
 from future import standard_library
 from future.builtins import *
 
-import _markupbase
+with standard_library.hooks():
+    import _markupbase
 import re
 import warnings
 
