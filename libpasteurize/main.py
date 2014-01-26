@@ -71,8 +71,8 @@ def main(args=None):
     refactor_stdin = False
     flags = {}
     options, args = parser.parse_args(args)
-    fixer_pkg = 'libfuturize.fixes3'
-    avail_fixes = libfuturize_3fix_names
+    fixer_pkg = 'libpasteurize.fixes'
+    avail_fixes = libpasteurize_fix_names
     flags["print_function"] = True
 
     if not options.write and options.no_diffs:
@@ -110,7 +110,7 @@ def main(args=None):
     # further.)
     extra_fixes = set()
     if options.all_imports:
-        prefix = 'libfuturize.fixes2.'
+        prefix = 'libfuturize.fixes.'
         if options.stage1:
             extra_fixes.add(prefix +
                             'fix_add__future__imports_except_unicode_literals')

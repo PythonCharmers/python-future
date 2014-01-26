@@ -8,4 +8,4 @@ Adds this import line:
 after any other imports (in an initial block of them).
 """
 
-from ..fixes2.fix_future_builtins import FixFutureBuiltins
+from libfuturize.fixes.fix_future_builtins import FixFutureBuiltins

@@ -41,17 +41,17 @@ import copy
 from lib2to3.pgen2.parse import ParseError
 from lib2to3.refactor import RefactoringTool
 
-from libfuturize import fixes2
+from libfuturize import fixes
 
 __version__ = '0.1.0'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-myfixes = (list(fixes2.libfuturize_2fix_names_stage1) +
-           list(fixes2.lib2to3_fix_names_stage1) +
-           list(fixes2.libfuturize_2fix_names_stage2) +
-           list(fixes2.lib2to3_fix_names_stage2))
+myfixes = (list(fixes.libfuturize_fix_names_stage1) +
+           list(fixes.lib2to3_fix_names_stage1) +
+           list(fixes.libfuturize_fix_names_stage2) +
+           list(fixes.lib2to3_fix_names_stage2))
 
 
 # There are two possible grammars: with or without the print statement.
@@ -103,7 +103,7 @@ py2_detect_fixers = [
     'lib2to3.fixes.fix_exec',
     # 'lib2to3.fixes.fix_future',    # we don't want to remove __future__ imports
     'lib2to3.fixes.fix_getcwdu',
-    # 'lib2to3.fixes.fix_imports',   # called by libfuturize.fixes2.fix_future_standard_library
+    # 'lib2to3.fixes.fix_imports',   # called by libfuturize.fixes.fix_future_standard_library
     # 'lib2to3.fixes.fix_imports2',  # we don't handle this yet (dbm)
     # 'lib2to3.fixes.fix_input',
     # 'lib2to3.fixes.fix_itertools',

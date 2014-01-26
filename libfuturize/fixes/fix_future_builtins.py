@@ -43,7 +43,7 @@ class FixFutureBuiltins(fixer_base.BaseFix):
               """.format(expression)
 
     def transform(self, node, results):
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         name = results["name"]
         touch_import_top(u'future.builtins', name.value, node)
         # name.replace(Name(u"input", prefix=name.prefix))
