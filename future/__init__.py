@@ -74,8 +74,6 @@ The software is distributed under an MIT licence. See LICENSE.txt.
 
 """
 
-from future.translation import install_hooks as autotranslate
-
 __title__ = 'future'
 __author__ = 'Ed Schofield'
 __license__ = 'MIT'

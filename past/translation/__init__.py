@@ -398,6 +398,7 @@ def install_hooks(include_paths=(), exclude_paths=()):
         include_paths = (include_paths,)
     if isinstance(exclude_paths, str):
         exclude_paths = (exclude_paths,)
+    assert len(include_paths) + len(exclude_paths) > 0, 'Pass at least one argument'
     _hook.include(include_paths)
     _hook.exclude(exclude_paths)
     # _hook.debug = debug

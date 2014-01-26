@@ -1,13 +1,13 @@
 # coding=utf-8
 """
-past: an implementation of Python 2 constructs in Python 3
-==========================================================
+past: compatibility with Python 2 from Python 3
+===============================================
 
 ``past`` is a package to aid with Python 2/3 compatibility. Whereas ``future``
 contains backports of Python 3 constructs to Python 2, ``past`` provides
-implementations of some Python 2 constructs in Python 3. It is intended to be
-used sparingly, as a way of running old Python 2 code from Python 3 until it is
-ported properly.
+implementations of some Python 2 constructs in Python 3 and tools to import and
+run Python 2 code in Python 3. It is intended to be used sparingly, as a way of
+running old Python 2 code from Python 3 until the code is ported properly.
 
 Potential uses for libraries:
 
@@ -20,7 +20,7 @@ Potential uses for libraries:
   wish to upgrade it gradually to Python 3 style.
 
 
-Here are some examples that run identically on Python 3 and 2::
+Here are some code examples that run identically on Python 3 and 2::
 
     >>> from past.builtins import str as oldstr
 
@@ -64,15 +64,17 @@ Here are some examples that run identically on Python 3 and 2::
     ...     pass
 
 
-The intention is for it to provide import hooks in the future so you can do::
+It also provides import hooks so you can import and use Python 2 modules like
+this::
 
-    >>> from past import magic
-    >>> magic.install_hooks()
+    $ python3
 
+    >>> from past import autotranslate
+    >>> authotranslate('mypy2module')
     >>> import mypy2module
 
-and use Python 2-only modules from Python 3 until the authors have upgraded
-their code. For example::
+until the authors of the Python 2 modules have upgraded their code. Then, for
+example::
     
     >>> mypy2module.func_taking_py2_string(oldstr(b'abcd'))
 
@@ -93,12 +95,14 @@ The software is distributed under an MIT licence. See LICENSE.txt.
 
 # from past.builtins import *
 
+from past.translation import install_hooks as autotranslate
+
 __title__ = 'past'
 __author__ = 'Ed Schofield'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2014 Python Charmers Pty Ltd'
 __ver_major__ = 0
-__ver_minor__ = 1
+__ver_minor__ = 11
 __ver_patch__ = 0
 __ver_sub__ = '-dev'
 __version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
