@@ -73,6 +73,14 @@ The functionality from ``futurize --from3`` is now in a separate script called
 2/3 compatible source. For more information, see :ref:`backwards-conversion`.
 
 
+pow()
+-----
+
+There is now a ``pow()`` function in ``future.builtins.misc`` that behaves like
+the Python 3 ``pow()`` function when raising a negative number to a fractional
+power (returning a complex number).
+
+
 input() no longer disabled globally on Py2
 ------------------------------------------
 

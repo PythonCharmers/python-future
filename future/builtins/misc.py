@@ -42,7 +42,7 @@ from future import utils
 if utils.PY2:
     from io import open
     from future_builtins import ascii, oct, hex
-    from __builtin__ import unichr as chr
+    from __builtin__ import unichr as chr, pow as _builtin_pow
     import __builtin__
 
     # Only for backward compatibility with future v0.8.2:
@@ -60,11 +60,31 @@ if utils.PY2:
     from future.builtins.newround import newround as round
     from future.builtins.newsuper import newsuper as super
 
+    _SENTINEL = object()
+
+    def pow(x, y, z=_SENTINEL):
+        """
+        pow(x, y[, z]) -> number
+    
+        With two arguments, equivalent to x**y.  With three arguments,
+        equivalent to (x**y) % z, but may be more efficient (e.g. for ints).
+        """
+        try:
+            if z == _SENTINEL:
+                return _builtin_pow(x, y)
+            else:
+                return _builtin_pow(x, y, z)
+        except ValueError:
+            if z == _SENTINEL:
+                return _builtin_pow(x+0j, y)
+            else:
+                return _builtin_pow(x+0j, y, z)
+
     # ``future`` doesn't support Py3.0/3.1. If we ever did, we'd add this:
     #     callable = __builtin__.callable
 
-    __all__ = ['ascii', 'chr', 'hex', 'input', 'isinstance', 'next',
-               'oct', 'open', 'round', 'super']
+    __all__ = ['ascii', 'chr', 'hex', 'input', 'isinstance', 'next', 'oct',
+               'open', 'pow', 'round', 'super']
 
 else:
     import builtins
@@ -77,6 +97,7 @@ else:
     isinstance = builtins.isinstance
     oct = builtins.oct
     open = builtins.open
+    pow = builtins.pow
     round = builtins.round
     super = builtins.super
 
