@@ -19,7 +19,6 @@ class TestStandardLibraryRenames(CodeHandler):
 
     def setUp(self):
         self.interpreter = 'python'
-        self.tempdir = tempfile.mkdtemp() + os.path.sep
         standard_library.install_hooks()
 
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
@@ -331,6 +330,31 @@ class TestStandardLibraryRenames(CodeHandler):
         import imp
         imp.reload(imp)
         self.assertTrue(True)
+
+
+try:
+    import requests
+except ImportError:
+    requests = None
+
+class TestRequests(CodeHandler):
+    """
+    This class tests whether the requests module conflicts with the
+    standard library import hooks, as in issue #19.
+    """
+    @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
+                     + ' to test ``requests`` + future compatibility (issue #19)')
+    def test_requests(self):
+        with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
+            f.write('from future import standard_library')
+        # import sys
+        # print('sys.meta_path is: ', sys.meta_path)
+        print('Importing test_imports_future')
+        import test_imports_future
+        import requests
+        r = requests.get('http://google.com')
+        self.assertTrue(True)
+
 
 if __name__ == '__main__':
     unittest.main()

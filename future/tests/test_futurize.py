@@ -75,7 +75,6 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         after = """
-        from __future__ import unicode_literals
         from future.builtins import zip
         for (a, b) in zip([1, 3, 5], [2, 4, 6]):
             pass
@@ -103,10 +102,10 @@ class TestFuturizeSimple(CodeHandler):
         f = bytes(a, encoding='utf-8')
         for g in xrange(10**10):
             pass
+        h = reduce(lambda x, y: x+y, [1, 2, 3, 4, 5])
         super(MyClass, self)
         """
         after = """
-        from __future__ import unicode_literals
         from future.builtins import bytes
         from future.builtins import filter
         from future.builtins import input
@@ -114,6 +113,7 @@ class TestFuturizeSimple(CodeHandler):
         from future.builtins import open
         from future.builtins import range
         from future.builtins import super
+        from functools import reduce
         a = input()
         b = open(a, b, c)
         c = list(filter(a, b))
@@ -122,8 +122,11 @@ class TestFuturizeSimple(CodeHandler):
         f = bytes(a, encoding='utf-8')
         for g in range(10**10):
             pass
+        h = reduce(lambda x, y: x+y, [1, 2, 3, 4, 5])
         super(MyClass, self)
         """
+        import pdb
+        pdb.set_trace()
         self.convert_check(before, after, ignore_imports=False, run=False)
 
     def test_xrange(self):
@@ -236,15 +239,29 @@ class TestFuturizeSimple(CodeHandler):
         def greet(name):
             print "Hello, {0}!".format(name)
         print "What's your name?"
+        import sys
+        oldstdin = sys.stdin
+
+        sys.stdin = 'Ed\n'
         name = raw_input()
         greet(name)
+
+        sys.stdin = oldstdin
+        assert name == 'Ed'
         """
         desired = """
         def greet(name):
             print("Hello, {0}!".format(name))
         print("What's your name?")
+        import sys
+        oldstdin = sys.stdin
+
+        sys.stdin = 'Ed\n'
         name = input()
         greet(name)
+
+        sys.stdin = oldstdin
+        assert name == 'Ed'
         """
         self.convert_check(before, desired, run=False)
 
@@ -294,6 +311,8 @@ class TestFuturizeRenamedStdlib(CodeHandler):
 
         s = cStringIO.StringIO('blah')
         """
+        # This requires that the argument to io.StringIO be made a
+        # unicode string explicitly if we're not using unicode_literals:
         after = """
         import configparser
         import copyreg
@@ -378,12 +397,14 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         s = cStringIO.StringIO('my string')
         assert isinstance(s, cStringIO.InputType)
         """
+
+        # There is no io.InputType in Python 3. futurize should change this to
+        # something like this. But note that the input to io.StringIO
+        # must be a unicode string on both Py2 and Py3.
         after = """
         import io
-        s = io.StringIO('my string')
-        # assert isinstance(s, io.InputType)
-        # There is no io.InputType in Python 3. What should we change this to
-        # instead?
+        s = io.StringIO(u'my string')
+        assert isinstance(s, io.StringIO)
         """
         self.convert_check(before, after)
 
