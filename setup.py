@@ -76,7 +76,7 @@ setup(name=NAME,
       keywords=KEYWORDS,
       entry_points={
           'console_scripts': [
-              'futurize = libfuturize.main:main'
+              'futurize = libfuturize.main:main',
               'pasteurize = libpasteurize.main:main'
           ]
       },
