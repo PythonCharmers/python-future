@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-future.translation
+past.translation
 ==================
 
-The ``future.translation`` package provides an import hook for Python 3 which
+The ``past.translation`` package provides an import hook for Python 3 which
 transparently runs ``futurize`` fixers over Python 2 code on import to convert
 print statements into functions, etc.
 
@@ -16,7 +16,7 @@ Usage
 Once your Py2 package is installed in the usual module search path, the import
 hook is invoked as follows:
 
-    >>> from future import autotranslate
+    >>> from past import autotranslate
     >>> autotranslate('mypackagename')
 
 Or:
@@ -25,7 +25,7 @@ Or:
 
 You can unregister the hook using::
 
-    >>> from future.translation import remove_hooks
+    >>> from past.translation import remove_hooks
     >>> remove_hooks()
 
 Author: Ed Schofield. 
@@ -230,22 +230,22 @@ class Py2Fixer(object):
 
     def __init__(self):
         self.found = None
-        self.base_exclude_paths = ['future']
+        self.base_exclude_paths = ['future', 'past']
         self.exclude_paths = copy.copy(self.base_exclude_paths)
         self.include_paths = []
 
     def include(self, paths):
         """
         Pass in a sequence of module names such as 'plotrique.plotting' that,
-        if present at the leftmost side of the full module filename, would
+        if present at the leftmost side of the full package name, would
         specify the module to be transformed from Py2 to Py3.
         """
         self.include_paths += paths
 
     def exclude(self, paths):
         """
-        Pass in a sequence of strings such as 'future/__init__.py' that, if
-        present at the rightmost side of the full module filename, would cause
+        Pass in a sequence of strings such as 'mymodule' that, if
+        present at the leftmost side of the full package name, would cause
         the module not to undergo any source transformation.
         """
         self.exclude_paths += paths
@@ -424,12 +424,12 @@ def detect_hooks():
     # return present
 
 
-class enable_hooks(object):
+class hooks(object):
     """
     Acts as a context manager. Use like this:
     
-    >>> from future import translation
-    >>> with translation.enable_hooks():
+    >>> from past import translation
+    >>> with translation.hooks():
     ...     import mypy2module
     >>> import requests        # py2/3 compatible anyway
     >>> # etc.
@@ -448,7 +448,7 @@ class suspend_hooks(object):
     """
     Acts as a context manager. Use like this:
     
-    >>> from future import translation
+    >>> from past import translation
     >>> translation.install_hooks()
     >>> import http.client
     >>> # ...

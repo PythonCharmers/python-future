@@ -19,6 +19,8 @@ Credits
             contributed by Jeff Tratner.
           - Documentation is generated with ``sphinx`` using the
             ``sphinx-bootstrap`` theme.
+          - ``past.translation`` is inspired by and borrows some code from
+            Sanjay Vinip's ``uprefix`` module.
 
 .. _licence:
 

@@ -1,14 +1,14 @@
 .. _translation:
 
-``future.translation`` package [Experimental]
-=============================================
+Importing Python 2-only dependencies on Python 3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``future`` now provides an experimental ``translation`` package to help
+The ``past`` module provides an experimental ``translation`` package to help
 with importing and using old Python 2 modules in a Python 3 environment.
 
 This is implemented using PEP 414 import hooks together with fixers from
 ``lib2to3`` and ``libfuturize`` (included with ``python-future``) that
-attempt to automatically translate Python 2 code to Python 3 syntax and
+attempt to automatically translate Python 2 code to Python 3 code with equivalent
 semantics upon import.
 
 *Note* This feature is still in alpha and needs further development to support a
@@ -21,16 +21,16 @@ Here is how to use it::
     $ python3
     
 Then pass in a whitelist of module name prefixes to the
-``future.autotranslate()`` function. Example::
+``past.autotranslate()`` function. Example::
     
-    >>> from future import autotranslate
+    >>> from past import autotranslate
     >>> autotranslate('plotrique')
     >>> import plotrique
 
-Here is a more explicit example::
+Here is another example::
 
-    >>> from future.translation import install_hooks
-    >>> install_hooks()
+    >>> from past.translation import install_hooks
+    >>> install_hooks('mypy2module')
     >>> import mypy2module
 
 This will translate, import and run Python 2 code such as the following::
@@ -85,13 +85,15 @@ This is a standard Python 3 data type, so, when called from Python 3 code,
 
 .. _translation-limitations
 
-Known limitations of ``future.translation``
--------------------------------------------
+Known limitations of ``past.translation``
+*******************************************
 
-The source translation feature offered by the ``future.translation``
-package has the same limitations as the ``futurize`` script (see
-:ref:`_futurize-limitations`_). Help developing and testing this further
+The source translation feature offered by the ``past.translation``
+package has some of the same limitations as the ``futurize`` script (see
+:ref:`futurize-limitations`). Help developing and testing this feature further
 would be particularly welcome.
 
 Please report any bugs you find on the ``python-future`` `bug tracker
 <https://github.com/PythonCharmers/python-future/>`_.
+
+
