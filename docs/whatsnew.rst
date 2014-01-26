@@ -10,53 +10,59 @@ What's new in version 0.11
 There are several major new features in version 0.11. 
 
 
+``past`` package
+----------------
+
+The python-future project now provides a ``past`` package in addition to the
+``future`` package. Whereas ``future`` provides improved compatibility with
+Python 3 code to Python 2, ``past`` provides support for using and interacting
+with Python 2 code from Python 3. The structure reflects that of ``future``,
+with ``past.builtins`` and ``past.utils``. There is also a new
+``past.translation`` package that provides transparent translation of Python 2
+code to Python 3. (See below.)
+
+One purpose of ``past`` is to ease module-by-module upgrades to
+codebases from Python 2. Another is to help with enabling Python 2 libraries to
+support Python 3 without breaking the API they currently provide. (For example,
+user code may expect these libraries to pass them Python 2's 8-bit strings,
+rather than Python 3's ``bytes`` object.) A third purpose is to help migrate
+projects to Python 3 even if one or more dependencies are still on Python 2.
+
+Currently ``past.builtins`` provides forward-ports of Python 2's ``str`` and
+``dict`` objects, ``basestring``, and list-producing iterator functions.  In
+later releases, ``past.builtins`` will be used internally by the
+``past.translation`` package to help with importing and using old Python 2
+modules in a Python 3 environment.
+
+
 Auto-translation of Python 2 modules upon import
 ------------------------------------------------
 
-``future`` now provides an experimental ``translation`` package to help
+``past`` provides an experimental ``translation`` package to help
 with importing and using old Python 2 modules in a Python 3 environment.
 
 This is implemented using import hooks that attempt to automatically
-translate Python 2 code to Python 3 syntax and semantics upon import. Use
+translate Python 2 modules to Python 3 syntax and semantics upon import. Use
 it like this::
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     $ python3
     
-Then pass in a whitelist of module name prefixes to the
-``future.autotranslate()`` function. Example::
+Then pass in a whitelist of module name prefixes to the ``past.autotranslate()``
+function. Example::
     
-    >>> from future import autotranslate
+    >>> from past import autotranslate
     >>> autotranslate('plotrique')
     >>> import plotrique
 
 
 This is intended to help you migrate to Python 3 without the need for all
 your code's dependencies to support Python 3 yet. It should be used as a
-"last resort"; ideally Python 2-only dependencies should be ported
+last resort; ideally Python 2-only dependencies should be ported
 properly to a Python 2/3 compatible codebase using a tool like
 ``futurize`` and the changes should be pushed to the upstream project.
 
 For more information, see :ref:`translation`.
-
-
-``past`` package
-----------------
-
-The python-future project now provides a ``past`` package in addition to the
-``future`` package. The structure reflects that of ``future``, with
-``past.builtins`` and ``past.utils``.
-
-One purpose of ``past`` is to ease module-by-module upgrades to
-codebases from Python 2. It can also help with enabling Python 2 libraries to
-support Python 3 without breaking the API they provide. (For example, user code
-may expect these libraries to pass them Python 2's 8-bit strings, rather than
-Python 3's ``bytes`` object.) In the future it will be used internally by the
-``future.translation`` package to help with importing and using old
-Python 2 modules in a Python 3 environment.
-
-Currently ``past.builtins`` provides forward-ports of Python 2's ``str`` and
-``dict`` objects, ``basestring``, and list-producing iterator functions.
 
 
 Separate ``pasteurize`` script
@@ -64,7 +70,7 @@ Separate ``pasteurize`` script
 
 The functionality from ``futurize --from3`` is now in a separate script called
 ``pasteurize``. Use ``pasteurize`` when converting from Python 3 code to Python
-2/3 compatible source.
+2/3 compatible source. For more information, see :ref:`backwards-conversion`.
 
 
 input() no longer disabled globally on Py2
@@ -85,12 +91,18 @@ Please remember to import ``input`` from ``future.builtins`` if you use
 Deprecated feature: auto-installation of standard-library import hooks
 ----------------------------------------------------------------------
 
-By version 1.0 of ``future``, importing ``future.standard_library`` will
-no longer install import hooks by default.
-These were bleeding into surrounding code, causing incompatibilities with
-modules like ``requests`` (issue #19). 
+Previous versions of ``python-future`` installed import hooks automatically upon
+``from future import standard_library``. This has been deprecated in order to
+improve robustness and compatibility with modules like ``requests`` that already
+perform their own single-source Python 2/3 compatibility.
 
-Instead, install the import hooks explicitly as follows::
+.. (Previously, the import hooks were
+.. bleeding into surrounding code, causing incompatibilities with modules like
+.. ``requests`` (issue #19). 
+
+In the next version of ``python-future``, importing ``future.standard_library``
+will no longer install import hooks by default. Instead, please install the
+import hooks explicitly as follows::
     
     from future import standard_library
     standard_library.install_hooks()
@@ -99,9 +111,16 @@ and uninstall them after your import statements using::
 
     standard_library.remove_hooks()
 
+..  For more fine-grained use of import hooks, the names can be passed explicitly as
+..  follows::
+.. 
+..      from future import standard_library
+..      standard_library.install_hooks()
+
+
 *Note*: this will be a backward-incompatible change.
 
-This feature may be resurrected in a later version if a safe implementation can be found.
+.. This feature may be resurrected in a later version if a safe implementation can be found.
 
 
 Internal changes
@@ -110,7 +129,6 @@ Internal changes
 The internal ``future.builtins.backports`` module has been renamed to
 ``future.builtins.types``. This will change the ``repr`` of ``future``
 types but not their use.
-
 
 
 .. whats-new-0.10.2:
