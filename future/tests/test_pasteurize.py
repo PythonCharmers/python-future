@@ -1,7 +1,7 @@
 """
 This module contains snippets of Python 3 code (invalid Python 2) and
-tests for whether they can be passed to ``futurize --from3`` and immediately
-run under both Python 2 and Python 3.
+tests for whether they can be passed to ``futurize --from3`` and
+immediately run under both Python 2 and Python 3.
 """
 
 from __future__ import print_function, absolute_import
@@ -14,11 +14,15 @@ import os
 from future.tests.base import CodeHandler, unittest
 
 
-class TestFuturizeFrom3(CodeHandler):
+class TestPasteurize(CodeHandler):
+    """
+    After running ``pasteurize``, these Python 3 code snippets should run
+    on both Py3 and Py2.
+    """
     def test_range_slice(self):
         """
-        After running ``futurize --from3``, this Python 3 code should run on
-        both Py3 and Py2 without a MemoryError
+        After running ``pasteurize``, this Python 3 code should run
+        quickly on both Py3 and Py2 without a MemoryError
         """
         code = '''
         for i in range(10**15)[:10]:

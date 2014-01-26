@@ -76,9 +76,9 @@ class CodeHandler(unittest.TestCase):
         ``stage2`` to ``futurize``. Passing both stages runs ``futurize``
         with both stages by default.
 
-        If from3 is False, runs ``futurize`` in the default mode,
-        converting from Python 2 to both 2 and 3. If from3 is True, runs
-        ``futurize --from3`` to convert from Python 3 to both 2 and 3.
+        If from3 is False, runs ``futurize``, converting from Python 2 to
+        both 2 and 3. If from3 is True, runs ``pasteurize`` to convert
+        from Python 3 to both 2 and 3.
 
         Optionally reformats the code block first using the reformat()
         method.
@@ -253,18 +253,20 @@ class CodeHandler(unittest.TestCase):
         if all_imports:
             params.append('--all-imports')
         if from3:
-            params.append('--from3')
-        if tobytes:
-            params.append('--tobytes')
-        if stages == [1]:
-            params.append('--stage1')
-        elif stages == [2]:
-            params.append('--stage2')
+            script = 'pasteurize.py'
         else:
-            assert stages == [1, 2]
+            script = 'futurize.py'
+            if tobytes:
+                params.append('--tobytes')
+            if stages == [1]:
+                params.append('--stage1')
+            elif stages == [2]:
+                params.append('--stage2')
+            else:
+                assert stages == [1, 2]
             # No extra params needed
 
-        output = subprocess.check_output(['python', 'futurize.py'] + params +
+        output = subprocess.check_output(['python', script] + params +
                                          ['-w', self.tempdir + filename],
                                          stderr=subprocess.STDOUT)
         return output
