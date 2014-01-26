@@ -131,11 +131,11 @@ class TestStandardLibraryRenames(CodeHandler):
         if utils.PY2:
             self.assertTrue(standard_library.detect_hooks())
 
-        old_meta_path = copy.copy(sys.meta_path)
+        meta_path = copy.copy(sys.meta_path)
 
         standard_library.remove_hooks()
         if utils.PY2:
-            self.assertTrue(len(old_meta_path) + 1 == len(sys.meta_path))
+            self.assertEqual(len(meta_path), len(sys.meta_path) + 1)
             self.assertFalse(standard_library.detect_hooks())
 
     @unittest.skipIf(utils.PY3, 'not testing for old urllib on Py3')
@@ -347,7 +347,6 @@ class TestRequests(CodeHandler):
     def test_requests(self):
         with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
             f.write('from future import standard_library')
-        # import sys
         # print('sys.meta_path is: ', sys.meta_path)
         print('Importing test_imports_future')
         import test_imports_future

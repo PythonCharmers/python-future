@@ -125,8 +125,6 @@ class TestFuturizeSimple(CodeHandler):
         h = reduce(lambda x, y: x+y, [1, 2, 3, 4, 5])
         super(MyClass, self)
         """
-        import pdb
-        pdb.set_trace()
         self.convert_check(before, after, ignore_imports=False, run=False)
 
     def test_xrange(self):
@@ -236,32 +234,34 @@ class TestFuturizeSimple(CodeHandler):
             http://docs.python.org/2/library/2to3.html
         """
         before = """
+        from io import BytesIO
         def greet(name):
             print "Hello, {0}!".format(name)
         print "What's your name?"
         import sys
         oldstdin = sys.stdin
 
-        sys.stdin = 'Ed\n'
+        sys.stdin = BytesIO(b'Ed\\n')
         name = raw_input()
-        greet(name)
+        greet(name.decode())
 
         sys.stdin = oldstdin
-        assert name == 'Ed'
+        assert name == b'Ed'
         """
         desired = """
+        from io import BytesIO
         def greet(name):
             print("Hello, {0}!".format(name))
         print("What's your name?")
         import sys
         oldstdin = sys.stdin
 
-        sys.stdin = 'Ed\n'
+        sys.stdin = BytesIO(b'Ed\\n')
         name = input()
-        greet(name)
+        greet(name.decode())
 
         sys.stdin = oldstdin
-        assert name == 'Ed'
+        assert name == b'Ed'
         """
         self.convert_check(before, desired, run=False)
 
@@ -269,6 +269,7 @@ class TestFuturizeSimple(CodeHandler):
             p1 = Popen([interpreter, self.tempdir + 'mytestscript.py'],
                        stdout=PIPE, stdin=PIPE, stderr=PIPE, env=self.env)
             (stdout, stderr) = p1.communicate(b'Ed')
+            self.assertEqual(stderr, b'')
             self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")
 
     def test_literal_prefixes_are_not_stripped(self):
@@ -308,18 +309,12 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         import copy_reg
         import cPickle
         import cStringIO
-
-        s = cStringIO.StringIO('blah')
         """
-        # This requires that the argument to io.StringIO be made a
-        # unicode string explicitly if we're not using unicode_literals:
         after = """
         import configparser
         import copyreg
         import pickle
         import io
-
-        s = io.StringIO('blah')
         """
         self.convert_check(before, after)
     
@@ -388,14 +383,20 @@ class TestFuturizeRenamedStdlib(CodeHandler):
     @unittest.expectedFailure
     def test_Py2_StringIO_module(self):
         """
+        This requires that the argument to io.StringIO be made a
+        unicode string explicitly if we're not using unicode_literals:
+
         Ideally, there would be a fixer for this. For now:
 
-        TODO: add the Py3 equivalent for this to the docs
+        TODO: add the Py3 equivalent for this to the docs. Also add back
+        a test for the unicode_literals case.
         """
         before = """
         import cStringIO
-        s = cStringIO.StringIO('my string')
-        assert isinstance(s, cStringIO.InputType)
+        import StringIO
+        s1 = cStringIO.StringIO('my string')
+        s2 = StringIO.StringIO('my other string')
+        assert isinstance(s1, cStringIO.InputType)
         """
 
         # There is no io.InputType in Python 3. futurize should change this to
@@ -403,8 +404,10 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         # must be a unicode string on both Py2 and Py3.
         after = """
         import io
-        s = io.StringIO(u'my string')
-        assert isinstance(s, io.StringIO)
+        import io
+        s1 = io.StringIO(u'my string')
+        s2 = io.StringIO(u'my other string')
+        assert isinstance(s1, io.StringIO)
         """
         self.convert_check(before, after)
 

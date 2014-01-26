@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Tests to make sure the behaviour of the builtins is sensible and correct.
 """
