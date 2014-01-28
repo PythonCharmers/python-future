@@ -13,9 +13,13 @@ from __future__ import (absolute_import, division,
 from future.builtins import *
 
 from future import standard_library, utils
-from http.server import BaseHTTPRequestHandler, HTTPServer, \
-     SimpleHTTPRequestHandler, CGIHTTPRequestHandler
-from http import server
+
+with standard_library.hooks():
+    from http.server import BaseHTTPRequestHandler, HTTPServer, \
+         SimpleHTTPRequestHandler, CGIHTTPRequestHandler
+    from http import server
+    import http.client
+    from test import support
 
 import os
 import sys
@@ -26,10 +30,6 @@ import shutil
 # import urllib.parse
 # Use this instead:
 import urllib
-
-with standard_library.hooks():
-    import http.client
-    from test import support
 
 import tempfile
 from io import BytesIO

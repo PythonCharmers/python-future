@@ -15,7 +15,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import copy
 
 from future import utils
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26
 
 
 original_locals = set(copy.copy(locals()))
@@ -48,6 +48,7 @@ class TestImportStar(unittest.TestCase):
     def test_super(self):
         pass
 
+    @skip26
     @unittest.expectedFailure
     def test_python3_stdlib_imports(self):
         """
