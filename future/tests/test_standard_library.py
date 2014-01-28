@@ -343,6 +343,7 @@ class TestRequests(CodeHandler):
     This class tests whether the requests module conflicts with the
     standard library import hooks, as in issue #19.
     """
+    @unittest.expectedFailure
     @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
                      + ' to test ``requests`` + future compatibility (issue #19)')
     def test_requests(self):
@@ -350,9 +351,10 @@ class TestRequests(CodeHandler):
             f.write('from future import standard_library')
         # print('sys.meta_path is: ', sys.meta_path)
         sys.path.insert(0, self.tempdir)
-        print('Importing test_imports_future')
+        print('Importing test_imports_future_stdlib ...')
         try:
             import test_imports_future_stdlib
+            standard_library.remove_hooks()
             import requests
             r = requests.get('http://google.com')
             self.assertTrue(True)
