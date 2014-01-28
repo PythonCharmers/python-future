@@ -2,12 +2,16 @@ What's new
 **********
 
 
-.. whats-new-0.11.1:
+.. whats-new-0.11.x:
 
-What's new in version 0.11.1
+What's new in version 0.11.x
 ============================
 
-The ``past.autotranslate`` feature now works with Python eggs.
+- v0.11.2: The ``past.autotranslate`` feature now finds modules to import more
+  robustly and works with Python eggs.
+
+- v0.11.1: Update to ``requirements_py26.txt`` for Python 2.6. Small updates to docs and
+  tests.
 
 
 .. whats-new-0.11:

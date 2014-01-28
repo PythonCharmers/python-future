@@ -24,14 +24,15 @@ Then pass in a whitelist of module name prefixes to the
 ``past.autotranslate()`` function. Example::
     
     >>> from past import autotranslate
-    >>> autotranslate('plotrique')
+    >>> autotranslate(['plotrique'])
     >>> import plotrique
 
 Here is another example::
 
-    >>> from past.translation import install_hooks
-    >>> install_hooks('mypy2module')
+    >>> from past.translation import install_hooks, remove_hooks
+    >>> install_hooks(['mypy2module'])
     >>> import mypy2module
+    >>> remove_hooks()
 
 This will translate, import and run Python 2 code such as the following::
 
