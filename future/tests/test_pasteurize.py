@@ -11,7 +11,7 @@ from subprocess import Popen, PIPE
 import tempfile
 import os
 
-from future.tests.base import CodeHandler, unittest
+from future.tests.base import CodeHandler, unittest, skip26
 
 
 class TestPasteurize(CodeHandler):

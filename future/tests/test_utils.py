@@ -11,7 +11,8 @@ from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
 
 
 from numbers import Integral
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26
+
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
 
@@ -99,6 +100,7 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(isbytes(self.s))
         self.assertFalse(isbytes(self.s2))
 
+    @skip26
     @unittest.expectedFailure
     def test_raise_(self):
         """

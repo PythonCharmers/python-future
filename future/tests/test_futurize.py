@@ -6,7 +6,7 @@ import tempfile
 from subprocess import Popen, PIPE
 import os
 
-from future.tests.base import CodeHandler, unittest
+from future.tests.base import CodeHandler, unittest, skip26
 
 
 class TestFuturizeSimple(CodeHandler):
@@ -148,6 +148,7 @@ class TestFuturizeSimple(CodeHandler):
         '''
         self.convert(code)
     
+    @skip26
     @unittest.expectedFailure
     def test_source_coding_utf8(self):
         """

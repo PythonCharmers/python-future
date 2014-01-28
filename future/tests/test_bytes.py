@@ -91,7 +91,6 @@ class TestBytes(unittest.TestCase):
     def test_isinstance_bytes(self):
         self.assertTrue(isinstance(bytes(b'blah'), bytes))
 
-    @unittest.expectedFailure
     def test_isinstance_oldbytestrings_bytes(self):
         """
         Watch out for this. Byte-strings produced in various places in Py2

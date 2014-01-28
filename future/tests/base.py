@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+import sys
 if not hasattr(unittest, 'skip'):
     import unittest2 as unittest
 

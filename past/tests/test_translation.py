@@ -16,7 +16,7 @@ from past import utils
 from past.builtins import basestring, str as oldstr
 
 from past.translation import install_hooks, remove_hooks, common_substring
-from future.tests.base import unittest, CodeHandler
+from future.tests.base import unittest, CodeHandler, skip26
 
 
 class TestTranslate(unittest.TestCase):
@@ -78,6 +78,7 @@ class TestTranslate(unittest.TestCase):
         module = self.write_and_import(code, 'execer')
         self.assertEqual(module.x, 7)
         
+    @skip26
     @unittest.expectedFailure
     def test_div(self):
         code = """
@@ -86,6 +87,7 @@ class TestTranslate(unittest.TestCase):
         module = self.write_and_import(code, 'div')
         self.assertEqual(module.x, 1)
 
+    @skip26
     @unittest.expectedFailure    # currently fails on Py3, succeeds on Py2
     def test_stdlib(self):
         """
@@ -147,6 +149,7 @@ class TestTranslate(unittest.TestCase):
         self.assertEqual(module.d, [0, 4, 8, 12, 16])
         self.assertTrue(module.e)
 
+    @skip26
     @unittest.expectedFailure
     def test_import_builtin_types(self):
         code = """
