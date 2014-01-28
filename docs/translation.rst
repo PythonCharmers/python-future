@@ -88,6 +88,9 @@ This is a standard Python 3 data type, so, when called from Python 3 code,
 Known limitations of ``past.translation``
 *******************************************
 
+- It currently requires a newline at the end of the module or it throws a
+  ``ParseError``.
+
 - This only works with pure-Python modules. C extension modules and Cython code
   are not supported.
 

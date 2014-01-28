@@ -197,7 +197,7 @@ def detect_python2(source, pathname):
 
     if source != str(tree)[:-1]:   # remove added newline
         # The above fixers made changes, so we conclude it's Python 2 code
-        logging.debug('Detected Python 2 code: {}'.format(pathname))
+        logger.debug('Detected Python 2 code: {}'.format(pathname))
         with open('/tmp/original_code.py', 'w') as f:
             f.write('### Original code (detected as py2): %s\n%s' % 
                     (pathname, source))
@@ -206,7 +206,7 @@ def detect_python2(source, pathname):
                     (pathname, str(tree)[:-1]))
         return True
     else:
-        logging.debug('Detected Python 3 code: {}'.format(pathname))
+        logger.debug('Detected Python 3 code: {}'.format(pathname))
         with open('/tmp/original_code.py', 'w') as f:
             f.write('### Original code (detected as py3): %s\n%s' % 
                     (pathname, source))
@@ -251,7 +251,7 @@ class Py2Fixer(object):
         self.exclude_paths += paths
 
     def find_module(self, fullname, path=None):
-        logging.debug('Running find_module: {}...'.format(fullname))
+        logger.debug('Running find_module: {}...'.format(fullname))
         if '.' in fullname:
             parent, child = fullname.rsplit('.', 1)
             if path is None:
@@ -260,7 +260,15 @@ class Py2Fixer(object):
                 path = mod.__path__
             fullname = child
 
-        self.found = imp.find_module(fullname, path)
+        # Perhaps we should try using the new importlib functionality in Python
+        # 3.3: something like this?
+        # thing = importlib.machinery.PathFinder.find_module(fullname, path)
+        try:
+            self.found = imp.find_module(fullname, path)
+        except Exception as e:
+            logger.debug('Py2Fixer could not find {}')
+            logger.debug('Exception was: {})'.format(fullname, e))
+            return None
         self.kind = self.found[-1][-1]
         if self.kind == imp.PKG_DIRECTORY:
             self.pathname = os.path.join(self.found[1], '__init__.py')
@@ -286,7 +294,7 @@ class Py2Fixer(object):
         return str(tree)[:-1] # remove added newline
 
     def load_module(self, fullname):
-        logging.debug('Running load_module for {}...'.format(fullname))
+        logger.debug('Running load_module for {}...'.format(fullname))
         if fullname in sys.modules:
             mod = sys.modules[fullname]
         else:
@@ -307,10 +315,10 @@ class Py2Fixer(object):
             else:
                 convert = False
             if not convert:
-                logging.debug('Excluded {} from translation'.format(fullname))
+                logger.debug('Excluded {} from translation'.format(fullname))
                 mod = imp.load_module(fullname, *self.found)
             else:
-                logging.debug('Autoconverting {} ...'.format(fullname))
+                logger.debug('Autoconverting {} ...'.format(fullname))
                 mod = imp.new_module(fullname)
                 sys.modules[fullname] = mod
 
