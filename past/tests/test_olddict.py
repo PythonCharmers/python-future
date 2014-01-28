@@ -432,8 +432,9 @@ class Py2DictTest(unittest.TestCase):
         hashed2 = Hashed()
         y.setdefault(hashed2, [])
         self.assertEqual(hashed1.hash_count, 1)
-        self.assertEqual(hashed2.hash_count, 1)
-        self.assertEqual(hashed1.eq_count + hashed2.eq_count, 1)
+        if PY3:
+            self.assertEqual(hashed2.hash_count, 1)
+            self.assertEqual(hashed1.eq_count + hashed2.eq_count, 1)
 
     def test_popitem(self):
         # dict.popitem()
