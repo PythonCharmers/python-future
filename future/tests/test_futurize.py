@@ -105,6 +105,7 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.unchanged(code)
 
+    @unittest.expectedFailure
     def test_import_builtins(self):
         before = """
         a = raw_input()
@@ -238,6 +239,7 @@ class TestFuturizeSimple(CodeHandler):
         # with open('/tmp/' + filename, 'w') as tarball:
         #     tarball.write(r2.content)
 
+    @unittest.expectedFailure
     def test_raw_input(self):
         """
         Passes in a string to the waiting input() after futurize
