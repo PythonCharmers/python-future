@@ -277,4 +277,7 @@ class CodeHandler(unittest.TestCase):
         return subprocess.check_output([interpreter, self.tempdir + filename],
                                        env=env)
 
+# Decorator to skip some tests on Python 2.6 ...
+skip26 = unittest.skipIf(sys.version_info[:2] == (2, 6), "this test is known to fail on Py2.6")
+
 

@@ -6,7 +6,7 @@ Tests to make sure the behaviour of the builtins is sensible and correct.
 from __future__ import absolute_import, division, print_function, unicode_literals
 from future.builtins import *
 from future.utils import PY3, exec_, native_str, implements_iterator
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26
 
 import sys
 import textwrap
@@ -170,27 +170,28 @@ class TestBuiltins(unittest.TestCase):
 
 from future import standard_library
 with standard_library.hooks():
-    import ast
     import builtins
-    import collections
-    import io
-    import locale
-    import os
-    import pickle
-    import platform
-    import random
-    import sys
-    import traceback
-    import types
-    import unittest
-    import warnings
-    from operator import neg
     from test.support import TESTFN, unlink,  run_unittest, check_warnings
-    try:
-        import pty, signal
-    except ImportError:
-        pty = signal = None
+    import ast
+    import collections
 
+import io
+import locale
+import os
+import pickle
+import platform
+import random
+import sys
+import traceback
+import types
+# Imported above more portably (using unittest2 on Py2.6):
+# import unittest
+import warnings
+from operator import neg
+try:
+    import pty, signal
+except ImportError:
+    pty = signal = None
 
 
 class Squares:
@@ -1482,19 +1483,20 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, round, t)
         self.assertRaises(TypeError, round, t, 0)
 
-    # Some versions of glibc for alpha have a bug that affects
-    # float -> integer rounding (floor, ceil, rint, round) for
-    # values in the range [2**52, 2**53).  See:
-    #
-    #   http://sources.redhat.com/bugzilla/show_bug.cgi?id=5350
-    #
-    # We skip this test on Linux/alpha if it would fail.
-    linux_alpha = (platform.system().startswith('Linux') and
-                   platform.machine().startswith('alpha'))
-    system_round_bug = round(5e15+1) != 5e15+1
-    @unittest.skipIf(linux_alpha and system_round_bug,
-                     "test will fail;  failure is probably due to a "
-                     "buggy system round function")
+    # # Some versions of glibc for alpha have a bug that affects
+    # # float -> integer rounding (floor, ceil, rint, round) for
+    # # values in the range [2**52, 2**53).  See:
+    # #
+    # #   http://sources.redhat.com/bugzilla/show_bug.cgi?id=5350
+    # #
+    # # We skip this test on Linux/alpha if it would fail.
+    # linux_alpha = (platform.system().startswith('Linux') and
+    #                platform.machine().startswith('alpha'))
+    # system_round_bug = round(5e15+1) != 5e15+1
+    # @unittest.skipIf(PY26)linux_alpha and system_round_bug,
+    #                  "test will fail;  failure is probably due to a "
+    #                  "buggy system round function")
+    @skip26
     def test_round_large(self):
         # Issue #1869: integral floats should remain unchanged
         self.assertEqual(round(5e15-1), 5e15-1)

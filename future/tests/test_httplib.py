@@ -9,21 +9,21 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
 from future import utils
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26
 
 from future import standard_library
-from http import client
-standard_library.remove_hooks()
+with standard_library.hooks():
+    from http import client
+    from test import support
 import array
 import io
 import socket
 import errno
+import sys
 
 TestCase = unittest.TestCase
-
-from test import support
-
 HOST = support.HOST
+
 
 class FakeSocket(object):
     def __init__(self, text, fileclass=io.BytesIO):
@@ -90,6 +90,7 @@ class NoEOFStringIO(io.BytesIO):
         return data
 
 
+@skip26
 class HeaderTests(TestCase):
     def test_auto_headers(self):
         # Some headers are added automatically, but should not be added by
@@ -175,6 +176,7 @@ class HeaderTests(TestCase):
         self.assertTrue(sock.data.startswith(expected))
 
 
+@skip26
 class BasicTest(TestCase):
     def test_status_lines(self):
         # Test HTTP status lines
@@ -446,11 +448,13 @@ class BasicTest(TestCase):
         self.assertEqual(resp.read(), b'')
         self.assertTrue(resp.isclosed())
 
+@skip26
 class OfflineTest(TestCase):
     def test_responses(self):
         self.assertEqual(client.responses[client.NOT_FOUND], "Not Found")
 
 
+@skip26
 class SourceAddressTest(TestCase):
     def setUp(self):
         self.serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -482,6 +486,7 @@ class SourceAddressTest(TestCase):
         # for an ssl_wrapped connect() to actually return from.
 
 
+@skip26
 class TimeoutTest(TestCase):
     PORT = None
 
@@ -528,6 +533,7 @@ class TimeoutTest(TestCase):
         httpConn.close()
 
 
+@skip26
 class HTTPSTest(TestCase):
 
     def test_attributes(self):

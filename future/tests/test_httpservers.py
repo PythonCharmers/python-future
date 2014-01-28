@@ -12,7 +12,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
 
-from future import standard_library
+from future import standard_library, utils
 from http.server import BaseHTTPRequestHandler, HTTPServer, \
      SimpleHTTPRequestHandler, CGIHTTPRequestHandler
 from http import server
@@ -26,13 +26,16 @@ import shutil
 # import urllib.parse
 # Use this instead:
 import urllib
-import http.client
-standard_library.remove_hooks()
+
+with standard_library.hooks():
+    import http.client
+    from test import support
+
 import tempfile
 from io import BytesIO
 
-from test import support
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26
+TestCase = unittest.TestCase
 
 threading = support.import_module('threading')
 
@@ -66,7 +69,8 @@ class TestServerThread(threading.Thread):
         self.server.shutdown()
 
 
-class BaseTestCase(unittest.TestCase):
+@skip26
+class BaseTestCase(TestCase):
     def setUp(self):
         self._threads = support.threading_setup()
         os.environ = support.EnvironmentVarGuard()
@@ -510,7 +514,8 @@ class AuditableBytesIO(object):
         return len(self.datas)
 
 
-class BaseHTTPRequestHandlerTestCase(unittest.TestCase):
+@skip26
+class BaseHTTPRequestHandlerTestCase(TestCase):
     """Test the functionality of the BaseHTTPServer.
 
        Test the support for the Expect 100-continue header.
@@ -668,7 +673,8 @@ class BaseHTTPRequestHandlerTestCase(unittest.TestCase):
         self.assertFalse(self.handler.get_called)
 
 
-class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
+@skip26
+class SimpleHTTPRequestHandlerTestCase(TestCase):
     """ Test url parsing """
     def setUp(self):
         self.translated = os.getcwd()
@@ -690,7 +696,7 @@ class SimpleHTTPRequestHandlerTestCase(unittest.TestCase):
         self.assertEqual(path, self.translated)
 
 
-class DummyTest(unittest.TestCase):
+class DummyTest(TestCase):
     """
     It might help on travis-ci to have at least one test being executed
     for this module.

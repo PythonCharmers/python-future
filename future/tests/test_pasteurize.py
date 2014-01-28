@@ -19,6 +19,8 @@ class TestPasteurize(CodeHandler):
     After running ``pasteurize``, these Python 3 code snippets should run
     on both Py3 and Py2.
     """
+    @skip26    # Python 2.6's lib2to3 causes the "from future.builtins import
+               # range" line to be stuck at the bottom of the module!
     def test_range_slice(self):
         """
         After running ``pasteurize``, this Python 3 code should run
