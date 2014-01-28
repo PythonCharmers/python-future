@@ -1353,7 +1353,7 @@ class BuiltinTest(unittest.TestCase):
                           % (len(lines), child_output.read()))
         os.close(fd)
         # Check we did exercise the GNU readline path
-        self.assertIn(lines[0], {'tty = True', 'tty = False'})
+        self.assertIn(lines[0], set(['tty = True', 'tty = False']))
         if lines[0] != 'tty = True':
             self.skipTest("standard IO in should have been a tty")
         input_result = eval(lines[1])   # ascii() -> eval() roundtrip

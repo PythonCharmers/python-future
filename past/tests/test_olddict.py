@@ -77,7 +77,7 @@ class TestOldDict(unittest.TestCase):
         d1, d2 = self.d1, self.d2
         self.assertEqual(dict(d1).viewkeys() & dict(d2).viewkeys(), set())
         self.assertEqual(dict(d1).viewkeys() | dict(d2).viewkeys(),
-                         {'key1', 'key2', 'C', 'B', 'A'})
+                         set(['key1', 'key2', 'C', 'B', 'A']))
         self.assertTrue(isinstance(d1.viewvalues() | d2.viewkeys(), set))
         self.assertTrue(isinstance(d1.viewitems() | d2.viewitems(), set))
 
@@ -364,10 +364,10 @@ class Py2DictTest(unittest.TestCase):
         class baddict3(dict):
             def __new__(cls):
                 return d
-        d = dict({i : i for i in range(10)})
+        d = dict((i, i) for i in range(10))
         res = d.copy()
         res.update(a=None, b=None, c=None)
-        self.assertEqual(baddict3.fromkeys({"a", "b", "c"}), res)
+        self.assertEqual(baddict3.fromkeys(set(["a", "b", "c"])), res)
 
     def test_copy(self):
         d = dict({1:1, 2:2, 3:3})
