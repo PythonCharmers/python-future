@@ -94,6 +94,7 @@ __all__ = ["HTTPServer", "BaseHTTPRequestHandler"]
 with standard_library.hooks():
     import html
     import http.client
+    import socketserver
 import email.message
 import email.parser
 import io
@@ -103,7 +104,6 @@ import posixpath
 import select
 import shutil
 import socket # For gethostbyaddr()
-import socketserver
 import sys
 import time
 import copy
