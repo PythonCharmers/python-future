@@ -32,7 +32,7 @@ Features
 -   ``past.translation`` package supports transparent translation of Python 2
     modules to Python 3 upon import. [This feature is currently in alpha.] 
 
--   330+ unit tests
+-   470+ unit tests
 
 -   ``futurize`` and ``pasteurize`` scripts based on ``2to3`` and parts of
     ``3to2`` and ``python-modernize``, for automatic conversion from either Py2
@@ -139,9 +139,9 @@ the block::
 Automatic translation
 ---------------------
 
-The ``past`` package can now automatically and transparently translate some
-Python 2 modules to Python 3 upon import. For example, here is how to use a
-Python 2-only package called ``plotrique`` on Python 3. First install it::
+The ``past`` package can now automatically translate some simple Python 2
+modules to Python 3 upon import. For example, here is how to use a Python 2-only
+package called ``plotrique`` on Python 3. First install it::
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     

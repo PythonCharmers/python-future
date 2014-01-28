@@ -88,10 +88,21 @@ This is a standard Python 3 data type, so, when called from Python 3 code,
 Known limitations of ``past.translation``
 *******************************************
 
-- The source translation feature offered by the ``past.translation``
-package has some of the same limitations as the ``futurize`` script (see
-:ref:`futurize-limitations`). Help developing and testing this feature further
-would be particularly welcome.
+- This only works with pure-Python modules. C extension modules and Cython code
+  are not supported.
+
+- The biggest hurdle to automatic translation is likely to be ambiguity
+  about byte-strings and text (unicode strings) in the Python 2 code. If the
+  ``past.autotranslate`` feature fails because of this, you could try
+  running ``futurize`` over the code and adding a ``b''`` or ``u''`` prefix to
+  the relevant string literals. To convert between byte-strings and text (unicode
+  strings), add an ``.encode`` or ``.decode`` method call. If this succeeds,
+  please push your patches upstream to the package maintainers.
+
+- Otherwise, the source translation feature offered by the ``past.translation``
+  package has similar limitations to the ``futurize`` script (see
+  :ref:`futurize-limitations`). Help developing and testing this feature further
+  would be particularly welcome.
 
 Please report any bugs you find on the ``python-future`` `bug tracker
 <https://github.com/PythonCharmers/python-future/>`_.
