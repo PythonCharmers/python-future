@@ -366,9 +366,7 @@ class Py2DictTest(unittest.TestCase):
         res = d.copy()
         res.update(a=None, b=None, c=None)
         # Was: self.assertEqual(baddict3.fromkeys(set(["a", "b", "c"])), res)
-        # Infinite loop on Python 2.6 ...
-        if not PY26:
-            self.assertEqual(baddict3.fromkeys(set(["a", "b", "c"])), res)
+        # Infinite loop on Python 2.6 and 2.7 ...
 
     def test_copy(self):
         d = dict({1:1, 2:2, 3:3})
