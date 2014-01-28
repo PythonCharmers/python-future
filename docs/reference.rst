@@ -18,6 +18,9 @@ future.builtins Interface
 .. automodule:: future.builtins
     :members:
 
+.. Docs are also in future-builtins.rst. Extract these and put them into the
+.. relevant docstrings.
+
 
 future.standard_library Interface
 =================================

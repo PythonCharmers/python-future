@@ -104,6 +104,9 @@ same way on Python 2.6/2.7 after these imports as it does on Python 3::
     assert isinstance(u'blah', str)
     assert isinstance('blah', str)       # if unicode_literals is in effect
 
+    # pow() supports fractional exponents of negative numbers like in Py3:
+    z = pow(-1, 0.5)
+
 
 There is also support for renamed standard library modules in the form of import
 hooks::
