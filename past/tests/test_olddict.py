@@ -8,7 +8,7 @@ import os
 import sys
 
 from future.utils import implements_iterator, PY26, PY3
-from past.tests.base import unittest, skip26
+from future.tests.base import unittest, skip26
 from past.builtins import dict
 
 
