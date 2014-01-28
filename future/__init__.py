@@ -12,12 +12,9 @@ It is designed to be used as follows::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
-    from future import *
-
-or explicitly as::
-
-    from future.builtins import (bytes, int, range, round, str, super,
-                                 ascii, chr, hex, input, oct, open,
+    from future.builtins import (bytes, dict, int, range, str,
+                                 ascii, chr, hex, input, next,
+                                 oct, open, pow, round, super,
                                  filter, map, zip)
 
 followed by predominantly standard, idiomatic Python 3 code that then runs
