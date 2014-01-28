@@ -16,16 +16,23 @@ class BaseOldStr(type):
         return isinstance(instance, _builtin_bytes)
 
 
-def collapse_double_backslashes(s):
+def unescape(s):
     """
-    Takes and returns a native string. Example:
+    Interprets strings with escape sequences
 
-    >>> s = collapse_double_backslashes(r'abc\\def')   # i.e. 'abc\\\\def'
+    Example:
+    >>> s = unescape(r'abc\\def')   # i.e. 'abc\\\\def'
     >>> print(s)
     'abc\def'
+    >>> s2 = unescape('abc\\ndef')
+    >>> len(s2)
+    8
+    >>> print(s2)
+    abc
+    def
     """
-    return s.replace(r'\\', '\\')
-
+    return s.encode().decode('unicode_escape')
+    
 
 class oldstr(with_metaclass(BaseOldStr, _builtin_bytes)):
     """
@@ -96,13 +103,14 @@ class oldstr(with_metaclass(BaseOldStr, _builtin_bytes)):
     #     return super(newbytes, cls).__new__(cls, value)
         
     def __repr__(self):
-        s = super(oldstr, self).__repr__()   # e.g. b'abc'
+        s = super(oldstr, self).__repr__()   # e.g. b'abc' on Py3, b'abc' on Py3
         return s[1:]
 
     def __str__(self):
         s = super(oldstr, self).__str__()   # e.g. "b'abc'" or "b'abc\\ndef'
         # TODO: fix this:
-        return collapse_double_backslashes(s[2:-1])      # e.g. 'abc'    or 'abc\ndef'
+        assert s[:2] == "b'" and s[-1] == "'"
+        return unescape(s[2:-1])            # e.g. 'abc'    or 'abc\ndef'
 
     def __getitem__(self, y):
         if isinstance(y, Integral):
