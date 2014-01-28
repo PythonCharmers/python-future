@@ -11,7 +11,14 @@ from future.utils import PY26
 
 import sys
 import random
-from test import support
+try:
+    from test import support
+except ImportError:
+    def cpython_only(f):
+        return f
+else:
+    cpython_only = support.cpython_only
+
 standard_library.remove_hooks()
 
 L = [
@@ -229,7 +236,7 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(int('1z141z5', 36), 4294967297)
 
     @unittest.expectedFailure     # fails on Py2
-    @support.cpython_only
+    @cpython_only
     def test_small_ints(self):
         # Bug #3236: Return small longs from PyLong_FromString
         self.assertIs(int('10'), 10)
