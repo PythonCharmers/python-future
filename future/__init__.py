@@ -32,7 +32,7 @@ Standard library reorganization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``from future import standard_library`` provides a context-manager called
-``enable_hooks`` that installs import hooks (PEP 3108) to allow renamed and
+``hooks`` that installs import hooks (PEP 3108) to allow renamed and
 moved standard library modules to be imported from their new Py3 locations.
 
 

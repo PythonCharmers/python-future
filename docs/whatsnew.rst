@@ -2,6 +2,14 @@ What's new
 **********
 
 
+.. whats-new-0.11.1:
+
+What's new in version 0.11.1
+============================
+
+The ``past.autotranslate`` feature now works with Python eggs.
+
+
 .. whats-new-0.11:
 
 What's new in version 0.11
@@ -248,7 +256,7 @@ and to remove the hooks afterwards with::
 
 The functions ``install_hooks()`` and ``remove_hooks()`` were previously
 called ``enable_hooks()`` and ``disable_hooks()``. The old names are
-still available as aliases.
+still available as aliases, but are deprecated.
 
 
 Utility functions raise_ and exec_

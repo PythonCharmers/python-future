@@ -88,7 +88,7 @@ This is a standard Python 3 data type, so, when called from Python 3 code,
 Known limitations of ``past.translation``
 *******************************************
 
-The source translation feature offered by the ``past.translation``
+- The source translation feature offered by the ``past.translation``
 package has some of the same limitations as the ``futurize`` script (see
 :ref:`futurize-limitations`). Help developing and testing this feature further
 would be particularly welcome.
