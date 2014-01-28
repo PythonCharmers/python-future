@@ -349,11 +349,19 @@ class TestRequests(CodeHandler):
         with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
             f.write('from future import standard_library')
         # print('sys.meta_path is: ', sys.meta_path)
+        sys.path.insert(0, self.tempdir)
         print('Importing test_imports_future')
-        import test_imports_future
-        import requests
-        r = requests.get('http://google.com')
-        self.assertTrue(True)
+        try:
+            import test_imports_future_stdlib
+            import requests
+            r = requests.get('http://google.com')
+            self.assertTrue(True)
+        except Exception as e:
+            raise e
+        else:
+            print('Succeeded!')
+        finally:
+            sys.path.remove(self.tempdir)
 
 
 if __name__ == '__main__':
