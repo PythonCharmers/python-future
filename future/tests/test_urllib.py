@@ -1,9 +1,14 @@
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import bytes, chr, hex, open, range, str
+from future import standard_library
 """Regresssion tests for urllib"""
 
-import urllib.parse
-import urllib.request
-import urllib.error
-import http.client
+with standard_library.hooks():
+    import urllib.parse
+    import urllib.request
+    import urllib.error
+    import http.client
+
 import email.message
 import io
 import unittest

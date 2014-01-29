@@ -1,3 +1,14 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import zip
+from future.builtins import bytes
+from future.builtins import dict
+from future.builtins import open
+from future.builtins import int
+from future.builtins import str
+from future import standard_library
 import unittest
 from test import support
 
@@ -220,14 +231,14 @@ class RequestHdrsTests(unittest.TestCase):
                          (None, None))
 
 
-class MockOpener:
+class MockOpener(object):
     addheaders = []
     def open(self, req, data=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
         self.req, self.data, self.timeout = req, data, timeout
     def error(self, proto, *args):
         self.proto, self.args = proto, args
 
-class MockFile:
+class MockFile(object):
     def read(self, count=None): pass
     def readline(self, count=None): pass
     def close(self): pass
@@ -245,13 +256,13 @@ class MockResponse(io.StringIO):
     def geturl(self):
         return self.url
 
-class MockCookieJar:
+class MockCookieJar(object):
     def add_cookie_header(self, request):
         self.ach_req = request
     def extract_cookies(self, response, request):
         self.ec_req, self.ec_r = request, response
 
-class FakeMethod:
+class FakeMethod(object):
     def __init__(self, meth_name, action, handle):
         self.meth_name = meth_name
         self.handle = handle
@@ -277,7 +288,7 @@ class MockHTTPResponse(io.IOBase):
         return self.url
 
 
-class MockHTTPClass:
+class MockHTTPClass(object):
     def __init__(self):
         self.level = 0
         self.req_headers = []
@@ -318,7 +329,7 @@ class MockHTTPClass:
     def close(self):
         pass
 
-class MockHandler:
+class MockHandler(object):
     # useful for testing handler machinery
     # see add_ordered_mock_handlers() docstring
     handler_order = 500
@@ -435,7 +446,7 @@ class MockHTTPSHandler(urllib.request.AbstractHTTPHandler):
     def https_open(self, req):
         return self.do_open(self.httpconn, req)
 
-class MockPasswordManager:
+class MockPasswordManager(object):
     def add_password(self, realm, uri, user, password):
         self.realm = realm
         self.url = uri
@@ -546,7 +557,7 @@ class OpenerDirectorTests(unittest.TestCase):
             ]
         handlers = add_ordered_mock_handlers(o, meth_spec)
 
-        class Unknown:
+        class Unknown(object):
             def __eq__(self, other): return True
 
         req = Request("http://example.com/")
@@ -631,7 +642,7 @@ def sanepathname2url(path):
 class HandlerTests(unittest.TestCase):
 
     def test_ftp(self):
-        class MockFTPWrapper:
+        class MockFTPWrapper(object):
             def __init__(self, data): self.data = data
             def retrfile(self, filename, filetype):
                 self.filename, self.filetype = filename, filetype
@@ -737,9 +748,9 @@ class HandlerTests(unittest.TestCase):
             "file://localhost:80%s" % urlpath,
             "file:///file_does_not_exist.txt",
             "file://%s:80%s/%s" % (socket.gethostbyname('localhost'),
-                                   os.getcwd(), TESTFN),
+                                   os.getcwdu(), TESTFN),
             "file://somerandomhost.ontheinternet.com%s/%s" %
-            (os.getcwd(), TESTFN),
+            (os.getcwdu(), TESTFN),
             ]:
             try:
                 f = open(TESTFN, "wb")

@@ -1,3 +1,12 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import super
+from future.builtins import str
+from future.builtins import bytes
+from future.builtins import int
+from future import standard_library
 #!/usr/bin/env python3
 
 import os
@@ -75,7 +84,7 @@ class LoopbackHttpServerThread(threading.Thread):
 
 # Authentication infrastructure
 
-class DigestAuthHandler:
+class DigestAuthHandler(object):
     """Handler for performing digest authentication."""
 
     def __init__(self):

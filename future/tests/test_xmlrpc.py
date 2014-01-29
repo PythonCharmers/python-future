@@ -1,3 +1,11 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import super
+from future.builtins import str
+from future.builtins import int
+from future import standard_library
 import base64
 import datetime
 import sys
@@ -360,7 +368,7 @@ ADDR = PORT = URL = None
 # Second when the server has been shutdown.  The user must clear
 # the event after it has been set the first time to catch the second set.
 def http_server(evt, numrequests, requestHandler=None):
-    class TestInstanceClass:
+    class TestInstanceClass(object):
         def div(self, x, y):
             return x // y
 
@@ -415,7 +423,7 @@ def http_server(evt, numrequests, requestHandler=None):
         evt.set()
 
 def http_multi_server(evt, numrequests, requestHandler=None):
-    class TestInstanceClass:
+    class TestInstanceClass(object):
         def div(self, x, y):
             return x // y
 
@@ -440,7 +448,7 @@ def http_multi_server(evt, numrequests, requestHandler=None):
     class MyRequestHandler(requestHandler):
         rpc_paths = []
 
-    class BrokenDispatcher:
+    class BrokenDispatcher(object):
         def _marshaled_dispatch(self, data, dispatch_method=None, path=None):
             raise RuntimeError("broken dispatcher")
 

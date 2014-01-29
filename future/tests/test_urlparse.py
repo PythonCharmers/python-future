@@ -1,3 +1,8 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
 #! /usr/bin/env python3
 
 from test import support
@@ -786,7 +791,7 @@ class UrlParseTestCase(unittest.TestCase):
         # we cannot rely on ordering here
         assert set(result.split('&')) == {'a=1', 'a=2', 'b=3', 'b=4', 'b=5'}
 
-        class Trivial:
+        class Trivial(object):
             def __str__(self):
                 return 'trivial'
 
