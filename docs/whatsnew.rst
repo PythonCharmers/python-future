@@ -52,7 +52,7 @@ Then pass in a whitelist of module name prefixes to the ``past.autotranslate()``
 function. Example::
     
     >>> from past import autotranslate
-    >>> autotranslate('plotrique')
+    >>> autotranslate(['plotrique'])
     >>> import plotrique
 
 
@@ -144,32 +144,6 @@ types but not their use.
 What's new in version 0.10.2
 ============================
 
-New context manager for standard_library hooks
-----------------------------------------------
-
-``future.standard_library`` provides a new context manager called
-``hooks``. Use it as follows::
-
-    >>> from future import standard_library
-    >>> with standard_library.hooks():
-    ...     import queue
-    ...     import socketserver
-    ...     from http.client import HTTPConnection
-    >>> import requests
-    >>> # etc.
-
-``future.standard_library`` also supports explicit calls to the
-``install_hooks`` and ``remove_hooks`` functions as an alternative.
-
-.. If you prefer, the following imports are also available directly::
-.. 
-..     >>> from future.standard_library import queue
-..     >>> from future.standard_library import socketserver
-..     >>> from future.standard_library.http.client import HTTPConnection
-
-
-As usual, this feature has no effect on Python 3.
-
 
 .. Simpler imports
 .. ---------------
@@ -229,6 +203,7 @@ this::
     with standard_library.hooks():
         import queue
         import configserver
+        from http.client import HTTPConnection
         # etc.
 
 If not using this decorator, it is now encouraged to add an explicit call to
@@ -248,7 +223,10 @@ and to remove the hooks afterwards with::
 
 The functions ``install_hooks()`` and ``remove_hooks()`` were previously
 called ``enable_hooks()`` and ``disable_hooks()``. The old names are
-still available as aliases.
+still available as aliases, but are deprecated.
+
+As usual, this feature has no effect on Python 3.
+
 
 
 Utility functions raise_ and exec_
@@ -272,8 +250,8 @@ Bugfixes
 
 .. whats-new-0.9:
 
-What's new in version 0.9.x
-===========================
+What's new in version 0.9
+=========================
 
 
 ``isinstance`` checks supported natively with backported types
@@ -380,6 +358,31 @@ deprecated.
 
 Summary of all changes
 ======================
+
+What's new in version 0.11.x
+============================
+
+v0.11.3:
+  * The ``future.builtins.bytes`` constructor now accepts ``frozenset``
+  objects as on Py3.
+
+v0.11.2:
+  * The ``past.autotranslate`` feature now finds modules to import more
+  robustly and works with Python eggs.
+
+v0.11.1:
+  * Update to ``requirements_py26.txt`` for Python 2.6. Small updates to
+  docs and tests.
+
+v0.11:
+  * New ``past`` package with ``past.builtins`` and ``past.translation``
+    modules.
+
+v0.10.2:
+  * Improvements to stdlib hooks. New context manager:
+    ``future.standard_library.hooks()``.
+
+  * New ``raise_`` and ``raise_with_traceback`` functions in ``future.utils``.
 
 v0.10:
   * New backported ``dict`` object with set-like ``keys``, ``values``, ``items``

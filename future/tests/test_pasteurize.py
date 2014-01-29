@@ -53,7 +53,32 @@ class TestPasteurize(CodeHandler):
         '''
         self.unchanged(code, from3=True)
 
+    def test_exception_indentation(self):
+        """
+        As of v0.11.2, pasteurize broke the indentation of ``raise`` statements
+        using with_traceback. Test for this.
+        """
+        before = '''
+        import sys
+        if True:
+            try:
+                'string' + 1
+        except TypeError:
+            ty, va, tb = sys.exc_info()
+            raise TypeError("can't do that!").with_traceback(tb)
+        '''
+        after = '''
+        import sys
+        if True:
+            try:
+                'string' + 1
+        except TypeError:
+            ty, va, tb = sys.exc_info()
+            raise_with_traceback(TypeError("can't do that!"), tb)
+        '''
+        self.check(before, after, from3=True)
 
+        
 class TestFuturizeAnnotations(CodeHandler):
     @unittest.expectedFailure
     def test_return_annotations_alone(self):

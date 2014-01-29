@@ -428,6 +428,33 @@ class TestBytes(unittest.TestCase):
         self.assertTrue(c5 == bytes(b'ABC'))
         self.assertTrue(c5 == b'ABC')
 
+    def test_bytes_frozenset(self):
+        _ALWAYS_SAFE = bytes(b'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                             b'abcdefghijklmnopqrstuvwxyz'
+                             b'0123456789'
+                             b'_.-')                   # from Py3.3's urllib.parse
+        s = frozenset(_ALWAYS_SAFE)
+        self.assertTrue(65 in s)
+        self.assertFalse(64 in s)
+        # Convert back to bytes
+        b1 = bytes(s)
+        self.assertTrue(65 in b1)
+        self.assertEqual(set(b1), set(_ALWAYS_SAFE))
+
+    def test_bytes_within_range(self):
+        """
+        Python 3 does this:
+        >>> bytes([255, 254, 256])
+        ValueError
+          ...
+        ValueError: bytes must be in range(0, 256)
+        
+        Ensure our bytes() constructor has the same behaviour
+        """
+        b1 = bytes([254, 255])
+        self.assertEqual(b1, b'\xfe\xff')
+        self.assertRaises(bytes, [254, 255, 256], ValueError)
+
 
 if __name__ == '__main__':
     unittest.main()

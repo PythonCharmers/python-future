@@ -24,14 +24,15 @@ Then pass in a whitelist of module name prefixes to the
 ``past.autotranslate()`` function. Example::
     
     >>> from past import autotranslate
-    >>> autotranslate('plotrique')
+    >>> autotranslate(['plotrique'])
     >>> import plotrique
 
 Here is another example::
 
-    >>> from past.translation import install_hooks
-    >>> install_hooks('mypy2module')
+    >>> from past.translation import install_hooks, remove_hooks
+    >>> install_hooks(['mypy2module'])
     >>> import mypy2module
+    >>> remove_hooks()
 
 This will translate, import and run Python 2 code such as the following::
 
@@ -88,10 +89,24 @@ This is a standard Python 3 data type, so, when called from Python 3 code,
 Known limitations of ``past.translation``
 *******************************************
 
-The source translation feature offered by the ``past.translation``
-package has some of the same limitations as the ``futurize`` script (see
-:ref:`futurize-limitations`). Help developing and testing this feature further
-would be particularly welcome.
+- It currently requires a newline at the end of the module or it throws a
+  ``ParseError``.
+
+- This only works with pure-Python modules. C extension modules and Cython code
+  are not supported.
+
+- The biggest hurdle to automatic translation is likely to be ambiguity
+  about byte-strings and text (unicode strings) in the Python 2 code. If the
+  ``past.autotranslate`` feature fails because of this, you could try
+  running ``futurize`` over the code and adding a ``b''`` or ``u''`` prefix to
+  the relevant string literals. To convert between byte-strings and text (unicode
+  strings), add an ``.encode`` or ``.decode`` method call. If this succeeds,
+  please push your patches upstream to the package maintainers.
+
+- Otherwise, the source translation feature offered by the ``past.translation``
+  package has similar limitations to the ``futurize`` script (see
+  :ref:`futurize-limitations`). Help developing and testing this feature further
+  would be particularly welcome.
 
 Please report any bugs you find on the ``python-future`` `bug tracker
 <https://github.com/PythonCharmers/python-future/>`_.
