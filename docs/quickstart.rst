@@ -76,17 +76,16 @@ via import hooks, allowing almost all moved standard library modules to
 be accessed under their Python 3 names and locations in Python 2::
     
     from future import standard_library
-    standard_library.install_hooks()
-    
-    import socketserver
-    import queue
-    import configparser
-    import test.support
-    import html.parser
-    from collections import UserList
-    from itertools import filterfalse, zip_longest
-    from http.client import HttpConnection
-    # and other moved modules and definitions
+    with standard_library.hooks():
+        import socketserver
+        import queue
+        import configparser
+        import test.support
+        import html.parser
+        from collections import UserList
+        from itertools import filterfalse, zip_longest
+        from http.client import HttpConnection
+        # and other moved modules and definitions
 
 :mod:`future` also includes backports for these stdlib modules from Py3
 that were heavily refactored versus Py2::
@@ -110,13 +109,14 @@ the future::
     import urllib.request
     import urllib.error
 
+    import xmlrpc.client
+    import xmlrpc.server
+
 If you need one of these, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.
 
-It is a good idea to disable the import hooks again after use, with::
-
-    standard_library.remove_hooks()
-
+For other forms of imports from the standard library, see
+:ref:`standard-library-imports`.
 
 For more information on interfaces that have changed in the standard library
 between Python 2 and Python 3, see :ref:`stdlib-incompatibilities`.
@@ -140,7 +140,7 @@ Then add the following code at the top of your (Py3 or Py2/3-compatible)
 code::
 
     from past import autotranslate
-    autotranslate('mypackagename')
+    autotranslate(['mypackagename'])
     import mypackagename
 
 This feature is experimental, and we would appreciate your feedback on

@@ -93,6 +93,97 @@ not be stable between different versions of ``future``.
 .. include:: translation.rst
 
 
+.. _standard-library-imports:
+
+Standard library imports
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+:mod:`future` supports the standard library reorganization (PEP 3108)
+via import hooks, allowing almost all moved standard library modules to
+be accessed under their Python 3 names and locations in Python 2.
+
+There are three interfaces to the backported standard library modules. The first
+is via a context-manager called ``hooks``::
+    
+The second interface to the standard library modules is via an explicit call to
+``install_hooks``::
+
+    from future import standard_library
+    standard_library.install_hooks()
+
+    import urllib
+    f = urllib.request.urlopen('http://www.python.org/')
+
+    standard_library.remove_hooks()
+
+It is a good idea to disable the import hooks again after use by calling
+``remove_hooks()``, in order to prevent the futurized modules from being invoked
+inadvertently by other modules. (Python does not automatically disable import
+hooks at the end of a module, but keeps them active indefinitely.)
+    
+The third interface avoids import hooks entirely. It may therefore be more
+robust, at the cost of less idiomatic code. Use it as follows::
+
+    from future.standard_library import queue
+    from future.standard_library import socketserver
+    from future.standard_library.http.client import HTTPConnection
+    # etc.
+
+If you wish to achieve the effect of a two-level import such as this::
+
+    import http.client 
+
+portably on both Python 2 and Python 3, you can use this idiom::
+
+    from future.standard_library import http
+    from future.standard_library.http import client as _client
+    http.client = client
+
+This is ugly, but it has the advantage that it can be used by automatic
+translation scripts such as ``futurize`` and ``pasteurize``.
+
+
+List of standard library modules
+________________________________
+
+The modules available are::
+
+    import socketserver
+    import queue
+    import configparser
+    import test.support
+    import html.parser
+    from collections import UserList
+    from itertools import filterfalse, zip_longest
+    from http.client import HttpConnection
+    # and other moved modules and definitions
+
+:mod:`future` also includes backports for these stdlib modules from Py3
+that were heavily refactored versus Py2::
+    
+    import html
+    import html.entities
+    import html.parser
+
+    import http
+    import http.client
+    import http.server
+
+The following modules are currently not supported, but we aim to support them in
+the future::
+    
+    import http.cookies
+    import http.cookiejar
+
+    import urllib
+    import urllib.parse
+    import urllib.request
+    import urllib.error
+
+If you need one of these, please open an issue `here
+<https://github.com/PythonCharmers/python-future>`_.
+
+
 
 .. _obsolete-builtins:
 
