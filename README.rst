@@ -111,23 +111,7 @@ as it does on Python 3::
 
 
 There is also support for renamed standard library modules in the form of import
-hooks::
-
-    from future import standard_library
-    standard_library.install_hooks()
-
-    from http.client import HttpConnection
-    from itertools import filterfalse
-    import html.parser
-    import queue
-
-To disable these at the end of a module, use::
-
-    standard_library.remove_hooks()
-
-
-There is also a context manager version which removes the hooks at the end of
-the ``with`` block::
+hooks. The context-manager form works like this::
 
     from future import standard_library
 
