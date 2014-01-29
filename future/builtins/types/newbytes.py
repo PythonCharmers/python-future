@@ -71,11 +71,14 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
             if len(args[0]) == 0:
                 # What is this?
                 raise ValueError('unknown argument type')
-            elif len(args[0]) > 0 and isinstance(args[0][0], Integral):
-                # It's a list of integers
-                value = b''.join([chr(x) for x in args[0]])
-            else:
-                raise ValueError('item cannot be interpreted as an integer')
+            # Was: elif len(args[0]) > 0 and isinstance(args[0][0], Integral):
+            #      # It's a list of integers
+            # But then we can't index into e.g. frozensets. Try to proceed anyway.
+            try:
+                values = [chr(x) for x in args[0]]
+                value = b''.join(values)
+            except:
+                raise ValueError('bytes must be in range(0, 256)')
         elif isinstance(args[0], Integral):
             if args[0] < 0:
                 raise ValueError('negative count')
