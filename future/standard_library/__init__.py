@@ -154,7 +154,7 @@ RENAMES = {
            # 'dumbdbm': 'dbm.dumb',
            # 'dbm': 'dbm.ndbm',
            # 'gdbm': 'dbm.gnu',
-           # 'xmlrpclib': 'xmlrpc.client',
+           'future.standard_library.xmlrpc': 'xmlrpc',
            # 'DocXMLRPCServer': 'xmlrpc.server',
            # 'SimpleXMLRPCServer': 'xmlrpc.server',
            # 'httplib': 'http.client',
@@ -172,13 +172,13 @@ RENAMES = {
            # 'abc': 'collections.abc',   # for Py33
            'future.standard_library.html': 'html',
            'future.standard_library.http': 'http',
-           # 'future.standard_library.urllib': 'newurllib',
+           'future.standard_library.urllib': 'newurllib',
            'future.standard_library._markupbase': '_markupbase',
           }
 
 
 REPLACED_MODULES = set(['test', 'urllib', 'pickle'])  # add dbm when we support it
-# These are entirely new to Python 2.x, so they cause no potential clashes
+# The following are entirely new to Python 2.x, so they cause no potential clashes
 #   xmlrpc, tkinter, http, html
 
 
