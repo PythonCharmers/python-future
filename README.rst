@@ -139,7 +139,7 @@ Example::
     $ python3
 
     >>> from past import autotranslate
-    >>> autotranslate('plotrique')
+    >>> autotranslate(['plotrique'])
     >>> import plotrique
 
 This transparently translates and runs the ``plotrique`` module and any

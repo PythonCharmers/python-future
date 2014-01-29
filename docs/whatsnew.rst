@@ -52,7 +52,7 @@ Then pass in a whitelist of module name prefixes to the ``past.autotranslate()``
 function. Example::
     
     >>> from past import autotranslate
-    >>> autotranslate('plotrique')
+    >>> autotranslate(['plotrique'])
     >>> import plotrique
 
 

@@ -140,7 +140,7 @@ Then add the following code at the top of your (Py3 or Py2/3-compatible)
 code::
 
     from past import autotranslate
-    autotranslate('mypackagename')
+    autotranslate(['mypackagename'])
     import mypackagename
 
 This feature is experimental, and we would appreciate your feedback on
