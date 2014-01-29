@@ -1,5 +1,5 @@
 """
-Ported 
+Ported using Python-Future from the Python 3.3 standard library.
 
 An extensible library for opening URLs using a variety of protocols
 
@@ -85,14 +85,17 @@ f = urllib.request.urlopen('http://www.python.org/')
 # abstract factory for opener
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-from future.builtins import dict, filter, input, int, map, open, str
-from future import standard_library
+from future.builtins import bytes, dict, filter, input, int, map, open, str
+from future.utils import PY3
 
 import base64
 import bisect
 import email
 import hashlib
-import http.client
+# Was: import http.client
+from future.standard_library import http
+from future.standard_library.http import client as _client
+http.client = _client
 import io
 import os
 import posixpath
@@ -106,12 +109,12 @@ import contextlib
 import warnings
 
 
-from urllib.error import URLError, HTTPError, ContentTooShortError
-from urllib.parse import (
+from future.standard_library.urllib.error import URLError, HTTPError, ContentTooShortError
+from future.standard_library.urllib.parse import (
     urlparse, urlsplit, urljoin, unwrap, quote, unquote,
     splittype, splithost, splitport, splituser, splitpasswd,
     splitattr, splitquery, splitvalue, splittag, to_bytes, urlunparse)
-from urllib.response import addinfourl, addclosehook
+from future.standard_library.urllib.response import addinfourl, addclosehook
 
 # check for SSL
 try:
@@ -247,9 +250,13 @@ def urlcleanup():
     if _opener:
         _opener = None
 
-# copied from cookielib.py
-_cut_port_re = re.compile(r":\d+$", re.ASCII)
+if PY3:
+    _cut_port_re = re.compile(r":\d+$", re.ASCII)
+else:
+    _cut_port_re = re.compile(r":\d+$")
+
 def request_host(request):
+
     """Return request-host, as defined by RFC 2965.
 
     Variation from RFC: returned value is lowercased, for convenient
@@ -461,7 +468,13 @@ class OpenerDirector(object):
                 return result
 
     def open(self, fullurl, data=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
-        # accept a URL or a Request object
+        """
+        Accept a URL or a Request object
+
+        Python-Future: if the URL is passed as a byte-string, decode it first.
+        """
+        if isinstance(fullurl, bytes):
+            fullurl = fullurl.decode()
         if isinstance(fullurl, str):
             req = Request(fullurl, data)
         else:

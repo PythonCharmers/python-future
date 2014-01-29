@@ -621,10 +621,10 @@ def unquote_plus(string, encoding='utf-8', errors='replace'):
     string = string.replace('+', ' ')
     return unquote(string, encoding, errors)
 
-_ALWAYS_SAFE = frozenset(b'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-                         b'abcdefghijklmnopqrstuvwxyz'
-                         b'0123456789'
-                         b'_.-')
+_ALWAYS_SAFE = frozenset(bytes(b'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                               b'abcdefghijklmnopqrstuvwxyz'
+                               b'0123456789'
+                               b'_.-'))
 _ALWAYS_SAFE_BYTES = bytes(_ALWAYS_SAFE)
 _safe_quoters = {}
 
