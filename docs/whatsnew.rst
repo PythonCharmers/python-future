@@ -2,18 +2,6 @@ What's new
 **********
 
 
-.. whats-new-0.11.x:
-
-What's new in version 0.11.x
-============================
-
-- v0.11.2: The ``past.autotranslate`` feature now finds modules to import more
-  robustly and works with Python eggs.
-
-- v0.11.1: Update to ``requirements_py26.txt`` for Python 2.6. Small updates to docs and
-  tests.
-
-
 .. whats-new-0.11:
 
 What's new in version 0.11
@@ -392,6 +380,31 @@ deprecated.
 
 Summary of all changes
 ======================
+
+What's new in version 0.11.x
+============================
+
+v0.11.3:
+  * The ``future.builtins.bytes`` constructor now accepts ``frozenset``
+  objects as on Py3.
+
+v0.11.2:
+  * The ``past.autotranslate`` feature now finds modules to import more
+  robustly and works with Python eggs.
+
+v0.11.1:
+  * Update to ``requirements_py26.txt`` for Python 2.6. Small updates to
+  docs and tests.
+
+v0.11:
+  * New ``past`` package with ``past.builtins`` and ``past.translation``
+    modules.
+
+v0.10.2:
+  * Improvements to stdlib hooks. New context manager:
+    ``future.standard_library.hooks()``.
+
+  * New ``raise_`` and ``raise_with_traceback`` functions in ``future.utils``.
 
 v0.10:
   * New backported ``dict`` object with set-like ``keys``, ``values``, ``items``
