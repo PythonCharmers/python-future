@@ -32,7 +32,7 @@ Features
 -   ``past.translation`` package supports transparent translation of Python 2
     modules to Python 3 upon import. [This feature is currently in alpha.] 
 
--   330+ unit tests
+-   470+ unit tests
 
 -   ``futurize`` and ``pasteurize`` scripts based on ``2to3`` and parts of
     ``3to2`` and ``python-modernize``, for automatic conversion from either Py2
@@ -49,12 +49,14 @@ Features
 Code examples
 -------------
 
-``future`` is designed to be imported at the top of each Python module together
-with Python's built-in ``__future__`` module. For example, this code behaves the
-same way on Python 2.6/2.7 after these imports as it does on Python 3::
+Replacements for Py2's built-in functions are designed to be imported at the top
+of each Python module together with Python's built-in ``__future__`` statements.
+For example, this code behaves identically on Python 2.6/2.7 after these imports
+as it does on Python 3::
     
     from __future__ import absolute_import, division, print_function
-    from future import bytes, str, open, super, zip, round, input, int
+    from future.builtins import (bytes, str, open, super, range,
+                                 zip, round, input, int, pow)
 
     # Backported Py3 bytes object
     b = bytes(b'ABCD')
@@ -69,7 +71,7 @@ same way on Python 2.6/2.7 after these imports as it does on Python 3::
     assert s != bytes(b'ABCD')
     assert isinstance(s.encode('utf-8'), bytes)
     assert isinstance(b.decode('utf-8'), str)
-    assert repr(s) == 'ABCD'      # consistent repr with Py3 (no u prefix)
+    assert repr(s) == "'ABCD'"      # consistent repr with Py3 (no u prefix)
     # These raise TypeErrors:
     # bytes(b'B') in s
     # s.find(bytes(b'A'))
@@ -102,7 +104,7 @@ same way on Python 2.6/2.7 after these imports as it does on Python 3::
     # Compatible output from isinstance() across Py2/3:
     assert isinstance(2**64, int)        # long integers
     assert isinstance(u'blah', str)
-    assert isinstance('blah', str)       # if unicode_literals is in effect
+    assert isinstance('blah', str)       # only if unicode_literals is in effect
 
     # pow() supports fractional exponents of negative numbers like in Py3:
     z = pow(-1, 0.5)
@@ -125,7 +127,7 @@ To disable these at the end of a module, use::
 
 
 There is also a context manager version which removes the hooks at the end of
-the block::
+the ``with`` block::
 
     from future import standard_library
 
@@ -139,9 +141,9 @@ the block::
 Automatic translation
 ---------------------
 
-The ``past`` package can now automatically and transparently translate some
-Python 2 modules to Python 3 upon import. For example, here is how to use a
-Python 2-only package called ``plotrique`` on Python 3. First install it::
+The ``past`` package can now automatically translate some simple Python 2
+modules to Python 3 upon import. For example, here is how to use a Python 2-only
+package called ``plotrique`` on Python 3. First install it::
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     
