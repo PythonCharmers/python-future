@@ -1,7 +1,3 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-from future.builtins import bytes, dict, int, range, str
-from future import standard_library
 #
 # XML-RPC CLIENT LIBRARY
 # $Id$
@@ -132,6 +128,11 @@ Exported functions:
   loads          Convert an XML-RPC packet to unmarshalled data plus a method
                  name (None if not present).
 """
+
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+from future.builtins import bytes, dict, int, range, str
+from future import standard_library
 
 import base64
 import sys

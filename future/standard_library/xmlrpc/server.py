@@ -1,11 +1,7 @@
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import int
-from future.builtins import str
-from future import standard_library
-r"""XML-RPC Servers.
+r"""
+Ported using Python-Future from the Python 3.3 standard library.
+
+XML-RPC Servers.
 
 This module can be used to create simple XML-RPC servers
 by creating a server and either installing functions, a
@@ -108,12 +104,15 @@ server.register_function(pow)
 server.handle_request()
 """
 
+from __future__ import absolute_import, division, print_function, unicode_literals
+from future.builtins import int, str
+
 # Written by Brian Quinlan (brian@sweetapp.com).
 # Based on code written by Fredrik Lundh.
 
-from xmlrpc.client import Fault, dumps, loads, gzip_encode, gzip_decode
-from http.server import BaseHTTPRequestHandler
-import http.server
+from future.standard_library.xmlrpc.client import Fault, dumps, loads, gzip_encode, gzip_decode
+from future.standard_library.http.server import BaseHTTPRequestHandler
+import future.standard_library.http.server
 import socketserver
 import sys
 import os
