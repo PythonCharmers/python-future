@@ -262,7 +262,8 @@ class RenameImport(object):
             try:
                 path = package.__path__
             except AttributeError:
-                logging.warn('Debug me: no __path__. What to do?')
+                logging.debug('Debug me: no __path__. '
+                              'Should anything special be done here?')
                 pass
             # if packagename == 'future':
             #     path = FIXME
@@ -360,7 +361,7 @@ class hooks(object):
     imported modules (like requests).
     """
     def __enter__(self):
-        # print('Entering CM')
+        logging.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
         scrub_py2_stdlib_modules()
@@ -368,7 +369,7 @@ class hooks(object):
         return self
 
     def __exit__(self, *args):
-        # print('Exiting CM')
+        logging.debug('Exiting hooks context manager')
         if not self.hooks_were_installed:
             # Reset sys.modules to how it was at the start.
             sys.modules = self.old_sys_modules
@@ -383,11 +384,10 @@ def scrub_py2_stdlib_modules():
     (e.g. urllib) despite the import hooks.
     """
     CLASH_MODULE_NAMES = ['urllib', 'test']
-    future_stdlib = os.path.join('future', 'standard_library')
     for modulename, module in sys.modules.items():
         for clasher in CLASH_MODULE_NAMES:
             if modulename.startswith(clasher):
-                logging.warn('Deleting {} from sys.modules'.format(modulename))
+                logging.debug('Deleting {} from sys.modules'.format(modulename))
                 del sys.modules[modulename]
 
 
@@ -400,7 +400,7 @@ def scrub_future_stdlib_modules():
         if modulename not in ['standard_library', 'future.standard_library']:
             if (hasattr(module, '__file__') and
                 module.__file__.startswith(future_stdlib)):
-                logging.warn('Deleting {} from sys.modules'.format(modulename))
+                logging.debug('Deleting {} from sys.modules'.format(modulename))
                 del sys.modules[modulename]
 
 
@@ -430,8 +430,8 @@ class suspend_hooks(object):
 def install_hooks():
     if utils.PY3:
         return
-    # print('sys.meta_path was: {}'.format(sys.meta_path))
-    # print('Installing hooks ...')
+    logging.debug('sys.meta_path was: {}'.format(sys.meta_path))
+    logging.debug('Installing hooks ...')
 
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
         newmod = __import__(newmodname)
@@ -443,7 +443,7 @@ def install_hooks():
     newhook = RenameImport(RENAMES)
     if not detect_hooks():
         sys.meta_path.append(newhook)
-    # print('sys.meta_path is now: {}'.format(sys.meta_path))
+    logging.debug('sys.meta_path is now: {}'.format(sys.meta_path))
 
 
 def enable_hooks():
@@ -460,7 +460,7 @@ def remove_hooks():
     """
     if utils.PY3:
         return
-    # print('Uninstalling hooks ...')
+    logging.debug('Uninstalling hooks ...')
     # Loop backwards, so deleting items keeps the ordering:
     for i, hook in list(enumerate(sys.meta_path))[::-1]:
         if hasattr(hook, 'RENAMER'):
@@ -479,12 +479,12 @@ def detect_hooks():
     """
     Returns True if the import hooks are installed, False if not.
     """
-    # print('Detecting hooks ...')
+    logging.debug('Detecting hooks ...')
     present = any([hasattr(hook, 'RENAMER') for hook in sys.meta_path])
-    # if present:
-    #     print('Detected.')
-    # else:
-    #     print('Not detected.')
+    if present:
+        logging.debug('Detected.')
+    else:
+        logging.debug('Not detected.')
     return present
 
 
