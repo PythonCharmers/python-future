@@ -2,6 +2,34 @@ What's new
 **********
 
 
+.. whats-new-0.12:
+
+What's new in version 0.12
+==========================
+
+The major new feature in version is improvements in the standard library module and its compatibility with 3rd-party modules:
+
+1. The ``urllib`` module is now supported. This is not a full backport of the
+Python 3 code module but a remapping to similar functionality in the Python 2.x
+standard library using ``six.moves`` internally. A full backport will be added
+in a later version.
+
+
+2. The ``hooks`` context manager now removes imported modules from
+   ``future.standard_library`` from ``sys.modules`` upon exit. Therefore this code
+   is now possible::
+
+       with standard_library.hooks():
+           import urllib.parse
+
+       import requests
+
+   or another module like ``requests`` that has its own Python 2.x and 3.x
+   compatibility code and also uses the ``urllib`` module. Previously this
+   required manually removing ``urllib`` from ``sys.modules`` before importing
+   ``requests``.
+   
+
 .. whats-new-0.11:
 
 What's new in version 0.11
