@@ -10,7 +10,31 @@ What's new in version 0.11.3
 This release has improvements in the standard library import hooks mechanism and
 its compatibility with 3rd-party modules:
 
-1. The ``futurize`` and ``pasteurize`` scripts now add an explicit call to
+
+Improved compatibility with ``requests``
+----------------------------------------
+
+The ``__exit__`` function of the ``hooks`` context manager and the
+``remove_hooks`` function both now remove submodules of
+``future.standard_library`` from the ``sys.modules`` cache. Therefore this code
+is now possible on Python 2 and 3::
+
+       with standard_library.hooks():
+           import http.client    # etc.
+
+       import requests
+
+Previously, this required manually removing ``urllib`` from ``sys.modules``
+before importing ``requests`` on Python 2.x.
+   
+This should also improve the compatibility of the standard library hooks with
+any other module that provides its own Python 2/3 compatibility code.
+
+
+Conversion scripts explicitly install import hooks
+--------------------------------------------------
+
+The ``futurize`` and ``pasteurize`` scripts now add an explicit call to
 ``install_hooks()`` to install the standard library import hooks. These scripts
 now add these two lines::
 
@@ -18,22 +42,11 @@ now add these two lines::
        standard_library.install_hooks()
 
 in place of just the first one. The next major version of ``future`` (0.12) will
-require the explicit call.
+require the explicit call or use of the ``hooks`` context manager. This will
+allow finer-grained control over whether import hooks are enabled for other
+imported modules, such as ``requests``, which provide their own Python 2/3
+compatibility code.
 
-2. The ``hooks`` context manager now removes imported modules from
-   ``future.standard_library`` from ``sys.modules`` upon exit. Therefore this code
-   is now possible::
-
-       with standard_library.hooks():
-           import http.client    # etc.
-
-       import requests
-
-   ``requests`` has its own Python 2.x and 3.x
-   compatibility code and also uses the ``urllib`` module. Previously this
-   required manually removing ``urllib`` from ``sys.modules`` before importing
-   ``requests``.
-   
 
 .. whats-new-0.11:
 
