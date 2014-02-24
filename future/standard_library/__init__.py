@@ -245,6 +245,7 @@ class RenameImport(object):
             name = self.new_to_old[name]
         # Was: with suspend_hooks():
         #          module = self._find_and_load_module(name)
+        module = self._find_and_load_module(name)
         sys.modules[name] = module
         return module
  
