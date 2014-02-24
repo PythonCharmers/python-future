@@ -347,7 +347,6 @@ class hooks(object):
     Acts as a context manager. Saves the state of sys.modules and restores it
     after the 'with' block. 
     
-    
     Use like this:
     
     >>> from future import standard_library
@@ -364,6 +363,7 @@ class hooks(object):
         # print('Entering CM')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
+        scrub_py2_stdlib_modules()
         install_hooks()
         return self
 
@@ -373,9 +373,25 @@ class hooks(object):
             # Reset sys.modules to how it was at the start.
             sys.modules = self.old_sys_modules
             remove_hooks()
+            scrub_future_stdlib_modules()
 
 
-def scrub_sys_modules():
+def scrub_py2_stdlib_modules():
+    """
+    Removes any Python 2 standard library modules from ``sys.modules`` that would
+    prevent the importing of future.standard_library modules with similar names
+    (e.g. urllib) despite the import hooks.
+    """
+    CLASH_MODULE_NAMES = ['urllib', 'test']
+    future_stdlib = os.path.join('future', 'standard_library')
+    for modulename, module in sys.modules.items():
+        for clasher in CLASH_MODULE_NAMES:
+            if modulename.startswith(clasher):
+                logging.warn('Deleting {} from sys.modules'.format(modulename))
+                del sys.modules[modulename]
+
+
+def scrub_future_stdlib_modules():
     """
     Removes any submodules of ``future.standard_library`` from sys.modules.
     """
@@ -416,6 +432,7 @@ def install_hooks():
         return
     # print('sys.meta_path was: {}'.format(sys.meta_path))
     # print('Installing hooks ...')
+
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
         newmod = __import__(newmodname)
         oldmod = __import__(oldmodname)
@@ -448,7 +465,6 @@ def remove_hooks():
     for i, hook in list(enumerate(sys.meta_path))[::-1]:
         if hasattr(hook, 'RENAMER'):
             del sys.meta_path[i]
-    scrub_sys_modules()
 
 
 def disable_hooks():
