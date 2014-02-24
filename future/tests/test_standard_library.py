@@ -11,6 +11,7 @@ import sys
 import tempfile
 import os
 import copy
+from subprocess import CalledProcessError
 
 from future.tests.base import CodeHandler
 
@@ -202,7 +203,7 @@ class TestStandardLibraryRenames(CodeHandler):
     def test_import_from_module(self):
         """
         Tests whether e.g. "import socketserver" succeeds in a module
-        imported by another module.
+        imported by another module. We want this to fail.
         """
         code1 = '''
                 from future import standard_library
@@ -210,12 +211,12 @@ class TestStandardLibraryRenames(CodeHandler):
                 '''
         code2 = '''
                 import socketserver
-                print('Import succeeded!')
+                print('Uh oh. importme2 should have raised an ImportError.')
                 '''
         self._write_test_script(code1, 'importme1.py')
         self._write_test_script(code2, 'importme2.py')
-        output = self._run_test_script('importme1.py')
-        print(output)
+        with self.assertRaises(CalledProcessError):
+            output = self._run_test_script('importme1.py')
 
     def test_configparser(self):
         import configparser
