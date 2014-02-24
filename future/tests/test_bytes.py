@@ -453,7 +453,8 @@ class TestBytes(unittest.TestCase):
         """
         b1 = bytes([254, 255])
         self.assertEqual(b1, b'\xfe\xff')
-        self.assertRaises(bytes, [254, 255, 256], ValueError)
+        with self.assertRaises(ValueError):
+            b2 = bytes([254, 255, 256])
 
 
 if __name__ == '__main__':
