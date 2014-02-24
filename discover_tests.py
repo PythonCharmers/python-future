@@ -22,7 +22,7 @@ def additional_tests():
 
 
 class SkipCase(unittest.TestCase):
-    def runTest(self):
+    def skeleton_run_test(self):
         raise unittest.SkipTest("Test fails spuriously on travis-ci")
 
 
@@ -46,7 +46,9 @@ def exclude_tests(suite, blacklist):
             for subtest in test._tests:
                 method = subtest._testMethodName
                 if method in blacklist:
-                    setattr(test, method, getattr(SkipCase(), 'runTest'))
+                    setattr(test,
+                            method,
+                            getattr(SkipCase(), 'skeleton_run_test'))
             new_suite.addTest(test)
     return new_suite
 
