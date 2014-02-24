@@ -377,18 +377,53 @@ class hooks(object):
             scrub_future_stdlib_modules()
 
 
+def is_future_stdlib_module(m):
+    """
+    Returns True if the module m is provided by the future.standard_library
+    package.
+    """
+
+
+def is_py2_stdlib_module(m):
+    """
+    Tries to infer whether the module m is from the Python 2 standard library.
+    This may not be reliable on all systems.
+    """
+    if not 'stdlib_path' in is_py2_stdlib_module.__dict__:
+        stdlib_files = [contextlib.__file__, os.__file__, copy.__file__]
+        stdlib_paths = [os.path.split(f)[0] for f in stdlib_files]
+        if not len(set(stdlib_paths)) == 1:
+            raise RuntimeError('Could not determine the location of the Python '
+                               'standard library')
+        # They are identical, so choose one and add / so we don't match urllib2
+        is_py2_stdlib_module.stdlib_path = stdlib_paths[0] + os.sep
+
+    if m.__name__ in sys.builtin_module_names:
+        return True
+
+    if (hasattr(m, '__file__') and
+        os.path.split(m.__file__)[0].startswith(is_py2_stdlib_module.stdlib_path)):
+        return True
+        
+    return False
+
+
 def scrub_py2_stdlib_modules():
     """
-    Removes any Python 2 standard library modules from ``sys.modules`` that would
-    prevent the importing of future.standard_library modules with similar names
-    (e.g. urllib) despite the import hooks.
+    Removes any Python 2 standard library modules from ``sys.modules`` that 
+
+    # Was: ... that do not exist under the same names in the Python 3 standard library.
+    
+    These modules may interfere with importing future.standard_library modules
+    with similar names (e.g. urllib) using the import hooks.
     """
-    CLASH_MODULE_NAMES = ['urllib', 'test']
-    for modulename, module in sys.modules.items():
-        for clasher in CLASH_MODULE_NAMES:
-            if modulename.startswith(clasher):
-                logging.debug('Deleting {} from sys.modules'.format(modulename))
-                del sys.modules[modulename]
+    for modulename in REPLACED_MODULES:
+    # for modulename, module in sys.modules.items():
+        module = sys.modules[modulename]
+        if is_py2_stdlib_module(module):
+            import pdb; pdb.set_trace()
+            logging.warn('Deleting {} from sys.modules'.format(modulename))
+            del sys.modules[modulename]
 
 
 def scrub_future_stdlib_modules():
@@ -400,7 +435,7 @@ def scrub_future_stdlib_modules():
         if modulename not in ['standard_library', 'future.standard_library']:
             if (hasattr(module, '__file__') and
                 module.__file__.startswith(future_stdlib)):
-                logging.debug('Deleting {} from sys.modules'.format(modulename))
+                logging.warn('Deleting {} from sys.modules'.format(modulename))
                 del sys.modules[modulename]
 
 
@@ -421,10 +456,13 @@ class suspend_hooks(object):
     def __enter__(self):
         self.hooks_were_installed = detect_hooks()
         remove_hooks()
+        scrub_future_stdlib_modules()
         return self
     def __exit__(self, *args):
         if self.hooks_were_installed:
+            scrub_py2_stdlib_modules()    # in case they interfere ... e.g. urllib
             install_hooks()
+            # TODO: add the scrubbed modules back to the sys.modules cache?
 
 
 def install_hooks():
