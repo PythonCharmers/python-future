@@ -11,6 +11,8 @@ from future.utils import PY26
 
 import sys
 import random
+
+standard_library.install_hooks()
 try:
     from test import support
 except ImportError:

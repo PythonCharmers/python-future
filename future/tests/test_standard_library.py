@@ -343,7 +343,6 @@ class TestRequests(CodeHandler):
     This class tests whether the requests module conflicts with the
     standard library import hooks, as in issue #19.
     """
-    @unittest.expectedFailure
     @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
                      + ' to test ``requests`` + future compatibility (issue #19)')
     def test_requests(self):
@@ -355,6 +354,35 @@ class TestRequests(CodeHandler):
         try:
             import test_imports_future_stdlib
             standard_library.remove_hooks()
+            import requests
+            r = requests.get('http://google.com')
+            self.assertTrue(True)
+        except Exception as e:
+            raise e
+        else:
+            print('Succeeded!')
+        finally:
+            sys.path.remove(self.tempdir)
+
+
+    @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
+                     + ' to test ``requests`` + future compatibility (issue #19)')
+    def test_requests_cm(self):
+        """
+        Tests whether requests can be used importing standard_library modules
+        previously with the hooks context manager
+        """
+        with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
+            f.write('from future import standard_library')
+            f.write('with standard_library.hooks():')
+            f.write('     import builtins')
+            f.write('     import html.parser')
+            f.write('     import http.client')
+        # print('sys.meta_path is: ', sys.meta_path)
+        sys.path.insert(0, self.tempdir)
+        print('Importing test_imports_future_stdlib ...')
+        try:
+            import test_imports_future_stdlib
             import requests
             r = requests.get('http://google.com')
             self.assertTrue(True)
