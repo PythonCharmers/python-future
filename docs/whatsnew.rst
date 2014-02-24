@@ -2,6 +2,39 @@ What's new
 **********
 
 
+.. whats-new-0.11.3:
+
+What's new in version 0.11.3
+============================
+
+This release has improvements in the standard library import hooks mechanism and
+its compatibility with 3rd-party modules:
+
+1. The ``futurize`` and ``pasteurize`` scripts now add an explicit call to
+``install_hooks()`` to install the standard library import hooks. These scripts
+now add these two lines::
+
+       from future import standard_library
+       standard_library.install_hooks()
+
+in place of just the first one. The next major version of ``future`` (0.12) will
+require the explicit call.
+
+2. The ``hooks`` context manager now removes imported modules from
+   ``future.standard_library`` from ``sys.modules`` upon exit. Therefore this code
+   is now possible::
+
+       with standard_library.hooks():
+           import http.client    # etc.
+
+       import requests
+
+   ``requests`` has its own Python 2.x and 3.x
+   compatibility code and also uses the ``urllib`` module. Previously this
+   required manually removing ``urllib`` from ``sys.modules`` before importing
+   ``requests``.
+   
+
 .. whats-new-0.11:
 
 What's new in version 0.11
@@ -363,6 +396,10 @@ What's new in version 0.11.x
 ============================
 
 v0.11.3:
+  * The ``futurize`` and ``pasteurize`` scripts add an explicit call to
+  ``future.standard_library.install_hooks()`` whenever modules affected by PEP
+  3108 are imported.
+
   * The ``future.builtins.bytes`` constructor now accepts ``frozenset``
   objects as on Py3.
 
