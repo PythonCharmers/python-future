@@ -1,12 +1,15 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future import standard_library
 """Unit tests for code in urllib.response."""
 
-import test.support
-import urllib.response
+from __future__ import absolute_import, division, unicode_literals
+from future import standard_library
+
+from future.standard_library import urllib
+from future.standard_library.urllib import reponse as _response
+urllib.response = _response
+
+with standard_library.hooks():
+    import test.support
+    # import urllib.response
 import unittest
 
 class TestFile(object):

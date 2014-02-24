@@ -87,15 +87,16 @@ f = urllib.request.urlopen('http://www.python.org/')
 from __future__ import absolute_import, division, print_function, unicode_literals
 from future.builtins import bytes, dict, filter, input, int, map, open, str
 from future.utils import PY3
+from future import standard_library
 
 import base64
 import bisect
 import email
 import hashlib
-# Was: import http.client
-from future.standard_library import http
-from future.standard_library.http import client as _client
-http.client = _client
+
+with standard_library.hooks():
+    import http.client
+
 import io
 import os
 import posixpath
@@ -108,13 +109,13 @@ import tempfile
 import contextlib
 import warnings
 
-
-from future.standard_library.urllib.error import URLError, HTTPError, ContentTooShortError
-from future.standard_library.urllib.parse import (
-    urlparse, urlsplit, urljoin, unwrap, quote, unquote,
-    splittype, splithost, splitport, splituser, splitpasswd,
-    splitattr, splitquery, splitvalue, splittag, to_bytes, urlunparse)
-from future.standard_library.urllib.response import addinfourl, addclosehook
+with standard_library.hooks():
+    from urllib.error import URLError, HTTPError, ContentTooShortError
+    from urllib.parse import (
+        urlparse, urlsplit, urljoin, unwrap, quote, unquote,
+        splittype, splithost, splitport, splituser, splitpasswd,
+        splitattr, splitquery, splitvalue, splittag, to_bytes, urlunparse)
+    from urllib.response import addinfourl, addclosehook
 
 # check for SSL
 try:

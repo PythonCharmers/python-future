@@ -1,28 +1,22 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import zip
-from future.builtins import bytes
-from future.builtins import dict
-from future.builtins import open
-from future.builtins import int
-from future.builtins import str
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import bytes, dict, int, open, str, zip
 from future import standard_library
-import unittest
-from test import support
 
+import unittest
 import os
 import io
 import socket
 import array
 import sys
 
-import urllib.request
-# The proxy bypass method imported below has logic specific to the OSX
-# proxy config data structure but is testable on all platforms.
-from urllib.request import Request, OpenerDirector, _proxy_bypass_macosx_sysconf
-import urllib.error
+with standard_library.hooks():
+    from test import support
+    import urllib.request
+    # The proxy bypass method imported below has logic specific to the OSX
+    # proxy config data structure but is testable on all platforms.
+    from urllib.request import Request, OpenerDirector, _proxy_bypass_macosx_sysconf
+    import urllib.error
+
 
 # XXX
 # Request
@@ -422,7 +416,9 @@ class MockHTTPHandler(urllib.request.BaseHandler):
         self._count = 0
         self.requests = []
     def http_open(self, req):
-        import email, http.client, copy
+        with standard_library.hooks():
+            import http.client
+        import email, copy
         self.requests.append(copy.deepcopy(req))
         if self._count == 0:
             self._count = self._count + 1
@@ -475,7 +471,8 @@ class OpenerDirectorTests(unittest.TestCase):
         # TypeError in real code; here, returning self from these mock
         # methods would either cause no exception, or AttributeError.
 
-        from urllib.error import URLError
+        with standard_library.hooks():
+            from urllib.error import URLError
 
         o = OpenerDirector()
         meth_spec = [
@@ -1099,8 +1096,9 @@ class HandlerTests(unittest.TestCase):
 
     def test_cookie_redirect(self):
         # cookies shouldn't leak into redirected requests
-        from http.cookiejar import CookieJar
-        from test.test_http_cookiejar import interact_netscape
+        with standard_library.hooks():
+            from http.cookiejar import CookieJar
+            from test.test_http_cookiejar import interact_netscape
 
         cj = CookieJar()
         interact_netscape(cj, "http://www.example.com/", "spam=eggs")
@@ -1532,4 +1530,4 @@ def test_main(verbose=None):
     support.run_unittest(*tests)
 
 if __name__ == "__main__":
-    test_main(verbose=True)
+    unittest.main()
