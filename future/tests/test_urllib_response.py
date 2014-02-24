@@ -3,13 +3,11 @@
 from __future__ import absolute_import, division, unicode_literals
 from future import standard_library
 
-from future.standard_library import urllib
-from future.standard_library.urllib import reponse as _response
-urllib.response = _response
-
 with standard_library.hooks():
+    import urllib
+    import urllib.response
     import test.support
-    # import urllib.response
+
 import unittest
 
 class TestFile(object):
