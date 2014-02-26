@@ -46,7 +46,7 @@ class CodeHandler(unittest.TestCase):
         from __future__ import print_function
         """)
 
-        # After stage2:
+        # After stage2 --all-imports:
         # TODO: use this form after implementing a fixer to consolidate
         #       __future__ imports into a single line:
         # self.headers2 = """
@@ -61,6 +61,7 @@ class CodeHandler(unittest.TestCase):
         from __future__ import print_function
         from __future__ import unicode_literals
         from future import standard_library
+        standard_library.install_hooks()
         from future.builtins import *
         """)
         self.interpreters = ['python']
@@ -131,6 +132,9 @@ class CodeHandler(unittest.TestCase):
             from future <anything>
             from future.<anything>
 
+        or any line containing:
+            install_hooks()
+
         Limitation: doesn't handle imports split across multiple lines like
         this:
 
@@ -141,6 +145,7 @@ class CodeHandler(unittest.TestCase):
         for line in code.splitlines():
             if not (line.startswith('from __future__ import ')
                     or line.startswith('from future ')
+                    or 'install_hooks()' in line
                     # but don't match "from future_builtins" :)
                     or line.startswith('from future.')):
                 output.append(line)
