@@ -367,6 +367,7 @@ def check_future_import(node):
     """If this is a future import, return set of symbols that are imported,
     else return None."""
     # node should be the import statement here
+    savenode = node
     if not (node.type == syms.simple_stmt and node.children):
         return set()
     node = node.children[0]
@@ -396,6 +397,8 @@ def check_future_import(node):
     elif node.type == token.NAME:
         return set([node.value])
     else:
-        assert 0, "strange import"
+        # TODO: handle brackets like this:
+        #     from __future__ import (absolute_import, division)
+        assert False, "strange import: %s" % savenode
 
 
