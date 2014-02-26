@@ -78,7 +78,7 @@ the ``--all-imports`` command-line option is passed to ``futurize``, in
 which case they are all added.
 
 The ``from __future__ import unicode_literals`` declaration is not added
-during stage 1.
+unless the ``--unicode-literals`` flag is passed to ``futurize``.
 
 The changes include::
 
@@ -117,10 +117,10 @@ Run with::
 
     futurize —-stage2 myfolder/*.py
 
-This stage adds a dependency on the ``future`` package. The goal for stage 2
-is to make further mostly safe changes to the Python 2 code to use Python
-3-style code that then still runs on Python 2 with the help of the appropriate
-builtins and utilities in ``future``.
+This stage adds a dependency on the ``future`` package. The goal for stage 2 is
+to make further mostly safe changes to the Python 2 code to use Python 3-style
+code that then still runs on Python 2 with the help of the appropriate builtins
+and utilities in ``future``.
 
 For example::
 
@@ -151,16 +151,22 @@ would be converted by Stage 2 to this code::
         def __str__(self):
             return u'My object'
 
-Stage 2 also renames standard-library imports to their Py3 names and adds this import::
+Stage 2 also renames standard-library imports to their Py3 names and adds these
+two lines::
 
     from future import standard_library
+    standard_library.install_hooks()
 
 For example::
 
     import ConfigParser
-    import 
 
-All strings are then unicode (on Py2 as on Py3) unless explicitly marked with a ``b''`` prefix.
+becomes::
+    
+    from future import standard_library
+    standard_library.install_hooks()
+    import ConfigParser
+
 
 Ideally the output of this stage should not be a ``SyntaxError`` on either
 Python 3 or Python 2.
@@ -168,8 +174,8 @@ Python 3 or Python 2.
 After this, you can run your tests on Python 3 and make further code changes
 until they pass on Python 3.
 
-The next step would be manually adding wrappers from ``future`` to re-enable
-Python 2 compatibility. See :ref:`what-else` for more info.
+The next step would be manually adding some decorators from ``future`` to
+e-enable Python 2 compatibility. See :ref:`what-else` for more info.
 
 
 
@@ -179,47 +185,34 @@ Separating text from bytes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After applying stage 2, the recommended step is to decide which of your Python
-2 strings represent binary data and to prefix all byte-string literals for binary
-data with ``b`` like ``b'\x00ABCD'``.
+2 strings represent text and which represent binary data and to prefix all
+string literals with either ``b`` or ``u`` accordingly. Furthermore, to ensure
+that these types behave similarly on Python 2 as on Python 3, also wrap
+byte-strings or text in the ``bytes`` and ``str`` types from ``future``. For
+example::
+    
+    from future.builtins import bytes, str
+    b = bytes(b'\x00ABCD')
+    s = str(u'This is normal text')
 
-After stage 2 conversion, all string literals for textual data without ``b``
-prefixes will use Python 3's ``str`` type (or the backported ``str`` object
-from ``future`` on Python 2).
+Any unadorned string literals will then represent native platform strings
+(byte-strings on Py2, unicode strings on Py3).
+
+An alternative is to pass the ``--unicode_literals`` flag::
+  
+  $ futurize --unicode_literals mypython2script.py
+
+After runnign this, all string literals that were not explicitly marked up as
+``b''`` will mean text (Python 3 ``str`` or Python 2 ``unicode``).
 
 
 .. _forwards-conversion-stage3:
 
-Stage 3: Py3 code with ``future`` wrappers for Py2
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Post-conversion
+~~~~~~~~~~~~~~~
 
-The goal for this stage is to get the tests passing first on Py3 and then on Py2
-again with the help of the ``future`` package.
-
-Run with::
-
-    futurize —-stage2 myfolder/*.py
-
-This adds these further imports to each module::
-
-    from __future__ import unicode_literals
-    from future import standard_library
-    from future.builtins import open
-    from future.builtins import str   # etc. for the builtins used in the module
-
-and makes other changes needed to support Python 3, such as
-renaming standard-library imports to their Py3 names.
-
-All strings are then implicitly unicode (on Py2 as on Py3) unless they were previously
-explicitly marked with a ``b''`` prefix.
-
-Ideally the output of this stage should not be a ``SyntaxError`` on either
-Python 3 or Python 2.
-
-After this, you can run your tests on Python 3 and make further code changes
-until they pass on Python 3.
-
-The next step would be manually adding wrappers from ``future`` to re-enable
-Python 2 compatibility. See :ref:`what-else` for more info.
+After running ``futurize``, we recommend first getting the tests passing on
+Py3, and then on Py2 again with the help of the ``future`` package.
 
 
 .. _backwards-conversion:
@@ -239,6 +232,7 @@ into this code which runs on both Py2 and Py3::
     
     from __future__ import print_function
     from future import standard_library
+    standard_library.install_hooks()
     
     import configparser
 
@@ -262,7 +256,7 @@ To handle function annotations (PEP 3107), see :ref:`func_annotations`.
 How well do ``futurize`` and ``pasteurize`` work?
 -------------------------------------------------
 
-They are still incomplete and make some mistakes, like 2to3, on which it is
+They are still incomplete and make some mistakes, like 2to3, on which they are
 based.
 
 Nevertheless, ``futurize`` and ``pasteurize`` are useful to automate much of the

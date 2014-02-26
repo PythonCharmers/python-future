@@ -60,7 +60,7 @@ lib2to3_fix_names_stage2 = set([
     'lib2to3.fixes.fix_raw_input',
     # 'lib2to3.fixes.fix_unicode',   # strips off the u'' prefix, which removes a potentially helpful source of information for disambiguating unicode/byte strings
     'lib2to3.fixes.fix_reduce',
-    'lib2to3.fixes.fix_urllib',
+    'lib2to3.fixes.fix_urllib',    # to be included in libfuturize.fix_future_standard_library_urllib
     'lib2to3.fixes.fix_xrange',
     'lib2to3.fixes.fix_zip',
 ])
@@ -74,8 +74,10 @@ libfuturize_fix_names_stage1 = set([
 ])
 
 libfuturize_fix_names_stage2 = set([
+    # 'libfuturize.fixes.fix_add__future__imports_except_unicode_literals',  # just in case
     'libfuturize.fixes.fix_future_builtins',
     'libfuturize.fixes.fix_future_standard_library',
+    # 'libfuturize.fixes.fix_future_standard_library_urllib',
     'libfuturize.fixes.fix_metaclass',
    # TODO: add int(33243) calls for what used to be 33243L
     'libfuturize.fixes.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing

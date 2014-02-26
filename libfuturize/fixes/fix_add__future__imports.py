@@ -1,7 +1,10 @@
 """
 Fixer for adding:
 
-    from __future__ import (absolute_import, division, print_function, unicode_literals)
+    from __future__ import absolute_import
+    from __future__ import division
+    from __future__ import print_function
+    from __future__ import unicode_literals
 
 This is done when converting from Py3 to both Py3/Py2.
 """
