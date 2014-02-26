@@ -1,11 +1,12 @@
 """
 For the ``future`` package.
 
-Also adds this import line:
+Adds this import line:
 
     from future import standard_library
 
-after any __future__ imports but before any other imports.
+after any __future__ imports but before any other imports. Doesn't actually
+change the imports to Py3 style.
 """
 
 from lib2to3 import fixer_base

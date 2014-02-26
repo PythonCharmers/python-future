@@ -282,6 +282,10 @@ def touch_import_top(package, name_to_import, node):
 
     Calling this multiple times adds them in reverse order.
         
+    Also adds "standard_library.install_hooks()" after "from future import
+    standard_library". This should probably be factored into another function
+    somehow.
+
     Based on lib2to3.fixer_util.touch_import()
     """
     root = find_root(node)
@@ -329,9 +333,31 @@ def touch_import_top(package, name_to_import, node):
         ])
     else:
         import_ = FromImport(package, [Leaf(token.NAME, name_to_import, prefix=u" ")])
+        if name_to_import == u'standard_library':
+            # Add:
+            #     standard_library.install_hooks()
+            # after:
+            #     from future import standard_library
+            install_hooks = Node(syms.simple_stmt,
+                                 [Node(syms.power,
+                                       [Leaf(token.NAME, u'standard_library'),
+                                        Node(syms.trailer, [Leaf(token.DOT, u'.'),
+                                        Leaf(token.NAME, u'install_hooks')]),
+                                        Node(syms.trailer, [Leaf(token.LPAR, u'('),
+                                                            Leaf(token.RPAR, u')')])
+                                       ])
+                                 ]
+                                )
+            children_hooks = [install_hooks, Newline(), Newline()]
+        else:
+            children_hooks = []
+        
+        FromImport(package, [Leaf(token.NAME, name_to_import, prefix=u" ")])
 
-    children = [import_, Newline()]
-    root.insert_child(insert_pos, Node(syms.simple_stmt, children))
+    children_import = [import_, Newline()]
+    root.insert_child(insert_pos, Node(syms.simple_stmt, children_import))
+    if len(children_hooks) > 0:
+        root.insert_child(insert_pos + 1, Node(syms.simple_stmt, children_hooks))
 
 
 ## The following functions are from python-modernize by Armin Ronacher:
