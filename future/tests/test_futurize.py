@@ -32,6 +32,7 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after)
 
+    @unittest.skip('--tobytes feature removed for now ...')
     def test_tobytes(self):
         """
         The --tobytes option converts all UNADORNED string literals 'abcd' to b'abcd'.
