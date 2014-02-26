@@ -2,8 +2,8 @@
 pasteurize: automatic conversion of Python 3 code to clean 2&3 code
 ===================================================================
 
-``pasteurize`` attempts to convert existing Python 3 code into
-source-compatible Python 2 and 3 code.
+``pasteurize`` attempts to convert existing Python 3 code into source-compatible
+Python 2 and 3 code.
 
 Use it like this on Python 3 code:
 
@@ -17,11 +17,17 @@ import lines:
     from __future__ import print_function
     from __future__ import unicode_literals
     from future import standard_library
+    standard_library.install_hooks()
     from future.builtins import *
 
 To write changes to the files, use the -w flag.
 
 It also adds any other wrappers needed for Py2/3 compatibility.
+
+Note that separate stages are not available (or needed) when converting from
+Python 3 with ``pasteurize`` as they are when converting from Python 2 with
+``futurize``.
+
 """
 
 from __future__ import (absolute_import, print_function, unicode_literals)

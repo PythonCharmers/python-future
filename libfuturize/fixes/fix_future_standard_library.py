@@ -22,3 +22,4 @@ class FixFutureStandardLibrary(FixImports):
         touch_import_top(u'future', u'standard_library', node)
         return result
 
+

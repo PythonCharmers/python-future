@@ -334,7 +334,6 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         """
         self.convert_check(before, after)
     
-    @unittest.expectedFailure
     def test_urllib_refactor(self):
         # Code like this using urllib is refactored by futurize --stage2 to use
         # the new Py3 module names, but ``future`` doesn't support urllib yet.
@@ -347,7 +346,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         data = r.read()
         """
         after = """
-        import urllib.request
+        import urllib.request, urllib.parse, urllib.error
         
         URL = 'http://pypi.python.org/pypi/future/json'
         package_name = 'future'
