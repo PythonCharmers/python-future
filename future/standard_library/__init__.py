@@ -424,7 +424,6 @@ def scrub_py2_stdlib_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            import pdb; pdb.set_trace()
             logging.warn('Deleting {} from sys.modules'.format(modulename))
             del sys.modules[modulename]
 
