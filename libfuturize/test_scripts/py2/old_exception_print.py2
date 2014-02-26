@@ -1,8 +1,0 @@
-"""
-Test of whether futurize handles the old-style exception Syntax
-"""
-def hello():
-    try:
-        print "Hello, world"
-    except IOError, e:
-        print e.errno

@@ -1,5 +1,0 @@
-import ConfigParser
-
-class Blah(object):
-    pass
-print 'Hello',

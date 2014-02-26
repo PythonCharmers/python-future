@@ -106,7 +106,7 @@ class CodeHandler(unittest.TestCase):
             code = code[1:]
         return dedent(code)
 
-    def check(self, output, expected, ignore_imports=True):
+    def compare(self, output, expected, ignore_imports=True):
         """
         Compares whether the code blocks are equal. If not, raises an
         exception so the test fails. Ignores any trailing whitespace like
@@ -150,7 +150,7 @@ class CodeHandler(unittest.TestCase):
                       all_imports=False, ignore_imports=True, from3=False,
                       tobytes=False, run=True):
         """
-        Convenience method that calls convert() and check().
+        Convenience method that calls convert() and compare().
 
         Reformats the code blocks automatically using the reformat()
         method.
@@ -175,29 +175,8 @@ class CodeHandler(unittest.TestCase):
         else:
             headers = ''
 
-        self.check(output, self.reformat(headers + expected),
-                   ignore_imports=ignore_imports)
-
-    def check_old(self, output, expected, stages=(1, 2), ignore_imports=True):
-        """
-        Checks that the output is equal to the expected output, after
-        reformatting.
-        
-        Pass ``expected`` as a string (as a code block). It will be
-        reformatted and compared with the resulting code. We assert that
-        the output of the conversion of ``before`` with ``futurize`` is
-        equal to ``after``. Unless ignore_imports is True, the
-        appropriate headers for the stage(s) used are added automatically
-        for the comparison.
-        """
-        headers = ''
-        # if not ignore_imports:
-        #     if 2 in stages:
-        #         headers = self.headers2
-        #     else:
-        #         headers = self.headers1
-        self.compare(output, headers + self.reformat(expected),
-                     ignore_imports=ignore_imports)
+        self.compare(output, self.reformat(headers + expected),
+                    ignore_imports=ignore_imports)
 
     def order_future_lines(self, code):
         """
