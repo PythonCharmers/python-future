@@ -418,8 +418,11 @@ def scrub_py2_stdlib_modules():
     with similar names (e.g. urllib) using the import hooks.
     """
     for modulename in REPLACED_MODULES:
-    # for modulename, module in sys.modules.items():
+        if not modulename in sys.modules:
+            continue
+
         module = sys.modules[modulename]
+
         if is_py2_stdlib_module(module):
             import pdb; pdb.set_trace()
             logging.warn('Deleting {} from sys.modules'.format(modulename))
