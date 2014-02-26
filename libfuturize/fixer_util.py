@@ -348,7 +348,7 @@ def touch_import_top(package, name_to_import, node):
                                        ])
                                  ]
                                 )
-            children_hooks = [install_hooks, Newline(), Newline()]
+            children_hooks = [install_hooks, Newline()]
         else:
             children_hooks = []
         
