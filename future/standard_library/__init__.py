@@ -158,6 +158,7 @@ RENAMES = {
            # 'dbm': 'dbm.ndbm',
            # 'gdbm': 'dbm.gnu',
            'future.standard_library.xmlrpc': 'xmlrpc',
+           'future.standard_library.email': 'email',    # for use by urllib
            # 'DocXMLRPCServer': 'xmlrpc.server',
            # 'SimpleXMLRPCServer': 'xmlrpc.server',
            # 'httplib': 'http.client',
