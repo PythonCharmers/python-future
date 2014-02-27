@@ -54,8 +54,8 @@ imported modules, such as ``requests``, which provide their own Python 2/3
 compatibility code.
 
 
-``futurize`` script no longer adds unicode_literals by default
---------------------------------------------------------------
+``futurize`` script no longer adds ``unicode_literals`` by default
+------------------------------------------------------------------
 
 There is a new ``--unicode-literals`` flag to ``futurize`` that adds the
 import::
