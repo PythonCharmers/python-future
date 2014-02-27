@@ -524,7 +524,8 @@ class HTMLParser(_markupbase.ParserBase):
             except ValueError:
                 return '&#' + s
             else:
-                from html.entities import html5
+                with standard_library.hooks():
+                    from html.entities import html5
                 if s in html5:
                     return html5[s]
                 elif s.endswith(';'):
