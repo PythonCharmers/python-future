@@ -11,7 +11,6 @@ Josip Dzolonga, and Michael Otteneder for the 2007/08 GHOP contest.
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
-
 from future import standard_library, utils
 
 with standard_library.hooks():
@@ -28,9 +27,6 @@ import base64
 import shutil
 # Not ported yet:
 # import urllib.parse
-# Use this instead:
-import urllib
-
 import tempfile
 from io import BytesIO
 
@@ -438,8 +434,14 @@ class CGIHTTPServerTestCase(BaseTestCase):
 
     @unittest.expectedFailure
     def test_post(self):
-        # Was: params = urllib.parse.urlencode(
-        params = urllib.urlencode(
+        # urllib not ported yet:
+        try:
+            from urllib.parse import urlencode
+        except ImportError:
+            # Use this instead for Py2:
+            from urllib import urlencode
+
+        params = urlencode(
             {'spam' : 1, 'eggs' : 'python', 'bacon' : 123456})
         headers = {'Content-type' : 'application/x-www-form-urlencoded'}
         res = self.request('/cgi-bin/file2.py', 'POST', params, headers)

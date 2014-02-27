@@ -433,7 +433,7 @@ def scrub_future_sys_modules():
             if (modulename in RENAMES.values() or    # builtins, configparser etc.
                 (hasattr(module, '__file__') and
                  module.__file__.startswith(future_stdlib))):
-                logging.warn('Deleting {} from sys.modules'.format(modulename))
+                logging.debug('Deleting {} from sys.modules'.format(modulename))
                 del sys.modules[modulename]
 
 
