@@ -91,10 +91,10 @@ from future import standard_library
 
 import base64
 import bisect
-import email
 import hashlib
 
 with standard_library.hooks():
+    import email
     import http.client
 
 import io
@@ -1413,7 +1413,8 @@ class FileHandler(BaseHandler):
 
     # not entirely sure what the rules are here
     def open_local_file(self, req):
-        import email.utils
+        with standard_library.hooks():
+            import email.utils
         import mimetypes
         host = req.host
         filename = req.selector
@@ -1900,7 +1901,8 @@ class URLopener(object):
 
     def open_local_file(self, url):
         """Use local file."""
-        import email.utils
+        with standard_library.hooks():
+            import email.utils
         import mimetypes
         host, file = splithost(url)
         localname = url2pathname(file)

@@ -69,11 +69,14 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
+from future import standard_library
 from future.builtins import *
 from future.utils import isbytes, istext
 
-import email.parser
-import email.message
+with standard_library.hooks():
+    import email.parser
+    import email.message
+    from urlib.parse import urlsplit
 import io
 import os
 import socket
@@ -81,7 +84,7 @@ import collections
 # Not yet backported:
 # from urllib.parse import urlsplit
 # Use the Py2.7 equivalent:
-from urlparse import urlsplit
+# from urlparse import urlsplit
 
 import warnings
 import numbers

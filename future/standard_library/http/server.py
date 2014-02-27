@@ -95,8 +95,8 @@ with standard_library.hooks():
     import html
     import http.client
     import socketserver
-import email.message
-import email.parser
+    import email.message
+    import email.parser
 import io
 import mimetypes
 import os
