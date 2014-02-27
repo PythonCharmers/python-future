@@ -4,7 +4,7 @@ from lib2to3 import refactor
 # The original set of these fixes comes from lib3to2 (https://bitbucket.org/amentajo/lib3to2):
 fix_names = set([
                  'libfuturize.fixes.fix_add__future__imports',  # from __future__ import absolute_import etc. on separate lines
-                 'libfuturize.fixes.fix_add_future_standard_library_import',  # we force adding this import for now, even if it doesn't seem necessary to the fix_future_standard_library fixer, for ease of testing
+                 'libpasteurize.fixes.fix_add_future_standard_library_import',  # we force adding this import for now, even if it doesn't seem necessary to the fix_future_standard_library fixer, for ease of testing
                  'libfuturize.fixes.fix_order___future__imports',  # consolidates to a single line to simplify testing
                  'libpasteurize.fixes.fix_future_builtins',   # adds "from future.builtins import *"
                  'libfuturize.fixes.fix_future_standard_library', # adds "from future import standard_library"
