@@ -242,10 +242,12 @@ class RenameImport(object):
             return sys.modules[name]
         elif name in self.new_to_old:
             # New name. Look up the corresponding old (Py2) name:
-            name = self.new_to_old[name]
-        # Was: with suspend_hooks():
-        #          module = self._find_and_load_module(name)
-        module = self._find_and_load_module(name)
+            oldname = self.new_to_old[name]
+            module = self._find_and_load_module(oldname)
+            sys.modules[oldname] = module    # is this necessary?
+        else:
+            module = self._find_and_load_module(name)
+        # In any case, make it available under the requested (Py3) name
         sys.modules[name] = module
         return module
  
@@ -372,9 +374,9 @@ class hooks(object):
         logging.debug('Exiting hooks context manager')
         if not self.hooks_were_installed:
             # Reset sys.modules to how it was at the start.
-            sys.modules = self.old_sys_modules
+            # sys.modules = self.old_sys_modules
             remove_hooks()
-            scrub_future_stdlib_modules()
+        scrub_future_stdlib_modules()
 
 
 def is_future_stdlib_module(m):
@@ -424,7 +426,7 @@ def scrub_py2_stdlib_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.warn('Deleting {} from sys.modules'.format(modulename))
+            logging.debug('Deleting {} from sys.modules'.format(modulename))
             del sys.modules[modulename]
 
 
@@ -437,7 +439,7 @@ def scrub_future_stdlib_modules():
         if modulename not in ['standard_library', 'future.standard_library']:
             if (hasattr(module, '__file__') and
                 module.__file__.startswith(future_stdlib)):
-                logging.warn('Deleting {} from sys.modules'.format(modulename))
+                logging.debug('Deleting {} from sys.modules'.format(modulename))
                 del sys.modules[modulename]
 
 

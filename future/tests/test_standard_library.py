@@ -24,6 +24,9 @@ class TestStandardLibraryRenames(CodeHandler):
         standard_library.install_hooks()
         super(TestStandardLibraryRenames, self).setUp()
 
+    def tearDown(self):
+        standard_library.remove_hooks()
+
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
         """
@@ -390,7 +393,7 @@ class TestRequests(CodeHandler):
             from future import standard_library
             standard_library.install_hooks()
 
-            import urllib.response
+            # import urllib.response
             import html.parser
             """
         with write_module(code, self.tempdir):
@@ -434,4 +437,3 @@ class TestRequests(CodeHandler):
 
 if __name__ == '__main__':
     unittest.main()
-    standard_library.remove_hooks()
