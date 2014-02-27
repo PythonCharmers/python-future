@@ -1,0 +1,10 @@
+Currently two tests are failing on Py2.7 with module import errors (http.client
+and test.support) when the test suite is run with:
+
+    $ python setup.py test
+
+which uses the unittest module's test discovery mechanism.
+
+These same tests pass when running the test suite with:
+
+    $ py.test
