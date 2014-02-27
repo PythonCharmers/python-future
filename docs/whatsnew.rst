@@ -19,16 +19,22 @@ The ``__exit__`` function of the ``hooks`` context manager and the
 ``future.standard_library`` from the ``sys.modules`` cache. Therefore this code
 is now possible on Python 2 and 3::
 
-       with standard_library.hooks():
-           import http.client    # etc.
-
+       from future import standard_library
+       import http.client
+       standard_library.remove_hooks()
        import requests
 
-Previously, this required manually removing ``urllib`` from ``sys.modules``
-before importing ``requests`` on Python 2.x.
+       data = requests.get('http://www.google.com')
+
+
+Previously, this required manually removing ``http`` and ``http.client`` from
+``sys.modules`` before importing ``requests`` on Python 2.x. (Issue #19).
    
-This should also improve the compatibility of the standard library hooks with
-any other module that provides its own Python 2/3 compatibility code.
+This change should also improve the compatibility of the standard library hooks
+with any other module that provides its own Python 2/3 compatibility code.
+
+Note that the situation will improve further in version 0.12; import hooks will
+require an explicit function call or the ``hooks`` context manager.
 
 
 Conversion scripts explicitly install import hooks
@@ -41,11 +47,26 @@ now add these two lines::
        from future import standard_library
        standard_library.install_hooks()
 
-in place of just the first one. The next major version of ``future`` (0.12) will
+instead of just the first one. The next major version of ``future`` (0.12) will
 require the explicit call or use of the ``hooks`` context manager. This will
 allow finer-grained control over whether import hooks are enabled for other
 imported modules, such as ``requests``, which provide their own Python 2/3
 compatibility code.
+
+
+``futurize`` script no longer adds unicode_literals by default
+--------------------------------------------------------------
+
+There is a new ``--unicode-literals`` flag to ``futurize`` that adds the
+import::
+    
+    from __future__ import unicode_literals
+
+to the top of each converted module. Without this flag, ``futurize`` now no
+longer adds this import. (Issue #22).
+
+The ``pasteurize`` script for converting from Py3 to Py2/3 still adds
+``unicode_literals``. (See the comments in issue #22 for an explanation.)
 
 
 .. whats-new-0.11:
