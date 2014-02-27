@@ -244,7 +244,6 @@ class RenameImport(object):
             # New name. Look up the corresponding old (Py2) name:
             oldname = self.new_to_old[name]
             module = self._find_and_load_module(oldname)
-            sys.modules[oldname] = module    # is this necessary?
         else:
             module = self._find_and_load_module(name)
         # In any case, make it available under the requested (Py3) name
