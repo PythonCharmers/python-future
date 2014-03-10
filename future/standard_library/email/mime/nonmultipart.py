@@ -3,6 +3,12 @@
 # Contact: email-sig@python.org
 
 """Base class for MIME type messages that are not multipart."""
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_hooks()
 
 __all__ = ['MIMENonMultipart']
 
