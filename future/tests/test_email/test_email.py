@@ -1,3 +1,7 @@
+# Copyright (C) 2001-2010 Python Software Foundation
+# Contact: email-sig@python.org
+# email package unit tests
+
 from __future__ import division
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -11,9 +15,6 @@ from future.builtins import bytes
 from future.builtins import str
 from future import standard_library
 standard_library.install_hooks()
-# Copyright (C) 2001-2010 Python Software Foundation
-# Contact: email-sig@python.org
-# email package unit tests
 
 import re
 import time

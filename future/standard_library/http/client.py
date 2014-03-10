@@ -81,11 +81,6 @@ import io
 import os
 import socket
 import collections
-# Not yet backported:
-# from urllib.parse import urlsplit
-# Use the Py2.7 equivalent:
-# from urlparse import urlsplit
-
 import warnings
 import numbers
 from array import array

@@ -1,3 +1,4 @@
+# coding: utf-8
 # Copyright (C) 2001-2007 Python Software Foundation
 # Author: Barry Warsaw
 # Contact: email-sig@python.org
@@ -483,7 +484,7 @@ class Message(object):
 
         msg.add_header('content-disposition', 'attachment', filename='bud.gif')
         msg.add_header('content-disposition', 'attachment',
-                       filename=('utf-8', '', Fußballer.ppt'))
+                       filename=('utf-8', '', 'Fußballer.ppt'))
         msg.add_header('content-disposition', 'attachment',
                        filename='Fußballer.ppt'))
         """
