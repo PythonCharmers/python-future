@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function
+
 import unittest
 import sys
 print([m for m in sys.modules if m.startswith('urllib')])
