@@ -1,6 +1,13 @@
 """This will be the home for the policy that hooks in the new
 code that adds all the email6 features.
 """
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import super
+from future import standard_library
+standard_library.install_hooks()
 
 from email._policybase import Policy, Compat32, compat32, _extend_docstrings
 from email.utils import _has_surrogates

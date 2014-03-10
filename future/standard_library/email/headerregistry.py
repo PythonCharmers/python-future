@@ -1,3 +1,11 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import super
+from future.builtins import str
+from future import standard_library
+standard_library.install_hooks()
 """Representing and manipulating email headers via custom objects.
 
 This module provides an implementation of the HeaderRegistry API.
@@ -12,7 +20,7 @@ from email import utils
 from email import errors
 from email import _header_value_parser as parser
 
-class Address:
+class Address(object):
 
     def __init__(self, display_name='', username='', domain='', addr_spec=None):
         """Create an object represeting a full email address.
@@ -102,7 +110,7 @@ class Address:
                 self.domain == other.domain)
 
 
-class Group:
+class Group(object):
 
     def __init__(self, display_name=None, addresses=None):
         """Create an object representing an address group.
@@ -199,7 +207,9 @@ class BaseHeader(str):
         self.init(name, **kwds)
         return self
 
-    def init(self, name, *, parse_tree, defects):
+    def init(self, name, **_3to2kwargs):
+        defects = _3to2kwargs['defects']; del _3to2kwargs['defects']
+        parse_tree = _3to2kwargs['parse_tree']; del _3to2kwargs['parse_tree']
         self._name = name
         self._parse_tree = parse_tree
         self._defects = defects
@@ -226,7 +236,8 @@ class BaseHeader(str):
     def _reconstruct(cls, value):
         return str.__new__(cls, value)
 
-    def fold(self, *, policy):
+    def fold(self, **_3to2kwargs):
+        policy = _3to2kwargs['policy']; del _3to2kwargs['policy']
         """Fold header according to policy.
 
         The parsed representation of the header is folded according to
@@ -256,7 +267,7 @@ def _reconstruct_header(cls_name, bases, value):
     return type(cls_name, bases, {})._reconstruct(value)
 
 
-class UnstructuredHeader:
+class UnstructuredHeader(object):
 
     max_count = None
     value_parser = staticmethod(parser.get_unstructured)
@@ -272,7 +283,7 @@ class UniqueUnstructuredHeader(UnstructuredHeader):
     max_count = 1
 
 
-class DateHeader:
+class DateHeader(object):
 
     """Header whose value consists of a single timestamp.
 
@@ -316,7 +327,7 @@ class UniqueDateHeader(DateHeader):
     max_count = 1
 
 
-class AddressHeader:
+class AddressHeader(object):
 
     max_count = None
 
@@ -391,7 +402,7 @@ class UniqueSingleAddressHeader(SingleAddressHeader):
     max_count = 1
 
 
-class MIMEVersionHeader:
+class MIMEVersionHeader(object):
 
     max_count = 1
 
@@ -428,7 +439,7 @@ class MIMEVersionHeader:
         return self._version
 
 
-class ParameterizedMIMEHeader:
+class ParameterizedMIMEHeader(object):
 
     # Mixin that handles the params dict.  Must be subclassed and
     # a property value_parser for the specific header provided.
@@ -493,7 +504,7 @@ class ContentDispositionHeader(ParameterizedMIMEHeader):
         return self._content_disposition
 
 
-class ContentTransferEncodingHeader:
+class ContentTransferEncodingHeader(object):
 
     max_count = 1
 
@@ -538,7 +549,7 @@ _default_header_map = {
     'content-transfer-encoding':    ContentTransferEncodingHeader,
     }
 
-class HeaderRegistry:
+class HeaderRegistry(object):
 
     """A header_factory and header registry."""
 

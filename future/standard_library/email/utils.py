@@ -1,3 +1,12 @@
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import bytes
+from future.builtins import str
+from future.builtins import int
+from future import standard_library
+standard_library.install_hooks()
 # Copyright (C) 2001-2010 Python Software Foundation
 # Author: Barry Warsaw
 # Contact: email-sig@python.org
@@ -220,7 +229,8 @@ def make_msgid(idstring=None, domain=None):
 
 
 def parsedate_to_datetime(data):
-    *dtuple, tz = _parsedate_tz(data)
+    _3to2list = list(_parsedate_tz(data))
+    dtuple, tz, = [_3to2list[:-1]] + _3to2list[-1:]
     if tz is None:
         return datetime.datetime(*dtuple[:6])
     return datetime.datetime(*dtuple[:6],

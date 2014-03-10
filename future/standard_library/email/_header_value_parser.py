@@ -66,6 +66,16 @@ It is returned in place of lists of (ctext/quoted-pair) and
 
 XXX: provide complete list of token types.
 """
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import range
+from future.builtins import int
+from future.builtins import super
+from future.builtins import str
+from future import standard_library
+standard_library.install_hooks()
 
 import re
 import urllib   # For urllib.parse.unquote
@@ -98,7 +108,7 @@ def quote_string(value):
 # Accumulator for header folding
 #
 
-class _Folded:
+class _Folded(object):
 
     def __init__(self, maxlen, policy):
         self.maxlen = maxlen
@@ -291,8 +301,9 @@ class TokenList(list):
             comments.extend(token.comments)
         return comments
 
-    def fold(self, *, policy):
+    def fold(self, **_3to2kwargs):
         # max_line_length 0/None means no limit, ie: infinitely long.
+        policy = _3to2kwargs['policy']; del _3to2kwargs['policy']
         maxlen = policy.max_line_length or float("+inf")
         folded = _Folded(maxlen, policy)
         self._fold(folded)
@@ -1368,7 +1379,8 @@ def _get_ptext_to_endchars(value, endchars):
     a flag that is True iff there were any quoted printables decoded.
 
     """
-    fragment, *remainder = _wsp_splitter(value, 1)
+    _3to2list = list(_wsp_splitter(value, 1))
+    fragment, remainder, = _3to2list[:1] + [_3to2list[1:]]
     vchars = []
     escape = False
     had_qp = False
@@ -1438,13 +1450,15 @@ def get_encoded_word(value):
     if not value.startswith('=?'):
         raise errors.HeaderParseError(
             "expected encoded word but found {}".format(value))
-    tok, *remainder = value[2:].split('?=', 1)
+    _3to2list1 = list(value[2:].split('?=', 1))
+tok, remainder, = _3to2list1[:1] + [_3to2list1[1:]]
     if tok == value[2:]:
         raise errors.HeaderParseError(
             "expected encoded word but found {}".format(value))
     remstr = ''.join(remainder)
     if remstr[:2].isdigit():
-        rest, *remainder = remstr.split('?=', 1)
+        _3to2list3 = list(remstr.split('?=', 1))
+        rest, remainder, = _3to2list3[:1] + [_3to2list3[1:]]
         tok = tok + '?=' + rest
     if len(tok.split()) > 1:
         ew.defects.append(errors.InvalidHeaderDefect(
@@ -1464,7 +1478,8 @@ def get_encoded_word(value):
             token, text = get_fws(text)
             ew.append(token)
             continue
-        chars, *remainder = _wsp_splitter(text, 1)
+        _3to2list5 = list(_wsp_splitter(text, 1))
+chars, remainder, = _3to2list5[:1] + [_3to2list5[1:]]
         vtext = ValueTerminal(chars, 'vtext')
         _validate_xtext(vtext)
         ew.append(vtext)
@@ -1518,7 +1533,8 @@ def get_unstructured(value):
                             unstructured[-1], 'fws')
                 unstructured.append(token)
                 continue
-        tok, *remainder = _wsp_splitter(value, 1)
+        _3to2list7 = list(_wsp_splitter(value, 1))
+tok, remainder, = _3to2list7[:1] + [_3to2list7[1:]]
         vtext = ValueTerminal(tok, 'vtext')
         _validate_xtext(vtext)
         unstructured.append(vtext)

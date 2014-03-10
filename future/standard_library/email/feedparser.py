@@ -18,6 +18,14 @@ exception.  Instead, when it finds something unexpected, it adds a 'defect' to
 the current message.  Defects are just instances that live on the message
 object's .defects attribute.
 """
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import super
+from future.builtins import range
+from future import standard_library
+standard_library.install_hooks()
 
 __all__ = ['FeedParser', 'BytesFeedParser']
 
@@ -132,10 +140,12 @@ class BufferedSubFile(object):
 
 
 
-class FeedParser:
+class FeedParser(object):
     """A feed-style parser of email."""
 
-    def __init__(self, _factory=message.Message, *, policy=compat32):
+    def __init__(self, _factory=message.Message, **_3to2kwargs):
+        if 'policy' in _3to2kwargs: policy = _3to2kwargs['policy']; del _3to2kwargs['policy']
+        else: policy = compat32
         """_factory is called with no arguments to create a new message obj
 
         The policy keyword specifies a policy object that controls a number of

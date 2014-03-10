@@ -3,6 +3,12 @@
 # Contact: email-sig@python.org
 
 """A parser of RFC 2822 and MIME email messages."""
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_hooks()
 
 __all__ = ['Parser', 'HeaderParser', 'BytesParser', 'BytesHeaderParser']
 
@@ -15,8 +21,10 @@ from email._policybase import compat32
 
 
 
-class Parser:
-    def __init__(self, _class=Message, *, policy=compat32):
+class Parser(object):
+    def __init__(self, _class=Message, **_3to2kwargs):
+        if 'policy' in _3to2kwargs: policy = _3to2kwargs['policy']; del _3to2kwargs['policy']
+        else: policy = compat32
         """Parser of RFC 2822 and MIME email messages.
 
         Creates an in-memory object tree representing the email message, which
@@ -78,7 +86,7 @@ class HeaderParser(Parser):
         return Parser.parsestr(self, text, True)
 
 
-class BytesParser:
+class BytesParser(object):
 
     def __init__(self, *args, **kw):
         """Parser of binary RFC 2822 and MIME email messages.

@@ -3,6 +3,17 @@
 # Contact: email-sig@python.org
 
 """Header encoding and decoding functionality."""
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import zip
+from future.builtins import super
+from future.builtins import bytes
+from future.builtins import range
+from future.builtins import str
+from future import standard_library
+standard_library.install_hooks()
 
 __all__ = [
     'Header',
@@ -177,7 +188,7 @@ def make_header(decoded_seq, maxlinelen=None, header_name=None,
 
 
 
-class Header:
+class Header(object):
     def __init__(self, s=None, charset=None,
                  maxlinelen=None, header_name=None,
                  continuation_ws=' ', errors='strict'):
@@ -415,7 +426,7 @@ class Header:
 
 
 
-class _ValueFormatter:
+class _ValueFormatter(object):
     def __init__(self, headerlen, maxlen, continuation_ws, splitchars):
         self._maxlen = maxlen
         self._continuation_ws = continuation_ws

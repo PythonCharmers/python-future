@@ -2,6 +2,13 @@
 
 Allows fine grained feature control of how the package parses and emits data.
 """
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import super
+from future import standard_library
+standard_library.install_hooks()
 
 import abc
 from email import header
@@ -15,7 +22,7 @@ __all__ = [
     ]
 
 
-class _PolicyBase:
+class _PolicyBase(object):
 
     """Policy Object basic framework.
 

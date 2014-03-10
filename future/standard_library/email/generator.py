@@ -3,6 +3,14 @@
 # Contact: email-sig@python.org
 
 """Classes to generate plain text from a message object tree."""
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import super
+from future.builtins import str
+from future import standard_library
+standard_library.install_hooks()
 
 __all__ = ['Generator', 'DecodedGenerator', 'BytesGenerator']
 
@@ -25,7 +33,7 @@ fcre = re.compile(r'^From ', re.MULTILINE)
 
 
 
-class Generator:
+class Generator(object):
     """Generates output from a Message object tree.
 
     This basic generator writes the message to the given file object as plain
@@ -35,8 +43,9 @@ class Generator:
     # Public interface
     #
 
-    def __init__(self, outfp, mangle_from_=True, maxheaderlen=None, *,
-                 policy=None):
+    def __init__(self, outfp, mangle_from_=True, maxheaderlen=None, **_3to2kwargs):
+        if 'policy' in _3to2kwargs: policy = _3to2kwargs['policy']; del _3to2kwargs['policy']
+        else: policy = None
         """Create the generator for message flattening.
 
         outfp is the output file-like object for writing the message to.  It
