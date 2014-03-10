@@ -7,14 +7,16 @@ What's new
 What's new in version 0.12
 ==========================
 
-The major new feature in version is improvements in the standard library module and its compatibility with 3rd-party modules:
+The major new feature in version is improvements in the standard library module
+and its compatibility with 3rd-party modules.
 
 Standard-library import hooks now require explicit installation
 ---------------------------------------------------------------
 
-*Note: backwards-incompatible change:* The deprecated feature of implicit
-installation of import hooks by ``future.standard_library`` has been
-removed. Now the import hooks must be installed explicitly, as follows::
+*Note: backwards-incompatible change:* As previously announced (see What's New
+for version 0.11.x), the deprecated feature of implicit installation of import
+hooks by ``future.standard_library`` has been removed. Now the import hooks
+must be installed explicitly, as follows::
 
     from future import standard_library
     with standard_library.hooks():
@@ -24,8 +26,8 @@ removed. Now the import hooks must be installed explicitly, as follows::
 or with the functional interface::
 
     from future import standard_library
-
     standard_library.install_hooks():
+
     import html.parser
     import http.client
     ...
@@ -33,38 +35,127 @@ or with the functional interface::
 
 This allows finer-grained control over whether import hooks are enabled for
 other imported modules, such as ``requests``, which provide their own Python
-2/3 compatibility code. Also see below.
+2/3 compatibility code. This also improves compatibility of ``future`` with
+tools like ``py2exe`` (see issue #...).
 
 
-New ``urllib`` and xmlrpc modules
----------------------------------
+.. Versioned standard library imports
+.. ----------------------------------
+.. 
+.. ``future`` now offers a choice of either backported versions of the standard library modules from Python 3.3 or renamed Python 2.7 versions. Use it as follows::
+.. 
+..     from future import standard_library
+..     standard_library.install_hooks(version='3.3')
+..     import html.parser
+..     ...
+..     standard_library.remove_hooks()
+.. 
+.. or as follows::
+..     
+..     from future import standard_library
+..     with standard_library.hooks(version='2.7'):
+..         import html.parser
+..         ...
+.. 
+.. If ``version='2.7'`` is selected, on Python 2.7 the import hooks provide an interface to the
+.. Python 2.7 standard library modules remapped to their equivalent Python 3.x names. For example, the above code is equivalent to this on Python 2.7 (more or less)::
+.. 
+..     import htmllib
+..     module = type(htmllib)
+..     html = module('html')
+..     html.parser = module('html.parser')
+..     html.parser.HTMLParser = htmllib.HTMLParser
+..     html.parser.HTMLParseError = htmllib.htmlParseError
+.. 
+.. but the dozen or so other functions in Python 3.3's ``html.parser`` module are not available on Python 2.7.
+.. 
+.. 
+.. If ``version=='3.3'`` is selected, 
+.. 
+.. These are not (yet) full backports of
+.. the Python 3.3
+.. modules but remappings to the corresponding
+.. functionality in the Python 2.x standard library.
 
-The ``urllib`` and ``xmlrpc`` modules are now supported. These are not (yet)
-full backports of the Python 3.3 modules but remappings to the corresponding
-functionality in the Python 2.x standard library.
+
+New ``urllib``, ``email``, and ``xmlrpc`` modules
+-------------------------------------------------
+
+Backports of the ``urllib``, ``email``, and ``xmlrpc`` modules from Python
+3.3's standard library are now provided. 
 
 Use them like this::
 
     with standard_library.hooks():
-        from urllib.request import Request, ...
+        from urllib.request import Request      # etc.
+        from email import message_from_bytes    # etc.
+
+
+.. whats-new-0.11.3:
+
+What's new in version 0.11.3
+============================
+
+This release has improvements in the standard library import hooks mechanism and
+its compatibility with 3rd-party modules:
+
 
 Improved compatibility with ``requests``
 ----------------------------------------
 
-The exit function of the ``hooks`` context manager and the ``remove_hooks``
-function both now remove submodules of ``future.standard_library`` from
-``sys.modules``. Therefore this code is now possible::
+The ``__exit__`` function of the ``hooks`` context manager and the
+``remove_hooks`` function both now remove submodules of
+``future.standard_library`` from the ``sys.modules`` cache. Therefore this code
+is now possible on Python 2 and 3::
 
-       with standard_library.hooks():
-           import urllib.parse
-
+       from future import standard_library
+       import http.client
+       standard_library.remove_hooks()
        import requests
 
-Previously this required either importing ``requests`` first or manually
-removing ``urllib`` from ``sys.modules`` before importing ``requests``.
+       data = requests.get('http://www.google.com')
+
+
+Previously, this required manually removing ``http`` and ``http.client`` from
+``sys.modules`` before importing ``requests`` on Python 2.x. (Issue #19).
    
-This should also improve the compatibility of the standard library hooks with
-any other module that provides its own Python 2/3 compatibility code.
+This change should also improve the compatibility of the standard library hooks
+with any other module that provides its own Python 2/3 compatibility code.
+
+Note that the situation will improve further in version 0.12; import hooks will
+require an explicit function call or the ``hooks`` context manager.
+
+
+Conversion scripts explicitly install import hooks
+--------------------------------------------------
+
+The ``futurize`` and ``pasteurize`` scripts now add an explicit call to
+``install_hooks()`` to install the standard library import hooks. These scripts
+now add these two lines::
+
+       from future import standard_library
+       standard_library.install_hooks()
+
+instead of just the first one. The next major version of ``future`` (0.12) will
+require the explicit call or use of the ``hooks`` context manager. This will
+allow finer-grained control over whether import hooks are enabled for other
+imported modules, such as ``requests``, which provide their own Python 2/3
+compatibility code.
+
+
+``futurize`` script no longer adds ``unicode_literals`` by default
+------------------------------------------------------------------
+
+There is a new ``--unicode-literals`` flag to ``futurize`` that adds the
+import::
+    
+    from __future__ import unicode_literals
+
+to the top of each converted module. Without this flag, ``futurize`` now no
+longer adds this import. (Issue #22).
+
+The ``pasteurize`` script for converting from Py3 to Py2/3 still adds
+``unicode_literals``. (See the comments in issue #22 for an explanation.)
 
 
 .. whats-new-0.11:
@@ -428,6 +519,10 @@ What's new in version 0.11.x
 ============================
 
 v0.11.3:
+  * The ``futurize`` and ``pasteurize`` scripts add an explicit call to
+  ``future.standard_library.install_hooks()`` whenever modules affected by PEP
+  3108 are imported.
+
   * The ``future.builtins.bytes`` constructor now accepts ``frozenset``
   objects as on Py3.
 

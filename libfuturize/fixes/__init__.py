@@ -79,7 +79,7 @@ libfuturize_fix_names_stage2 = set([
     'libfuturize.fixes.fix_future_standard_library',
     'libfuturize.fixes.fix_future_standard_library_urllib',
     'libfuturize.fixes.fix_metaclass',
-   # TODO: add int(33243) calls for what used to be 33243L
+    # TODO: add int(33243) calls for what used to be 33243L
     'libfuturize.fixes.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing
     'libfuturize.fixes.fix_unicode_keep_u',
     # 'libfuturize.fixes.fix_unicode_literals_import',

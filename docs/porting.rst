@@ -12,8 +12,8 @@ Step 0: setup
 
 Step 0 goal: set up and see the tests passing on Python 2 and failing on Python 3.
 
-a. Clone the package from github/bitbucket. Rename your repo to ``package-future``. Examples: ``reportlab-future``, ``paramiko-future``, ``mezzanine-future``.
-b. Create and activate a Python 2 virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test`` or ``nosetests``)
+a. Clone the package from github/bitbucket. Optionally rename your repo to ``package-future``. Examples: ``reportlab-future``, ``paramiko-future``, ``mezzanine-future``.
+b. Create and activate a Python 2 conda environment or virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test`` or ``nosetests``)
 c. Optionally: if there’s a ``.travis.yml`` file, add Python version 3.3 and remove any versions < 2.6.
 d. Install Python 3.3 with e.g. ``sudo apt-get install python3``. On other platforms, an easy way is to use Miniconda3. See `Miniconda3 <http://repo.continuum.io/miniconda/index.html>`_. Then e.g.::
     
@@ -26,15 +26,20 @@ Step 1: modern Py2 code
 
 The goal for this step is to modernize the Python 2 code without introducing any dependencies (on ``future`` or e.g. ``six``) at this stage.
 
-  1a. Install ``future`` into the virtualenv using::
+1a. Install ``future`` into the virtualenv using::
       
-      pip install future
+          pip install future
   
-  1b. Run ``futurize --stage1 -w *.py subdir1/*.py subdir2/*.py``
-  
-  1c. Commit all changes
-  
-  1d. Re-run the test suite and fix any errors.
+1b. Run ``futurize --stage1 -w *.py subdir1/*.py subdir2/*.py``
+
+    Note that with ``zsh``, you can apply stage1 to all Python source files
+    recursively with::
+
+        futurize --stage1 -w **/*.py
+
+1c. Commit all changes
+
+1d. Re-run the test suite on Py2 and fix any errors.
 
 See :ref:`forwards-conversion-stage1` for more info.
 
@@ -58,7 +63,9 @@ package on Python 3, or on Python 2 with ``absolute_import`` in effect, is::
 
     python -m tests.test_platypus_xref
 
-(For more info, see `PEP 328 <http://www.python.org/dev/peps/pep-0328/>`_ and the `PEP 8 <http://www.python.org/dev/peps/pep-0008/>`_ section on absolute imports.)
+(For more info, see `PEP 328 <http://www.python.org/dev/peps/pep-0328/>`_ and
+the `PEP 8 <http://www.python.org/dev/peps/pep-0008/>`_ section on absolute
+imports.)
 
 
 .. _porting-step2:
@@ -71,22 +78,33 @@ again with the help of the ``future`` package.
 
 2a. Run::
 
-    futurize —-stage2 myfolder/*.py
+        futurize —-stage2 myfolder1/*.py myfolder2/*.py
 
-This adds this further import to each module::
+    Alternatively, with ``zsh``, you can view the stage 2 changes to all Python source files
+    recursively with::
+
+        futurize --stage2 **/*.py
+
+    To apply the changes, add the ``-w`` argument.
+
+    This stage makes further conversions needed to support both Python 2 and 3.
+    These will likely require imports from ``future``, such as::
+
+        from future import standard_library
+        standard_library.install_hooks()
+        from future.builtins import bytes
+        from future.builtins import open
+
+Optionally, you can use the ``--unicode-literals`` flag to adds this further
+import to the top of each module::
 
     from __future__ import unicode_literals
 
-All strings are then unicode (on Py2 as on Py3) unless explicitly marked with a ``b''`` prefix.
+All strings would then be unicode (on Py2 as on Py3) unless explicitly marked
+with a ``b''`` prefix.
 
-It also makes other conversions needed to support both Python 2 and 3. These will likely
-require additional imports from ``future``, such as::
-
-    from future import standard_library
-    from future.builtins import bytes
-    from future.builtins import open
-
-If you would like ``futurize`` to import all the changed builtins to have their Python 3 semantics on Python 2, invoke it like this::
+If you would like ``futurize`` to import all the changed builtins to have their
+Python 3 semantics on Python 2, invoke it like this::
 
     futurize --stage2 --all-imports myfolder/*.py
 
@@ -109,4 +127,5 @@ See :ref:`what-else` for more info.
 
 After each change, re-run the tests on Py3 and Py2 to ensure they pass on both.
 
-2e. You’re done! Celebrate! Push your code and announce to the world! Hashtag #python-future
+2e. You’re done! Celebrate! Push your code and announce to the world! Hashtags
+#python3 #python-future.

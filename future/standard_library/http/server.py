@@ -94,6 +94,10 @@ __all__ = ["HTTPServer", "BaseHTTPRequestHandler"]
 with standard_library.hooks():
     import html
     import http.client
+    # Something bizarre sometimes happens to cause the client submodule to
+    # disappear from http after a successful import when run under the Py2.7 unittest runner.
+    # TODO: investigate this!
+    from http.client import HTTPMessage
     import socketserver
     import email.message
     import email.parser
@@ -585,7 +589,7 @@ class BaseHTTPRequestHandler(socketserver.StreamRequestHandler):
     protocol_version = "HTTP/1.0"
 
     # MessageClass used to parse headers
-    MessageClass = http.client.HTTPMessage
+    MessageClass = HTTPMessage
 
     # Table mapping response codes to messages; entries have the
     # form {code: (shortmessage, longmessage)}.

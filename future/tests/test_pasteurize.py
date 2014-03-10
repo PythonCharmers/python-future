@@ -115,7 +115,6 @@ class TestPasteurize(CodeHandler):
 
         self.convert_check(before, after, from3=True)
 
-
         
 class TestFuturizeAnnotations(CodeHandler):
     @unittest.expectedFailure
