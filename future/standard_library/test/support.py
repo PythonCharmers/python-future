@@ -6,7 +6,6 @@ Backported for python-future from Python 3.3 test/support.py.
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-import future.standard_library
 from future import utils
 from future.builtins import *
 

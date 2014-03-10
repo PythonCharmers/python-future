@@ -1,7 +1,7 @@
 r"""HTTP cookie handling for web clients.
 
-This is based on the Py3.3 ``http.cookiejar`` module and the Py2.7
-``cookielib`` module.
+This is a backport of the Py3.3 ``http.cookiejar`` module for
+python-future.
 
 This module has (now fairly distant) origins in Gisle Aas' Perl module
 HTTP::Cookies, from the libwww-perl library.
@@ -27,9 +27,12 @@ http://wwwsearch.sf.net/):
                MSIECookieJar
 
 """
-from __future__ import (absolute_import, division)
-from future import standard_library
-# from future.builtins import *
+
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import filter, int, map, open, str
 
 __all__ = ['Cookie', 'CookieJar', 'CookiePolicy', 'DefaultCookiePolicy',
            'FileCookieJar', 'LWPCookieJar', 'LoadError', 'MozillaCookieJar']
@@ -37,16 +40,14 @@ __all__ = ['Cookie', 'CookieJar', 'CookiePolicy', 'DefaultCookiePolicy',
 import copy
 import datetime
 import re
+re.ASCII = 0
 import time
-import urlparse, urllib
+from future.standard_library.urllib.parse import urlparse, urlsplit, quote
+from future.standard_library.http.client import HTTP_PORT
 try:
     import threading as _threading
 except ImportError:
     import dummy_threading as _threading
-# Instead of this: import httplib
-# Import this new-style one:
-with standard_library.hooks():
-    import http.client  # only for the default HTTP port
 from calendar import timegm
 
 debug = False   # set to True to enable debugging via the logging module
@@ -62,7 +63,7 @@ def _debug(*args):
     return logger.debug(*args)
 
 
-DEFAULT_HTTP_PORT = str(http.client.HTTP_PORT)
+DEFAULT_HTTP_PORT = str(HTTP_PORT)
 MISSING_FILENAME_TEXT = ("a filename was not supplied (nor was the CookieJar "
                          "instance initialised with one)")
 
@@ -136,7 +137,7 @@ def time2netscape(t=None):
 
 UTC_ZONES = {"GMT": None, "UTC": None, "UT": None, "Z": None}
 
-TIMEZONE_RE = re.compile(r"^([-+])?(\d\d?):?(\d\d)?$")
+TIMEZONE_RE = re.compile(r"^([-+])?(\d\d?):?(\d\d)?$", re.ASCII)
 def offset_from_tz_string(tz):
     offset = None
     if tz in UTC_ZONES:
@@ -206,9 +207,9 @@ def _str2time(day, mon, yr, hr, min, sec, tz):
 
 STRICT_DATE_RE = re.compile(
     r"^[SMTWF][a-z][a-z], (\d\d) ([JFMASOND][a-z][a-z]) "
-    "(\d\d\d\d) (\d\d):(\d\d):(\d\d) GMT$")
+    "(\d\d\d\d) (\d\d):(\d\d):(\d\d) GMT$", re.ASCII)
 WEEKDAY_RE = re.compile(
-    r"^(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat)[a-z]*,?\s*", re.I)
+    r"^(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat)[a-z]*,?\s*", re.I | re.ASCII)
 LOOSE_HTTP_DATE_RE = re.compile(
     r"""^
     (\d\d?)            # day
@@ -225,7 +226,7 @@ LOOSE_HTTP_DATE_RE = re.compile(
     ([-+]?\d{2,4}|(?![APap][Mm]\b)[A-Za-z]+)? # timezone
        \s*
     (?:\(\w+\))?       # ASCII representation of timezone in parens.
-       \s*$""", re.X)
+       \s*$""", re.X | re.ASCII)
 def http2time(text):
     """Returns time in seconds since epoch of time represented by a string.
 
@@ -297,7 +298,7 @@ ISO_DATE_RE = re.compile(
       \s*
    ([-+]?\d\d?:?(:?\d\d)?
     |Z|z)?               # timezone  (Z is "zero meridian", i.e. GMT)
-      \s*$""", re.X)
+      \s*$""", re.X | re. ASCII)
 def iso2time(text):
     """
     As for http2time, but parses the ISO 8601 formats:
@@ -385,7 +386,7 @@ def split_header_words(header_values):
     [[('Basic', None), ('realm', '"foobar"')]]
 
     """
-    assert not isinstance(header_values, basestring)
+    assert not isinstance(header_values, str)
     result = []
     for text in header_values:
         orig_text = text
@@ -510,7 +511,7 @@ def parse_ns_headers(ns_headers):
     return result
 
 
-IPV4_RE = re.compile(r"\.\d+$")
+IPV4_RE = re.compile(r"\.\d+$", re.ASCII)
 def is_HDN(text):
     """Return True if text is a host domain name."""
     # XXX
@@ -595,7 +596,7 @@ def user_domain_match(A, B):
         return True
     return False
 
-cut_port_re = re.compile(r":\d+$")
+cut_port_re = re.compile(r":\d+$", re.ASCII)
 def request_host(request):
     """Return request-host, as defined by RFC 2965.
 
@@ -604,7 +605,7 @@ def request_host(request):
 
     """
     url = request.get_full_url()
-    host = urllib.parse.urlparse(url)[1]
+    host = urlparse(url)[1]
     if host == "":
         host = request.get_header("Host", "")
 
@@ -626,7 +627,7 @@ def eff_request_host(request):
 def request_path(request):
     """Path component of request-URI, as defined by RFC 2965."""
     url = request.get_full_url()
-    parts = urllib.parse.urlsplit(url)
+    parts = urlsplit(url)
     path = escape_path(parts.path)
     if not path.startswith("/"):
         # fix bad RFC 2396 absoluteURI
@@ -634,7 +635,7 @@ def request_path(request):
     return path
 
 def request_port(request):
-    host = request.get_host()
+    host = request.host
     i = host.find(':')
     if i >= 0:
         port = host[i+1:]
@@ -663,9 +664,7 @@ def escape_path(path):
     # And here, kind of: draft-fielding-uri-rfc2396bis-03
     # (And in draft IRI specification: draft-duerst-iri-05)
     # (And here, for new URI schemes: RFC 2718)
-    if isinstance(path, unicode):
-        path = path.encode("utf-8")
-    path = urllib.quote(path, HTTP_PATH_SAFE)
+    path = quote(path, HTTP_PATH_SAFE)
     path = ESCAPED_CHAR_RE.sub(uppercase_escaped_char, path)
     return path
 
@@ -960,7 +959,7 @@ class DefaultCookiePolicy(CookiePolicy):
         return True
 
     def set_ok_verifiability(self, cookie, request):
-        if request.is_unverifiable() and is_third_party(request):
+        if request.unverifiable and is_third_party(request):
             if cookie.version > 0 and self.strict_rfc2965_unverifiable:
                 _debug("   third-party RFC 2965 cookie during "
                              "unverifiable transaction")
@@ -1099,7 +1098,7 @@ class DefaultCookiePolicy(CookiePolicy):
         return True
 
     def return_ok_verifiability(self, cookie, request):
-        if request.is_unverifiable() and is_third_party(request):
+        if request.unverifiable and is_third_party(request):
             if cookie.version > 0 and self.strict_rfc2965_unverifiable:
                 _debug("   third-party RFC 2965 cookie during unverifiable "
                        "transaction")
@@ -1111,7 +1110,7 @@ class DefaultCookiePolicy(CookiePolicy):
         return True
 
     def return_ok_secure(self, cookie, request):
-        if cookie.secure and request.get_type() != "https":
+        if cookie.secure and request.type != "https":
             _debug("   secure cookie with non-secure request")
             return False
         return True
@@ -1218,8 +1217,7 @@ class CookieJar(object):
     """Collection of HTTP cookies.
 
     You may not need to know about this class: try
-    urllib2.build_opener(HTTPCookieProcessor).open(url).
-
+    urllib.request.build_opener(HTTPCookieProcessor).open(url).
     """
 
     non_word_re = re.compile(r"\W")
@@ -1228,7 +1226,7 @@ class CookieJar(object):
     domain_re = re.compile(r"[^.]*")
     dots_re = re.compile(r"^\.+")
 
-    magic_re = re.compile(r"^\#LWP-Cookies-(\d+\.\d+)")
+    magic_re = re.compile(r"^\#LWP-Cookies-(\d+\.\d+)", re.ASCII)
 
     def __init__(self, policy=None):
         if policy is None:
@@ -1326,7 +1324,7 @@ class CookieJar(object):
         return attrs
 
     def add_cookie_header(self, request):
-        """Add correct Cookie: header to request (urllib2.Request object).
+        """Add correct Cookie: header to request (urllib.request.Request object).
 
         The Cookie2 header is also added unless policy.hide_cookie2 is true.
 
@@ -1572,8 +1570,8 @@ class CookieJar(object):
         """Return sequence of Cookie objects extracted from response object."""
         # get cookie-attributes for RFC 2965 and Netscape protocols
         headers = response.info()
-        rfc2965_hdrs = headers.getheaders("Set-Cookie2")  # FIXME?
-        ns_hdrs = headers.getheaders("Set-Cookie")        # FIXME?
+        rfc2965_hdrs = headers.get_all("Set-Cookie2", [])
+        ns_hdrs = headers.get_all("Set-Cookie", [])
 
         rfc2965 = self._policy.rfc2965
         netscape = self._policy.netscape
@@ -1806,5 +1804,298 @@ class FileCookieJar(CookieJar):
         finally:
             self._cookies_lock.release()
 
-from _LWPCookieJar import LWPCookieJar, lwp_cookie_str
-from _MozillaCookieJar import MozillaCookieJar
+
+def lwp_cookie_str(cookie):
+    """Return string representation of Cookie in an the LWP cookie file format.
+
+    Actually, the format is extended a bit -- see module docstring.
+
+    """
+    h = [(cookie.name, cookie.value),
+         ("path", cookie.path),
+         ("domain", cookie.domain)]
+    if cookie.port is not None: h.append(("port", cookie.port))
+    if cookie.path_specified: h.append(("path_spec", None))
+    if cookie.port_specified: h.append(("port_spec", None))
+    if cookie.domain_initial_dot: h.append(("domain_dot", None))
+    if cookie.secure: h.append(("secure", None))
+    if cookie.expires: h.append(("expires",
+                               time2isoz(float(cookie.expires))))
+    if cookie.discard: h.append(("discard", None))
+    if cookie.comment: h.append(("comment", cookie.comment))
+    if cookie.comment_url: h.append(("commenturl", cookie.comment_url))
+
+    keys = sorted(cookie._rest.keys())
+    for k in keys:
+        h.append((k, str(cookie._rest[k])))
+
+    h.append(("version", str(cookie.version)))
+
+    return join_header_words([h])
+
+class LWPCookieJar(FileCookieJar):
+    """
+    The LWPCookieJar saves a sequence of "Set-Cookie3" lines.
+    "Set-Cookie3" is the format used by the libwww-perl libary, not known
+    to be compatible with any browser, but which is easy to read and
+    doesn't lose information about RFC 2965 cookies.
+
+    Additional methods
+
+    as_lwp_str(ignore_discard=True, ignore_expired=True)
+
+    """
+
+    def as_lwp_str(self, ignore_discard=True, ignore_expires=True):
+        """Return cookies as a string of "\\n"-separated "Set-Cookie3" headers.
+
+        ignore_discard and ignore_expires: see docstring for FileCookieJar.save
+
+        """
+        now = time.time()
+        r = []
+        for cookie in self:
+            if not ignore_discard and cookie.discard:
+                continue
+            if not ignore_expires and cookie.is_expired(now):
+                continue
+            r.append("Set-Cookie3: %s" % lwp_cookie_str(cookie))
+        return "\n".join(r+[""])
+
+    def save(self, filename=None, ignore_discard=False, ignore_expires=False):
+        if filename is None:
+            if self.filename is not None: filename = self.filename
+            else: raise ValueError(MISSING_FILENAME_TEXT)
+
+        f = open(filename, "w")
+        try:
+            # There really isn't an LWP Cookies 2.0 format, but this indicates
+            # that there is extra information in here (domain_dot and
+            # port_spec) while still being compatible with libwww-perl, I hope.
+            f.write("#LWP-Cookies-2.0\n")
+            f.write(self.as_lwp_str(ignore_discard, ignore_expires))
+        finally:
+            f.close()
+
+    def _really_load(self, f, filename, ignore_discard, ignore_expires):
+        magic = f.readline()
+        if not self.magic_re.search(magic):
+            msg = ("%r does not look like a Set-Cookie3 (LWP) format "
+                   "file" % filename)
+            raise LoadError(msg)
+
+        now = time.time()
+
+        header = "Set-Cookie3:"
+        boolean_attrs = ("port_spec", "path_spec", "domain_dot",
+                         "secure", "discard")
+        value_attrs = ("version",
+                       "port", "path", "domain",
+                       "expires",
+                       "comment", "commenturl")
+
+        try:
+            while 1:
+                line = f.readline()
+                if line == "": break
+                if not line.startswith(header):
+                    continue
+                line = line[len(header):].strip()
+
+                for data in split_header_words([line]):
+                    name, value = data[0]
+                    standard = {}
+                    rest = {}
+                    for k in boolean_attrs:
+                        standard[k] = False
+                    for k, v in data[1:]:
+                        if k is not None:
+                            lc = k.lower()
+                        else:
+                            lc = None
+                        # don't lose case distinction for unknown fields
+                        if (lc in value_attrs) or (lc in boolean_attrs):
+                            k = lc
+                        if k in boolean_attrs:
+                            if v is None: v = True
+                            standard[k] = v
+                        elif k in value_attrs:
+                            standard[k] = v
+                        else:
+                            rest[k] = v
+
+                    h = standard.get
+                    expires = h("expires")
+                    discard = h("discard")
+                    if expires is not None:
+                        expires = iso2time(expires)
+                    if expires is None:
+                        discard = True
+                    domain = h("domain")
+                    domain_specified = domain.startswith(".")
+                    c = Cookie(h("version"), name, value,
+                               h("port"), h("port_spec"),
+                               domain, domain_specified, h("domain_dot"),
+                               h("path"), h("path_spec"),
+                               h("secure"),
+                               expires,
+                               discard,
+                               h("comment"),
+                               h("commenturl"),
+                               rest)
+                    if not ignore_discard and c.discard:
+                        continue
+                    if not ignore_expires and c.is_expired(now):
+                        continue
+                    self.set_cookie(c)
+
+        except IOError:
+            raise
+        except Exception:
+            _warn_unhandled_exception()
+            raise LoadError("invalid Set-Cookie3 format file %r: %r" %
+                            (filename, line))
+
+
+class MozillaCookieJar(FileCookieJar):
+    """
+
+    WARNING: you may want to backup your browser's cookies file if you use
+    this class to save cookies.  I *think* it works, but there have been
+    bugs in the past!
+
+    This class differs from CookieJar only in the format it uses to save and
+    load cookies to and from a file.  This class uses the Mozilla/Netscape
+    `cookies.txt' format.  lynx uses this file format, too.
+
+    Don't expect cookies saved while the browser is running to be noticed by
+    the browser (in fact, Mozilla on unix will overwrite your saved cookies if
+    you change them on disk while it's running; on Windows, you probably can't
+    save at all while the browser is running).
+
+    Note that the Mozilla/Netscape format will downgrade RFC2965 cookies to
+    Netscape cookies on saving.
+
+    In particular, the cookie version and port number information is lost,
+    together with information about whether or not Path, Port and Discard were
+    specified by the Set-Cookie2 (or Set-Cookie) header, and whether or not the
+    domain as set in the HTTP header started with a dot (yes, I'm aware some
+    domains in Netscape files start with a dot and some don't -- trust me, you
+    really don't want to know any more about this).
+
+    Note that though Mozilla and Netscape use the same format, they use
+    slightly different headers.  The class saves cookies using the Netscape
+    header by default (Mozilla can cope with that).
+
+    """
+    magic_re = re.compile("#( Netscape)? HTTP Cookie File")
+    header = """\
+# Netscape HTTP Cookie File
+# http://www.netscape.com/newsref/std/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+"""
+
+    def _really_load(self, f, filename, ignore_discard, ignore_expires):
+        now = time.time()
+
+        magic = f.readline()
+        if not self.magic_re.search(magic):
+            f.close()
+            raise LoadError(
+                "%r does not look like a Netscape format cookies file" %
+                filename)
+
+        try:
+            while 1:
+                line = f.readline()
+                if line == "": break
+
+                # last field may be absent, so keep any trailing tab
+                if line.endswith("\n"): line = line[:-1]
+
+                # skip comments and blank lines XXX what is $ for?
+                if (line.strip().startswith(("#", "$")) or
+                    line.strip() == ""):
+                    continue
+
+                domain, domain_specified, path, secure, expires, name, value = \
+                        line.split("\t")
+                secure = (secure == "TRUE")
+                domain_specified = (domain_specified == "TRUE")
+                if name == "":
+                    # cookies.txt regards 'Set-Cookie: foo' as a cookie
+                    # with no name, whereas http.cookiejar regards it as a
+                    # cookie with no value.
+                    name = value
+                    value = None
+
+                initial_dot = domain.startswith(".")
+                assert domain_specified == initial_dot
+
+                discard = False
+                if expires == "":
+                    expires = None
+                    discard = True
+
+                # assume path_specified is false
+                c = Cookie(0, name, value,
+                           None, False,
+                           domain, domain_specified, initial_dot,
+                           path, False,
+                           secure,
+                           expires,
+                           discard,
+                           None,
+                           None,
+                           {})
+                if not ignore_discard and c.discard:
+                    continue
+                if not ignore_expires and c.is_expired(now):
+                    continue
+                self.set_cookie(c)
+
+        except IOError:
+            raise
+        except Exception:
+            _warn_unhandled_exception()
+            raise LoadError("invalid Netscape format cookies file %r: %r" %
+                            (filename, line))
+
+    def save(self, filename=None, ignore_discard=False, ignore_expires=False):
+        if filename is None:
+            if self.filename is not None: filename = self.filename
+            else: raise ValueError(MISSING_FILENAME_TEXT)
+
+        f = open(filename, "w")
+        try:
+            f.write(self.header)
+            now = time.time()
+            for cookie in self:
+                if not ignore_discard and cookie.discard:
+                    continue
+                if not ignore_expires and cookie.is_expired(now):
+                    continue
+                if cookie.secure: secure = "TRUE"
+                else: secure = "FALSE"
+                if cookie.domain.startswith("."): initial_dot = "TRUE"
+                else: initial_dot = "FALSE"
+                if cookie.expires is not None:
+                    expires = str(cookie.expires)
+                else:
+                    expires = ""
+                if cookie.value is None:
+                    # cookies.txt regards 'Set-Cookie: foo' as a cookie
+                    # with no name, whereas http.cookiejar regards it as a
+                    # cookie with no value.
+                    name = ""
+                    value = cookie.name
+                else:
+                    name = cookie.name
+                    value = cookie.value
+                f.write(
+                    "\t".join([cookie.domain, initial_dot, cookie.path,
+                               secure, expires, name, value])+
+                    "\n")
+        finally:
+            f.close()
