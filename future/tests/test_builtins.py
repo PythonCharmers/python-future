@@ -36,6 +36,22 @@ class TestBuiltins(unittest.TestCase):
         self.assertEqual(len(l), 1)
         self.assertTrue(isinstance(l, list))
 
+    def test_super_2(self):
+        """
+        This occurs in the backported email/_header_value_parser.py
+        module and seems to fail.
+        """
+        class Terminal(str):
+            def __new__(cls, value, token_type):
+                self = super().__new__(cls, value)
+                self.token_type = token_type
+                self.defects = []
+                return self
+
+        DOT = Terminal('.', 'dot')
+
+        self.assertTrue(True)
+
     def test_isinstance_int(self):
         """
         Redefining ``int`` to a ``long`` subclass on Py2 makes this
