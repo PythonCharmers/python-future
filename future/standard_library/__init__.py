@@ -286,6 +286,9 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
          ('itertools', 'zip_longest','itertools', 'izip_longest'),
          ('sys', 'intern','__builtin__', 'intern'),
+         # The email module has no ASCII flag in Py2, but this is the default.
+         # Set re.ASCII to a zero constant. io.SEEK_SET just happens to be one.
+         ('re', 'ASCII','io', 'SEEK_SET'),
          # urllib._urlopener	urllib.request
          # urllib.ContentTooShortError	urllib.error
          # urllib.FancyURLOpener	urllib.request
