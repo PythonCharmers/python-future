@@ -1,11 +1,9 @@
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import str
 from future.builtins import next
-from future import standard_library
-standard_library.install_hooks()
+
 # Copyright (C) 2001-2007 Python Software Foundation
 # Author: Ben Gertzfield, Barry Warsaw
 # Contact: email-sig@python.org

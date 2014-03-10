@@ -4,14 +4,11 @@
 
 """Basic message object for the email package object model."""
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import zip
 from future.builtins import range
 from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = ['Message']
 

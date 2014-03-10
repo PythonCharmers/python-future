@@ -19,21 +19,18 @@ the current message.  Defects are just instances that live on the message
 object's .defects attribute.
 """
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import super
 from future.builtins import range
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = ['FeedParser', 'BytesFeedParser']
 
 import re
 
-from email import errors
-from email import message
-from email._policybase import compat32
+from future.standard_library.email import errors
+from future.standard_library.email import message
+from future.standard_library.email._policybase import compat32
 
 NLCRE = re.compile('\r\n|\r|\n')
 NLCRE_bol = re.compile('(\r\n|\r|\n)')

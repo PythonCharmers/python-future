@@ -5,14 +5,11 @@ to a public API if there is demand.
 
 """
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import bytes
 from future.builtins import chr
 from future.builtins import int
-from future import standard_library
-standard_library.install_hooks()
 
 # An ecoded word looks like this:
 #
@@ -53,7 +50,7 @@ import base64
 import binascii
 import functools
 from string import ascii_letters, digits
-from email import errors
+from future.standard_library.email import errors
 
 __all__ = ['decode_q',
            'encode_q',

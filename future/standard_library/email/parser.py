@@ -4,20 +4,17 @@
 
 """A parser of RFC 2822 and MIME email messages."""
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = ['Parser', 'HeaderParser', 'BytesParser', 'BytesHeaderParser']
 
 import warnings
 from io import StringIO, TextIOWrapper
 
-from email.feedparser import FeedParser, BytesFeedParser
-from email.message import Message
-from email._policybase import compat32
+from future.standard_library.email.feedparser import FeedParser, BytesFeedParser
+from future.standard_library.email.message import Message
+from future.standard_library.email._policybase import compat32
 
 
 

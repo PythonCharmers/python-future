@@ -4,7 +4,6 @@
 
 """Header encoding and decoding functionality."""
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import zip
@@ -12,8 +11,6 @@ from future.builtins import super
 from future.builtins import bytes
 from future.builtins import range
 from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = [
     'Header',
@@ -24,11 +21,11 @@ __all__ = [
 import re
 import binascii
 
-import email.quoprimime
-import email.base64mime
+import future.standard_library.email.quoprimime
+import future.standard_library.email.base64mime
 
-from email.errors import HeaderParseError
-from email import charset as _charset
+from future.standard_library.email.errors import HeaderParseError
+from future.standard_library.email import charset as _charset
 Charset = _charset.Charset
 
 NL = '\n'

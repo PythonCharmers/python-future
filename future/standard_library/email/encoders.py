@@ -4,12 +4,9 @@
 
 """Encodings and related functions."""
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = [
     'encode_7or8bit',
@@ -19,7 +16,11 @@ __all__ = [
     ]
 
 
-from base64 import encodebytes as _bencode
+try:
+    from base64 import encodebytes as _bencode
+except ImportError:
+    # Py2 compatibility. TODO: test this!
+    from base64 import encodestring as _bencode
 from quopri import encodestring as _encodestring
 
 

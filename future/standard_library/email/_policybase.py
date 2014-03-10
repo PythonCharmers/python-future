@@ -7,13 +7,11 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import super
-from future import standard_library
-standard_library.install_hooks()
 
 import abc
-from email import header
-from email import charset as _charset
-from email.utils import _has_surrogates
+from future.standard_library.email import header
+from future.standard_library.email import charset as _charset
+from future.standard_library.email.utils import _has_surrogates
 
 __all__ = [
     'Policy',

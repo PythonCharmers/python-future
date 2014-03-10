@@ -4,18 +4,15 @@
 
 """Class representing image/* type MIME documents."""
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = ['MIMEImage']
 
 import imghdr
 
-from email import encoders
-from email.mime.nonmultipart import MIMENonMultipart
+from future.standard_library.email import encoders
+from future.standard_library.email.mime.nonmultipart import MIMENonMultipart
 
 
 class MIMEImage(MIMENonMultipart):

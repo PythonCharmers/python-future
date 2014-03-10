@@ -4,11 +4,8 @@
 
 """A package for parsing, handling, and generating email messages."""
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
 
 __version__ = '5.1.0'
 
@@ -42,7 +39,7 @@ def message_from_string(s, *args, **kws):
 
     Optional _class and strict are passed to the Parser constructor.
     """
-    from email.parser import Parser
+    from future.standard_library.email.parser import Parser
     return Parser(*args, **kws).parsestr(s)
 
 def message_from_bytes(s, *args, **kws):
@@ -50,7 +47,7 @@ def message_from_bytes(s, *args, **kws):
 
     Optional _class and strict are passed to the Parser constructor.
     """
-    from email.parser import BytesParser
+    from future.standard_library.email.parser import BytesParser
     return BytesParser(*args, **kws).parsebytes(s)
 
 def message_from_file(fp, *args, **kws):
@@ -58,7 +55,7 @@ def message_from_file(fp, *args, **kws):
 
     Optional _class and strict are passed to the Parser constructor.
     """
-    from email.parser import Parser
+    from future.standard_library.email.parser import Parser
     return Parser(*args, **kws).parse(fp)
 
 def message_from_binary_file(fp, *args, **kws):
@@ -66,5 +63,5 @@ def message_from_binary_file(fp, *args, **kws):
 
     Optional _class and strict are passed to the Parser constructor.
     """
-    from email.parser import BytesParser
+    from future.standard_library.email.parser import BytesParser
     return BytesParser(*args, **kws).parse(fp)

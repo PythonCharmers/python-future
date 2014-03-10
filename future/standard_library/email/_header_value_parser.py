@@ -70,19 +70,17 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import range
-from future.builtins import int
-from future.builtins import super
-from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
+from future.builtins import int, range, str, super
 
 import re
-import urllib   # For urllib.parse.unquote
 from collections import namedtuple, OrderedDict
-from email import _encoded_words as _ew
-from email import errors
-from email import utils
+
+from future import standard_library
+with standard_library.hooks():
+    import urllib   # For urllib.parse.unquote
+from future.standard_library.email import _encoded_words as _ew
+from future.standard_library.email import errors
+from future.standard_library.email import utils
 
 #
 # Useful constants and functions

@@ -4,15 +4,12 @@
 
 """Base class for MIME multipart/* type messages."""
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = ['MIMEMultipart']
 
-from email.mime.base import MIMEBase
+from future.standard_library.email.mime.base import MIMEBase
 
 
 class MIMEMultipart(MIMEBase):

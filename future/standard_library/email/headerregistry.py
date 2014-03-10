@@ -1,11 +1,3 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import super
-from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
 """Representing and manipulating email headers via custom objects.
 
 This module provides an implementation of the HeaderRegistry API.
@@ -15,10 +7,15 @@ Eventually HeaderRegistry will be a public API, but it isn't yet,
 and will probably change some before that happens.
 
 """
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
 
-from email import utils
-from email import errors
-from email import _header_value_parser as parser
+from future.builtins import super
+from future.builtins import str
+from future.standard_library.email import utils
+from future.standard_library.email import errors
+from future.standard_library.email import _header_value_parser as parser
 
 class Address(object):
 

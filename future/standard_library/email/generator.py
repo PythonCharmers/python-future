@@ -9,8 +9,6 @@ from __future__ import division
 from __future__ import absolute_import
 from future.builtins import super
 from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = ['Generator', 'DecodedGenerator', 'BytesGenerator']
 
@@ -21,10 +19,10 @@ import random
 import warnings
 
 from io import StringIO, BytesIO
-from email._policybase import compat32
-from email.header import Header
-from email.utils import _has_surrogates
-import email.charset as _charset
+from future.standard_library.email._policybase import compat32
+from future.standard_library.email.header import Header
+from future.standard_library.email.utils import _has_surrogates
+import future.standard_library.email.charset as _charset
 
 UNDERSCORE = '_'
 NL = '\n'  # XXX: no longer used by the code below.

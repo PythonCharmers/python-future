@@ -26,7 +26,6 @@ does dumb encoding and decoding.  To deal with the various line
 wrapping issues, use the email.header module.
 """
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import dict
@@ -34,8 +33,6 @@ from future.builtins import super
 from future.builtins import int
 from future.builtins import chr
 from future.builtins import range
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = [
     'body_decode',

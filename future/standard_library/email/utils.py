@@ -1,17 +1,16 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import bytes
-from future.builtins import str
-from future.builtins import int
-from future import standard_library
-standard_library.install_hooks()
 # Copyright (C) 2001-2010 Python Software Foundation
 # Author: Barry Warsaw
 # Contact: email-sig@python.org
 
 """Miscellaneous utilities."""
+
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from future import standard_library
+from future.builtins import bytes
+from future.builtins import str
+from future.builtins import int
 
 __all__ = [
     'collapse_rfc2231_value',
@@ -38,21 +37,22 @@ import base64
 import random
 import socket
 import datetime
-import urllib.parse
+with standard_library.hooks():
+    import urllib.parse
 import warnings
 from io import StringIO
 
-from email._parseaddr import quote
-from email._parseaddr import AddressList as _AddressList
-from email._parseaddr import mktime_tz
+from future.standard_library.email._parseaddr import quote
+from future.standard_library.email._parseaddr import AddressList as _AddressList
+from future.standard_library.email._parseaddr import mktime_tz
 
-from email._parseaddr import parsedate, parsedate_tz, _parsedate_tz
+from future.standard_library.email._parseaddr import parsedate, parsedate_tz, _parsedate_tz
 
 from quopri import decodestring as _qdecode
 
 # Intrapackage imports
-from email.encoders import _bencode, _qencode
-from email.charset import Charset
+from future.standard_library.email.encoders import _bencode, _qencode
+from future.standard_library.email.charset import Charset
 
 COMMASPACE = ', '
 EMPTYSTRING = ''

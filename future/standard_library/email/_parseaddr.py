@@ -1,10 +1,3 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import int
-from future import standard_library
-standard_library.install_hooks()
 # Copyright (C) 2002-2007 Python Software Foundation
 # Contact: email-sig@python.org
 
@@ -19,6 +12,12 @@ __all__ = [
     'parsedate_tz',
     'quote',
     ]
+
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import int
 
 import time, calendar
 

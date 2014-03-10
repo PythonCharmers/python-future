@@ -4,16 +4,13 @@
 
 """Base class for MIME type messages that are not multipart."""
 from __future__ import unicode_literals
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
 
 __all__ = ['MIMENonMultipart']
 
-from email import errors
-from email.mime.base import MIMEBase
+from future.standard_library.email import errors
+from future.standard_library.email.mime.base import MIMEBase
 
 
 class MIMENonMultipart(MIMEBase):
