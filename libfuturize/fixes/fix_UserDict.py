@@ -1,4 +1,10 @@
-"""Fix UserDict."""
+"""Fix UserDict.
+
+Incomplete!
+
+TODO: base this on fix_urllib perhaps?
+"""
+
 
 # Local imports
 from lib2to3 import fixer_base
@@ -7,8 +13,6 @@ from lib2to3.fixes.fix_imports import alternates, build_pattern, FixImports
 
 MAPPING = {'UserDict':  'collections',
 }
-
-TODO: base this on fix_urllib perhaps?
 
 # def alternates(members):
 #     return "(" + "|".join(map(repr, members)) + ")"
