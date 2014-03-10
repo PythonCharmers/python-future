@@ -31,7 +31,9 @@ Excerpts from Ryan's docstring:
   that function was defined.  Yuck, but it seems to work..."
 '''
 
+from __future__ import absolute_import
 import sys
+from types import FunctionType
 
 from future.utils import PY3
 
@@ -73,10 +75,12 @@ def newsuper(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
         for typ in mro:
             #  Find the class that owns the currently-executing method.
             for meth in typ.__dict__.values():
-                if not isinstance(meth, type(newsuper)):
-                    continue
-                if meth.func_code is f.f_code:
-                    break   # Aha!  Found you.
+                if isinstance(meth, FunctionType):
+                    if meth.func_code is f.f_code:
+                        break   # Aha!  Found you.
+                elif isinstance(meth, staticmethod):
+                    if meth.__func__.func_code is f.f_code:
+                        break   # Aha!  Found you.
             else:
                 continue    #  Not found! Move onto the next class in MRO.
             break    #  Found! Break out of the search loop.
