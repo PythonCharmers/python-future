@@ -1449,7 +1449,7 @@ def get_encoded_word(value):
         raise errors.HeaderParseError(
             "expected encoded word but found {}".format(value))
     _3to2list1 = list(value[2:].split('?=', 1))
-tok, remainder, = _3to2list1[:1] + [_3to2list1[1:]]
+    tok, remainder, = _3to2list1[:1] + [_3to2list1[1:]]
     if tok == value[2:]:
         raise errors.HeaderParseError(
             "expected encoded word but found {}".format(value))
@@ -1477,7 +1477,7 @@ tok, remainder, = _3to2list1[:1] + [_3to2list1[1:]]
             ew.append(token)
             continue
         _3to2list5 = list(_wsp_splitter(text, 1))
-chars, remainder, = _3to2list5[:1] + [_3to2list5[1:]]
+        chars, remainder, = _3to2list5[:1] + [_3to2list5[1:]]
         vtext = ValueTerminal(chars, 'vtext')
         _validate_xtext(vtext)
         ew.append(vtext)
@@ -1532,7 +1532,7 @@ def get_unstructured(value):
                 unstructured.append(token)
                 continue
         _3to2list7 = list(_wsp_splitter(value, 1))
-tok, remainder, = _3to2list7[:1] + [_3to2list7[1:]]
+        tok, remainder, = _3to2list7[:1] + [_3to2list7[1:]]
         vtext = ValueTerminal(tok, 'vtext')
         _validate_xtext(vtext)
         unstructured.append(vtext)
