@@ -418,7 +418,8 @@ class MockHTTPHandler(urllib.request.BaseHandler):
     def http_open(self, req):
         with standard_library.hooks():
             import http.client
-        import email, copy
+            import email
+        import copy
         self.requests.append(copy.deepcopy(req))
         if self._count == 0:
             self._count = self._count + 1
@@ -697,7 +698,9 @@ class HandlerTests(unittest.TestCase):
             self.assertEqual(int(headers["Content-length"]), len(data))
 
     def test_file(self):
-        import email.utils, socket
+        with standard_library.hooks():
+            import email.utils
+        import socket
         h = urllib.request.FileHandler()
         o = h.parent = MockOpener()
 

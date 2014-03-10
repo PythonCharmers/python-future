@@ -8,11 +8,11 @@ with standard_library.hooks():
     import urllib.request
     import urllib.error
     import http.client
+    from test import support
+    import email.message
 
-import email.message
 import io
 import unittest
-from test import support
 import os
 import sys
 import tempfile

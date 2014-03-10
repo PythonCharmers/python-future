@@ -225,7 +225,7 @@ MAXAMOUNT = 1048576
 # maximal line length when calling readline().
 _MAXLINE = 65536
 
-class HTTPMessage(email.message.Message, object):
+class HTTPMessage(email.message.Message):
     # XXX The only usage of this method is in
     # http.server.CGIHTTPRequestHandler.  Maybe move the code there so
     # that it doesn't need to be part of the public API.  The API has
