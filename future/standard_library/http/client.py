@@ -76,7 +76,7 @@ from future.utils import isbytes, istext
 with standard_library.hooks():
     import email.parser
     import email.message
-    from urlib.parse import urlsplit
+    from urllib.parse import urlsplit
 import io
 import os
 import socket
