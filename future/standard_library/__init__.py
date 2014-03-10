@@ -176,7 +176,8 @@ RENAMES = {
            # 'abc': 'collections.abc',   # for Py33
            'future.standard_library.html': 'html',
            'future.standard_library.http': 'http',
-           'future.standard_library.moves.urllib': 'urllib',
+           # 'future.standard_library.moves.urllib': 'urllib',
+           'future.standard_library.urllib': 'urllib',
            'future.standard_library._markupbase': '_markupbase',
           }
 
