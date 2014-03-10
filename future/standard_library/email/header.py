@@ -61,7 +61,7 @@ _embeded_header = re.compile(r'\n[^ \t]+:')
 
 
 # Helpers
-_max_append = email.quoprimime._max_append
+_max_append = future.standard_library.email.quoprimime._max_append
 
 
 def decode_header(header):
@@ -123,7 +123,7 @@ def decode_header(header):
             # This is an unencoded word.
             decoded_words.append((encoded_string, charset))
         elif encoding == 'q':
-            word = email.quoprimime.header_decode(encoded_string)
+            word = future.standard_library.email.quoprimime.header_decode(encoded_string)
             decoded_words.append((word, charset))
         elif encoding == 'b':
             paderr = len(encoded_string) % 4   # Postel's law: add missing padding

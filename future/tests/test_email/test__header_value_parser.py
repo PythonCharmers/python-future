@@ -6,13 +6,14 @@ from future.builtins import bytes
 from future.builtins import range
 from future.builtins import str
 from future import standard_library
-standard_library.install_hooks()
 import string
 import unittest
-from email import _header_value_parser as parser
-from email import errors
-from email import policy
-from test.test_email import TestEmailBase, parameterize
+with standard_library.hooks():
+    from email import _header_value_parser as parser
+    from email import errors
+    from email import policy
+    from test.test_email import TestEmailBase, parameterize
+
 
 class TestTokens(TestEmailBase):
 

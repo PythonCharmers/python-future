@@ -23,6 +23,7 @@ from __future__ import division
 from __future__ import absolute_import
 from future.builtins import super
 from future.builtins import range
+from future.utils import implements_iterator, PY3
 
 __all__ = ['FeedParser', 'BytesFeedParser']
 
@@ -45,6 +46,7 @@ NL = '\n'
 NeedMoreData = object()
 
 
+@implements_iterator
 class BufferedSubFile(object):
     """A file-ish object that can have new data loaded into it.
 
@@ -158,7 +160,10 @@ class FeedParser(object):
             self._factory_kwds = lambda: {}
         self._input = BufferedSubFile()
         self._msgstack = []
-        self._parse = self._parsegen().__next__
+        if PY3:
+            self._parse = self._parsegen().__next__
+        else:
+            self._parse = self._parsegen().next
         self._cur = None
         self._last = None
         self._headersonly = False

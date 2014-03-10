@@ -4,12 +4,12 @@ from __future__ import division
 from __future__ import absolute_import
 from future.builtins import super
 from future import standard_library
-standard_library.install_hooks()
 import io
-import email
 import unittest
-from email.message import Message
-from test.test_email import TestEmailBase
+with standard_library.hooks():
+    import email
+    from email.message import Message
+    from future.tests.test_email import TestEmailBase
 
 
 class TestCustomMessage(TestEmailBase):

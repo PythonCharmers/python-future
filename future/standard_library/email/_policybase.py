@@ -7,6 +7,7 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import super
+from future.utils import with_metaclass
 
 import abc
 from future.standard_library.email import header
@@ -114,7 +115,7 @@ def _extend_docstrings(cls):
     return cls
 
 
-class Policy(_PolicyBase, metaclass=abc.ABCMeta):
+class Policy(with_metaclass(abc.ABCMeta, _PolicyBase)):
 
     r"""Controls for how messages are interpreted and formatted.
 

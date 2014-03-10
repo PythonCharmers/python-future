@@ -28,11 +28,7 @@ wrapping issues, use the email.header module.
 from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import dict
-from future.builtins import super
-from future.builtins import int
-from future.builtins import chr
-from future.builtins import range
+from future.builtins import bytes, chr, dict, int, range, super
 
 __all__ = [
     'body_decode',
@@ -65,15 +61,15 @@ _QUOPRI_HEADER_MAP = dict((c, '=%02X' % c) for c in range(256))
 _QUOPRI_BODY_MAP = _QUOPRI_HEADER_MAP.copy()
 
 # Safe header bytes which need no encoding.
-for c in b'-!*+/' + ascii_letters.encode('ascii') + digits.encode('ascii'):
+for c in bytes(b'-!*+/' + ascii_letters.encode('ascii') + digits.encode('ascii')):
     _QUOPRI_HEADER_MAP[c] = chr(c)
 # Headers have one other special encoding; spaces become underscores.
 _QUOPRI_HEADER_MAP[ord(' ')] = '_'
 
 # Safe body bytes which need no encoding.
-for c in (b' !"#$%&\'()*+,-./0123456789:;<>'
-          b'?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
-          b'abcdefghijklmnopqrstuvwxyz{|}~\t'):
+for c in bytes(b' !"#$%&\'()*+,-./0123456789:;<>'
+               b'?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
+               b'abcdefghijklmnopqrstuvwxyz{|}~\t'):
     _QUOPRI_BODY_MAP[c] = chr(c)
 
 

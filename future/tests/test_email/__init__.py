@@ -7,15 +7,15 @@ from future.builtins import range
 from future.builtins import super
 from future.builtins import str
 from future import standard_library
-standard_library.install_hooks()
 import os
 import sys
 import unittest
-import test.support
-import email
-from email.message import Message
-from email._policybase import compat32
-from test.test_email import __file__ as landmark
+with standard_library.hooks():
+    import test.support
+    import email
+    from email.message import Message
+    from email._policybase import compat32
+from future.tests.test_email import __file__ as landmark
 
 # Run all tests in package for '-m unittest test.test_email'
 def load_tests(loader, standard_tests, pattern):

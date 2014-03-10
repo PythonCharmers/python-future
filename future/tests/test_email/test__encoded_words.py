@@ -3,11 +3,11 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future import standard_library
-standard_library.install_hooks()
 import unittest
-from email import _encoded_words as _ew
-from email import errors
-from test.test_email import TestEmailBase
+with standard_library.hooks():
+    from email import _encoded_words as _ew
+    from email import errors
+from future.tests.test_email import TestEmailBase
 
 
 class TestDecodeQ(TestEmailBase):

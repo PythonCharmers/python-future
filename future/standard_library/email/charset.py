@@ -17,11 +17,11 @@ __all__ = [
 
 from functools import partial
 
-import email.base64mime
-import email.quoprimime
+import future.standard_library.email.base64mime
+import future.standard_library.email.quoprimime
 
-from email import errors
-from email.encoders import encode_7or8bit
+from future.standard_library.email import errors
+from future.standard_library.email.encoders import encode_7or8bit
 
 
 # Flags for types of header encodings
