@@ -15,7 +15,6 @@ __all__ = ['MIMEMultipart']
 from email.mime.base import MIMEBase
 
 
-
 class MIMEMultipart(MIMEBase):
     """Base class for MIME multipart/* type messages."""
 

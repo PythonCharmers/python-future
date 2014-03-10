@@ -19,7 +19,6 @@ from email import encoders
 from email.mime.nonmultipart import MIMENonMultipart
 
 
-
 _sndhdr_MIMEmap = {'au'  : 'basic',
                    'wav' :'x-wav',
                    'aiff':'x-aiff',
@@ -44,7 +43,6 @@ def _whatsnd(data):
     return None
 
 
-
 class MIMEAudio(MIMENonMultipart):
     """Class for generating audio/* MIME documents."""
 
