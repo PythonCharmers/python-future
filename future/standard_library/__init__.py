@@ -382,11 +382,11 @@ class hooks(object):
             scrub_future_stdlib_modules()
 
 
-def is_future_stdlib_module(m):
-    """
-    Returns True if the module m is provided by the future.standard_library
-    package.
-    """
+# def is_future_stdlib_module(m):
+#     """
+#     Returns True if the module m is provided by the future.standard_library
+#     package.
+#     """
 
 
 def is_py2_stdlib_module(m):
