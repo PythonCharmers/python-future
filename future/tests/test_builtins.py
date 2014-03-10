@@ -188,8 +188,8 @@ from future import standard_library
 with standard_library.hooks():
     import builtins
     from test.support import TESTFN, unlink,  run_unittest, check_warnings
-    import ast
-    import collections
+import ast
+import collections
 
 import io
 import locale
