@@ -30,22 +30,25 @@ This produces more modern Python 2 code that is not yet compatible with Python
 most Python projects that are willing to drop support for Python 2.5 and lower.
 
 After this, the recommended approach is to explicitly mark all strings that must
-be byte-strings with a b'' prefix, and then invoke the second stage with:
+be byte-strings with a b'' prefix and all text (unicode) strings with a u''
+prefix, and then invoke the second stage of Python 2 to 2/3 conversion with::
 
   $ futurize --stage2 mypython2script.py
 
-This implicitly turns all unadorned string literals into unicode strings (Py3
-str) and makes the additional changes needed to support Python 3. This stage
-introduces a dependency on ``future`` to restore Py2 support.
+Stage 2 adds a dependency on ``future``. It converts most remaining Python
+2-specific code to Python 3 code and adds appropriate imports from ``future``
+to restore Py2 support.
 
-If you would prefer instead to mark all your text strings explicitly with u''
-prefixes and have all unadorned '' strings converted to byte-strings, use this:
+The command above leaves all unadorned string literals as native strings
+(byte-strings on Py2, unicode strings on Py3). If instead you would like all
+unadorned string literals to be promoted to unicode, you can also pass this
+flag:
 
-  $ futurize --stage2 --tobytes mypython2script.py
+  $ futurize --stage2 --unicode-literals mypython2script.py
 
-Note that this even includes docstrings.
-
-Separate stages are not available (or needed) when converting from Python 3.
+This adds the declaration ``from __future__ import unicode_literals`` to the
+top of each file, which implicitly declares all unadorned string literals to be
+unicode strings (``unicode`` on Py2).
 """
 
 from __future__ import (absolute_import, print_function, unicode_literals)
@@ -75,14 +78,14 @@ def main(args=None):
                       help="Adds all __future__ and future imports to each module")
     parser.add_option("-d", "--doctests_only", action="store_true",
                       help="Fix up doctests only")
-    parser.add_option("-b", "--tobytes", action="store_true",
-                      help="Convert all unadorned string literals to bytes objects")
     parser.add_option("-1", "--stage1", action="store_true",
                       help="Modernize Python 2 code only; no compatibility with Python 3 (or dependency on ``future``)")
     parser.add_option("-2", "--stage2", action="store_true",
                       help="Take modernized (stage1) code and add a dependency on ``future`` to provide Py3 compatibility.")
     parser.add_option("-0", "--both-stages", action="store_true",
                       help="Apply both stages 1 and 2")
+    parser.add_option("-u", "--unicode-literals", action="store_true",
+                      help="Add ``from __future__ import unicode_literals`` to implicitly convert all unadorned string literals '' into unicode strings")
     parser.add_option("-f", "--fix", action="append", default=[],
                       help="Each FIX specifies a transformation; default: all")
     parser.add_option("-j", "--processes", action="store", default=1,
@@ -108,11 +111,11 @@ def main(args=None):
     options, args = parser.parse_args(args)
     fixer_pkg = 'libfuturize.fixes'
     avail_fixes = set()
-    if not (options.stage1 or options.stage2):
-        options.both_stages = True
-    else:
+    if options.stage1 or options.stage2:
         assert options.both_stages is None
         options.both_stages = False
+    else:
+        options.both_stages = True
     if options.stage1 or options.both_stages:
         avail_fixes.update(lib2to3_fix_names_stage1)
         avail_fixes.update(libfuturize_fix_names_stage1)
@@ -120,8 +123,10 @@ def main(args=None):
         avail_fixes.update(lib2to3_fix_names_stage2)
         avail_fixes.update(libfuturize_fix_names_stage2)
 
-    if options.tobytes:
-        avail_fixes.add('libfuturize.fixes.fix_bytes')
+    # if options.tobytes:
+    #     avail_fixes.add('libfuturize.fixes.fix_bytes')
+    if options.unicode_literals:
+        avail_fixes.add('libfuturize.fixes.fix_unicode_literals_import')
     if not options.write and options.no_diffs:
         warn("not writing files and not printing diffs; that's not very useful")
     if not options.write and options.nobackups:

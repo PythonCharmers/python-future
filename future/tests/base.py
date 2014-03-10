@@ -46,7 +46,7 @@ class CodeHandler(unittest.TestCase):
         from __future__ import print_function
         """)
 
-        # After stage2:
+        # After stage2 --all-imports:
         # TODO: use this form after implementing a fixer to consolidate
         #       __future__ imports into a single line:
         # self.headers2 = """
@@ -61,6 +61,7 @@ class CodeHandler(unittest.TestCase):
         from __future__ import print_function
         from __future__ import unicode_literals
         from future import standard_library
+        standard_library.install_hooks()
         from future.builtins import *
         """)
         self.interpreters = ['python']
@@ -68,7 +69,7 @@ class CodeHandler(unittest.TestCase):
         self.env = {'PYTHONPATH': os.getcwd()}
 
     def convert(self, code, stages=(1, 2), all_imports=False, from3=False,
-                reformat=True, tobytes=True, run=True):
+                reformat=True, run=True):
         """
         Converts the code block using ``futurize`` and returns the
         resulting code.
@@ -91,7 +92,7 @@ class CodeHandler(unittest.TestCase):
             code = self.reformat(code)
         self._write_test_script(code)
         self._futurize_test_script(stages=stages, all_imports=all_imports,
-                                   from3=from3, tobytes=tobytes)
+                                   from3=from3)
         output = self._read_test_script()
         if run:
             for interpreter in self.interpreters:
@@ -106,7 +107,7 @@ class CodeHandler(unittest.TestCase):
             code = code[1:]
         return dedent(code)
 
-    def check(self, output, expected, ignore_imports=True):
+    def compare(self, output, expected, ignore_imports=True):
         """
         Compares whether the code blocks are equal. If not, raises an
         exception so the test fails. Ignores any trailing whitespace like
@@ -131,6 +132,9 @@ class CodeHandler(unittest.TestCase):
             from future <anything>
             from future.<anything>
 
+        or any line containing:
+            install_hooks()
+
         Limitation: doesn't handle imports split across multiple lines like
         this:
 
@@ -141,16 +145,16 @@ class CodeHandler(unittest.TestCase):
         for line in code.splitlines():
             if not (line.startswith('from __future__ import ')
                     or line.startswith('from future ')
+                    or 'install_hooks()' in line
                     # but don't match "from future_builtins" :)
                     or line.startswith('from future.')):
                 output.append(line)
         return '\n'.join(output)
 
-    def convert_check(self, before, expected, stages=(1, 2),
-                      all_imports=False, ignore_imports=True, from3=False,
-                      tobytes=False, run=True):
+    def convert_check(self, before, expected, stages=(1, 2), all_imports=False,
+                      ignore_imports=True, from3=False, run=True):
         """
-        Convenience method that calls convert() and check().
+        Convenience method that calls convert() and compare().
 
         Reformats the code blocks automatically using the reformat()
         method.
@@ -167,37 +171,15 @@ class CodeHandler(unittest.TestCase):
             
         for the purpose of the comparison.
         """
-        output = self.convert(before, stages=stages,
-                              all_imports=all_imports, from3=from3,
-                              tobytes=tobytes, run=run)
+        output = self.convert(before, stages=stages, all_imports=all_imports,
+                              from3=from3, run=run)
         if all_imports:
             headers = self.headers2 if 2 in stages else self.headers1
         else:
             headers = ''
 
-        self.check(output, self.reformat(headers + expected),
-                   ignore_imports=ignore_imports)
-
-    def check_old(self, output, expected, stages=(1, 2), ignore_imports=True):
-        """
-        Checks that the output is equal to the expected output, after
-        reformatting.
-        
-        Pass ``expected`` as a string (as a code block). It will be
-        reformatted and compared with the resulting code. We assert that
-        the output of the conversion of ``before`` with ``futurize`` is
-        equal to ``after``. Unless ignore_imports is True, the
-        appropriate headers for the stage(s) used are added automatically
-        for the comparison.
-        """
-        headers = ''
-        # if not ignore_imports:
-        #     if 2 in stages:
-        #         headers = self.headers2
-        #     else:
-        #         headers = self.headers1
-        self.compare(output, headers + self.reformat(expected),
-                     ignore_imports=ignore_imports)
+        self.compare(output, self.reformat(headers + expected),
+                    ignore_imports=ignore_imports)
 
     def order_future_lines(self, code):
         """
@@ -248,7 +230,7 @@ class CodeHandler(unittest.TestCase):
         return newsource
 
     def _futurize_test_script(self, filename='mytestscript.py', stages=(1, 2),
-                              all_imports=False, from3=False, tobytes=False):
+                              all_imports=False, from3=False):
         params = []
         stages = list(stages)
         if all_imports:
@@ -257,8 +239,6 @@ class CodeHandler(unittest.TestCase):
             script = 'pasteurize.py'
         else:
             script = 'futurize.py'
-            if tobytes:
-                params.append('--tobytes')
             if stages == [1]:
                 params.append('--stage1')
             elif stages == [2]:

@@ -7,9 +7,8 @@ Adapted for the python-future module from the Python 3.3 standard library tests.
 from __future__ import unicode_literals
 from future import standard_library
 
-import html
-
-standard_library.remove_hooks()
+with standard_library.hooks():
+    import html
 
 import unittest
 

@@ -23,10 +23,6 @@ class TestDecorators(unittest.TestCase):
         if not utils.PY3:
             assert hasattr(a, '__unicode__')
         self.assertEqual(str(a), my_unicode_str)
-
-    @unittest.expectedFailure
-    def test_str_encode_returns_bytes(self):
-        " The following fails but should ideally pass: "
         self.assertTrue(isinstance(str(a).encode('utf-8'), bytes))
 
         # Manual equivalent on Py2 without the decorator:
@@ -57,3 +53,5 @@ class TestDecorators(unittest.TestCase):
                 break
             self.assertEqual(item, 'Next!')
 
+if __name__ == '__main__':
+    unittest.main()

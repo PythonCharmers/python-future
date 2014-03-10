@@ -2,6 +2,71 @@ What's new
 **********
 
 
+.. whats-new-0.12:
+
+What's new in version 0.12
+==========================
+
+The major new feature in version is improvements in the standard library module and its compatibility with 3rd-party modules:
+
+Standard-library import hooks now require explicit installation
+---------------------------------------------------------------
+
+*Note: backwards-incompatible change:* The deprecated feature of implicit
+installation of import hooks by ``future.standard_library`` has been
+removed. Now the import hooks must be installed explicitly, as follows::
+
+    from future import standard_library
+    with standard_library.hooks():
+        import html.parser
+        import http.client
+
+or with the functional interface::
+
+    from future import standard_library
+
+    standard_library.install_hooks():
+    import html.parser
+    import http.client
+    ...
+    standard_library.remove_hooks()
+
+This allows finer-grained control over whether import hooks are enabled for
+other imported modules, such as ``requests``, which provide their own Python
+2/3 compatibility code. Also see below.
+
+
+New ``urllib`` and xmlrpc modules
+---------------------------------
+
+The ``urllib`` and ``xmlrpc`` modules are now supported. These are not (yet)
+full backports of the Python 3.3 modules but remappings to the corresponding
+functionality in the Python 2.x standard library.
+
+Use them like this::
+
+    with standard_library.hooks():
+        from urllib.request import Request, ...
+
+Improved compatibility with ``requests``
+----------------------------------------
+
+The exit function of the ``hooks`` context manager and the ``remove_hooks``
+function both now remove submodules of ``future.standard_library`` from
+``sys.modules``. Therefore this code is now possible::
+
+       with standard_library.hooks():
+           import urllib.parse
+
+       import requests
+
+Previously this required either importing ``requests`` first or manually
+removing ``urllib`` from ``sys.modules`` before importing ``requests``.
+   
+This should also improve the compatibility of the standard library hooks with
+any other module that provides its own Python 2/3 compatibility code.
+
+
 .. whats-new-0.11:
 
 What's new in version 0.11

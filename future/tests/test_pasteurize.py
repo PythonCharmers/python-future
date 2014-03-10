@@ -1,6 +1,6 @@
 """
 This module contains snippets of Python 3 code (invalid Python 2) and
-tests for whether they can be passed to ``futurize --from3`` and
+tests for whether they can be passed to ``pasteurize`` and
 immediately run under both Python 2 and Python 3.
 """
 
@@ -19,6 +19,7 @@ class TestPasteurize(CodeHandler):
     After running ``pasteurize``, these Python 3 code snippets should run
     on both Py3 and Py2.
     """
+
     @skip26    # Python 2.6's lib2to3 causes the "from future.builtins import
                # range" line to be stuck at the bottom of the module!
     def test_range_slice(self):
@@ -53,6 +54,7 @@ class TestPasteurize(CodeHandler):
         '''
         self.unchanged(code, from3=True)
 
+    @unittest.expectedFailure
     def test_exception_indentation(self):
         """
         As of v0.11.2, pasteurize broke the indentation of ``raise`` statements
@@ -63,20 +65,56 @@ class TestPasteurize(CodeHandler):
         if True:
             try:
                 'string' + 1
-        except TypeError:
-            ty, va, tb = sys.exc_info()
-            raise TypeError("can't do that!").with_traceback(tb)
+            except TypeError:
+                ty, va, tb = sys.exc_info()
+                raise TypeError("can't do that!").with_traceback(tb)
         '''
         after = '''
         import sys
+        from future.utils import raise_with_traceback
         if True:
             try:
                 'string' + 1
-        except TypeError:
-            ty, va, tb = sys.exc_info()
-            raise_with_traceback(TypeError("can't do that!"), tb)
+            except TypeError:
+                ty, va, tb = sys.exc_info()
+                raise_with_traceback(TypeError("can't do that!"), tb)
         '''
-        self.check(before, after, from3=True)
+        self.convert_check(before, after, from3=True)
+
+    # TODO: fix and test this test
+    @unittest.expectedFailure
+    def test_urllib_request(self):
+        """
+        Example Python 3 code using the new urllib.request module.
+        
+        Does the ``pasteurize`` script handle this?
+        """
+        before = """
+            import pprint
+            import urllib.request
+
+            URL = 'http://pypi.python.org/pypi/{}/json'
+            package = 'future'
+            
+            r = urllib.request.urlopen(URL.format(package_name))
+            pprint.pprint(r.read())
+        """
+        after = """
+            from future import standard_library
+            standard_library.install_hooks()
+
+            import pprint
+            import urllib.request
+
+            URL = 'http://pypi.python.org/pypi/{}/json'
+            package = 'future'
+            
+            r = urllib.request.urlopen(URL.format(package_name))
+            pprint.pprint(r.read())
+        """
+
+        self.convert_check(before, after, from3=True)
+
 
         
 class TestFuturizeAnnotations(CodeHandler):
@@ -87,7 +125,7 @@ class TestFuturizeAnnotations(CodeHandler):
         def foo(): pass
         foo.__annotations__ = {'return': 'bar'}
         """
-        self.check(before, after, from3=True)
+        self.convert_check(before, after, from3=True)
 
         b = """
         def foo() -> "bar":
@@ -99,7 +137,7 @@ class TestFuturizeAnnotations(CodeHandler):
             print "baz"
             print "what's next, again?"
         """
-        self.check(b, a, from3=True)
+        self.convert_check(b, a, from3=True)
 
     @unittest.expectedFailure
     def test_single_param_annotations(self):
@@ -108,7 +146,7 @@ class TestFuturizeAnnotations(CodeHandler):
         def foo(bar): pass
         foo.__annotations__ = {'bar': 'baz'}
         """
-        self.check(b, a, from3=True)
+        self.convert_check(b, a, from3=True)
 
         b = """
         def foo(bar:"baz"="spam"):
@@ -121,13 +159,13 @@ class TestFuturizeAnnotations(CodeHandler):
             print("whatever.")
         foo.__annotations__ = {'bar': 'baz'}
         """
-        self.check(b, a, from3=True)
+        self.convert_check(b, a, from3=True)
 
     @unittest.expectedFailure
     def test_multiple_param_annotations(self):
         b = "def foo(bar:'spam'=False, baz:'eggs'=True, ham:False='spaghetti'): pass"
         a = "def foo(bar=False, baz=True, ham='spaghetti'): pass"
-        self.check(b, a, from3=True)
+        self.convert_check(b, a, from3=True)
 
         b = """
         def foo(bar:"spam"=False, baz:"eggs"=True, ham:False="spam"):
@@ -139,13 +177,13 @@ class TestFuturizeAnnotations(CodeHandler):
             print("this is filler, just doing a suite")
             print("suites require multiple lines.")
         """
-        self.check(b, a, from3=True)
+        self.convert_check(b, a, from3=True)
 
     @unittest.expectedFailure
     def test_mixed_annotations(self):
         b = "def foo(bar=False, baz:'eggs'=True, ham:False='spaghetti') -> 'zombies': pass"
         a = "def foo(bar=False, baz=True, ham='spaghetti'): pass"
-        self.check(b, a, from3=True)
+        self.convert_check(b, a, from3=True)
 
         b = """
         def foo(bar:"spam"=False, baz=True, ham:False="spam") -> 'air':
@@ -157,11 +195,11 @@ class TestFuturizeAnnotations(CodeHandler):
             print("this is filler, just doing a suite")
             print("suites require multiple lines.")
         """
-        self.check(b, a, from3=True)
+        self.convert_check(b, a, from3=True)
 
         b = "def foo(bar) -> 'brains': pass"
         a = "def foo(bar): pass"
-        self.check(b, a, from3=True)
+        self.convert_check(b, a, from3=True)
 
     def test_functions_unchanged(self):
         s = "def foo(): pass"

@@ -11,6 +11,8 @@ import sys
 import tempfile
 import os
 import copy
+import textwrap
+from subprocess import CalledProcessError
 
 from future.tests.base import CodeHandler
 
@@ -199,23 +201,27 @@ class TestStandardLibraryRenames(CodeHandler):
         self.assertEqual(list(zip_longest(a, b)),
                          [(1, 2), (2, 4), (None, 6)])
 
-    def test_import_from_module(self):
+    def test_import_failure_from_module(self):
         """
         Tests whether e.g. "import socketserver" succeeds in a module
-        imported by another module.
+        imported by another module that has used and removed the stdlib hooks.
+        We want this to fail; the stdlib hooks should not bleed to imported
+        modules too without their explicitly invoking them.
         """
         code1 = '''
                 from future import standard_library
+                standard_library.install_hooks()
+                standard_library.remove_hooks()
                 import importme2
                 '''
         code2 = '''
                 import socketserver
-                print('Import succeeded!')
+                print('Uh oh. importme2 should have raised an ImportError.')
                 '''
         self._write_test_script(code1, 'importme1.py')
         self._write_test_script(code2, 'importme2.py')
-        output = self._run_test_script('importme1.py')
-        print(output)
+        with self.assertRaises(CalledProcessError):
+            output = self._run_test_script('importme1.py')
 
     def test_configparser(self):
         import configparser
@@ -333,37 +339,97 @@ class TestStandardLibraryRenames(CodeHandler):
         self.assertTrue(True)
 
 
-try:
-    import requests
-except ImportError:
-    requests = None
+with standard_library.suspend_hooks():
+    try:
+        import requests
+    except ImportError:
+        requests = None
+
+
+#########################################################################
+# From here below is about testing whether the standard library hooks in
+# ``future`` are compatible with the ``requests`` package.
+#########################################################################
+
+class write_module(object):
+    """
+    A context manager to streamline the tests. Creates a temp file for a
+    module designed to be imported by the ``with`` block, then removes it
+    afterwards.
+    """
+    def __init__(self, code, tempdir):
+        self.code = code
+        self.tempdir = tempdir
+
+    def __enter__(self):
+        print('Creating {}/test_imports_future_stdlib ...'.format(self.tempdir))
+        with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
+            f.write(textwrap.dedent(self.code))
+        sys.path.insert(0, self.tempdir)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        If an exception occurred, we leave the file for inspection.
+        """
+        sys.path.remove(self.tempdir)
+        if exc_type is None:
+            # No exception occurred
+            os.remove(self.tempdir + 'test_imports_future_stdlib.py')
+
 
 class TestRequests(CodeHandler):
     """
     This class tests whether the requests module conflicts with the
     standard library import hooks, as in issue #19.
     """
-    @unittest.expectedFailure
     @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
                      + ' to test ``requests`` + future compatibility (issue #19)')
     def test_requests(self):
-        with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
-            f.write('from future import standard_library')
-        # print('sys.meta_path is: ', sys.meta_path)
-        sys.path.insert(0, self.tempdir)
-        print('Importing test_imports_future_stdlib ...')
-        try:
+        code = """
+            from future import standard_library
+            standard_library.install_hooks()
+
+            import urllib.response
+            import html.parser
+            """
+        with write_module(code, self.tempdir):
             import test_imports_future_stdlib
             standard_library.remove_hooks()
             import requests
             r = requests.get('http://google.com')
             self.assertTrue(True)
-        except Exception as e:
-            raise e
-        else:
-            print('Succeeded!')
-        finally:
-            sys.path.remove(self.tempdir)
+
+        # Was:
+        # try:
+        #    (code)
+        # except Exception as e:
+        #     raise e
+        # else:
+        #     print('Succeeded!')
+        # finally:
+        #     sys.path.remove(self.tempdir)
+
+
+    @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
+                     + ' to test ``requests`` + future compatibility (issue #19)')
+    def test_requests_cm(self):
+        """
+        Tests whether requests can be used importing standard_library modules
+        previously with the hooks context manager
+        """
+        code = """
+            from future import standard_library
+            with standard_library.hooks():
+                 import builtins
+                 import html.parser
+                 import http.client
+            """
+        with write_module(code, self.tempdir):
+            import test_imports_future_stdlib
+            import requests
+            r = requests.get('http://google.com')
+            self.assertTrue(True)
 
 
 if __name__ == '__main__':
