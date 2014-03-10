@@ -75,9 +75,7 @@ from future.builtins import int, range, str, super
 import re
 from collections import namedtuple, OrderedDict
 
-from future import standard_library
-with standard_library.hooks():
-    import urllib   # For urllib.parse.unquote
+from future.standard_library.urllib.parse import (unquote, unquote_to_bytes)
 from future.standard_library.email import _encoded_words as _ew
 from future.standard_library.email import errors
 from future.standard_library.email import utils
@@ -1123,12 +1121,12 @@ class MimeParameters(TokenList):
                 value = param.param_value
                 if param.extended:
                     try:
-                        value = urllib.parse.unquote_to_bytes(value)
+                        value = unquote_to_bytes(value)
                     except UnicodeEncodeError:
                         # source had surrogate escaped bytes.  What we do now
                         # is a bit of an open question.  I'm not sure this is
                         # the best choice, but it is what the old algorithm did
-                        value = urllib.parse.unquote(value, encoding='latin-1')
+                        value = unquote(value, encoding='latin-1')
                     else:
                         try:
                             value = value.decode(charset, 'surrogateescape')

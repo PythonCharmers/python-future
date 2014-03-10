@@ -69,14 +69,11 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future import standard_library
 from future.builtins import *
 from future.utils import isbytes, istext
-
-with standard_library.hooks():
-    import email.parser
-    import email.message
-    from urllib.parse import urlsplit
+from future.standard_library.email.message import Message
+from future.standard_library.email.parser import Parser
+from future.standard_library.urllib.parse import urlsplit
 import io
 import os
 import socket
@@ -225,7 +222,7 @@ MAXAMOUNT = 1048576
 # maximal line length when calling readline().
 _MAXLINE = 65536
 
-class HTTPMessage(email.message.Message):
+class HTTPMessage(Message):
     # XXX The only usage of this method is in
     # http.server.CGIHTTPRequestHandler.  Maybe move the code there so
     # that it doesn't need to be part of the public API.  The API has
@@ -274,9 +271,7 @@ def parse_headers(fp, _class=HTTPMessage):
         if line in (b'\r\n', b'\n', b''):
             break
     hstring = bytes(b'').join(headers).decode('iso-8859-1')
-                                          #  Try passing it as bytes to Py2.7 email.parser.parsestr
-                                          #  which expects a byte-string
-    return email.parser.Parser(_class=_class).parsestr(hstring)
+    return Parser(_class=_class).parsestr(hstring)
 
 _strict_sentinel = object()
 

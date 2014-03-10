@@ -12,11 +12,8 @@ Backported for python-future from Python 3.3.
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future import standard_library
 from future.builtins import *
-
-with standard_library.hooks():
-    import _markupbase
+from future.standard_library import _markupbase
 import re
 import warnings
 
@@ -524,8 +521,7 @@ class HTMLParser(_markupbase.ParserBase):
             except ValueError:
                 return '&#' + s
             else:
-                with standard_library.hooks():
-                    from html.entities import html5
+                from future.standard_library.html.entities import html5
                 if s in html5:
                     return html5[s]
                 elif s.endswith(';'):
