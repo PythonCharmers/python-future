@@ -48,7 +48,6 @@ NL = '\n'
 NeedMoreData = object()
 
 
-
 class BufferedSubFile(object):
     """A file-ish object that can have new data loaded into it.
 
@@ -139,7 +138,6 @@ class BufferedSubFile(object):
         return line
 
 
-
 class FeedParser(object):
     """A feed-style parser of email."""
 
