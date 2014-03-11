@@ -60,12 +60,13 @@ Explicit imports
 Explicit forms of the imports are often preferred and are necessary for using
 certain automated code-analysis tools.
 
-The most common imports from ``future`` are::
+The complete set of imports from ``future`` is::
     
     from future import standard_library, utils
-    from future.builtins import (bytes, int, range, round, str, super,
-                                 ascii, chr, hex, input, oct, open,
-                                 filter, map, zip)
+    from future.builtins import (ascii, bytes, chr, dict, filter, hex, input,
+                                 int, map, next, oct, open, pow, range, round,
+                                 str, super, zip)
+
 
 The disadvantage of importing only some of the builtins is that it
 increases the risk of introducing Py2/3 portability bugs as your code
@@ -79,8 +80,8 @@ equivalent to typing ``bytes = bytes; int = int`` etc. for each builtin.
 
 The internal API is currently as follows::
 
-    from future.builtins.types import bytes, int, range, str
-    from future.builtins.misc import ascii, chr, hex, input, oct, open, round, super
+    from future.builtins.types import bytes, dict, int, range, str
+    from future.builtins.misc import ascii, chr, hex, input, next, oct, open, round, super
     from future.builtins.iterators import filter, map, zip
 
 To understand the details of the backported builtins on Python 2, see the

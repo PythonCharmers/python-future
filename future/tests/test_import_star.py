@@ -49,7 +49,6 @@ class TestImportStar(unittest.TestCase):
         pass
 
     @skip26
-    @unittest.expectedFailure
     def test_python3_stdlib_imports(self):
         """
         The import hooks should be tightened up so that this test never fails

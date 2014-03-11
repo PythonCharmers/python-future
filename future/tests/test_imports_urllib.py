@@ -2,13 +2,12 @@ from __future__ import absolute_import, print_function
 
 import unittest
 import sys
-# print([m for m in sys.modules if m.startswith('urllib')])
 
 class ImportUrllibTest(unittest.TestCase):
     @unittest.expectedFailure
     def test_urllib(self):
         """
-        This will fail: importing urllib first means that the import hooks
+        This should perhaps fail: importing urllib first means that the import hooks
         won't be consulted when importing urllib.response.
         """
         import urllib

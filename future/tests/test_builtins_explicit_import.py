@@ -5,8 +5,8 @@ future.builtins namespace.
 
 from __future__ import absolute_import, division, unicode_literals
 from future.builtins import (filter, map, zip)
-from future.builtins import (ascii, chr, hex, input, isinstance, oct, open)
-from future.builtins import (bytes, int, range, round, str, super)
+from future.builtins import (ascii, chr, hex, input, isinstance, next, oct, open)
+from future.builtins import (bytes, dict, int, range, round, str, super)
 from future.tests.base import unittest
 
 
