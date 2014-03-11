@@ -369,7 +369,7 @@ class hooks(object):
     imported modules (like requests).
     """
     def __enter__(self):
-        logging.warn('Entering hooks context manager')
+        logging.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
         scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
@@ -377,7 +377,7 @@ class hooks(object):
         return self
 
     def __exit__(self, *args):
-        logging.warn('Exiting hooks context manager')
+        logging.debug('Exiting hooks context manager')
         if not self.hooks_were_installed:
             remove_hooks(keep_sys_modules=True)
             scrub_future_sys_modules()
@@ -431,7 +431,7 @@ def scrub_py2_sys_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.warn('Deleting (Py2) {} from sys.modules'.format(modulename))
+            logging.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
             del sys.modules[modulename]
 
 
@@ -447,10 +447,25 @@ def scrub_future_sys_modules():
         if modulename.startswith('future'):
             logging.debug('Not removing', modulename)
             continue
-        if modulename in RENAMES.values():   #  and    # builtins, configparser etc.
-            # (hasattr(module, '__file__') and
-            #  module.__file__.startswith(future_stdlib))):
-            logging.warn('Deleting (future) {} from sys.modules'.format(modulename))
+        # We look for builtins, configparser, urllib, email, http, etc., and
+        # their submodules
+        if (modulename in RENAMES.values() or 
+            any(modulename.startswith(m + '.') for m in RENAMES.values())):   
+            # We don't want to remove Python 2.x urllib if this is cached
+            if is_py2_stdlib_module(module):
+                continue
+
+            logging.debug('Deleting (future) {} from sys.modules'.format(modulename))
+
+            # builtins has no __file__:
+            if hasattr(module, '__file__'):
+                if not os.path.join('future', 'standard_library') in module.__file__:
+                    # Why would this occur?
+                    s = ('Please report this unknown condition as an issue on '
+                         'https://github.com/PythonCharmers/python-future: {}, {}'
+                        ).format(modulename, module.__file__)
+                    logging.warn(s)
+                    continue
             del sys.modules[modulename]
 
 
