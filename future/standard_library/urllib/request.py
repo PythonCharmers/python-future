@@ -86,7 +86,7 @@ f = urllib.request.urlopen('http://www.python.org/')
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from future.builtins import bytes, dict, filter, input, int, map, open, str
-from future.utils import PY3
+from future.utils import PY3, raise_with_traceback
 
 import base64
 import bisect
@@ -1896,8 +1896,7 @@ class URLopener(object):
 
     def open_local_file(self, url):
         """Use local file."""
-        with standard_library.hooks():
-            import email.utils
+        # Not needed: from future.standard_library.email import utils as email_utils
         import mimetypes
         host, file = splithost(url)
         localname = url2pathname(file)

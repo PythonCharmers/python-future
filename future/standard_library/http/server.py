@@ -35,7 +35,7 @@ XXX To do:
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future import standard_library, utils
+from future import utils
 from future.builtins import *
 
 
@@ -91,16 +91,22 @@ __version__ = "0.6"
 
 __all__ = ["HTTPServer", "BaseHTTPRequestHandler"]
 
-with standard_library.hooks():
-    import html
-    import email.message
-    import email.parser
-    import http.client
-    # Something bizarre sometimes happens to cause the client submodule to
-    # disappear from http after a successful import when run under the Py2.7 unittest runner.
-    # TODO: investigate this!
-    import socketserver
-    import urllib.parse
+from future.standard_library import html
+from future.standard_library.http import client as http_client
+from future.standard_library.urllib import parse as urllib_parse
+from future.standard_library import socketserver
+
+# with standard_library.hooks():
+#     import html
+#     import email.message
+#     import email.parser
+#     import http.client
+#     # (Old message? Is this resolved now?)
+#     #     Something bizarre sometimes happens to cause the client submodule to
+#     #     disappear from http after a successful import when run under the Py2.7 unittest runner.
+#     #     TODO: investigate this!
+#     import socketserver
+#     import urllib.parse
 import io
 import mimetypes
 import os
@@ -330,9 +336,9 @@ class BaseHTTPRequestHandler(socketserver.StreamRequestHandler):
 
         # Examine the headers and look for a Connection directive.
         try:
-            self.headers = http.client.parse_headers(self.rfile,
+            self.headers = http_client.parse_headers(self.rfile,
                                                      _class=self.MessageClass)
-        except http.client.LineTooLong:
+        except http_client.LineTooLong:
             self.send_error(400, "Line too long")
             return False
 
@@ -582,7 +588,7 @@ class BaseHTTPRequestHandler(socketserver.StreamRequestHandler):
     protocol_version = "HTTP/1.0"
 
     # MessageClass used to parse headers
-    MessageClass = http.client.HTTPMessage
+    MessageClass = http_client.HTTPMessage
 
     # Table mapping response codes to messages; entries have the
     # form {code: (shortmessage, longmessage)}.
@@ -746,7 +752,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             return None
         list.sort(key=lambda a: a.lower())
         r = []
-        displaypath = html.escape(urllib.parse.unquote(self.path))
+        displaypath = html.escape(urllib_parse.unquote(self.path))
         enc = sys.getfilesystemencoding()
         title = 'Directory listing for %s' % displaypath
         r.append('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" '
@@ -768,7 +774,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
             r.append('<li><a href="%s">%s</a></li>'
-                    % (urllib.parse.quote(linkname), html.escape(displayname)))
+                    % (urllib_parse.quote(linkname), html.escape(displayname)))
             # # Use this instead:
             # r.append('<li><a href="%s">%s</a></li>'
             #         % (urllib.quote(linkname), cgi.escape(displayname)))
@@ -794,7 +800,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         # abandon query parameters
         path = path.split('?',1)[0]
         path = path.split('#',1)[0]
-        path = posixpath.normpath(urllib.parse.unquote(path))
+        path = posixpath.normpath(urllib_parse.unquote(path))
         words = path.split('/')
         words = filter(None, words)
         path = os.getcwd()
@@ -1052,7 +1058,7 @@ class CGIHTTPRequestHandler(SimpleHTTPRequestHandler):
         env['SERVER_PROTOCOL'] = self.protocol_version
         env['SERVER_PORT'] = str(self.server.server_port)
         env['REQUEST_METHOD'] = self.command
-        uqrest = urllib.parse.unquote(rest)
+        uqrest = urllib_parse.unquote(rest)
         env['PATH_INFO'] = uqrest
         env['PATH_TRANSLATED'] = self.translate_path(uqrest)
         env['SCRIPT_NAME'] = scriptname

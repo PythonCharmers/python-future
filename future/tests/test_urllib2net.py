@@ -1,20 +1,18 @@
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import range
-from future.builtins import open
-from future import standard_library
 #!/usr/bin/env python3
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+from future.builtins import open, range
+from future import standard_library
 
 import unittest
-from test import support
-from test.test_urllib2 import sanepathname2url
+with standard_library.hooks():
+    from test import support
+    import urllib.error
+    import urllib.request
 
+from .test_urllib2 import sanepathname2url
 import os
 import socket
-import urllib.error
-import urllib.request
 import sys
 try:
     import ssl

@@ -132,15 +132,13 @@ Exported functions:
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from future.builtins import bytes, dict, int, range, str
-from future import standard_library
 
 import base64
 import sys
 import time
 from datetime import datetime
-with standard_library.hooks():
-    import http.client
-    import urllib.parse
+from future.standard_library.http import client as http_client
+from future.standard_library.urllib import parse as urllib_parse
 from xml.parsers import expat
 import socket
 import errno

@@ -1,14 +1,16 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+from future.builtins import filter, str
 import os
 import sys
 import ssl
 import pprint
 import socket
-import urllib.parse
+from future.standard_library.urllib import parse as urllib_parse
 # Rename HTTPServer to _HTTPServer so as to avoid confusion with HTTPSServer.
-from http.server import (HTTPServer as _HTTPServer,
+from future.standard_library.http.server import (HTTPServer as _HTTPServer,
     SimpleHTTPRequestHandler, BaseHTTPRequestHandler)
 
-from test import support
+from future.standard_library.test import support
 threading = support.import_module("threading")
 
 here = os.path.dirname(__file__)
@@ -189,7 +191,7 @@ if __name__ == "__main__":
         handler_class = StatsRequestHandler
     else:
         handler_class = RootedHTTPRequestHandler
-        handler_class.root = os.getcwd()
+        handler_class.root = os.getcwdu()
     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
     context.load_cert_chain(CERTFILE)
     if args.curve_name:

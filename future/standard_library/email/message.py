@@ -20,11 +20,11 @@ import binascii
 from io import BytesIO, StringIO
 
 # Intrapackage imports
-from . import utils
-from . import errors
-from ._policybase import compat32
-from . import charset as _charset
-from ._encoded_words import decode_b
+from future.standard_library.email import utils
+from future.standard_library.email import errors
+from future.standard_library.email._policybase import compat32
+from future.standard_library.email import charset as _charset
+from future.standard_library.email._encoded_words import decode_b
 Charset = _charset.Charset
 
 SEMISPACE = '; '

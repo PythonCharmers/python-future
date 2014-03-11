@@ -70,11 +70,11 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
-from future import standard_library
 from future.utils import isbytes, istext, bind_method
 # from future.standard_library.email.message import Message
 from future.standard_library.email.parser import Parser
 from future.standard_library.urllib.parse import urlsplit
+from future.standard_library.email import message as email_message
 # from future.standard_library.socket import SocketIO, socket as newsocket
 import io
 import os
@@ -84,8 +84,6 @@ import warnings
 import numbers
 from array import array
 
-with standard_library.hooks():
-    import email.message
 
 
 ### Butchered makefile() method from Python 3.3's socket.socket class
@@ -124,6 +122,7 @@ def makefile(sock, mode="r"):
 
 import errno
 _blocking_errnos = set([errno.EAGAIN, errno.EWOULDBLOCK])
+
 
 class SocketIO(io.RawIOBase):
 
@@ -389,7 +388,7 @@ MAXAMOUNT = 1048576
 # maximal line length when calling readline().
 _MAXLINE = 65536
 
-class HTTPMessage(email.message.Message):
+class HTTPMessage(email_message.Message):
     # XXX The only usage of this method is in
     # http.server.CGIHTTPRequestHandler.  Maybe move the code there so
     # that it doesn't need to be part of the public API.  The API has
