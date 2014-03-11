@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import bytes, range, str, super, zip
-from future import standard_library
-standard_library.remove_hooks(keep_sys_modules=True)
 
 __all__ = [
     'Header',
