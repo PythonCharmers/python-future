@@ -7,10 +7,8 @@
 from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-from future.builtins import bytes
-from future.builtins import str
-from future.builtins import int
+from future import utils
+from future.builtins import bytes, int, str
 
 __all__ = [
     'collapse_rfc2231_value',
@@ -32,13 +30,14 @@ __all__ = [
 
 import os
 import re
+if utils.PY2:
+    re.ASCII = 0
 import time
 import base64
 import random
 import socket
 import datetime
-with standard_library.hooks():
-    import urllib.parse
+from future.standard_library.urllib.parse import quote as url_quote, unquote as url_unquote
 import warnings
 from io import StringIO
 
@@ -272,7 +271,7 @@ def encode_rfc2231(s, charset=None, language=None):
     charset is given but not language, the string is encoded using the empty
     string for language.
     """
-    s = urllib.parse.quote(s, safe='', encoding=charset or 'ascii')
+    s = url_quote(s, safe='', encoding=charset or 'ascii')
     if charset is None and language is None:
         return s
     if language is None:
@@ -328,7 +327,7 @@ def decode_params(params):
                     # Decode as "latin-1", so the characters in s directly
                     # represent the percent-encoded octet values.
                     # collapse_rfc2231_value treats this as an octet sequence.
-                    s = urllib.parse.unquote(s, encoding="latin-1")
+                    s = url_unquote(s, encoding="latin-1")
                     extended = True
                 value.append(s)
             value = quote(EMPTYSTRING.join(value))

@@ -44,6 +44,12 @@ Many other constants may be defined; these may be used in calls to
 the setsockopt() and getsockopt() methods.
 """
 
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
+from future.builtins import super
+
 import _socket
 from _socket import *
 
@@ -91,7 +97,10 @@ class socket(_socket.socket):
     __slots__ = ["__weakref__", "_io_refs", "_closed"]
 
     def __init__(self, family=AF_INET, type=SOCK_STREAM, proto=0, fileno=None):
-        _socket.socket.__init__(self, family, type, proto, fileno)
+        if fileno is None:
+            _socket.socket.__init__(self, family, type, proto)
+        else:
+            _socket.socket.__init__(self, family, type, proto, fileno)
         self._io_refs = 0
         self._closed = False
 
@@ -141,14 +150,19 @@ class socket(_socket.socket):
             sock.setblocking(True)
         return sock, addr
 
-    def makefile(self, mode="r", buffering=None, *,
-                 encoding=None, errors=None, newline=None):
+    def makefile(self, mode="r", buffering=None, **_3to2kwargs):
         """makefile(...) -> an I/O stream connected to the socket
 
         The arguments are as for io.open() after the filename,
         except the only mode characters supported are 'r', 'w' and 'b'.
         The semantics are similar too.  (XXX refactor to share code?)
         """
+        if 'newline' in _3to2kwargs: newline = _3to2kwargs['newline']; del _3to2kwargs['newline']
+        else: newline = None
+        if 'errors' in _3to2kwargs: errors = _3to2kwargs['errors']; del _3to2kwargs['errors']
+        else: errors = None
+        if 'encoding' in _3to2kwargs: encoding = _3to2kwargs['encoding']; del _3to2kwargs['encoding']
+        else: encoding = None
         for c in mode:
             if c not in {"r", "w", "b"}:
                 raise ValueError("invalid mode %r (only r, w, b allowed)")
@@ -298,8 +312,8 @@ class SocketIO(io.RawIOBase):
             except timeout:
                 self._timeout_occurred = True
                 raise
-            except InterruptedError:
-                continue
+            # except InterruptedError:
+            #     continue
             except error as e:
                 if e.args[0] in _blocking_errnos:
                     return None

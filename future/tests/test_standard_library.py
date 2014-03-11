@@ -164,7 +164,8 @@ class TestStandardLibraryRenames(CodeHandler):
         """
         code1 = '''
                 from future import standard_library
-                import module_importing_old_urllib
+                with standard_library.suspend_hooks():
+                    import module_importing_old_urllib
                 '''
         self._write_test_script(code1, 'runme.py')
         code2 = '''

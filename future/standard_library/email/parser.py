@@ -20,8 +20,6 @@ from future.standard_library.email._policybase import compat32
 
 class Parser(object):
     def __init__(self, _class=Message, **_3to2kwargs):
-        if 'policy' in _3to2kwargs: policy = _3to2kwargs['policy']; del _3to2kwargs['policy']
-        else: policy = compat32
         """Parser of RFC 2822 and MIME email messages.
 
         Creates an in-memory object tree representing the email message, which
@@ -42,6 +40,8 @@ class Parser(object):
         backward compatibility.
 
         """
+        if 'policy' in _3to2kwargs: policy = _3to2kwargs['policy']; del _3to2kwargs['policy']
+        else: policy = compat32
         self._class = _class
         self.policy = policy
 

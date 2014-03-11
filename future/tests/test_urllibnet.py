@@ -4,6 +4,7 @@ from future.builtins import int, open
 from future import standard_library
 
 import unittest
+from future.standard_library.email.message import Message
 with standard_library.hooks():
     from test import support
     import urllib.request
@@ -119,7 +120,7 @@ class urlopenNetworkTests(unittest.TestCase):
         bogus_domain = "sadflkjsasf.i.nvali.d"
         try:
             socket.gethostbyname(bogus_domain)
-        except OSError:
+        except (OSError, socket.error):     # for Py3 and Py2 respectively
             # socket.gaierror is too narrow, since getaddrinfo() may also
             # fail with EAI_SYSTEM and ETIMEDOUT (seen on Ubuntu 13.04),
             # i.e. Python's TimeoutError.

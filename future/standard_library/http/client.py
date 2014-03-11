@@ -70,10 +70,12 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
-from future.utils import isbytes, istext
-from future.standard_library.email.message import Message
+from future import standard_library
+from future.utils import isbytes, istext, bind_method
+# from future.standard_library.email.message import Message
 from future.standard_library.email.parser import Parser
 from future.standard_library.urllib.parse import urlsplit
+# from future.standard_library.socket import SocketIO, socket as newsocket
 import io
 import os
 import socket
@@ -81,6 +83,171 @@ import collections
 import warnings
 import numbers
 from array import array
+
+with standard_library.hooks():
+    import email.message
+
+
+### Butchered makefile() method from Python 3.3's socket.socket class
+def makefile(sock, mode="r"):
+    """makefile(...) -> an I/O stream connected to the socket
+
+    The arguments are as for io.open() after the filename,
+    except the only mode characters supported are 'r', 'w' and 'b'.
+    The semantics are similar too.  (XXX refactor to share code?)
+    """
+    for c in mode:
+        if c not in {"r", "w", "b"}:
+            raise ValueError("invalid mode %r (only r, w, b allowed)")
+    writing = "w" in mode
+    reading = "r" in mode or not writing
+    assert reading or writing
+    binary = "b" in mode
+    rawmode = ""
+    if reading:
+        rawmode += "r"
+    if writing:
+        rawmode += "w"
+
+    # sck = sock._sock
+    # newsock = newsocket(sck.family, sck.type, sck.proto)
+
+    raw = SocketIO(sock, rawmode)
+    # newsock._io_refs += 1
+    buffer = io.BufferedReader(raw)
+    if binary:
+        return buffer
+    text = io.TextIOWrapper(buffer, encoding, errors, newline)
+    text.mode = mode
+    return text
+
+
+import errno
+_blocking_errnos = set([errno.EAGAIN, errno.EWOULDBLOCK])
+
+class SocketIO(io.RawIOBase):
+
+    """Raw I/O implementation for stream sockets.
+
+    This class supports the makefile() method on sockets.  It provides
+    the raw I/O interface on top of a socket object.
+    """
+
+    # One might wonder why not let FileIO do the job instead.  There are two
+    # main reasons why FileIO is not adapted:
+    # - it wouldn't work under Windows (where you can't used read() and
+    #   write() on a socket handle)
+    # - it wouldn't work with socket timeouts (FileIO would ignore the
+    #   timeout and consider the socket non-blocking)
+
+    # XXX More docs
+
+    def __init__(self, sock, mode):
+        if mode not in ("r", "w", "rw", "rb", "wb", "rwb"):
+            raise ValueError("invalid mode: %r" % mode)
+        io.RawIOBase.__init__(self)
+        self._sock = sock
+        if "b" not in mode:
+            mode += "b"
+        self._mode = mode
+        self._reading = "r" in mode
+        self._writing = "w" in mode
+        self._timeout_occurred = False
+
+    def readinto(self, b):
+        """Read up to len(b) bytes into the writable buffer *b* and return
+        the number of bytes read.  If the socket is non-blocking and no bytes
+        are available, None is returned.
+
+        If *b* is non-empty, a 0 return value indicates that the connection
+        was shutdown at the other end.
+        """
+        # Was:
+        # self._checkClosed()
+        # self._checkReadable()
+        if self._timeout_occurred:
+            raise IOError("cannot read from timed out object")
+        while True:
+            try:
+                return self._sock.recv_into(b)
+            except socket.timeout:
+                self._timeout_occurred = True
+                raise
+            # except InterruptedError:
+            #     continue
+            except socket.error as e:
+                if e.args[0] in _blocking_errnos:
+                    return None
+                raise
+            except Exception as e:
+                print(e)
+                # TODO: check this
+
+    def write(self, b):
+        """Write the given bytes or bytearray object *b* to the socket
+        and return the number of bytes written.  This can be less than
+        len(b) if not all data could be written.  If the socket is
+        non-blocking and no bytes could be written None is returned.
+        """
+        self._checkClosed()
+        self._checkWritable()
+        try:
+            return self._sock.send(b)
+        except error as e:
+            # XXX what about EINTR?
+            if e.args[0] in _blocking_errnos:
+                return None
+            raise
+
+    def readable(self):
+        """True if the SocketIO is open for reading.
+        """
+        if self.closed:
+            raise ValueError("I/O operation on closed socket.")
+        return self._reading
+
+    def writable(self):
+        """True if the SocketIO is open for writing.
+        """
+        if self.closed:
+            raise ValueError("I/O operation on closed socket.")
+        return self._writing
+
+    def seekable(self):
+        """True if the SocketIO is open for seeking.
+        """
+        if self.closed:
+            raise ValueError("I/O operation on closed socket.")
+        return super().seekable()
+
+    def fileno(self):
+        """Return the file descriptor of the underlying socket.
+        """
+        self._checkClosed()
+        return self._sock.fileno()
+
+    @property
+    def name(self):
+        if not self.closed:
+            return self.fileno()
+        else:
+            return -1
+
+    @property
+    def mode(self):
+        return self._mode
+
+    def close(self):
+        """Close the SocketIO object.  This doesn't close the underlying
+        socket, except if all references to it have disappeared.
+        """
+        if self.closed:
+            return
+        io.RawIOBase.close(self)
+        # self._sock._decref_socketios()
+        self._sock = None
+
+
 
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",
@@ -222,7 +389,7 @@ MAXAMOUNT = 1048576
 # maximal line length when calling readline().
 _MAXLINE = 65536
 
-class HTTPMessage(Message):
+class HTTPMessage(email.message.Message):
     # XXX The only usage of this method is in
     # http.server.CGIHTTPRequestHandler.  Maybe move the code there so
     # that it doesn't need to be part of the public API.  The API has
@@ -292,6 +459,14 @@ class HTTPResponse(io.RawIOBase, object):
         # happen if a self.fp.read() is done (without a size) whether
         # self.fp is buffered or not.  So, no self.fp.read() by
         # clients unless they know what they are doing.
+
+        ###
+        # Use a Python 3.3-like socket.makefile method on this object. This wraps
+        # the socket object in an io.BufferedReader class, which supports the
+        # readinto method that this http.client code uses.
+        # self.fp = makefile(sock, 'rb')
+        ###
+
         self.fp = sock.makefile("rb")
         self.debuglevel = debuglevel
         if strict is not _strict_sentinel:
@@ -545,7 +720,15 @@ class HTTPResponse(io.RawIOBase, object):
         # we do not use _safe_read() here because this may be a .will_close
         # connection, and the user is reading more bytes than will be provided
         # (for example, reading in 1k chunks)
-        n = self.fp.readinto(b)
+
+        ### Python-Future:
+        # Was: n = self.fp.readinto(b)
+        # >>> buf = array.array('c', '\0' * 50)
+        # >>> os.fdopen(c.fileno()).readinto(buf)
+        data = self.fp.read(len(b))
+        b[:] = data
+        n = len(data)
+        ### 
         if not n:
             # Ideally, we would raise IncompleteRead if the content-length
             # wasn't satisfied, but it might break compatibility.
