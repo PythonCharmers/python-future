@@ -24,4 +24,4 @@ class HtmlTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest_main()
+    unittest.main()
