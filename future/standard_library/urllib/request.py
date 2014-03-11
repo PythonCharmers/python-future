@@ -87,15 +87,19 @@ f = urllib.request.urlopen('http://www.python.org/')
 from __future__ import absolute_import, division, print_function, unicode_literals
 from future.builtins import bytes, dict, filter, input, int, map, open, str
 from future.utils import PY3
-from future import standard_library
 
 import base64
 import bisect
 import hashlib
 
-with standard_library.hooks():
-    import email
-    import http.client
+from future.standard_library import email
+from future.standard_library.http import client as http_client
+from .error import URLError, HTTPError, ContentTooShortError
+from .parse import (
+    urlparse, urlsplit, urljoin, unwrap, quote, unquote,
+    splittype, splithost, splitport, splituser, splitpasswd,
+    splitattr, splitquery, splitvalue, splittag, to_bytes, urlunparse)
+from .response import addinfourl, addclosehook
 
 import io
 import os
@@ -108,14 +112,6 @@ import collections
 import tempfile
 import contextlib
 import warnings
-
-with standard_library.hooks():
-    from urllib.error import URLError, HTTPError, ContentTooShortError
-    from urllib.parse import (
-        urlparse, urlsplit, urljoin, unwrap, quote, unquote,
-        splittype, splithost, splitport, splituser, splitpasswd,
-        splitattr, splitquery, splitvalue, splittag, to_bytes, urlunparse)
-    from urllib.response import addinfourl, addclosehook
 
 # check for SSL
 try:
@@ -558,7 +554,7 @@ def build_opener(*handlers):
     default_classes = [ProxyHandler, UnknownHandler, HTTPHandler,
                        HTTPDefaultErrorHandler, HTTPRedirectHandler,
                        FTPHandler, FileHandler, HTTPErrorProcessor]
-    if hasattr(http.client, "HTTPSConnection"):
+    if hasattr(http_client, "HTTPSConnection"):
         default_classes.append(HTTPSHandler)
     skip = set()
     for klass in default_classes:
@@ -1291,11 +1287,11 @@ class AbstractHTTPHandler(BaseHandler):
 class HTTPHandler(AbstractHTTPHandler):
 
     def http_open(self, req):
-        return self.do_open(http.client.HTTPConnection, req)
+        return self.do_open(http_client.HTTPConnection, req)
 
     http_request = AbstractHTTPHandler.do_request_
 
-if hasattr(http.client, 'HTTPSConnection'):
+if hasattr(http_client, 'HTTPSConnection'):
 
     class HTTPSHandler(AbstractHTTPHandler):
 
@@ -1305,7 +1301,7 @@ if hasattr(http.client, 'HTTPSConnection'):
             self._check_hostname = check_hostname
 
         def https_open(self, req):
-            return self.do_open(http.client.HTTPSConnection, req,
+            return self.do_open(http_client.HTTPSConnection, req,
                 context=self._context, check_hostname=self._check_hostname)
 
         https_request = AbstractHTTPHandler.do_request_
@@ -1413,8 +1409,7 @@ class FileHandler(BaseHandler):
 
     # not entirely sure what the rules are here
     def open_local_file(self, req):
-        with standard_library.hooks():
-            import email.utils
+        from future.standard_library.email.utils import formatdate
         import mimetypes
         host = req.host
         filename = req.selector
@@ -1422,7 +1417,7 @@ class FileHandler(BaseHandler):
         try:
             stats = os.stat(localfile)
             size = stats.st_size
-            modified = email.utils.formatdate(stats.st_mtime, usegmt=True)
+            modified = formatdate(stats.st_mtime, usegmt=True)
             mtype = mimetypes.guess_type(filename)[0]
             headers = email.message_from_string(
                 'Content-type: %s\nContent-length: %d\nLast-modified: %s\n' %
@@ -1841,7 +1836,7 @@ class URLopener(object):
 
         try:
             response = http_conn.getresponse()
-        except http.client.BadStatusLine:
+        except http_client.BadStatusLine:
             # something went wrong with the HTTP status line
             raise URLError("http protocol error: bad status line")
 
@@ -1857,7 +1852,7 @@ class URLopener(object):
 
     def open_http(self, url, data=None):
         """Use HTTP protocol."""
-        return self._open_generic_http(http.client.HTTPConnection, url, data)
+        return self._open_generic_http(http_client.HTTPConnection, url, data)
 
     def http_error(self, url, fp, errcode, errmsg, headers, data=None):
         """Handle http errors.
@@ -1882,7 +1877,7 @@ class URLopener(object):
 
     if _have_ssl:
         def _https_connection(self, host):
-            return http.client.HTTPSConnection(host,
+            return http_client.HTTPSConnection(host,
                                            key_file=self.key_file,
                                            cert_file=self.cert_file)
 
@@ -1911,7 +1906,7 @@ class URLopener(object):
         except OSError as e:
             raise URLError(e.strerror, e.filename)
         size = stats.st_size
-        modified = email.utils.formatdate(stats.st_mtime, usegmt=True)
+        modified = formatdate(stats.st_mtime, usegmt=True)
         mtype = mimetypes.guess_type(url)[0]
         headers = email.message_from_string(
             'Content-Type: %s\nContent-Length: %d\nLast-modified: %s\n' %

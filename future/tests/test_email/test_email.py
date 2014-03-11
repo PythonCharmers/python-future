@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (C) 2001-2010 Python Software Foundation
 # Contact: email-sig@python.org
 # email package unit tests

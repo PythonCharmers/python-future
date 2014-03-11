@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 # Copyright (C) 2001-2007 Python Software Foundation
 # Author: Barry Warsaw
 # Contact: email-sig@python.org
@@ -20,11 +20,11 @@ import binascii
 from io import BytesIO, StringIO
 
 # Intrapackage imports
-from email import utils
-from email import errors
-from email._policybase import compat32
-from email import charset as _charset
-from email._encoded_words import decode_b
+from . import utils
+from . import errors
+from ._policybase import compat32
+from . import charset as _charset
+from ._encoded_words import decode_b
 Charset = _charset.Charset
 
 SEMISPACE = '; '
