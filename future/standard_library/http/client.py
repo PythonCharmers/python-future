@@ -1,8 +1,7 @@
 """HTTP/1.1 client library
 
-A backport of the Python 3.3 module to Python 2.7 using ``future``.
-
---------------
+<intro stuff goes here>
+<other stuff, too>
 
 HTTPConnection goes through a number of "states", which define when a client
 may legally make another request or fetch the response for a particular
@@ -69,184 +68,17 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future.builtins import *
-from future.utils import isbytes, istext, bind_method
-# from future.standard_library.email.message import Message
-from future.standard_library.email.parser import Parser
+from future.builtins import bytes, int, str, super
 from future.standard_library.urllib.parse import urlsplit
 from future.standard_library.email import message as email_message
-# from future.standard_library.socket import SocketIO, socket as newsocket
+from future.standard_library.email import parser as email_parser
+
 import io
 import os
 import socket
 import collections
+from urllib.parse import urlsplit
 import warnings
-import numbers
-from array import array
-
-
-
-### Butchered makefile() method from Python 3.3's socket.socket class
-def makefile(sock, mode="r"):
-    """makefile(...) -> an I/O stream connected to the socket
-
-    The arguments are as for io.open() after the filename,
-    except the only mode characters supported are 'r', 'w' and 'b'.
-    The semantics are similar too.  (XXX refactor to share code?)
-    """
-    for c in mode:
-        if c not in {"r", "w", "b"}:
-            raise ValueError("invalid mode %r (only r, w, b allowed)")
-    writing = "w" in mode
-    reading = "r" in mode or not writing
-    assert reading or writing
-    binary = "b" in mode
-    rawmode = ""
-    if reading:
-        rawmode += "r"
-    if writing:
-        rawmode += "w"
-
-    # sck = sock._sock
-    # newsock = newsocket(sck.family, sck.type, sck.proto)
-
-    raw = SocketIO(sock, rawmode)
-    # newsock._io_refs += 1
-    buffer = io.BufferedReader(raw)
-    if binary:
-        return buffer
-    text = io.TextIOWrapper(buffer, encoding, errors, newline)
-    text.mode = mode
-    return text
-
-
-import errno
-_blocking_errnos = set([errno.EAGAIN, errno.EWOULDBLOCK])
-
-
-class SocketIO(io.RawIOBase):
-
-    """Raw I/O implementation for stream sockets.
-
-    This class supports the makefile() method on sockets.  It provides
-    the raw I/O interface on top of a socket object.
-    """
-
-    # One might wonder why not let FileIO do the job instead.  There are two
-    # main reasons why FileIO is not adapted:
-    # - it wouldn't work under Windows (where you can't used read() and
-    #   write() on a socket handle)
-    # - it wouldn't work with socket timeouts (FileIO would ignore the
-    #   timeout and consider the socket non-blocking)
-
-    # XXX More docs
-
-    def __init__(self, sock, mode):
-        if mode not in ("r", "w", "rw", "rb", "wb", "rwb"):
-            raise ValueError("invalid mode: %r" % mode)
-        io.RawIOBase.__init__(self)
-        self._sock = sock
-        if "b" not in mode:
-            mode += "b"
-        self._mode = mode
-        self._reading = "r" in mode
-        self._writing = "w" in mode
-        self._timeout_occurred = False
-
-    def readinto(self, b):
-        """Read up to len(b) bytes into the writable buffer *b* and return
-        the number of bytes read.  If the socket is non-blocking and no bytes
-        are available, None is returned.
-
-        If *b* is non-empty, a 0 return value indicates that the connection
-        was shutdown at the other end.
-        """
-        # Was:
-        # self._checkClosed()
-        # self._checkReadable()
-        if self._timeout_occurred:
-            raise IOError("cannot read from timed out object")
-        while True:
-            try:
-                return self._sock.recv_into(b)
-            except socket.timeout:
-                self._timeout_occurred = True
-                raise
-            # except InterruptedError:
-            #     continue
-            except socket.error as e:
-                if e.args[0] in _blocking_errnos:
-                    return None
-                raise
-            except Exception as e:
-                print(e)
-                # TODO: check this
-
-    def write(self, b):
-        """Write the given bytes or bytearray object *b* to the socket
-        and return the number of bytes written.  This can be less than
-        len(b) if not all data could be written.  If the socket is
-        non-blocking and no bytes could be written None is returned.
-        """
-        self._checkClosed()
-        self._checkWritable()
-        try:
-            return self._sock.send(b)
-        except error as e:
-            # XXX what about EINTR?
-            if e.args[0] in _blocking_errnos:
-                return None
-            raise
-
-    def readable(self):
-        """True if the SocketIO is open for reading.
-        """
-        if self.closed:
-            raise ValueError("I/O operation on closed socket.")
-        return self._reading
-
-    def writable(self):
-        """True if the SocketIO is open for writing.
-        """
-        if self.closed:
-            raise ValueError("I/O operation on closed socket.")
-        return self._writing
-
-    def seekable(self):
-        """True if the SocketIO is open for seeking.
-        """
-        if self.closed:
-            raise ValueError("I/O operation on closed socket.")
-        return super().seekable()
-
-    def fileno(self):
-        """Return the file descriptor of the underlying socket.
-        """
-        self._checkClosed()
-        return self._sock.fileno()
-
-    @property
-    def name(self):
-        if not self.closed:
-            return self.fileno()
-        else:
-            return -1
-
-    @property
-    def mode(self):
-        return self._mode
-
-    def close(self):
-        """Close the SocketIO object.  This doesn't close the underlying
-        socket, except if all references to it have disappeared.
-        """
-        if self.closed:
-            return
-        io.RawIOBase.close(self)
-        # self._sock._decref_socketios()
-        self._sock = None
-
-
 
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",
@@ -387,6 +219,8 @@ MAXAMOUNT = 1048576
 
 # maximal line length when calling readline().
 _MAXLINE = 65536
+_MAXHEADERS = 100
+
 
 class HTTPMessage(email_message.Message):
     # XXX The only usage of this method is in
@@ -434,14 +268,17 @@ def parse_headers(fp, _class=HTTPMessage):
         if len(line) > _MAXLINE:
             raise LineTooLong("header line")
         headers.append(line)
+        if len(headers) > _MAXHEADERS:
+            raise HTTPException("got more than %d headers" % _MAXHEADERS)
         if line in (b'\r\n', b'\n', b''):
             break
-    hstring = bytes(b'').join(headers).decode('iso-8859-1')
-    return Parser(_class=_class).parsestr(hstring)
+    hstring = b''.join(headers).decode('iso-8859-1')
+    return email_parser.Parser(_class=_class).parsestr(hstring)
+
 
 _strict_sentinel = object()
 
-class HTTPResponse(io.RawIOBase, object):
+class HTTPResponse(io.RawIOBase):
 
     # See RFC 2616 sec 19.6 and RFC 1945 sec 6 for details.
 
@@ -458,14 +295,6 @@ class HTTPResponse(io.RawIOBase, object):
         # happen if a self.fp.read() is done (without a size) whether
         # self.fp is buffered or not.  So, no self.fp.read() by
         # clients unless they know what they are doing.
-
-        ###
-        # Use a Python 3.3-like socket.makefile method on this object. This wraps
-        # the socket object in an io.BufferedReader class, which supports the
-        # readinto method that this http.client code uses.
-        # self.fp = makefile(sock, 'rb')
-        ###
-
         self.fp = sock.makefile("rb")
         self.debuglevel = debuglevel
         if strict is not _strict_sentinel:
@@ -671,16 +500,16 @@ class HTTPResponse(io.RawIOBase, object):
 
     def read(self, amt=None):
         if self.fp is None:
-            return bytes(b"")
+            return b""
 
         if self._method == "HEAD":
             self._close_conn()
-            return bytes(b"")
+            return b""
 
         if amt is not None:
             # Amount is given, so call base class version
             # (which is implemented in terms of self.readinto)
-            return bytes(super(HTTPResponse, self).read(amt))
+            return super(HTTPResponse, self).read(amt)
         else:
             # Amount is not given (unbounded read) so we must check self.length
             # and self.chunked
@@ -698,7 +527,7 @@ class HTTPResponse(io.RawIOBase, object):
                     raise
                 self.length = 0
             self._close_conn()        # we read everything
-            return bytes(s)
+            return s
 
     def readinto(self, b):
         if self.fp is None:
@@ -719,16 +548,8 @@ class HTTPResponse(io.RawIOBase, object):
         # we do not use _safe_read() here because this may be a .will_close
         # connection, and the user is reading more bytes than will be provided
         # (for example, reading in 1k chunks)
-
-        ### Python-Future:
-        # Was: n = self.fp.readinto(b)
-        # >>> buf = array.array('c', '\0' * 50)
-        # >>> os.fdopen(c.fileno()).readinto(buf)
-        data = self.fp.read(len(b))
-        b[:] = data
-        n = len(data)
-        ### 
-        if not n:
+        n = self.fp.readinto(b)
+        if not n and b:
             # Ideally, we would raise IncompleteRead if the content-length
             # wasn't satisfied, but it might break compatibility.
             self._close_conn()
@@ -791,7 +612,7 @@ class HTTPResponse(io.RawIOBase, object):
         # we read everything; close the "file"
         self._close_conn()
 
-        return bytes(b'').join(value)
+        return b''.join(value)
 
     def _readinto_chunked(self, b):
         assert self.chunked != _UNKNOWN
@@ -855,7 +676,7 @@ class HTTPResponse(io.RawIOBase, object):
                 raise IncompleteRead(b''.join(s), amt)
             s.append(chunk)
             amt -= len(chunk)
-        return bytes(b"").join(s)
+        return b"".join(s)
 
     def _safe_readinto(self, b):
         """Same as _safe_read, but for reading into a buffer."""
@@ -880,11 +701,11 @@ class HTTPResponse(io.RawIOBase, object):
         if self.headers is None:
             raise ResponseNotReady()
         headers = self.headers.get_all(name) or default
-        if istext(headers) or not hasattr(headers, '__iter__'):
+        if isinstance(headers, str) or not hasattr(headers, '__iter__'):
             return headers
         else:
             return ', '.join(headers)
-    
+
     def getheaders(self):
         """Return list of (header, value) tuples."""
         if self.headers is None:
@@ -981,7 +802,7 @@ class HTTPConnection(object):
             header_str = "%s: %s\r\n" % (header, value)
             header_bytes = header_str.encode("latin-1")
             self.send(header_bytes)
-        self.send(bytes(b'\r\n'))
+        self.send(b'\r\n')
 
         response = self.response_class(self.sock, method=self._method)
         (version, code, message) = response._read_status()
@@ -1032,9 +853,7 @@ class HTTPConnection(object):
         if self.debuglevel > 0:
             print("send:", repr(data))
         blocksize = 8192
-        # Python 2.7 array objects have a read method which is incompatible
-        # with the 2-arg calling syntax below.
-        if hasattr(data, "read") and not isinstance(data, array):
+        if hasattr(data, "read") :
             if self.debuglevel > 0:
                 print("sendIng a read()able")
             encode = False
@@ -1056,7 +875,7 @@ class HTTPConnection(object):
                 if encode:
                     datablock = datablock.encode("iso-8859-1")
                 self.sock.sendall(datablock)
-
+            return
         try:
             self.sock.sendall(data)
         except TypeError:
@@ -1080,13 +899,13 @@ class HTTPConnection(object):
         Appends an extra \\r\\n to the buffer.
         A message_body may be specified, to be appended to the request.
         """
-        self._buffer.extend((bytes(b""), bytes(b"")))
-        msg = bytes(b"\r\n").join(self._buffer)
+        self._buffer.extend((b"", b""))
+        msg = b"\r\n".join(self._buffer)
         del self._buffer[:]
         # If msg and message_body are sent in a single send() call,
         # it will avoid performance problems caused by the interaction
         # between delayed ack and the Nagle algorithm.
-        if isbytes(message_body):
+        if isinstance(message_body, bytes):
             msg += message_body
             message_body = None
         self.send(msg)
@@ -1225,9 +1044,9 @@ class HTTPConnection(object):
         for i, one_value in enumerate(values):
             if hasattr(one_value, 'encode'):
                 values[i] = one_value.encode('latin-1')
-            elif isinstance(one_value, numbers.Integral):
+            elif isinstance(one_value, int):
                 values[i] = str(one_value).encode('ascii')
-        value = bytes(b'\r\n\t').join(values)
+        value = b'\r\n\t'.join(values)
         header = header + b': ' + value
         self._output(header)
 
@@ -1282,7 +1101,7 @@ class HTTPConnection(object):
             self._set_content_length(body)
         for hdr, value in headers.items():
             self.putheader(hdr, value)
-        if istext(body):
+        if isinstance(body, str):
             # RFC 2616 Section 3.7.1 says that text default has a
             # default charset of iso-8859-1.
             body = body.encode('iso-8859-1')
@@ -1348,34 +1167,61 @@ try:
 except ImportError:
     pass
 else:
-    ######################################
-    # We use the old HTTPSConnection class from Py2.7, because ssl.SSLContext
-    # doesn't exist in the Py2.7 stdlib
     class HTTPSConnection(HTTPConnection):
         "This class allows communication via SSL."
 
         default_port = HTTPS_PORT
 
+        # XXX Should key_file and cert_file be deprecated in favour of context?
+
         def __init__(self, host, port=None, key_file=None, cert_file=None,
-                     strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-                     source_address=None):
-            HTTPConnection.__init__(self, host, port, strict, timeout,
-                                    source_address)
+                     strict=_strict_sentinel, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                     source_address=None, **_3to2kwargs):
+            if 'check_hostname' in _3to2kwargs: check_hostname = _3to2kwargs['check_hostname']; del _3to2kwargs['check_hostname']
+            else: check_hostname = None
+            if 'context' in _3to2kwargs: context = _3to2kwargs['context']; del _3to2kwargs['context']
+            else: context = None
+            super(HTTPSConnection, self).__init__(host, port, strict, timeout,
+                                                  source_address)
             self.key_file = key_file
             self.cert_file = cert_file
+            if context is None:
+                # Some reasonable defaults
+                context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+                context.options |= ssl.OP_NO_SSLv2
+            will_verify = context.verify_mode != ssl.CERT_NONE
+            if check_hostname is None:
+                check_hostname = will_verify
+            elif check_hostname and not will_verify:
+                raise ValueError("check_hostname needs a SSL context with "
+                                 "either CERT_OPTIONAL or CERT_REQUIRED")
+            if key_file or cert_file:
+                context.load_cert_chain(cert_file, key_file)
+            self._context = context
+            self._check_hostname = check_hostname
 
         def connect(self):
             "Connect to a host on a given (SSL) port."
 
             sock = socket.create_connection((self.host, self.port),
                                             self.timeout, self.source_address)
+
             if self._tunnel_host:
                 self.sock = sock
                 self._tunnel()
-            self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file)
+
+            server_hostname = self.host if ssl.HAS_SNI else None
+            self.sock = self._context.wrap_socket(sock,
+                                                  server_hostname=server_hostname)
+            try:
+                if self._check_hostname:
+                    ssl.match_hostname(self.sock.getpeercert(), self.host)
+            except Exception:
+                self.sock.shutdown(socket.SHUT_RDWR)
+                self.sock.close()
+                raise
 
     __all__.append("HTTPSConnection")
-
 
 class HTTPException(Exception):
     # Subclasses that define an __init__ must call Exception.__init__
