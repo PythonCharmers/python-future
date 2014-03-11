@@ -29,6 +29,14 @@ class TestBytes(unittest.TestCase):
         b = bytes(u, encoding='utf-8')
         self.assertEqual(b, u.encode('utf-8'))
 
+    def test_bytes_encoding_arg_non_kwarg(self):
+        """
+        As above, but with a positional argument
+        """
+        u = u'Unicode string: \u5b54\u5b50'
+        b = bytes(u, 'utf-8')
+        self.assertEqual(b, u.encode('utf-8'))
+
     def test_bytes_string_no_encoding(self):
         with self.assertRaises(TypeError):
             bytes(u'ABC')
