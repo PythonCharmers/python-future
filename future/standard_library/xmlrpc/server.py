@@ -112,7 +112,7 @@ from future.builtins import int, str
 
 from future.standard_library.xmlrpc.client import Fault, dumps, loads, gzip_encode, gzip_decode
 from future.standard_library.http.server import BaseHTTPRequestHandler
-import future.standard_library.http.server
+import future.standard_library.http.server as http_server
 import socketserver
 import sys
 import os
@@ -666,7 +666,7 @@ class CGIXMLRPCRequestHandler(SimpleXMLRPCDispatcher):
         code = 400
         message, explain = BaseHTTPRequestHandler.responses[code]
 
-        response = http.server.DEFAULT_ERROR_MESSAGE % \
+        response = http_server.DEFAULT_ERROR_MESSAGE % \
             {
              'code' : code,
              'message' : message,
@@ -674,7 +674,7 @@ class CGIXMLRPCRequestHandler(SimpleXMLRPCDispatcher):
             }
         response = response.encode('utf-8')
         print('Status: %d %s' % (code, message))
-        print('Content-Type: %s' % http.server.DEFAULT_ERROR_CONTENT_TYPE)
+        print('Content-Type: %s' % http_server.DEFAULT_ERROR_CONTENT_TYPE)
         print('Content-Length: %d' % len(response))
         print()
         sys.stdout.flush()
@@ -762,20 +762,23 @@ class ServerHTMLDoc(pydoc.HTMLDoc):
             self.escape(anchor), self.escape(name))
 
         if inspect.ismethod(object):
-            args, varargs, varkw, defaults = inspect.getargspec(object)
+            args = inspect.getfullargspec(object)
             # exclude the argument bound to the instance, it will be
             # confusing to the non-Python user
             argspec = inspect.formatargspec (
-                    args[1:],
-                    varargs,
-                    varkw,
-                    defaults,
+                    args.args[1:],
+                    args.varargs,
+                    args.varkw,
+                    args.defaults,
+                    annotations=args.annotations,
                     formatvalue=self.formatvalue
                 )
         elif inspect.isfunction(object):
-            args, varargs, varkw, defaults = inspect.getargspec(object)
+            args = inspect.getfullargspec(object)
             argspec = inspect.formatargspec(
-                args, varargs, varkw, defaults, formatvalue=self.formatvalue)
+                args.args, args.varargs, args.varkw, args.defaults,
+                annotations=args.annotations,
+                formatvalue=self.formatvalue)
         else:
             argspec = '(...)'
 
@@ -970,10 +973,24 @@ class DocCGIXMLRPCRequestHandler(   CGIXMLRPCRequestHandler,
 
 
 if __name__ == '__main__':
+    import datetime
+
+    class ExampleService:
+        def getData(self):
+            return '42'
+
+        class currentTime:
+            @staticmethod
+            def getCurrentTime():
+                return datetime.datetime.now()
+
     server = SimpleXMLRPCServer(("localhost", 8000))
     server.register_function(pow)
     server.register_function(lambda x,y: x+y, 'add')
+    server.register_instance(ExampleService(), allow_dotted_names=True)
+    server.register_multicall_functions()
     print('Serving XML-RPC on localhost port 8000')
+    print('It is advisable to run this example server within a secure, closed network.')
     try:
         server.serve_forever()
     except KeyboardInterrupt:
