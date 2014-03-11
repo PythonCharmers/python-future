@@ -1273,6 +1273,13 @@ class AbstractHTTPHandler(BaseHandler):
             raise URLError(err)
         else:
             r = h.getresponse()
+            # If the server does not send us a 'Connection: close' header,
+            # HTTPConnection assumes the socket should be left open. Manually
+            # mark the socket to be closed when this response object goes away.
+            if h.sock:
+                h.sock.close()
+                h.sock = None
+
 
         r.url = req.get_full_url()
         # This line replaces the .msg attribute of the HTTPResponse
@@ -2251,7 +2258,10 @@ def thishost():
     """Return the IP addresses of the current host."""
     global _thishost
     if _thishost is None:
-        _thishost = tuple(socket.gethostbyname_ex(socket.gethostname())[2])
+        try:
+            _thishost = tuple(socket.gethostbyname_ex(socket.gethostname())[2])
+        except socket.gaierror:
+            _thishost = tuple(socket.gethostbyname_ex('localhost')[2])
     return _thishost
 
 _ftperrors = None
@@ -2295,8 +2305,8 @@ class ftpwrapper(object):
         self.ftp = ftplib.FTP()
         self.ftp.connect(self.host, self.port, self.timeout)
         self.ftp.login(self.user, self.passwd)
-        for dir in self.dirs:
-            self.ftp.cwd(dir)
+        _target = '/'.join(self.dirs)
+        self.ftp.cwd(_target)
 
     def retrfile(self, file, type):
         import ftplib
@@ -2316,7 +2326,7 @@ class ftpwrapper(object):
                 conn, retrlen = self.ftp.ntransfercmd(cmd)
             except ftplib.error_perm as reason:
                 if str(reason)[:3] != '550':
-                    raise_with_traceback(URLError('ftp error: %d' % reason))
+                    raise_with_traceback(URLError('ftp error: %r' % reason))
         if not conn:
             # Set transfer mode to ASCII!
             self.ftp.voidcmd('TYPE A')
@@ -2327,7 +2337,11 @@ class ftpwrapper(object):
                     try:
                         self.ftp.cwd(file)
                     except ftplib.error_perm as reason:
-                        raise URLError('ftp error: %d' % reason)   # was: ... from reason
+                        ### Was:
+                        # raise URLError('ftp error: %r' % reason) from reason
+                        exc = URLError('ftp error: %r' % reason)
+                        exc.__cause__ = reason
+                        raise exc
                 finally:
                     self.ftp.cwd(pwd)
                 cmd = 'LIST ' + file
