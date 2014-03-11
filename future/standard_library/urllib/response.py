@@ -6,7 +6,9 @@ addinfourl instance, which defines an info() method that returns
 headers and a geturl() method that returns the url.
 """
 from __future__ import absolute_import, division, unicode_literals
+from future.utils import implements_iterator
 
+@implements_iterator
 class addbase(object):
     """Base class for addinfo and addclosehook."""
 

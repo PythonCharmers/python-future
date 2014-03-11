@@ -267,18 +267,24 @@ boolean = Boolean = bool
 #              a time tuple, or an integer time value.
 
 
+### For Python-Future:
+def _iso8601_format(value):
+    return "%04d%02d%02dT%02d:%02d:%02d" % (
+                value.year, value.month, value.day,
+                value.hour, value.minute, value.second)
+###
 # Issue #13305: different format codes across platforms
-_day0 = datetime(1, 1, 1)
-if _day0.strftime('%Y') == '0001':      # Mac OS X
-    def _iso8601_format(value):
-        return value.strftime("%Y%m%dT%H:%M:%S")
-elif _day0.strftime('%4Y') == '0001':   # Linux
-    def _iso8601_format(value):
-        return value.strftime("%4Y%m%dT%H:%M:%S")
-else:
-    def _iso8601_format(value):
-        return value.strftime("%Y%m%dT%H:%M:%S").zfill(17)
-del _day0
+# _day0 = datetime(1, 1, 1)
+# if _day0.strftime('%Y') == '0001':      # Mac OS X
+#     def _iso8601_format(value):
+#         return value.strftime("%Y%m%dT%H:%M:%S")
+# elif _day0.strftime('%4Y') == '0001':   # Linux
+#     def _iso8601_format(value):
+#         return value.strftime("%4Y%m%dT%H:%M:%S")
+# else:
+#     def _iso8601_format(value):
+#         return value.strftime("%Y%m%dT%H:%M:%S").zfill(17)
+# del _day0
 
 
 def _strftime(value):
@@ -1139,7 +1145,7 @@ class Transport(object):
             except socket.error as e:
                 if i or e.errno not in (errno.ECONNRESET, errno.ECONNABORTED, errno.EPIPE):
                     raise
-            except http.client.BadStatusLine: #close after we sent request
+            except http_client.BadStatusLine: #close after we sent request
                 if i:
                     raise
 
@@ -1197,10 +1203,10 @@ class Transport(object):
         if isinstance(host, tuple):
             host, x509 = host
 
-        auth, host = urllib.parse.splituser(host)
+        auth, host = urllib_parse.splituser(host)
 
         if auth:
-            auth = urllib.parse.unquote_to_bytes(auth)
+            auth = urllib_parse.unquote_to_bytes(auth)
             auth = base64.encodebytes(auth).decode("utf-8")
             auth = "".join(auth.split()) # get rid of whitespace
             extra_headers = [
@@ -1224,7 +1230,7 @@ class Transport(object):
             return self._connection[1]
         # create a HTTP connection object from a host descriptor
         chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, http.client.HTTPConnection(chost)
+        self._connection = host, http_client.HTTPConnection(chost)
         return self._connection[1]
 
     ##
@@ -1335,13 +1341,13 @@ class SafeTransport(Transport):
         if self._connection and host == self._connection[0]:
             return self._connection[1]
 
-        if not hasattr(http.client, "HTTPSConnection"):
+        if not hasattr(http_client, "HTTPSConnection"):
             raise NotImplementedError(
             "your version of http.client doesn't support HTTPS")
         # create a HTTPS connection object from a host descriptor
         # host may be a string, or a (host, x509-dict) tuple
         chost, self._extra_headers, x509 = self.get_host_info(host)
-        self._connection = host, http.client.HTTPSConnection(chost,
+        self._connection = host, http_client.HTTPSConnection(chost,
             None, **(x509 or {}))
         return self._connection[1]
 
@@ -1389,10 +1395,10 @@ class ServerProxy(object):
         # establish a "logical" server connection
 
         # get the url
-        type, uri = urllib.parse.splittype(uri)
+        type, uri = urllib_parse.splittype(uri)
         if type not in ("http", "https"):
             raise IOError("unsupported XML-RPC protocol")
-        self.__host, self.__handler = urllib.parse.splithost(uri)
+        self.__host, self.__handler = urllib_parse.splithost(uri)
         if not self.__handler:
             self.__handler = "/RPC2"
 

@@ -1,5 +1,7 @@
 """HTTP/1.1 client library
 
+A backport of the Python 3.3 http/client.py module for python-future.
+
 <intro stuff goes here>
 <other stuff, too>
 
@@ -77,7 +79,6 @@ import io
 import os
 import socket
 import collections
-from urllib.parse import urlsplit
 import warnings
 
 __all__ = ["HTTPResponse", "HTTPConnection",
@@ -272,7 +273,7 @@ def parse_headers(fp, _class=HTTPMessage):
             raise HTTPException("got more than %d headers" % _MAXHEADERS)
         if line in (b'\r\n', b'\n', b''):
             break
-    hstring = b''.join(headers).decode('iso-8859-1')
+    hstring = bytes(b'').join(headers).decode('iso-8859-1')
     return email_parser.Parser(_class=_class).parsestr(hstring)
 
 
@@ -500,16 +501,16 @@ class HTTPResponse(io.RawIOBase):
 
     def read(self, amt=None):
         if self.fp is None:
-            return b""
+            return bytes(b"")
 
         if self._method == "HEAD":
             self._close_conn()
-            return b""
+            return bytes(b"")
 
         if amt is not None:
             # Amount is given, so call base class version
             # (which is implemented in terms of self.readinto)
-            return super(HTTPResponse, self).read(amt)
+            return bytes(super(HTTPResponse, self).read(amt))
         else:
             # Amount is not given (unbounded read) so we must check self.length
             # and self.chunked
@@ -527,7 +528,7 @@ class HTTPResponse(io.RawIOBase):
                     raise
                 self.length = 0
             self._close_conn()        # we read everything
-            return s
+            return bytes(s)
 
     def readinto(self, b):
         if self.fp is None:
@@ -548,7 +549,14 @@ class HTTPResponse(io.RawIOBase):
         # we do not use _safe_read() here because this may be a .will_close
         # connection, and the user is reading more bytes than will be provided
         # (for example, reading in 1k chunks)
-        n = self.fp.readinto(b)
+
+        ### Python-Future:
+        data = self.fp.read(len(b))
+        b[:] = data
+        n = len(data)
+        ###
+        # Was:
+        # n = self.fp.readinto(b)
         if not n and b:
             # Ideally, we would raise IncompleteRead if the content-length
             # wasn't satisfied, but it might break compatibility.
@@ -600,7 +608,7 @@ class HTTPResponse(io.RawIOBase):
                     if chunk_left == 0:
                         break
                 except ValueError:
-                    raise IncompleteRead(b''.join(value))
+                    raise IncompleteRead(bytes(b'').join(value))
             value.append(self._safe_read(chunk_left))
 
             # we read the whole chunk, get another
@@ -612,7 +620,7 @@ class HTTPResponse(io.RawIOBase):
         # we read everything; close the "file"
         self._close_conn()
 
-        return b''.join(value)
+        return bytes(b'').join(value)
 
     def _readinto_chunked(self, b):
         assert self.chunked != _UNKNOWN
@@ -673,10 +681,10 @@ class HTTPResponse(io.RawIOBase):
         while amt > 0:
             chunk = self.fp.read(min(amt, MAXAMOUNT))
             if not chunk:
-                raise IncompleteRead(b''.join(s), amt)
+                raise IncompleteRead(bytes(b'').join(s), amt)
             s.append(chunk)
             amt -= len(chunk)
-        return b"".join(s)
+        return bytes(b"").join(s)
 
     def _safe_readinto(self, b):
         """Same as _safe_read, but for reading into a buffer."""
@@ -802,7 +810,7 @@ class HTTPConnection(object):
             header_str = "%s: %s\r\n" % (header, value)
             header_bytes = header_str.encode("latin-1")
             self.send(header_bytes)
-        self.send(b'\r\n')
+        self.send(bytes(b'\r\n'))
 
         response = self.response_class(self.sock, method=self._method)
         (version, code, message) = response._read_status()
@@ -853,7 +861,9 @@ class HTTPConnection(object):
         if self.debuglevel > 0:
             print("send:", repr(data))
         blocksize = 8192
-        if hasattr(data, "read") :
+        # Python 2.7 array objects have a read method which is incompatible
+        # with the 2-arg calling syntax below.
+        if hasattr(data, "read") and not isinstance(data, array):
             if self.debuglevel > 0:
                 print("sendIng a read()able")
             encode = False
@@ -899,8 +909,8 @@ class HTTPConnection(object):
         Appends an extra \\r\\n to the buffer.
         A message_body may be specified, to be appended to the request.
         """
-        self._buffer.extend((b"", b""))
-        msg = b"\r\n".join(self._buffer)
+        self._buffer.extend((bytes(b""), bytes(b"")))
+        msg = bytes(b"\r\n").join(self._buffer)
         del self._buffer[:]
         # If msg and message_body are sent in a single send() call,
         # it will avoid performance problems caused by the interaction
@@ -999,7 +1009,7 @@ class HTTPConnection(object):
                     # when used as Host header
 
                     if self.host.find(':') >= 0:
-                        host_enc = b'[' + host_enc + b']'
+                        host_enc = bytes(b'[' + host_enc + b']')
 
                     if self.port == self.default_port:
                         self.putheader('Host', host_enc)
@@ -1046,8 +1056,8 @@ class HTTPConnection(object):
                 values[i] = one_value.encode('latin-1')
             elif isinstance(one_value, int):
                 values[i] = str(one_value).encode('ascii')
-        value = b'\r\n\t'.join(values)
-        header = header + b': ' + value
+        value = bytes(b'\r\n\t').join(values)
+        header = header + bytes(b': ') + value
         self._output(header)
 
     def endheaders(self, message_body=None):
@@ -1167,61 +1177,34 @@ try:
 except ImportError:
     pass
 else:
+    ######################################
+    # We use the old HTTPSConnection class from Py2.7, because ssl.SSLContext
+    # doesn't exist in the Py2.7 stdlib
     class HTTPSConnection(HTTPConnection):
         "This class allows communication via SSL."
 
         default_port = HTTPS_PORT
 
-        # XXX Should key_file and cert_file be deprecated in favour of context?
-
         def __init__(self, host, port=None, key_file=None, cert_file=None,
-                     strict=_strict_sentinel, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-                     source_address=None, **_3to2kwargs):
-            if 'check_hostname' in _3to2kwargs: check_hostname = _3to2kwargs['check_hostname']; del _3to2kwargs['check_hostname']
-            else: check_hostname = None
-            if 'context' in _3to2kwargs: context = _3to2kwargs['context']; del _3to2kwargs['context']
-            else: context = None
-            super(HTTPSConnection, self).__init__(host, port, strict, timeout,
-                                                  source_address)
+                     strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                     source_address=None):
+            HTTPConnection.__init__(self, host, port, strict, timeout,
+                                    source_address)
             self.key_file = key_file
             self.cert_file = cert_file
-            if context is None:
-                # Some reasonable defaults
-                context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-                context.options |= ssl.OP_NO_SSLv2
-            will_verify = context.verify_mode != ssl.CERT_NONE
-            if check_hostname is None:
-                check_hostname = will_verify
-            elif check_hostname and not will_verify:
-                raise ValueError("check_hostname needs a SSL context with "
-                                 "either CERT_OPTIONAL or CERT_REQUIRED")
-            if key_file or cert_file:
-                context.load_cert_chain(cert_file, key_file)
-            self._context = context
-            self._check_hostname = check_hostname
 
         def connect(self):
             "Connect to a host on a given (SSL) port."
 
             sock = socket.create_connection((self.host, self.port),
                                             self.timeout, self.source_address)
-
             if self._tunnel_host:
                 self.sock = sock
                 self._tunnel()
-
-            server_hostname = self.host if ssl.HAS_SNI else None
-            self.sock = self._context.wrap_socket(sock,
-                                                  server_hostname=server_hostname)
-            try:
-                if self._check_hostname:
-                    ssl.match_hostname(self.sock.getpeercert(), self.host)
-            except Exception:
-                self.sock.shutdown(socket.SHUT_RDWR)
-                self.sock.close()
-                raise
+            self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file)
 
     __all__.append("HTTPSConnection")
+
 
 class HTTPException(Exception):
     # Subclasses that define an __init__ must call Exception.__init__
