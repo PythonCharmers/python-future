@@ -34,13 +34,17 @@ import re
 import subprocess
 import imp
 import time
+import sysconfig
 import fnmatch
 import logging.handlers
 import struct
 import tempfile
-import _testcapi
+
 try:
-    import thread, threading
+    if utils.PY3:
+        import _thread, threading
+    else:
+        import thread as _thread, threading
 except ImportError:
     _thread = None
     threading = None
@@ -53,6 +57,11 @@ try:
     import zlib
 except ImportError:
     zlib = None
+
+try:
+    import gzip
+except ImportError:
+    gzip = None
 
 try:
     import bz2
@@ -83,7 +92,7 @@ __all__ = [
     "TestHandler", "Matcher", "can_symlink", "skip_unless_symlink",
     "skip_unless_xattr", "import_fresh_module", "requires_zlib",
     "PIPE_MAX_SIZE", "failfast", "anticipate_failure", "run_with_tz",
-    "requires_bz2", "requires_lzma", "suppress_crash_popup",
+    "requires_gzip", "requires_bz2", "requires_lzma", "suppress_crash_popup",
     ]
 
 class Error(Exception):
@@ -131,7 +140,8 @@ def import_module(name, deprecated=False):
 def _save_and_remove_module(name, orig_modules):
     """Helper function to save and remove a module from sys.modules
 
-       Raise ImportError if the module can't be imported."""
+    Raise ImportError if the module can't be imported.
+    """
     # try to import the module and raise an error if it can't be imported
     if name not in sys.modules:
         __import__(name)
@@ -144,7 +154,8 @@ def _save_and_remove_module(name, orig_modules):
 def _save_and_block_module(name, orig_modules):
     """Helper function to save and block a module in sys.modules
 
-       Return True if the module was in sys.modules, False otherwise."""
+    Return True if the module was in sys.modules, False otherwise.
+    """
     saved = True
     try:
         orig_modules[name] = sys.modules[name]
@@ -166,18 +177,32 @@ def anticipate_failure(condition):
 
 
 def import_fresh_module(name, fresh=(), blocked=(), deprecated=False):
-    """Imports and returns a module, deliberately bypassing the sys.modules cache
-    and importing a fresh copy of the module. Once the import is complete,
-    the sys.modules cache is restored to its original state.
+    """Import and return a module, deliberately bypassing sys.modules.
+    This function imports and returns a fresh copy of the named Python module
+    by removing the named module from sys.modules before doing the import.
+    Note that unlike reload, the original module is not affected by
+    this operation.
 
-    Modules named in fresh are also imported anew if needed by the import.
-    If one of these modules can't be imported, None is returned.
+    *fresh* is an iterable of additional module names that are also removed
+    from the sys.modules cache before doing the import.
 
-    Importing of modules named in blocked is prevented while the fresh import
-    takes place.
+    *blocked* is an iterable of module names that are replaced with None
+    in the module cache during the import to ensure that attempts to import
+    them raise ImportError.
+
+    The named module and any modules named in the *fresh* and *blocked*
+    parameters are saved before starting the import and then reinserted into
+    sys.modules when the fresh import is complete.
+
+    Module and package deprecation messages are suppressed during this import
+    if *deprecated* is True.
+
+    This function will raise ImportError if the named module cannot be
+    imported.
 
     If deprecated is True, any module or package deprecation messages
-    will be suppressed."""
+    will be suppressed.
+    """
     # NOTE: test_heapq, test_json and test_warnings include extra sanity checks
     # to make sure that this utility function is working as expected
     with _ignore_deprecated_imports(deprecated):
@@ -239,7 +264,7 @@ def unload(name):
 
 if sys.platform.startswith("win"):
     def _waitfor(func, pathname, waitall=False):
-        # Peform the operation
+        # Perform the operation
         func(pathname)
         # Now setup the wait loop
         if waitall:
@@ -255,7 +280,7 @@ if sys.platform.startswith("win"):
         # required when contention occurs.
         timeout = 0.001
         while timeout < 1.0:
-            # Note we are only testing for the existance of the file(s) in
+            # Note we are only testing for the existence of the file(s) in
             # the contents of the directory regardless of any security or
             # access rights.  If we have made it this far, we have sufficient
             # permissions to do that much using Python's equivalent of the
@@ -423,6 +448,8 @@ def _requires_unix_version(sysname, min_version):
                         raise unittest.SkipTest(
                             "%s version %s or higher required, not %s"
                             % (sysname, min_version_txt, version_txt))
+            return func(*args, **kw)
+        wrapper.min_version = min_version
         return wrapper
     return decorator
 
@@ -471,8 +498,11 @@ def requires_mac_ver(*min_version):
         return wrapper
     return decorator
 
+# Don't use "localhost", since resolving it uses the DNS under recent
+# Windows versions (see issue #18792).
+HOST = "127.0.0.1"
+HOSTv6 = "::1"
 
-HOST = 'localhost'
 
 def find_unused_port(family=socket.AF_INET, socktype=socket.SOCK_STREAM):
     """Returns an unused port that should be suitable for binding.  This is
@@ -557,9 +587,15 @@ def bind_port(sock, host=HOST):
                 raise TestFailed("tests should never set the SO_REUSEADDR "   \
                                  "socket option on TCP/IP sockets!")
         if hasattr(socket, 'SO_REUSEPORT'):
-            if sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT) == 1:
-                raise TestFailed("tests should never set the SO_REUSEPORT "   \
-                                 "socket option on TCP/IP sockets!")
+            try:
+                if sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT) == 1:
+                    raise TestFailed("tests should never set the SO_REUSEPORT "   \
+                                     "socket option on TCP/IP sockets!")
+            except OSError:
+                # Python's socket module was compiled using modern headers
+                # thus defining SO_REUSEPORT but this process is running
+                # under an older kernel that does not support SO_REUSEPORT.
+                pass
         if hasattr(socket, 'SO_EXCLUSIVEADDRUSE'):
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
 
@@ -585,11 +621,19 @@ def _is_ipv6_enabled():
 IPV6_ENABLED = _is_ipv6_enabled()
 
 
-# A constant likely larger than the underlying OS pipe buffer size.
-# Windows limit seems to be around 512B, and many Unix kernels have a 64K pipe
-# buffer size or 16*PAGE_SIZE: take a few megs to be sure.  This
-PIPE_MAX_SIZE = 3 * 1000 * 1000
+# A constant likely larger than the underlying OS pipe buffer size, to
+# make writes blocking.
+# Windows limit seems to be around 512 B, and many Unix kernels have a
+# 64 KiB pipe buffer size or 16 * PAGE_SIZE: take a few megs to be sure.
+# (see issue #17835 for a discussion of this number).
+PIPE_MAX_SIZE = 4 * 1024 * 1024 + 1
 
+# A constant likely larger than the underlying OS socket buffer size, to make
+# writes blocking.
+# The socket buffer sizes can usually be tuned system-wide (e.g. through sysctl
+# on Linux), or on a per-socket basis (SO_SNDBUF/SO_RCVBUF). See issue #18643
+# for a discussion of this number).
+SOCK_MAX_SIZE = 16 * 1024 * 1024 + 1
 
 # # decorator for skipping tests on non-IEEE 754 platforms
 # requires_IEEE_754 = unittest.skipUnless(
@@ -1676,7 +1720,7 @@ def modules_cleanup(oldmodules):
     sys.modules.update(oldmodules)
 
 #=======================================================================
-# Py2.7 versions of threading_setup() and threading_cleanup() which don't refer
+# Backported versions of threading_setup() and threading_cleanup() which don't refer
 # to threading._dangling (not available on Py2.7).
 
 # Threading support to prevent reporting refleaks when running regrtest.py -R
@@ -1690,25 +1734,23 @@ def modules_cleanup(oldmodules):
 # at the end of a test run.
 
 def threading_setup():
-    if thread:
-        return thread._count(),
+    if _thread:
+        return _thread._count(),
     else:
         return 1,
 
 def threading_cleanup(nb_threads):
-    if not thread:
+    if not _thread:
         return
 
     _MAX_COUNT = 10
     for count in range(_MAX_COUNT):
-        n = thread._count()
+        n = _thread._count()
         if n == nb_threads:
             break
         time.sleep(0.1)
     # XXX print a warning in case of failure?
 
-
-#=======================================================================
 def reap_threads(func):
     """Use this function when threads are being used.  This will
     ensure that the threads are cleaned up even when the test fails.
