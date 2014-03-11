@@ -25,6 +25,22 @@ class TestStandardLibraryRenames(CodeHandler):
     def tearDown(self):
         standard_library.remove_hooks()
 
+    def test_can_import_several(self):
+        """
+        This test fails if e.g. future/standard_library/email/header.py contains:
+        
+            from future import standard_library
+            standard_library.remove_hooks(keep_sys_modules=True)
+        """
+
+        with standard_library.hooks():
+            import urllib.parse
+            import urllib.request
+            import http.server
+            from test import support
+        for m in [urllib.parse, urllib.request, http.server, support]:
+            self.assertTrue(m is not None)
+
     def test_is_py2_stdlib_module(self):
         """
         Tests whether the internal is_py2_stdlib_module function (called by the

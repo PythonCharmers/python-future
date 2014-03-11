@@ -89,7 +89,7 @@ Not available on Py2.6:
 
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function
 
 import sys
 import logging
@@ -369,7 +369,7 @@ class hooks(object):
     imported modules (like requests).
     """
     def __enter__(self):
-        logging.debug('Entering hooks context manager')
+        logging.warn('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
         scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
@@ -377,7 +377,7 @@ class hooks(object):
         return self
 
     def __exit__(self, *args):
-        logging.debug('Exiting hooks context manager')
+        logging.warn('Exiting hooks context manager')
         if not self.hooks_were_installed:
             remove_hooks(keep_sys_modules=True)
             scrub_future_sys_modules()
@@ -431,7 +431,7 @@ def scrub_py2_sys_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
+            logging.warn('Deleting (Py2) {} from sys.modules'.format(modulename))
             del sys.modules[modulename]
 
 
@@ -444,12 +444,14 @@ def scrub_future_sys_modules():
         return
     future_stdlib = os.path.join('future', 'standard_library')
     for modulename, module in sys.modules.items():
-        if modulename not in ['standard_library', 'future.standard_library']:
-            if (modulename in RENAMES.values() or    # builtins, configparser etc.
-                (hasattr(module, '__file__') and
-                 module.__file__.startswith(future_stdlib))):
-                logging.debug('Deleting (future) {} from sys.modules'.format(modulename))
-                del sys.modules[modulename]
+        if modulename.startswith('future'):
+            logging.debug('Not removing', modulename)
+            continue
+        if modulename in RENAMES.values():   #  and    # builtins, configparser etc.
+            # (hasattr(module, '__file__') and
+            #  module.__file__.startswith(future_stdlib))):
+            logging.warn('Deleting (future) {} from sys.modules'.format(modulename))
+            del sys.modules[modulename]
 
 
 class suspend_hooks(object):

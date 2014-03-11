@@ -6,11 +6,9 @@
 from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import zip
-from future.builtins import super
-from future.builtins import bytes
-from future.builtins import range
-from future.builtins import str
+from future.builtins import bytes, range, str, super, zip
+from future import standard_library
+standard_library.remove_hooks(keep_sys_modules=True)
 
 __all__ = [
     'Header',
@@ -25,7 +23,7 @@ import future.standard_library.email.quoprimime
 import future.standard_library.email.base64mime
 
 from future.standard_library.email.errors import HeaderParseError
-from future.standard_library.email import charset as _charset
+import future.standard_library.email.charset as _charset
 Charset = _charset.Charset
 
 NL = '\n'
