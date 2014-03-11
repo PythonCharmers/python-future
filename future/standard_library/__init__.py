@@ -385,13 +385,16 @@ class hooks(object):
 
 # Sanity check for is_py2_stdlib_module(): We aren't replacing any
 # builtin modules names:
-assert len(set(RENAMES.values()) & set(sys.builtin_module_names)) == 0
+if utils.PY2:
+    assert len(set(RENAMES.values()) & set(sys.builtin_module_names)) == 0
 
 def is_py2_stdlib_module(m):
     """
     Tries to infer whether the module m is from the Python 2 standard library.
     This may not be reliable on all systems.
     """
+    if utils.PY3:
+        return False
     if not 'stdlib_path' in is_py2_stdlib_module.__dict__:
         stdlib_files = [contextlib.__file__, os.__file__, copy.__file__]
         stdlib_paths = [os.path.split(f)[0] for f in stdlib_files]
