@@ -1,30 +1,31 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import super
-from future.builtins import str
-from future.builtins import int
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import int, str, super
 from future import standard_library
 import base64
 import datetime
 import sys
 import time
-import unittest
-import xmlrpc.client as xmlrpclib
-import xmlrpc.server
-import http.client
+from future.tests.base import unittest
+with standard_library.hooks():
+    import xmlrpc.client as xmlrpclib
+    import xmlrpc.server
+    import http.client
+    from test import support
 import socket
 import os
 import re
 import io
 import contextlib
-from test import support
 
 try:
     import threading
 except ImportError:
     threading = None
+
+try:
+    import mock
+except ImportError:
+    mock = None
 
 alist = [{'astring': 'foo@bar.baz.spam',
           'afloat': 7283.43,
@@ -256,8 +257,16 @@ class FaultTestCase(unittest.TestCase):
         self.assertTrue(xmlrpc.server.resolve_dotted_attribute(str, 'title'))
 
 class DateTimeTestCase(unittest.TestCase):
+    @unittest.skipIf(mock is None, "this test requires the mock library")
     def test_default(self):
-        t = xmlrpclib.DateTime()
+        with mock.patch('time.localtime') as localtime_mock:
+            time_struct = time.struct_time(
+                [2013, 7, 15, 0, 24, 49, 0, 196, 0])
+            localtime_mock.return_value = time_struct
+            localtime = time.localtime()
+            t = xmlrpclib.DateTime()
+            self.assertEqual(str(t),
+                             time.strftime("%Y%m%dT%H:%M:%S", localtime))
 
     def test_time(self):
         d = 1181399930.036952
@@ -294,7 +303,7 @@ class DateTimeTestCase(unittest.TestCase):
         self.assertEqual(t1, tref)
 
         t2 = xmlrpclib._datetime(d)
-        self.assertEqual(t1, tref)
+        self.assertEqual(t2, tref)
 
     def test_comparison(self):
         now = datetime.datetime.now()
