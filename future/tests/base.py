@@ -4,9 +4,11 @@ import unittest
 import sys
 if not hasattr(unittest, 'skip'):
     import unittest2 as unittest
-
 from textwrap import dedent
 import subprocess
+
+from future.utils import bind_method
+
 
 # For Python 2.6 compatibility: see http://stackoverflow.com/questions/4814970/
 if "check_output" not in dir(subprocess): # duck punch it in!
@@ -258,7 +260,10 @@ class CodeHandler(unittest.TestCase):
         return subprocess.check_output([interpreter, self.tempdir + filename],
                                        env=env)
 
+
 # Decorator to skip some tests on Python 2.6 ...
 skip26 = unittest.skipIf(sys.version_info[:2] == (2, 6), "this test is known to fail on Py2.6")
 
 
+# Renamed in Py3.3:
+unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp

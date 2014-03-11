@@ -503,7 +503,7 @@ def unquote_to_bytes(string):
         except KeyError:
             append(b'%')
             append(item)
-    return b''.join(res)
+    return bytes(b'').join(res)
 
 _asciire = re.compile('([\x00-\x7f]+)')
 
@@ -720,6 +720,9 @@ def quote_from_bytes(bs, safe='/'):
         raise TypeError("quote_from_bytes() expected bytes")
     if not bs:
         return ''
+    ### For Python-Future:
+    bs = bytes(bs)
+    ### 
     if isinstance(safe, str):
         # Normalize 'safe' by converting to bytes and removing non-ASCII chars
         safe = safe.encode('ascii', 'ignore')
