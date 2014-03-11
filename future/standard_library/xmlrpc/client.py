@@ -134,6 +134,9 @@ from __future__ import (absolute_import, division, print_function,
 from future.builtins import bytes, dict, int, range, str
 
 import base64
+# Py2.7 compatibility hack
+base64.encodebytes = base64.encodestring
+base64.decodebytes = base64.decodestring
 import sys
 import time
 from datetime import datetime
@@ -520,8 +523,16 @@ class Marshaller(object):
         return result
 
     def __dump(self, value, write):
+        future_types = [dict, int, str, bytes]
+        key = None
+        for t in future_types:
+            if isinstance(value, t):
+                key = t       # if it's e.g. Py2 dict, make it a newdict for dispatching
+                break
+        if key is None:
+            key = type(value)
         try:
-            f = self.dispatch[type(value)]
+            f = self.dispatch[key]
         except KeyError:
             # check if this object can be marshalled as a structure
             if not hasattr(value, '__dict__'):
@@ -830,7 +841,7 @@ class MultiCallIterator(object):
 
     def __getitem__(self, i):
         item = self.results[i]
-        if type(item) == type({}):
+        if isinstance(type(item), dict):
             raise Fault(item['faultCode'], item['faultString'])
         elif type(item) == type([]):
             return item[0]
@@ -989,7 +1000,7 @@ def dumps(params, methodname=None, methodresponse=None, encoding=None,
             )
     else:
         return data # return as is
-    return "".join(data)
+    return str("").join(data)
 
 ##
 # Convert an XML-RPC packet to a Python object.  If the XML-RPC packet
@@ -1160,9 +1171,10 @@ class Transport(object):
 
         except Fault:
             raise
-        except Exception:
+        except Exception as e:
             #All unexpected errors leave connection in
             # a strange state, so we clear it.
+            print(e)
             self.close()
             raise
 
