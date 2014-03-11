@@ -86,19 +86,12 @@ class newdict(with_metaclass(BaseNewDict, _builtin_dict)):
                 d[k] = v
         dict(**kwargs) -> new dictionary initialized with the name=value pairs
             in the keyword argument list.  For example:  dict(one=1, two=2)
-
         """
-        
+
         if len(args) == 0:
             return super(newdict, cls).__new__(cls)
-        # Was: elif isinstance(args[0], newbytes):
-        # We use type() instead of the above because we're redefining
-        # this to be True for all unicode string subclasses. Warning:
-        # This may render newstr un-subclassable.
         elif type(args[0]) == newdict:
             return args[0]
-        # elif isinstance(args[0], _builtin_dict):
-        #     value = args[0]
         else:
             value = args[0]
         return super(newdict, cls).__new__(cls, value)
@@ -107,7 +100,7 @@ class newdict(with_metaclass(BaseNewDict, _builtin_dict)):
         """
         Hook for the future.utils.native() function
         """
-        return super(newbytes, self)
+        return dict(self)
 
 
 __all__ = ['newdict']
