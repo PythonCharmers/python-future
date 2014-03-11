@@ -45,26 +45,43 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
           - an integer
         """
         
+        encoding = None
+        errors = None
+
         if len(args) == 0:
             return super(newbytes, cls).__new__(cls)
+        elif len(args) >= 2:
+            args = list(args)
+            if len(args) == 3:
+                errors = args.pop()
+            encoding=args.pop()
         # Was: elif isinstance(args[0], newbytes):
         # We use type() instead of the above because we're redefining
         # this to be True for all unicode string subclasses. Warning:
         # This may render newstr un-subclassable.
-        elif type(args[0]) == newbytes:
+        if type(args[0]) == newbytes:
             return args[0]
         elif isinstance(args[0], _builtin_bytes):
             value = args[0]
         elif isinstance(args[0], unicode):
-            if 'encoding' not in kwargs:
+            try:
+                if 'encoding' in kwargs:
+                    assert encoding is None
+                    encoding = kwargs['encoding']
+                if 'errors' in kwargs:
+                    assert errors is None
+                    errors = kwargs['errors']
+            except AssertionError:
+                raise TypeError('Argument given by name and position')
+            if encoding is None:
                 raise TypeError('unicode string argument without an encoding')
             ###
             # Was:   value = args[0].encode(**kwargs)
             # Python 2.6 string encode() method doesn't take kwargs:
             # Use this instead:
-            newargs = [kwargs['encoding']]
-            if 'errors' in kwargs:
-                newargs.append(kwargs['errors'])
+            newargs = [encoding]
+            if errors is not None:
+                newargs.append(errors)
             value = args[0].encode(*newargs)
             ### 
         elif isinstance(args[0], Iterable):
