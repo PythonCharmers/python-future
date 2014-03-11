@@ -5,7 +5,7 @@ Tests for the future.standard_library module
 from __future__ import absolute_import, unicode_literals, print_function
 from future import standard_library
 from future import utils
-from future.tests.base import unittest
+from future.tests.base import unittest, CodeHandler
 
 import sys
 import tempfile
@@ -13,8 +13,6 @@ import os
 import copy
 import textwrap
 from subprocess import CalledProcessError
-
-from future.tests.base import CodeHandler
 
 
 class TestStandardLibraryRenames(CodeHandler):
@@ -26,6 +24,18 @@ class TestStandardLibraryRenames(CodeHandler):
 
     def tearDown(self):
         standard_library.remove_hooks()
+
+    def test_is_py2_stdlib_module(self):
+        """
+        Tests whether the internal is_py2_stdlib_module function (called by the
+        sys.modules scrubbing functions) is reliable.
+        """
+        py2modules = [sys, tempfile, os, copy, textwrap]
+        externalmodules = [standard_library, utils]
+        self.assertTrue(all([standard_library.is_py2_stdlib_module(module)
+                             for module in py2modules]))
+        self.assertTrue(not any([standard_library.is_py2_stdlib_module(module)
+                             for module in externalmodules]))
 
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
