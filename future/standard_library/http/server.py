@@ -35,7 +35,7 @@ XXX To do:
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future import standard_library
+from future import standard_library, utils
 from future.builtins import *
 
 
@@ -93,14 +93,14 @@ __all__ = ["HTTPServer", "BaseHTTPRequestHandler"]
 
 with standard_library.hooks():
     import html
+    import email.message
+    import email.parser
     import http.client
     # Something bizarre sometimes happens to cause the client submodule to
     # disappear from http after a successful import when run under the Py2.7 unittest runner.
     # TODO: investigate this!
-    from http.client import HTTPMessage
     import socketserver
-    import email.message
-    import email.parser
+    import urllib.parse
 import io
 import mimetypes
 import os
@@ -112,13 +112,6 @@ import sys
 import time
 import copy
 import argparse
-
-# Not backported yet:
-# import urllib.parse
-# The old Py2 one instead:
-import urllib
-# Also from 2.7:
-import cgi
 
 
 # Default error message template
@@ -589,7 +582,7 @@ class BaseHTTPRequestHandler(socketserver.StreamRequestHandler):
     protocol_version = "HTTP/1.0"
 
     # MessageClass used to parse headers
-    MessageClass = HTTPMessage
+    MessageClass = http.client.HTTPMessage
 
     # Table mapping response codes to messages; entries have the
     # form {code: (shortmessage, longmessage)}.
@@ -753,10 +746,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             return None
         list.sort(key=lambda a: a.lower())
         r = []
-        # Urllib.parse not ported yet:
-        # displaypath = html.escape(urllib.parse.unquote(self.path))
-        # Use this code from the Py2.7 httpservers.py module instead:
-        displaypath = cgi.escape(urllib.unquote(self.path))
+        displaypath = html.escape(urllib.parse.unquote(self.path))
         enc = sys.getfilesystemencoding()
         title = 'Directory listing for %s' % displaypath
         r.append('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" '
@@ -777,12 +767,11 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             if os.path.islink(fullname):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
-            # Original from Py3.3:
-            # r.append('<li><a href="%s">%s</a></li>'
-            #         % (urllib.parse.quote(linkname), html.escape(displayname)))
-            # Use this instead:
             r.append('<li><a href="%s">%s</a></li>'
-                    % (urllib.quote(linkname), cgi.escape(displayname)))
+                    % (urllib.parse.quote(linkname), html.escape(displayname)))
+            # # Use this instead:
+            # r.append('<li><a href="%s">%s</a></li>'
+            #         % (urllib.quote(linkname), cgi.escape(displayname)))
         r.append('</ul>\n<hr>\n</body>\n</html>\n')
         encoded = '\n'.join(r).encode(enc)
         f = io.BytesIO()
@@ -805,8 +794,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         # abandon query parameters
         path = path.split('?',1)[0]
         path = path.split('#',1)[0]
-        # Was this: path = posixpath.normpath(urllib.parse.unquote(path))
-        path = posixpath.normpath(urllib.unquote(path))
+        path = posixpath.normpath(urllib.parse.unquote(path))
         words = path.split('/')
         words = filter(None, words)
         path = os.getcwd()
@@ -1064,8 +1052,7 @@ class CGIHTTPRequestHandler(SimpleHTTPRequestHandler):
         env['SERVER_PROTOCOL'] = self.protocol_version
         env['SERVER_PORT'] = str(self.server.server_port)
         env['REQUEST_METHOD'] = self.command
-        # Was this: uqrest = urllib.parse.unquote(rest)
-        uqrest = urllib.unquote(rest)
+        uqrest = urllib.parse.unquote(rest)
         env['PATH_INFO'] = uqrest
         env['PATH_TRANSLATED'] = self.translate_path(uqrest)
         env['SCRIPT_NAME'] = scriptname
@@ -1081,11 +1068,14 @@ class CGIHTTPRequestHandler(SimpleHTTPRequestHandler):
                 if authorization[0].lower() == "basic":
                     try:
                         authorization = authorization[1].encode('ascii')
-                        # In Py3.3, was: authorization = base64.decodebytes(authorization).\
-                        #                                decode('ascii')
-                        # Backport to Py2.7:
-                        authorization = base64.decodestring(authorization).\
-                                        decode('ascii')
+                        if utils.PY3:
+                            # In Py3.3, was:
+                            authorization = base64.decodebytes(authorization).\
+                                            decode('ascii')
+                        else:
+                            # Backport to Py2.7:
+                            authorization = base64.decodestring(authorization).\
+                                            decode('ascii')
                     except (binascii.Error, UnicodeError):
                         pass
                     else:
