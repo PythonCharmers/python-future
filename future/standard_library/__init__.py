@@ -451,6 +451,13 @@ def scrub_future_sys_modules():
         # their submodules
         if (modulename in RENAMES.values() or 
             any(modulename.startswith(m + '.') for m in RENAMES.values())):   
+
+            if module is None:
+                # This shouldn't have happened. Delete it.
+                logging.debug('Deleting EMPTY module {} from sys.modules'.format(modulename))
+                del sys.modules[modulename]
+                continue
+
             # We don't want to remove Python 2.x urllib if this is cached
             if is_py2_stdlib_module(module):
                 continue

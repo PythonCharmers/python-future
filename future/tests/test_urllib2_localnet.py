@@ -466,11 +466,13 @@ class TestUrlopen(unittest.TestCase):
         self.assertEqual(data, expected_response)
         self.assertEqual(handler.requests, ["/bizarre", b"get=with_feeling"])
 
+    @unittest.skip('Py3.3 ssl module not yet backported')
     def test_https(self):
         handler = self.start_https_server()
         data = self.urlopen("https://localhost:%s/bizarre" % handler.port)
         self.assertEqual(data, b"we care a bit")
 
+    @unittest.skip('Py3.3 ssl module not yet backported')
     def test_https_with_cafile(self):
         handler = self.start_https_server(certfile=CERT_localhost)
         import ssl
@@ -488,6 +490,7 @@ class TestUrlopen(unittest.TestCase):
             self.urlopen("https://localhost:%s/bizarre" % handler.port,
                          cafile=CERT_fakehostname)
 
+    @unittest.skip('Py3.3 ssl module not yet backported')
     def test_https_with_cadefault(self):
         handler = self.start_https_server(certfile=CERT_localhost)
         # Self-signed cert should fail verification with system certificate store
