@@ -506,7 +506,7 @@ class HTTPResponse(io.RawIOBase, object):
         if amt is not None:
             # Amount is given, so call base class version
             # (which is implemented in terms of self.readinto)
-            return super(HTTPResponse, self).read(amt)
+            return bytes(super(HTTPResponse, self).read(amt))
         else:
             # Amount is not given (unbounded read) so we must check self.length
             # and self.chunked
@@ -524,7 +524,7 @@ class HTTPResponse(io.RawIOBase, object):
                     raise
                 self.length = 0
             self._close_conn()        # we read everything
-            return s
+            return bytes(s)
 
     def readinto(self, b):
         if self.fp is None:
