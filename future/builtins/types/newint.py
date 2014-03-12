@@ -7,6 +7,8 @@ They are very similar. The most notable difference is:
 
 """
 
+from __future__ import division
+
 from numbers import Integral
 
 from future.builtins.types.newbytes import newbytes
@@ -112,16 +114,40 @@ class newint(with_metaclass(BaseNewInt, long)):
         return value
 
     def __div__(self, other):
+        # We override this rather than e.g. relying on object.__div__ or
+        # long.__div__ because we want to wrap the result in a newint() call
         return newint(super(newint, self).__div__(other))
 
     def __rdiv__(self, other):
         return newint(super(newint, self).__rdiv__(other))
+
+    def __idiv__(self, other):
+        # long has no __idiv__ method. Use __itruediv__ and cast back to newint:
+        return newint(self.__itruediv__(other))
+
+    def __truediv__(self, other):
+        return super(newint, self).__truediv__(other)
+
+    def __rtruediv__(self, other):
+        return super(newint, self).__rtruediv__(other)
+
+    def __itruediv__(self, other):
+        # long has no __itruediv__ method
+        mylong = long(self)
+        mylong /= other
+        return mylong
 
     def __floordiv__(self, other):
         return newint(super(newint, self).__floordiv__(other))
 
     def __rfloordiv__(self, other):
         return newint(super(newint, self).__rfloordiv__(other))
+
+    def __ifloordiv__(self, other):
+        # long has no __ifloordiv__ method
+        mylong = long(self)
+        mylong //= other
+        return newint(mylong)
 
     def __mod__(self, other):
         return newint(super(newint, self).__mod__(other))
@@ -188,6 +214,18 @@ class newint(with_metaclass(BaseNewInt, long)):
     
     def __invert__(self):
         return newint(super(newint, self).__invert__())
+
+    def __int__(self):
+        return self
+
+    def __nonzero__(self):
+        return self.__bool__()
+
+    def __bool__(self):
+        """
+        So subclasses can override this, Py3-style
+        """
+        return super(newint, self).__nonzero__()
 
     def __native__(self):
         return long(self)
