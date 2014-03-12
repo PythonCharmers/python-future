@@ -20,7 +20,7 @@ Py3-style codebase, module by module.
 Features
 --------
 
--   ``future.builtins`` package provides backports and remappings for 16
+-   ``future.builtins`` package provides backports and remappings for 19
     builtins with different semantics on Py3 versus Py2
 
 -   ``future.standard_library`` package provides backports and remappings from
@@ -56,7 +56,7 @@ as it does on Python 3::
     
     from __future__ import absolute_import, division, print_function
     from future.builtins import (bytes, str, open, super, range,
-                                 zip, round, input, int, pow)
+                                 zip, round, input, int, pow, object)
 
     # Backported Py3 bytes object
     b = bytes(b'ABCD')
@@ -108,6 +108,17 @@ as it does on Python 3::
 
     # pow() supports fractional exponents of negative numbers like in Py3:
     z = pow(-1, 0.5)
+
+    # Py3-style iterators written as new-style classes (subclasses of
+    # future.builtins.object) are backward compatibile with Py2:
+    class Upper(object):
+        def __init__(self, iterable):
+            self._iter = iter(iterable)
+        def __next__(self):                 # note the Py3 interface
+            return next(self._iter).upper()
+        def __iter__(self):
+            return self
+    assert list(Upper('hello')) == list('HELLO')
 
 
 There is also support for renamed standard library modules in the form of import

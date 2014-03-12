@@ -3,52 +3,86 @@
 Custom iterators
 ----------------
 
-If you define your own iterators, there is an incompatibility in the method name
+If you define your own iterators, there is an incompatibility in the special method name
 across Py3 and Py2. On Python 3 it is ``__next__``, whereas on Python 2 it is
 ``next``.
 
-The ``next`` function in ``future.builtins`` provides compatibility across
-Python 2 and Python 3 for iterators that defines a Python 3-like ``.__next__``
-method. You can use it as follows::
+The most elegant solution to this is to derive your custom iterator class from
+``future.builtins.object``. This provides a special fallback ``next`` method
+that maps to ``__next__``. Use it as follows::
 
-    # Python 3-style iterator:
+    from future.builtins import object
+    
     class Upper(object):
         def __init__(self, iterable):
             self._iter = iter(iterable)
-        def __next__(self):                 # note the Py3 interface
+        def __next__(self):                 # Py3-style iterator interface
+            return next(self._iter).upper()
+        def __iter__(self):
+            return self
+
+    itr = Upper('hello')
+    assert next(itr) == 'H'
+    assert next(itr) == 'E'
+    assert list(itr) == list('LLO')
+
+
+This works unless you are defining a subclass of a base class defined elsewhere
+that does not derive from ``future.builtins.object``.
+
+In this case, you can provide compatibility across Python 2 and Python 3 using the ``next``
+function in ``future.builtins``::
+
+    from some_module import some_base_class
+
+    class Upper2(some_base_class):
+        def __init__(self, iterable):
+            self._iter = iter(iterable)
+        def __next__(self):                 # Py3-style iterator interface
             return next(self._iter).upper()
         def __iter__(self):
             return self
 
     from future.builtins import next
-    itr = Upper('hello')
-    assert next(itr) == 'H'
-    assert next(itr) == 'E'
+
+    itr2 = Upper2('hello')
+    assert next(itr2) == 'H'
+    assert next(itr2) == 'E'
 
 ``next()`` also works with regular Python 2 iterators with a ``.next`` method::
 
-    itr = iter(['one', 'three', 'five'])
-    assert 'next' in dir(itr)
-    assert next(itr) == 'one'
+    itr3 = iter(['one', 'three', 'five'])
+    assert 'next' in dir(itr3)
+    assert next(itr3) == 'one'
 
-This works whenever your code calls the ``next()`` function explicitly.  If you
+This works whenever your code calls the ``next()`` function explicitly. If you
 consume the iterator implicitly in a ``for`` loop or ``list()`` call or by some
-other method, the ``future.builtins.next`` function will not help.  Instead, a
-decorator called ``implements_iterator`` is provided in ``future.utils`` to
-allow Py3-style iterators to work identically on Py2. Use it as follows::
+other method, the ``future.builtins.next`` function will not help; the third
+assertion below would fail on Python 2::
+
+    itr2 = Upper2('hello')
+
+    assert next(itr2) == 'H'
+    assert next(itr2) == 'E'
+    assert list(itr2) == list('LLO')      # fails because Py2 implicitly looks
+                                          # for a ``__next__`` method.
+
+Instead, you can use a decorator called ``implements_iterator`` from
+``future.utils`` to allow Py3-style iterators to work identically on Py2, even
+if they don't inherit from ``future.builtins.object``. Use it as follows::
 
     from future.utils import implements_iterator
 
-    Upper = implements_iterator(Upper)
+    Upper2 = implements_iterator(Upper2)
 
-    print(list(Upper('hello')))
+    print(list(Upper2('hello')))
     # prints ['H', 'E', 'L', 'L', 'O']
 
 This can of course also be used with the ``@`` decorator syntax when defining
 the iterator as follows::
 
     @implements_iterator
-    class Upper(object):
+    class Upper2(some_base_class):
         def __init__(self, iterable):
             self._iter = iter(iterable)
         def __next__(self):                 # note the Py3 interface

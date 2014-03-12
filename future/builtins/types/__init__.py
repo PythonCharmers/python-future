@@ -58,6 +58,7 @@ For more information:
 - future.builtins.types.newbytes
 - future.builtins.types.newdict
 - future.builtins.types.newint
+- future.builtins.types.newobject
 - future.builtins.types.newrange
 - future.builtins.types.newstr
 
@@ -217,6 +218,7 @@ if utils.PY3:
     bytes = builtins.bytes
     dict = builtins.dict
     int = builtins.int
+    object = builtins.object
     range = builtins.range
     str = builtins.str
     __all__ = []
@@ -225,6 +227,7 @@ else:
     from .newdict import newdict as dict
     from .newint import newint as int
     from .newrange import newrange as range
+    from .newobject import newobject as object
     from .newstr import newstr as str
     __all__ = ['bytes', 'dict', 'int', 'range', 'str']
 

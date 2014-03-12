@@ -13,10 +13,9 @@ and its compatibility with 3rd-party modules.
 Standard-library import hooks now require explicit installation
 ---------------------------------------------------------------
 
-*Note: backwards-incompatible change:* As previously announced (see What's New
-for version 0.11.x), the deprecated feature of implicit installation of import
-hooks by ``future.standard_library`` has been removed. Now the import hooks
-must be installed explicitly, as follows::
+*Note: backwards-incompatible change:* As previously announced (see
+:ref:`deprecated-auto-import-hooks`), the import hooks must now be installed
+explicitly, as follows::
 
     from future import standard_library
     with standard_library.hooks():
@@ -36,7 +35,8 @@ or with the functional interface::
 This allows finer-grained control over whether import hooks are enabled for
 other imported modules, such as ``requests``, which provide their own Python
 2/3 compatibility code. This also improves compatibility of ``future`` with
-tools like ``py2exe`` (see issue #...).
+tools like ``py2exe`` (see `issue #31
+<https://github.com/PythonCharmers/python-future/issues/31>`).
 
 
 .. Versioned standard library imports
@@ -89,6 +89,66 @@ Use them like this::
     with standard_library.hooks():
         from urllib.request import Request      # etc.
         from email import message_from_bytes    # etc.
+
+
+``newobject`` base object defines Py2-compatible special methods
+-----------------------------------------------------------------
+
+There is a new ``future.bytes.object`` class that can streamline Py3/2
+compatible code by providing fallback special methods for its subclasses for
+Py2 compatibility.  This obviates the need to add compatibility hacks or
+decorators to the code such as the ``@implements_iterator`` for classes that
+define a Py3-style ``__next__`` method.
+
+In this example, the code defines a Py3-style iterator with a ``__next__``
+method. The ``object`` class defines a ``next`` method for Python 2 that maps
+to ``__next__``::
+    
+    from future.builtins import object
+
+    class Upper(object):
+        def __init__(self, iterable):
+            self._iter = iter(iterable)
+        def __next__(self):                 # note the Py3 interface
+            return next(self._iter).upper()
+        def __iter__(self):
+            return self
+
+    assert list(Upper('hello')) == list('HELLO')
+
+``future.builtins.object`` defines other Py2-compatible special methods similarly:
+currently these include ``__nonzero__`` (mapped to ``__bool__``) and
+``__long__`` (mapped to ``__int__``).
+    
+On Python 3, as usual, ``object`` simply points to ``builtins.object``.
+
+
+Bug fixes
+---------
+
+Many small improvements and fixes have been made across the project. Some highlights are:
+
+- Fixes and updates from Python 3.3.5 have been included in the backported
+  standard library modules.
+
+- ``http.client`` module and related modules use the new backported modules
+  such as ``email``. As a result they are more compliant with the Python 3.3
+  equivalents.
+
+- Scrubbing of the ``sys.modules`` cache performed by ``remove_hooks()`` (also
+  called by the ``suspend_hooks`` and ``hooks`` context managers) is now more
+  conservative. It now removes only modules with Py3 names (such as
+  ``urllib.parse``) and not the corresponding ``future.standard_library.*``
+  modules (such as ``future.standard_library.urllib.parse``.
+
+- The zero-argument ``super()`` function now works from within
+  ``staticmethod``s such as those called ``__new__``.
+
+- Calls to ``bytes(string, encoding[, errors])`` now work with ``encoding`` and
+  ``errors`` passed as positional arguments. Previously this only worked if
+  ``encoding`` and ``errors`` were specified as keyword arguments.
+
+- ``future.utils.native(d)`` calls now work for ``future.builtins.dict`` objects.
 
 
 .. whats-new-0.11.3:
@@ -251,6 +311,8 @@ compatibility of ``future`` with other Python 2 modules.
 Please remember to import ``input`` from ``future.builtins`` if you use
 ``input()`` in a Python 2/3 compatible codebase.
 
+
+.. deprecated-auto-import-hooks
 
 Deprecated feature: auto-installation of standard-library import hooks
 ----------------------------------------------------------------------

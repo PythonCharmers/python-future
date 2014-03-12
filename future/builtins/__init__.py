@@ -19,7 +19,7 @@ from future.builtins.iterators import (filter, map, zip)
 # backward-compatibility with future v0.8.2. It will be removed in future v1.0.
 from future.builtins.misc import (ascii, chr, hex, input, isinstance, next,
                                   oct, open, pow, round, super)
-from future.builtins.types import (bytes, dict, int, range, str)
+from future.builtins.types import (bytes, dict, int, object, range, str)
 from future import utils
 
 
@@ -30,7 +30,8 @@ if not utils.PY3:
     # Only shadow builtins on Py2; no new names
     __all__ = ['filter', 'map', 'zip', 
                'ascii', 'chr', 'hex', 'input', 'next', 'oct', 'open', 'pow',
-               'round', 'super', 'bytes', 'dict', 'int', 'range', 'str',
+               'round', 'super',
+               'bytes', 'dict', 'int', 'object', 'range', 'str',
               ]
 
 else:
