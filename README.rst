@@ -14,6 +14,8 @@ features from Python 3 and 2. It also comes with ``futurize`` and
 Py2 or Py3 code easily to support both Python 2 and 3 in a single clean
 Py3-style codebase, module by module.
 
+Notable projects that use ``future`` for Python 3/2 compatibility are `Mezzanine
+<http://mezzanine.jupo.org/>`_ and `ObsPy <http://obspy.org>`_.
 
 .. _features:
 
@@ -32,7 +34,7 @@ Features
 -   ``past.translation`` package supports transparent translation of Python 2
     modules to Python 3 upon import. [This feature is currently in alpha.] 
 
--   580+ unit tests, including many from the Py3.3 source tree.
+-   640+ unit tests, including many from the Py3.3 source tree.
 
 -   ``futurize`` and ``pasteurize`` scripts based on ``2to3`` and parts of
     ``3to2`` and ``python-modernize``, for automatic conversion from either Py2
