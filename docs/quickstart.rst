@@ -31,7 +31,9 @@ The easiest way is to start each new module with these lines::
 Then write standard Python 3 code. The :mod:`future` package will
 provide support for running your code on Python 2.6 and 2.7 mostly unchanged.
 
-See :ref:`what-else` for more details.
+- For more examples, see :ref:`overview`.
+- For explicit import forms, see :ref:`imports`.
+- For more details, see :ref:`what-else`.
 
 
 To convert existing Python 3 code
@@ -45,14 +47,17 @@ module::
     from __future__ import division
     from __future__ import print_function
     from __future__ import unicode_literals
+
     from future.builtins import open
     from future.builtins import str
-    from past.utils import div
     # etc., as needed
+
+    from future import standard_library
+    standard_library.install_hooks()
     
-and converts a few Python 3-only constructs to a form compatible with
-both Py3 and Py2. Most remaining Python 3 code should simply work on
-Python 2.
+and converts several Python 3-only constructs (like keyword-only arguments) to a
+form compatible with both Py3 and Py2. Most remaining Python 3 code should
+simply work on Python 2.
 
 See :ref:`backwards-conversion` for more details.
 
@@ -97,10 +102,6 @@ that were heavily refactored versus Py2::
     import http
     import http.client
     import http.server
-
-The following modules are currently not supported, but we aim to support them in
-the future::
-    
     import http.cookies
     import http.cookiejar
 
@@ -112,6 +113,10 @@ the future::
     import xmlrpc.client
     import xmlrpc.server
 
+
+The following modules are currently not supported, but we aim to support them in
+the future::
+    
 If you need one of these, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.
 
@@ -149,57 +154,9 @@ how well this works or doesn't work for you. Please file an issue `here
 `python-porting <https://mail.python.org/mailman/listinfo/python-porting>`_
 mailing list.
 
-For more information, see :ref:`translation`.
+For more information on the automatic translation feature, see :ref:`translation`.
 
-.. _utilities-guide:
-
-Utilities
----------
-
-:mod:`future` also provides some useful functions and decorators to ease
-backward compatibility with Py2 in the :mod:`future.utils` and
-:mod:`past.utils` modules. These are a selection of the most useful functions
-from ``six`` and various home-grown Py2/3 compatibility modules from popular
-Python projects, such as Jinja2, Pandas, IPython, and Django. The goal is to
-consolidate these in one place, tested and documented, obviating the need for
-every project to repeat this work.
-
-Examples::
-
-    # Functions like print() expect __str__ on Py2 to return a byte
-    # string. This decorator maps the __str__ to __unicode__ on Py2 and
-    # defines __str__ to encode it as utf-8:
-
-    from future.utils import python_2_unicode_compatible
-
-    @python_2_unicode_compatible
-    class MyClass(object):
-        def __str__(self):
-            return u'Unicode string: \u5b54\u5b50'
-    a = MyClass()
-
-    # This then prints the Chinese characters for Confucius:
-    print(a)
-
-
-    # Iterators on Py3 require a __next__() method, whereas on Py2 this
-    # is called next(). This decorator allows Py3-style iterators to work
-    # identically on Py2:
-
-    @implements_iterator
-    class Upper(object):
-        def __init__(self, iterable):
-            self._iter = iter(iterable)
-        def __next__(self):                 # note the Py3 interface
-            return next(self._iter).upper()
-        def __iter__(self):
-            return self
-
-    print(list(Upper('hello')))
-    # prints ['H', 'E', 'L', 'L', 'O']
-
-On Python 3 these decorators are no-ops.
-
-
-For more information, see :ref:`what-else`.
+Next steps
+----------
+For more information about writing Py3/2-compatible code, see :ref:`what-else`.
 

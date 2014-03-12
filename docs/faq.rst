@@ -4,15 +4,15 @@ Frequently Asked Questions (FAQ)
 Who is this for?
 ================
 
-1. People who would prefer to write clean, future-proof Python
-3-compatible code, but whose day-jobs require that their code still run
-on a Python 2 stack.
+1. People with existing or new Python 3 codebases who wish to provide
+ongoing Python 2.6 / 2.7 support easily and with little maintenance burden.
 
 2. People who wish to simplify migration of their codebases to Python
 3.3+, module by module, without giving up Python 2 compatibility.
 
-3. People with existing or new Python 3 codebases who wish to provide
-ongoing Python 2.6 / 2.7 support easily and with little maintenance burden.
+.. 3. People who would prefer to write clean, future-proof Python
+.. 3-compatible code, but who are required to write code that still runs
+.. on a Python 2 stack.
 
 
 Why upgrade to Python 3?
@@ -28,8 +28,8 @@ Python 2.7 is the end of the Python 2 line. (See `PEP 404
 <http://www.python.org/peps/pep-0404/>`_.) The language and standard
 libraries are improving only in Python 3.x.
 
-Python 3.3 is a better language and better set of standard libraries than
-Python 2.x in almost every way. Python 3 is cleaner, less warty, and easier to
+Python 3.x is a better language and better set of standard libraries than
+Python 2.x in almost every way. Python 3.x is cleaner, less warty, and easier to
 learn than Python 2. It has better memory efficiency, easier Unicode handling,
 and powerful new features like function annotations and the `asyncio
 <https://pypi.python.org/pypi/asyncio>`_ module.
@@ -119,7 +119,7 @@ Is it tested?
 -------------
 
 ``future`` is used by ``mezzanine``, among other projects. Currently
-``future`` has 470+ unit tests. Many of these are straight from the Python 3.3
+``future`` has 580+ unit tests. Many of these are straight from the Python 3.3
 test suite. In general, the ``future`` package itself is in good shape, whereas
 the ``futurize`` script for automatic porting is incomplete and imperfect.
 (Chances are it will require some manual cleanup afterwards.)

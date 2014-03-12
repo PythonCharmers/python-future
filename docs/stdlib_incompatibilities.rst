@@ -74,9 +74,9 @@ This method has been removed in Py3. This crops up in e.g. porting ``http.client
 
 .. _stdlib-base64-decodebytes:
 
-base64.decodebytes()
---------------------
-The ``base64`` module on Py2 has no 'decodebytes'.
+base64.decodebytes() and base64.encodebytes()
+---------------------------------------------
+The ``base64`` module on Py2 has no ``decodebytes`` or ``encodebytes`` functions.
 
 
 .. _stdlib-re-ASCII:

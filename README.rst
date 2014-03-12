@@ -32,7 +32,7 @@ Features
 -   ``past.translation`` package supports transparent translation of Python 2
     modules to Python 3 upon import. [This feature is currently in alpha.] 
 
--   470+ unit tests
+-   580+ unit tests, including many from the Py3.3 source tree.
 
 -   ``futurize`` and ``pasteurize`` scripts based on ``2to3`` and parts of
     ``3to2`` and ``python-modernize``, for automatic conversion from either Py2
@@ -49,10 +49,10 @@ Features
 Code examples
 -------------
 
-Replacements for Py2's built-in functions are designed to be imported at the top
-of each Python module together with Python's built-in ``__future__`` statements.
-For example, this code behaves identically on Python 2.6/2.7 after these imports
-as it does on Python 3::
+Replacements for Py2's built-in functions and types are designed to be imported
+at the top of each Python module together with Python's built-in ``__future__``
+statements. For example, this code behaves identically on Python 2.6/2.7 after
+these imports as it does on Python 3.3+::
     
     from __future__ import absolute_import, division, print_function
     from future.builtins import (bytes, str, open, super, range,
@@ -133,12 +133,64 @@ hooks. The context-manager form works like this::
         import queue
 
 
+Automatic conversion to Py3/2-compatible code
+=============================================
+
+``future`` comes with two scripts called ``futurize`` and
+``pasteurize`` to aid in making Python 2 code or Python 3 code compatible with
+both platforms (Py2&3). It is based on 2to3 and uses fixers from ``lib2to3``,
+``lib3to2``, and ``python-modernize``, as well as custom fixers.
+
+``futurize`` passes Python 2 code through all the appropriate fixers to turn it
+into valid Python 3 code, and then adds ``__future__`` and ``future`` package
+imports so that it also runs under Python 2.
+
+For conversions from Python 3 code to Py2/3, use the ``pasteurize`` script
+instead. This converts Py3-only constructs (e.g. new metaclass syntax) to
+Py2/3 compatible constructs and adds ``__future__`` and ``future`` imports to
+the top of each module.
+
+In both cases, the result should be relatively clean Py3-style code that runs
+mostly unchanged on both Python 2 and Python 3.
+
+.. _forwards-conversion:
+
+Futurize: 2 to both
+--------------------
+
+For example, running ``futurize -w mymodule.py`` turns this Python 2 code::
+    
+    import ConfigParser
+
+    class Blah(object):
+        pass
+    print 'Hello',
+
+into this code which runs on both Py2 and Py3::
+    
+    from __future__ import print_function
+    from future import standard_library
+    
+    import configparser
+
+    class Blah(object):
+        pass
+    print('Hello', end=' ')
+
+For complex projects, it may be better to divide the porting into two stages.
+``futurize`` supports a ``--stage1`` flag for safe changes that modernize the
+code but do not break Python 2.6 compatibility or introduce a depdendency on the
+``future`` package. Calling ``futurize --stage2`` then completes the process.
+
+
 Automatic translation
 ---------------------
 
 The ``past`` package can now automatically translate some simple Python 2
-modules to Python 3 upon import. For example, here is how to use a Python 2-only
-package called ``plotrique`` on Python 3. First install it::
+modules to Python 3 upon import. The goal is to support the "long tail" of
+real-world Python 2 modules (e.g. on PyPI) that have not been ported yet. For
+example, here is how to use a Python 2-only package called ``plotrique`` on
+Python 3. First install it::
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     
@@ -163,8 +215,7 @@ properly to a Python 2/3 compatible codebase using a tool like
 ``futurize`` and the changes should be pushed to the upstream project.
 
 Note: the translation feature is still in alpha and needs more testing and
-development to support a full range of real-world Python 2 modules.
-
+development.
 
 Next steps
 ----------
