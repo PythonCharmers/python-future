@@ -20,6 +20,11 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import test.support
     import html, html.parser, html.entites
     import http, http.client, http.server
+    import http.cookies, http.cookiejar
+    import xmlrpc.client, xmlrpc.server
+    import urllib.request, urllib.parse
+    import urllib.error, urllib.robotparser
+
     import _thread
     import _dummythread
     import _markupbase
@@ -51,16 +56,10 @@ Limitations
 -----------
 We don't currently support these modules, but would like to::
 
-    import http.cookies, http.cookiejar
     import dbm
     import dbm.dumb
     import dbm.gnu
-    import xmlrpc.client
     import collections.abc  # on Py33
-    import urllib.request
-    import urllib.parse
-    import urllib.error
-    import urllib.robotparser
     import tkinter
     import pickle     # should (optionally) bring in cPickle on Python 2
 
