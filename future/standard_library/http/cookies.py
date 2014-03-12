@@ -132,6 +132,7 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import chr, dict, int, str
+from future.utils import PY2, as_native_str
 
 #
 # Import our required modules
@@ -246,32 +247,32 @@ def _quote(str, LegalChars=_LegalChars):
 _OctalPatt = re.compile(r"\\[0-3][0-7][0-7]")
 _QuotePatt = re.compile(r"[\\].")
 
-def _unquote(str):
+def _unquote(mystr):
     # If there aren't any doublequotes,
     # then there can't be any special characters.  See RFC 2109.
-    if len(str) < 2:
-        return str
-    if str[0] != '"' or str[-1] != '"':
-        return str
+    if len(mystr) < 2:
+        return mystr
+    if mystr[0] != '"' or mystr[-1] != '"':
+        return mystr
 
     # We have to assume that we must decode this string.
     # Down to work.
 
     # Remove the "s
-    str = str[1:-1]
+    mystr = mystr[1:-1]
 
     # Check for special sequences.  Examples:
     #    \012 --> \n
     #    \"   --> "
     #
     i = 0
-    n = len(str)
+    n = len(mystr)
     res = []
     while 0 <= i < n:
-        o_match = _OctalPatt.search(str, i)
-        q_match = _QuotePatt.search(str, i)
+        o_match = _OctalPatt.search(mystr, i)
+        q_match = _QuotePatt.search(mystr, i)
         if not o_match and not q_match:              # Neither matched
-            res.append(str[i:])
+            res.append(mystr[i:])
             break
         # else:
         j = k = -1
@@ -280,12 +281,12 @@ def _unquote(str):
         if q_match:
             k = q_match.start(0)
         if q_match and (not o_match or k < j):     # QuotePatt matched
-            res.append(str[i:k])
-            res.append(str[k+1])
+            res.append(mystr[i:k])
+            res.append(mystr[k+1])
             i = k + 2
         else:                                      # OctalPatt matched
-            res.append(str[i:j])
-            res.append(chr(int(str[j+1:j+4], 8)))
+            res.append(mystr[i:j])
+            res.append(chr(int(mystr[j+1:j+4], 8)))
             i = j + 4
     return _nulljoin(res)
 
@@ -380,9 +381,14 @@ class Morsel(dict):
 
     __str__ = output
 
+    @as_native_str()
     def __repr__(self):
+        if PY2 and isinstance(self.value, unicode):
+            val = str(self.value)    # make it a newstr to remove the u prefix
+        else:
+            val = self.value
         return '<%s: %s=%s>' % (self.__class__.__name__,
-                                self.key, repr(self.value))
+                                str(self.key), repr(val))
 
     def js_output(self, attrs=None):
         # Print javascript
@@ -506,11 +512,16 @@ class BaseCookie(dict):
 
     __str__ = output
 
+    @as_native_str()
     def __repr__(self):
         l = []
         items = sorted(self.items())
         for key, value in items:
-            l.append('%s=%s' % (key, repr(value.value)))
+            if PY2 and isinstance(value.value, unicode):
+                val = str(value.value)    # make it a newstr to remove the u prefix
+            else:
+                val = value.value
+            l.append('%s=%s' % (str(key), repr(val)))
         return '<%s: %s>' % (self.__class__.__name__, _spacejoin(l))
 
     def js_output(self, attrs=None):
@@ -535,19 +546,20 @@ class BaseCookie(dict):
                 self[key] = value
         return
 
-    def __parse_string(self, str, patt=_CookiePattern):
+    def __parse_string(self, mystr, patt=_CookiePattern):
         i = 0            # Our starting point
-        n = len(str)     # Length of string
+        n = len(mystr)     # Length of string
         M = None         # current morsel
 
         while 0 <= i < n:
             # Start looking for a cookie
-            match = patt.search(str, i)
+            match = patt.search(mystr, i)
             if not match:
                 # No more cookies
                 break
 
             key, value = match.group("key"), match.group("val")
+
             i = match.end(0)
 
             # Parse the key, value in case it's metainfo

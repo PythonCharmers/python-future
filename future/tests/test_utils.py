@@ -7,7 +7,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import sys
 from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
-                         native_str, raise_)
+                         native_str, raise_, as_native_str)
 
 
 from numbers import Integral
@@ -108,7 +108,6 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(isbytes(self.s2))
 
     @skip26
-    @unittest.expectedFailure
     def test_raise_(self):
         """
         The with_value() test currently fails on Py3
@@ -145,6 +144,23 @@ class TestUtils(unittest.TestCase):
         except IOError as e:
             self.assertEqual(str(e), "An error")
 
+
+    def test_as_native_str(self):
+        """
+        Tests the decorator as_native_str()
+        """
+        class MyClass(object):
+            @as_native_str()
+            def __repr__(self):
+                return u'abc'
+            
+        obj = MyClass()
+       
+        self.assertEqual(repr(obj), 'abc')
+        if PY2:
+            self.assertEqual(repr(obj), b'abc')
+        else:
+            self.assertEqual(repr(obj), u'abc')
 
 
 if __name__ == '__main__':

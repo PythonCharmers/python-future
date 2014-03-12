@@ -2,11 +2,13 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
+from future.builtins import str
 from future import standard_library
+from future.utils import text_to_native_str
 # Simple test suite for http/cookies.py
 
 with standard_library.hooks():
-    from test.support import run_unittest, run_doctest, check_warnings
+    from test.support import run_unittest, run_doctest   # , check_warnings
     from http import cookies
 from future.tests.base import unittest
 
@@ -15,13 +17,14 @@ import warnings
 class CookieTests(unittest.TestCase):
 
     def setUp(self):
-        self._warnings_manager = check_warnings()
-        self._warnings_manager.__enter__()
+        # self._warnings_manager = check_warnings()
+        # self._warnings_manager.__enter__()
         warnings.filterwarnings("ignore", ".* class is insecure.*",
                                 DeprecationWarning)
 
     def tearDown(self):
-        self._warnings_manager.__exit__(None, None, None)
+        # self._warnings_manager.__exit__(None, None, None)
+        pass
 
     def test_basic(self):
         cases = [
@@ -54,7 +57,7 @@ class CookieTests(unittest.TestCase):
         for case in cases:
             C = cookies.SimpleCookie()
             C.load(case['data'])
-            self.assertEqual(repr(C), case['repr'])
+            self.assertEqual(repr(C), text_to_native_str(case['repr']))
             self.assertEqual(C.output(sep='\n'), case['output'])
             for k, v in sorted(case['dict'].items()):
                 self.assertEqual(C[k].value, v)
@@ -232,9 +235,9 @@ class MorselTests(unittest.TestCase):
                               M.set, i, '%s_value' % i, '%s_value' % i)
 
 
-def test_main():
-    run_unittest(CookieTests, MorselTests)
-    run_doctest(cookies)
+# def test_main():
+#     run_unittest(CookieTests, MorselTests)
+#     run_doctest(cookies)
 
 if __name__ == '__main__':
-    test_main()
+    unittest.main()

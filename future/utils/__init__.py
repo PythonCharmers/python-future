@@ -67,6 +67,7 @@ On Python 3, this decorator is a no-op.
 import types
 import sys
 import numbers
+import functools
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
@@ -174,6 +175,9 @@ if PY3:
 
     def bytes_to_native_str(b, encoding='ascii'):
         return b.decode(encoding)
+
+    def text_to_native_str(b, encoding='ascii'):
+        return b
 else:
     # Python 2
     def native_str_to_bytes(s, encoding='ascii'):
@@ -182,6 +186,12 @@ else:
     def bytes_to_native_str(b, encoding='ascii'):
         return b
 
+    def text_to_native_str(b, encoding='ascii'):
+        """
+        Use this to create a Py2 native string when "from __future__ import
+        unicode_literals" is in effect.
+        """
+        return b.encode(encoding)
 
 if PY3:
     # list-producing versions of the major Python iterating functions
@@ -523,7 +533,33 @@ def old_div(a, b):
     return a // b if (isint(a) and isint(b)) else a / b
 
 
+def as_native_str(encoding='utf-8'):
+    '''
+    A decorator to turn a function or method call that returns text, i.e.
+    unicode, into one that returns a native platform str.
+
+    Use it as a decorator like this::
+        
+        from __future__ import unicode_literals
+
+        class MyClass(object):
+            @as_native_str(encoding='ascii')
+            def __repr__(self):
+                return next(self._iter).upper()
+    '''
+    if PY3:
+        return lambda f: f
+    else:
+        def encoder(f):
+            @functools.wraps(f)
+            def wrapper(*args, **kwargs):
+                return f(*args, **kwargs).encode(encoding=encoding)
+            return wrapper
+        return encoder
+
+
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
+           'as_native_str',
            'with_metaclass', 'bchr', 'bstr', 'bord',
            'tobytes', 'str_to_native_bytes', 'bytes_to_native_str', 
            'lrange', 'lmap', 'lzip', 'lfilter',
