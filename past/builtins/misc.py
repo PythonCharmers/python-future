@@ -23,6 +23,7 @@ these standard locations on both Py2.6+ and Py3:
 """
 
 from __future__ import unicode_literals
+import sys
 
 from future.utils import PY3
 
@@ -34,18 +35,32 @@ if PY3:
     unicode = str
     unichr = chr
 else:
+    import __builtin__
     cmp = __builtin__.cmp
     raw_input = __builtin__.raw_input
     unicode = __builtin__.unicode
     unichr = __builtin__.unichr
 
 
-def execfile(filename, myglobals=None, mylocals=None):
-    if PY3:
+if PY3:
+    def execfile(filename, myglobals=None, mylocals=None):
+        """
+        A version of execfile() that handles unicode filenames.
+
+        From IPython.
+        """
         mylocals = mylocals if (mylocals is not None) else myglobals
         exec_(compile(open(filename).read(), filename, 'exec'),
               myglobals, mylocals)
-    else:
+
+else:
+    def execfile(filename, myglobals=None, mylocals=None):
+        """
+        A version of execfile() for Py2 that handles unicode filenames (useful
+        if "from __future__ import unicode_literals" is in effect.
+
+        From IPython.
+        """
         if sys.platform == 'win32':
             # The rstrip() is necessary b/c trailing whitespace in
             # files will cause an IndentationError in Python 2.6

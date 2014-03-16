@@ -529,8 +529,13 @@ def old_div(a, b):
     """
     Equivalent to ``a / b`` on Python 2 without ``from __future__ import
     division``.
+
+    TODO: generalize this to other objects (like arrays etc.)
     """
-    return a // b if (isint(a) and isint(b)) else a / b
+    if isinstance(a, numbers.Integral) and isinstance(b, numbers.Integral):
+        return a // b
+    else:
+        return a / b
 
 
 def as_native_str(encoding='utf-8'):
@@ -567,5 +572,6 @@ __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'viewitems', 'viewkeys', 'viewvalues',
            'bind_method', 'getexception',
            'reraise', 'implements_iterator', 'get_next', 'encode_filename',
-           'is_new_style', 'native_str']
+           'is_new_style', 'native_str', 'old_div', 'as_native_str'
+          ]
 

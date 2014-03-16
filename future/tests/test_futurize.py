@@ -68,6 +68,36 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after, tobytes=True)
 
+    def test_cmp(self):
+        before = """
+        assert cmp(1, 2) == -1
+        assert cmp(2, 1) == 1
+        """
+        after = """
+        from past.builtins import cmp
+        assert cmp(1, 2) == -1
+        assert cmp(2, 1) == 1
+        """
+        self.convert_check(before, after, stages=(1, 2), ignore_imports=False)
+
+    def test_execfile(self):
+        before = """
+        with open('mytempfile.py', 'w') as f:
+            f.write('x = 1')
+        execfile('mytempfile.py')
+        x += 1
+        assert x == 2
+        """
+        after = """
+        from past.builtins import execfile
+        with open('mytempfile.py', 'w') as f:
+            f.write('x = 1')
+        execfile('mytempfile.py')
+        x += 1
+        assert x == 2
+        """
+        self.convert_check(before, after, stages=(1, 2), ignore_imports=False)
+
     @unittest.expectedFailure
     def test_izip(self):
         before = """
