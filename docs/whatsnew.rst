@@ -6,8 +6,19 @@ What's new
 
 What's new in version 0.11.4
 ============================
+Relative imports from Cython modules
+------------------------------------
+
+...
+
+
+Bug fixes
+---------
 
 This release contains various small improvements and fixes:
+
+- The ``fix_absolute_import`` fixer now supports Cython ``.pyx`` modules. (Issue
+  #35).
 
 - This release restores Python 2.6 compatibility. (Issue #42).
 
