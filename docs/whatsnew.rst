@@ -131,6 +131,12 @@ includes custom ``execfile()`` and ``cmp()`` functions. ``futurize`` now
 invokes imports of these functions from ``past.builtins``.
 
 
+Relative imports from Cython modules
+------------------------------------
+
+...
+
+
 Bug fixes
 ---------
 
