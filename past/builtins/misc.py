@@ -78,8 +78,16 @@ else:
                 filename = filename.encode(sys.getfilesystemencoding())
             else:
                 filename = filename
-            __builtin__.execfile(filename, myglobals=myglobals,
-                                 mylocals=mylocals)
+            if mylocals is not None:
+                if myglobals is not None:
+                    __builtin__.execfile(filename, myglobals, mylocals)
+                else:
+                    assert False
+            else:
+                if myglobals is not None:
+                    __builtin__.execfile(filename, myglobals)
+                else:
+                    __builtin__.execfile(filename)
 
 
 __all__ = ['cmp', 'raw_input', 'unichr', 'unicode', 'execfile']
