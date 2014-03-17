@@ -1,18 +1,44 @@
 # Python test set -- built-in functions
+from past.builtins import filter, map, range, zip
+from past.builtins import basestring, dict, str   #, unicode
+from past.builtins import cmp, raw_input, unichr, unicode
+# from past.builtins import execfile
+
+from future import standard_library
+with standard_library.hooks():
+    from test.support import TESTFN     #, run_unittest
 
 import platform
-import unittest
-from test.test_support import fcmp, have_unicode, TESTFN, unlink, \
-                              run_unittest, check_py3k_warnings
+from os import unlink
 import warnings
 from operator import neg
-
 import sys, cStringIO, random, UserDict
+from future.tests.base import unittest
 
 # count the number of test runs.
 # used to skip running test_execfile() multiple times
 # and to create unique strings to intern in test_intern()
 numruns = 0
+
+def fcmp(x, y): # fuzzy comparison function
+    """
+    From Python 2.7 test.test_support
+    """
+    if isinstance(x, float) or isinstance(y, float):
+        try:
+            fuzz = (abs(x) + abs(y)) * FUZZ
+            if abs(x-y) <= fuzz:
+                return 0
+        except:
+            pass
+    elif type(x) == type(y) and isinstance(x, (tuple, list)):
+        for i in range(min(len(x), len(y))):
+            outcome = fcmp(x[i], y[i])
+            if outcome != 0:
+                return outcome
+        return (len(x) > len(y)) - (len(x) < len(y))
+    return (x > y) - (x < y)
+
 
 class Squares:
 
@@ -252,7 +278,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, compile, chr(0), 'f', 'exec')
         self.assertRaises(TypeError, compile, 'pass', '?', 'exec',
                           mode='eval', source='0', filename='tmp')
-        if have_unicode:
+        if True:  # Was: if have_unicode:
             compile(unicode('print u"\xc3\xa5"\n', 'utf8'), '', 'exec')
             self.assertRaises(TypeError, compile, unichr(0), 'f', 'exec')
             self.assertRaises(ValueError, compile, unicode('a = 1'), 'f', 'bad')
@@ -361,12 +387,12 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(eval('a', globals, locals), 1)
         self.assertEqual(eval('b', globals, locals), 200)
         self.assertEqual(eval('c', globals, locals), 300)
-        if have_unicode:
+        if True:   # Was: if have_unicode:
             self.assertEqual(eval(unicode('1+1')), 2)
             self.assertEqual(eval(unicode(' 1+1\n')), 2)
         globals = {'a': 1, 'b': 2}
         locals = {'b': 200, 'c': 300}
-        if have_unicode:
+        if True:   # Was: if have_unicode:
             self.assertEqual(eval(unicode('a'), globals), 1)
             self.assertEqual(eval(unicode('a'), globals, locals), 1)
             self.assertEqual(eval(unicode('b'), globals, locals), 200)
@@ -453,8 +479,9 @@ class BuiltinTest(unittest.TestCase):
     f.write('z = z+1\n')
     f.write('z = z*2\n')
     f.close()
-    with check_py3k_warnings(("execfile.. not supported in 3.x",
-                              DeprecationWarning)):
+    if True:
+        # with check_py3k_warnings(("execfile.. not supported in 3.x",
+        #                           DeprecationWarning)):
         execfile(TESTFN)
 
     def test_execfile(self):
@@ -549,7 +576,7 @@ class BuiltinTest(unittest.TestCase):
                 return chr(ord(str.__getitem__(self, index))+1)
         self.assertEqual(filter(lambda x: x>="3", shiftstr("1234")), "345")
 
-        if have_unicode:
+        if True:   # Was: if have_unicode:
             # test bltinmodule.c::filterunicode()
             self.assertEqual(filter(None, unicode("12")), unicode("12"))
             self.assertEqual(filter(lambda x: x>="3", unicode("1234")), unicode("34"))
@@ -589,7 +616,7 @@ class BuiltinTest(unittest.TestCase):
             tuple2: {(): (), (1, 2, 3): (2, 4, 6)},
             str2:   {"": "", "123": "112233"}
         }
-        if have_unicode:
+        if True:    # Was: if have_unicode:
             class unicode2(unicode):
                 def __getitem__(self, index):
                     return 2*unicode.__getitem__(self, index)
@@ -617,7 +644,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, getattr, sys, 1)
         self.assertRaises(TypeError, getattr, sys, 1, "foo")
         self.assertRaises(TypeError, getattr)
-        if have_unicode:
+        if True:    # Was: have_unicode:
             self.assertRaises(UnicodeError, getattr, sys, unichr(sys.maxunicode))
 
     def test_hasattr(self):
@@ -625,7 +652,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertTrue(hasattr(sys, 'stdout'))
         self.assertRaises(TypeError, hasattr, sys, 1)
         self.assertRaises(TypeError, hasattr)
-        if have_unicode:
+        if True:      # Was: if have_unicode:
             self.assertRaises(UnicodeError, hasattr, sys, unichr(sys.maxunicode))
 
         # Check that hasattr allows SystemExit and KeyboardInterrupts by
@@ -643,7 +670,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(hash(1), hash(1L))
         self.assertEqual(hash(1), hash(1.0))
         hash('spam')
-        if have_unicode:
+        if True:      # Was: if have_unicode:
             self.assertEqual(hash('spam'), hash(unicode('spam')))
         hash((0,1,2,3))
         def f(): pass
@@ -714,7 +741,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, iter)
         self.assertRaises(TypeError, iter, 42, 42)
         lists = [("1", "2"), ["1", "2"], "12"]
-        if have_unicode:
+        if True:      # Was: if have_unicode:
             lists.append(unicode("12"))
         for l in lists:
             i = iter(l)
@@ -995,10 +1022,10 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(ord(' '), 32)
         self.assertEqual(ord('A'), 65)
         self.assertEqual(ord('a'), 97)
-        if have_unicode:
+        if True:      # Was: if have_unicode:
             self.assertEqual(ord(unichr(sys.maxunicode)), sys.maxunicode)
         self.assertRaises(TypeError, ord, 42)
-        if have_unicode:
+        if True:      # Was: if have_unicode:
             self.assertRaises(TypeError, ord, unicode("12"))
 
     def test_pow(self):
@@ -1419,7 +1446,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertNotEqual(type(''), type(()))
 
     def test_unichr(self):
-        if have_unicode:
+        if True:      # Was: if have_unicode:
             self.assertEqual(unichr(32), unicode(' '))
             self.assertEqual(unichr(65), unicode('A'))
             self.assertEqual(unichr(97), unicode('a'))
@@ -1669,14 +1696,14 @@ class TestSorted(unittest.TestCase):
     def test_inputtypes(self):
         s = 'abracadabra'
         types = [list, tuple]
-        if have_unicode:
+        if True:      # Was: if have_unicode:
             types.insert(0, unicode)
         for T in types:
             self.assertEqual(sorted(s), sorted(T(s)))
 
         s = ''.join(dict.fromkeys(s).keys())  # unique letters only
         types = [set, frozenset, list, tuple, dict.fromkeys]
-        if have_unicode:
+        if True:      # Was: if have_unicode:
             types.insert(0, unicode)
         for T in types:
             self.assertEqual(sorted(s), sorted(T(s)))
@@ -1686,10 +1713,11 @@ class TestSorted(unittest.TestCase):
         self.assertRaises(TypeError, sorted, data, None, lambda x,y: 0)
 
 def _run_unittest(*args):
-    with check_py3k_warnings(
-            (".+ not supported in 3.x", DeprecationWarning),
-            (".+ is renamed to imp.reload", DeprecationWarning),
-            ("classic int division", DeprecationWarning)):
+    # with check_py3k_warnings(
+    #         (".+ not supported in 3.x", DeprecationWarning),
+    #         (".+ is renamed to imp.reload", DeprecationWarning),
+    #         ("classic int division", DeprecationWarning)):
+    if True:
         run_unittest(*args)
 
 def test_main(verbose=None):
@@ -1709,4 +1737,5 @@ def test_main(verbose=None):
 
 
 if __name__ == "__main__":
-    test_main(verbose=True)
+    # test_main(verbose=True)
+    unittest.main()
