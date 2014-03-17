@@ -56,8 +56,9 @@ if PY3:
 else:
     def execfile(filename, myglobals=None, mylocals=None):
         """
-        A version of execfile() for Py2 that handles unicode filenames (useful
-        if "from __future__ import unicode_literals" is in effect.
+        A version of execfile() for Py2 that handles unicode filenames.
+        This is useful if "from __future__ import unicode_literals" is in
+        effect.
 
         From IPython.
         """
@@ -82,7 +83,8 @@ else:
                 if myglobals is not None:
                     __builtin__.execfile(filename, myglobals, mylocals)
                 else:
-                    assert False
+                    raise ValueError(
+                        'globals argument is required if locals is passed')
             else:
                 if myglobals is not None:
                     __builtin__.execfile(filename, myglobals)
