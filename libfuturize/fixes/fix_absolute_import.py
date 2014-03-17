@@ -15,10 +15,13 @@ becomes:
     from . import spam
 """
 
+from os.path import dirname, join, exists, sep
 from lib2to3.fixes.fix_import import FixImport
 from lib2to3.fixer_util import FromImport, syms
 from lib2to3.fixes.fix_import import traverse_imports
+
 from libfuturize.fixer_util import future_import
+
 
 class FixAbsoluteImport(FixImport):
     run_order = 9
