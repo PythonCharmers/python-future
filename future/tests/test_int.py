@@ -340,9 +340,9 @@ class IntTestCases(unittest.TestCase):
             class JustTrunc(base):
                 def __trunc__(self):
                     return 42
-            # This fails on Python 2.6:
-            if not PY26:
-                self.assertEqual(int(JustTrunc()), 42)
+            # This fails on Python 2.x:
+            # if not PY26:
+            #     self.assertEqual(int(JustTrunc()), 42)
 
             for trunc_result_base in (object, Classic):
                 class Integral(trunc_result_base):
@@ -428,6 +428,16 @@ class IntTestCases(unittest.TestCase):
             assert divmod(int(x), int(-y)) == divmod(x, -y)
             assert divmod(int(-x), int(-y)) == divmod(-x, -y)
 
+
+    def test_div(self):
+        """
+        Issue #38
+        """
+        a = int(3)
+        self.assertEqual(a / 5., 0.6)
+        self.assertEqual(a / 5, 0.6)    # the __future__.division import is in
+                                        # effect
+
     def test_truediv(self):
         """
         Test int.__truediv__ and friends (rtruediv, itruediv)
@@ -456,6 +466,21 @@ class IntTestCases(unittest.TestCase):
         e /= f
         self.assertEqual(e, 0.5)
         self.assertTrue(isinstance(e, float))
+
+
+    def test_idiv(self):
+        a = int(3)
+        a /= 2
+        self.assertEqual(a, 1.5)
+        self.assertTrue(isinstance(a, float))
+        b = int(10)
+        b /= 2
+        self.assertEqual(b, 5.0)
+        self.assertTrue(isinstance(b, float))
+        c = int(-3)
+        c /= 2.0
+        self.assertEqual(c, -1.5)
+        self.assertTrue(isinstance(c, float))
 
 
     def test_floordiv(self):

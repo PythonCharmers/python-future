@@ -91,6 +91,15 @@ Use them like this::
         from email import message_from_bytes    # etc.
 
 
+``past.builtins`` module improved
+---------------------------------
+
+The ``past.builtins`` module is much more compatible with the
+corresponding builtins on Python 2; many more of the Py2 unit tests pass
+on Py3. For example, functions like ``map()`` and ``filter()``
+now behave as they do on Py2 with with ``None`` as the first argument.
+
+
 ``newobject`` base object defines Py2-compatible special methods
 -----------------------------------------------------------------
 
@@ -163,6 +172,8 @@ Many small improvements and fixes have been made across the project. Some highli
   ``encoding`` and ``errors`` were specified as keyword arguments.
 
 - ``future.utils.native(d)`` calls now work for ``future.builtins.dict`` objects.
+
+- Right-division with ``newint`` objects is fixed. (Issue #38).
 
 
 .. whats-new-0.11.3:
