@@ -7,7 +7,11 @@ What's new
 What's new in version 0.11.4
 ============================
 
-This release restores Python 2.6 compatibility.
+This release contains various small improvements and fixes:
+
+- This release restores Python 2.6 compatibility. (Issue #42).
+
+- Right-division with ``newint`` objects is fixed. (Issue #38).
 
 
 .. whats-new-0.11.3:
