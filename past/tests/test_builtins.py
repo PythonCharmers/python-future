@@ -268,20 +268,20 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(OverflowError, coerce, 0.5, int("12345" * 1000))
 
     def test_compile(self):
-        compile('print 1\n', '', 'exec')
+        compile('print(1)\n', '', 'exec')
         bom = '\xef\xbb\xbf'
-        compile(bom + 'print 1\n', '', 'exec')
+        compile(bom + 'print(1)\n', '', 'exec')
         compile(source='pass', filename='?', mode='exec')
         compile(dont_inherit=0, filename='tmp', source='0', mode='eval')
         compile('pass', '?', dont_inherit=1, mode='exec')
         self.assertRaises(TypeError, compile)
-        self.assertRaises(ValueError, compile, 'print 42\n', '<string>', 'badmode')
-        self.assertRaises(ValueError, compile, 'print 42\n', '<string>', 'single', 0xff)
+        self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'badmode')
+        self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'single', 0xff)
         self.assertRaises(TypeError, compile, chr(0), 'f', 'exec')
         self.assertRaises(TypeError, compile, 'pass', '?', 'exec',
                           mode='eval', source='0', filename='tmp')
         if True:  # Was: if have_unicode:
-            compile(unicode('print u"\xc3\xa5"\n', 'utf8'), '', 'exec')
+            compile(unicode('print(u"\xc3\xa5"\n)', 'utf8'), '', 'exec')
             self.assertRaises(TypeError, compile, unichr(0), 'f', 'exec')
             self.assertRaises(ValueError, compile, unicode('a = 1'), 'f', 'bad')
 
@@ -484,8 +484,7 @@ class BuiltinTest(unittest.TestCase):
     if True:
         # with check_py3k_warnings(("execfile.. not supported in 3.x",
         #                           DeprecationWarning)):
-        # execfile(TESTFN)
-        pass
+        execfile(TESTFN)
 
     def test_execfile(self):
         global numruns
@@ -988,9 +987,9 @@ class BuiltinTest(unittest.TestCase):
 
     def test_oct(self):
         self.assertEqual(oct(100), '0144')
-        self.assertEqual(oct(100), '0144L')
+        # self.assertEqual(oct(100L), '0144L')
         self.assertEqual(oct(-100), '-0144')
-        self.assertEqual(oct(-100), '-0144L')
+        # self.assertEqual(oct(-100L), '-0144L')
         self.assertRaises(TypeError, oct, ())
 
     def write_testfile(self):
@@ -1235,12 +1234,12 @@ class BuiltinTest(unittest.TestCase):
             # SF 876178: make sure input() respect future options.
             sys.stdin = io.BytesIO(b'1/2')
             sys.stdout = io.BytesIO()
-            exec(compile('print input()', 'test_builtin_tmp', 'exec'))
+            exec(compile('print(input())', 'test_builtin_tmp', 'exec'))
             sys.stdin.seek(0, 0)
-            exec(compile('from __future__ import division;print input()',
+            exec(compile('from __future__ import division;print(input())',
                          'test_builtin_tmp', 'exec'))
             sys.stdin.seek(0, 0)
-            exec(compile('print input()', 'test_builtin_tmp', 'exec'))
+            exec(compile('print(input())', 'test_builtin_tmp', 'exec'))
             # The result we expect depends on whether new division semantics
             # are already in effect.
             if 1/2 == 0:
