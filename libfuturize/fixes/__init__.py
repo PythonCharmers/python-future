@@ -6,7 +6,6 @@ from lib2to3 import refactor
 # projects that are happy to drop support for Py2.5 and below. Applying
 # them first will reduce the size of the patch set for the real porting.
 lib2to3_fix_names_stage1 = set([
-    'lib2to3.fixes.fix_absolute_import',   # FAKE: TESTING ONLY
     'lib2to3.fixes.fix_apply',
     'lib2to3.fixes.fix_except',
     'lib2to3.fixes.fix_exitfunc',
