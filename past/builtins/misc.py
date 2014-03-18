@@ -1,45 +1,29 @@
-"""
-A resurrection of some old functions from Python 2. These should be used
-sparingly, to help with porting efforts, since code using them is no
-longer standard Python 3 code.
-
-We provide these builtin functions which have no equivalent on Py3:
-
-- cmp()
-- execfile()
-
-These aliases are also provided:
-
-- raw_input() <- input()
-- unicode() <- str()
-- unichr() <- chr()
-
-For reference, the following Py2 builtin functions are available from
-these standard locations on both Py2.6+ and Py3:
-
-- reduce() <- functools.reduce()
-- reload() <- imp.reload()
-
-"""
-
 from __future__ import unicode_literals
 import sys
 
-from future.utils import PY3
+from future.utils import PY3, exec_
 
 
 if PY3:
-    # Bring back the cmp function
+    def apply(f, *args, **kw):
+        return f(*args, **kw)
     cmp = lambda a, b: (a > b) - (a < b)
+    from sys import intern
     raw_input = input
+    from imp import reload
     unicode = str
     unichr = chr
+    xrange = range
 else:
     import __builtin__
+    apply = __builtin__.apply
     cmp = __builtin__.cmp
+    intern = __builtin__.intern
     raw_input = __builtin__.raw_input
+    reload = __builtin__.reload
     unicode = __builtin__.unicode
     unichr = __builtin__.unichr
+    xrange = __builtin__.xrange
 
 
 if PY3:
@@ -91,5 +75,9 @@ else:
                 else:
                     __builtin__.execfile(filename)
 
+if PY3:
+    __all__ = ['apply', 'cmp', 'execfile', 'intern', 'raw_input',
+               'reload', 'unichr', 'unicode', 'xrange']
+else:
+    __all__ = []
 
-__all__ = ['cmp', 'raw_input', 'unichr', 'unicode', 'execfile']
