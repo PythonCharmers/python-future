@@ -9,20 +9,19 @@ What's new in version 0.11.4
 
 This release contains various small improvements and fixes:
 
+- This release restores Python 2.6 compatibility. (Issue #42).
+
 - The ``fix_absolute_import`` fixer now supports Cython ``.pyx`` modules. (Issue
   #35).
 
-- This release restores Python 2.6 compatibility. (Issue #42).
-
 - Right-division with ``newint`` objects is fixed. (Issue #38).
 
-- The ``fix_dict`` fixer has been moved to stage2 of ``futurize``
+- The ``fix_dict`` fixer has been moved to stage2 of ``futurize``.
 
 - A positional ``encoding`` argument to the ``bytes()`` constructor is now supported.
 
-- The ``install_hooks()`` function and ``hooks`` context manager in
-  ``future.standard_library`` are now more accurate at assessing which modules
-  belong to the standard library when scrubbing the ``sys.modules`` cache.
+- The 0-argument ``super()`` function now works from inside static methods such
+  as ``__new__``. (Issue #36).
 
 
 .. whats-new-0.11.3:
