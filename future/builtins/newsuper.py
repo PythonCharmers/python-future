@@ -35,7 +35,7 @@ from __future__ import absolute_import
 import sys
 from types import FunctionType
 
-from future.utils import PY3
+from future.utils import PY3, PY26
 
 
 _builtin_super = super
@@ -79,8 +79,14 @@ def newsuper(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
                     if meth.func_code is f.f_code:
                         break   # Aha!  Found you.
                 elif isinstance(meth, staticmethod):
-                    if meth.__func__.func_code is f.f_code:
-                        break   # Aha!  Found you.
+                    if PY26:
+                        # Prior to Python 2.7, this contortion was necessary.
+                        # See http://bugs.python.org/issue5982.
+                        if meth.__get__(1).func_code is f.f_code:
+                            break   # Aha!  Found you.
+                    else:
+                        if meth.__func__.func_code is f.f_code:
+                            break   # Aha!  Found you.
             else:
                 continue    #  Not found! Move onto the next class in MRO.
             break    #  Found! Break out of the search loop.
