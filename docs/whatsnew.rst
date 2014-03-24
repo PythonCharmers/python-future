@@ -2,6 +2,14 @@ What's new
 **********
 
 
+.. whats-new-0.11.4:
+
+What's new in version 0.11.4
+============================
+
+This release restores Python 2.6 compatibility.
+
+
 .. whats-new-0.11.3:
 
 What's new in version 0.11.3
@@ -428,6 +436,9 @@ Summary of all changes
 
 What's new in version 0.11.x
 ============================
+
+v0.11.4:
+  * Restore Py2.6 compatibility
 
 v0.11.3:
   * The ``futurize`` and ``pasteurize`` scripts add an explicit call to
