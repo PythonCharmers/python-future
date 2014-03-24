@@ -13,6 +13,9 @@ This release contains various small improvements and fixes:
 
 - Right-division with ``newint`` objects is fixed. (Issue #38).
 
+- The ``fix_dict`` fixer has been moved to stage2 of ``futurize``
+
+
 
 .. whats-new-0.11.3:
 
