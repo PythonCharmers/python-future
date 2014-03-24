@@ -415,7 +415,7 @@ def scrub_py2_sys_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.debug('Deleting {} from sys.modules'.format(modulename))
+            logging.debug('Deleting {0} from sys.modules'.format(modulename))
             del sys.modules[modulename]
 
 
@@ -432,7 +432,7 @@ def scrub_future_sys_modules():
             if (modulename in RENAMES.values() or    # builtins, configparser etc.
                 (hasattr(module, '__file__') and
                  module.__file__.startswith(future_stdlib))):
-                logging.debug('Deleting {} from sys.modules'.format(modulename))
+                logging.debug('Deleting {0} from sys.modules'.format(modulename))
                 del sys.modules[modulename]
 
 
@@ -474,7 +474,7 @@ def install_hooks(keep_sys_modules=False):
         return
     if not keep_sys_modules:
         scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
-    logging.debug('sys.meta_path was: {}'.format(sys.meta_path))
+    logging.debug('sys.meta_path was: {0}'.format(sys.meta_path))
     logging.debug('Installing hooks ...')
 
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
@@ -487,7 +487,7 @@ def install_hooks(keep_sys_modules=False):
     newhook = RenameImport(RENAMES)
     if not detect_hooks():
         sys.meta_path.append(newhook)
-    logging.debug('sys.meta_path is now: {}'.format(sys.meta_path))
+    logging.debug('sys.meta_path is now: {0}'.format(sys.meta_path))
 
 
 def enable_hooks():

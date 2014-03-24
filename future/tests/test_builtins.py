@@ -1311,7 +1311,7 @@ class BuiltinTest(unittest.TestCase):
         except (OSError, AttributeError) as e:
             os.close(r)
             os.close(w)
-            self.skipTest("pty.fork() raised {}".format(e))
+            self.skipTest("pty.fork() raised {0}".format(e))
         if pid == 0:
             # Child
             try:

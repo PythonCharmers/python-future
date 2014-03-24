@@ -365,7 +365,7 @@ class write_module(object):
         self.tempdir = tempdir
 
     def __enter__(self):
-        print('Creating {}/test_imports_future_stdlib ...'.format(self.tempdir))
+        print('Creating {0}/test_imports_future_stdlib ...'.format(self.tempdir))
         with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
             f.write(textwrap.dedent(self.code))
         sys.path.insert(0, self.tempdir)
