@@ -427,18 +427,33 @@ def scrub_py2_sys_modules():
 
 def scrub_future_sys_modules():
     """
-    Removes any submodules of ``future.standard_library`` and Python 3 names of
-    any PEP 3108 renamed modules from the ``sys.modules`` cache.
+    Removes any Python 3 module names (PEP 3108) from the ``sys.modules`` cache
+    corresponding to submodules of ``future.standard_library``.
     """
     if utils.PY3:
         return
-    future_stdlib = os.path.join('future', 'standard_library')
     for modulename, module in sys.modules.items():
-        if modulename not in ['standard_library', 'future.standard_library']:
-            if (modulename in RENAMES.values() or    # builtins, configparser etc.
-                (hasattr(module, '__file__') and
-                 module.__file__.startswith(future_stdlib))):
-                logging.debug('Deleting {0} from sys.modules'.format(modulename))
+        if modulename.startswith('future'):
+            logging.debug('Not removing future module')
+        # We look for builtins, configparser, urllib, email, http, etc., and
+        # their submodules
+        if (modulename in RENAMES.values() or 
+            any(modulename.startswith(m + '.') for m in RENAMES.values())):   
+            # We don't want to remove Python 2.x urllib if this is cached
+            if is_py2_stdlib_module(module):
+                continue
+
+            # builtins has no __file__:
+            if hasattr(module, '__file__'):
+                if not os.path.join('future', 'standard_library') in module.__file__:
+                    # Why would this occur?
+                    s = ('Please report this unknown condition as an issue on '
+                         'https://github.com/PythonCharmers/python-future: '
+                         '{0}, {1}').format(modulename, module.__file__)
+                    logging.warn(s)
+                    continue
+
+                logging.debug('Deleting (future) {0} from sys.modules'.format(modulename))
                 del sys.modules[modulename]
 
 
