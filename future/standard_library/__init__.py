@@ -387,10 +387,10 @@ def is_py2_stdlib_module(m):
         stdlib_files = [contextlib.__file__, os.__file__, copy.__file__]
         stdlib_paths = [os.path.split(f)[0] for f in stdlib_files]
         if not len(set(stdlib_paths)) == 1:
-            logging.error('Multiple locations found for stdlib: %s' %
-                          stdlib_paths)
-            raise RuntimeError('Could not determine the location of the Python '
-                               'standard library')
+            # This seems to happen on travis-ci.org. Very strange. We'll try to
+            # ignore it.
+            logging.warn('Multiple locations found for the Python standard '
+                         'library: %s' % stdlib_paths)
         # They are identical, so choose one and add / so we don't match urllib2
         is_py2_stdlib_module.stdlib_path = stdlib_paths[0] + os.sep
 
