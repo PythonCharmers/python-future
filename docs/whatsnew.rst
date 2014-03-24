@@ -6,14 +6,6 @@ What's new
 
 What's new in version 0.11.4
 ============================
-Relative imports from Cython modules
-------------------------------------
-
-...
-
-
-Bug fixes
----------
 
 This release contains various small improvements and fixes:
 
@@ -26,6 +18,11 @@ This release contains various small improvements and fixes:
 
 - The ``fix_dict`` fixer has been moved to stage2 of ``futurize``
 
+- A positional ``encoding`` argument to the ``bytes()`` constructor is now supported.
+
+- The ``install_hooks()`` function and ``hooks`` context manager in
+  ``future.standard_library`` are now more accurate at assessing which modules
+  belong to the standard library when scrubbing the ``sys.modules`` cache.
 
 
 .. whats-new-0.11.3:
