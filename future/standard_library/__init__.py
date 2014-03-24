@@ -385,6 +385,8 @@ def is_py2_stdlib_module(m):
         stdlib_files = [contextlib.__file__, os.__file__, copy.__file__]
         stdlib_paths = [os.path.split(f)[0] for f in stdlib_files]
         if not len(set(stdlib_paths)) == 1:
+            logging.error('Multiple locations found for stdlib: %s' %
+                          stdlib_paths)
             raise RuntimeError('Could not determine the location of the Python '
                                'standard library')
         # They are identical, so choose one and add / so we don't match urllib2
