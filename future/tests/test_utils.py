@@ -86,7 +86,11 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(type(t), unicode)
         else:
             self.assertEqual(type(t), str)
-        type(s)
+
+        d1 = dict({'a': 1, 'b': 2})
+        d2 = native(d1)
+        self.assertEqual(d1, d2)
+        self.assertEqual(type(d2), type({}))
 
     def test_istext(self):
         self.assertTrue(istext(self.s))
