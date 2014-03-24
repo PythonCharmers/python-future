@@ -27,6 +27,24 @@ class TestStandardLibraryRenames(CodeHandler):
     def tearDown(self):
         standard_library.remove_hooks()
 
+    def test_is_py2_stdlib_module(self):
+        """
+        Tests whether the internal is_py2_stdlib_module function (called by the
+        sys.modules scrubbing functions) is reliable.
+        """
+        externalmodules = [standard_library, utils]
+        self.assertTrue(not any([standard_library.is_py2_stdlib_module(module)
+                             for module in externalmodules]))
+
+        py2modules = [sys, tempfile, os, copy, textwrap]
+        if utils.PY2:
+            self.assertTrue(all([standard_library.is_py2_stdlib_module(module)
+                                 for module in py2modules]))
+        else:
+            self.assertTrue(
+                    not any ([standard_library.is_py2_stdlib_module(module)
+                              for module in py2modules]))
+
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
         """

@@ -391,15 +391,17 @@ def is_py2_stdlib_module(m):
             # ignore it.
             logging.warn('Multiple locations found for the Python standard '
                          'library: %s' % stdlib_paths)
-        # They are identical, so choose one and add / so we don't match urllib2
-        is_py2_stdlib_module.stdlib_path = stdlib_paths[0] + os.sep
+        # Choose the first one arbitrarily
+        is_py2_stdlib_module.stdlib_path = stdlib_paths[0]
 
     if m.__name__ in sys.builtin_module_names:
         return True
 
-    if (hasattr(m, '__file__') and
-        os.path.split(m.__file__)[0].startswith(is_py2_stdlib_module.stdlib_path)):
-        return True
+    if hasattr(m, '__file__'):
+        modpath = os.path.split(m.__file__)
+        if (modpath[0].startswith(is_py2_stdlib_module.stdlib_path) and
+            'site-packages' not in modpath[0]):
+            return True
         
     return False
 
