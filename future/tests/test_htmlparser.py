@@ -15,7 +15,7 @@ with standard_library.hooks():
     import html.parser
 
 import pprint
-import unittest
+from future.tests.base import unittest
 import sys
 
 # print(html.parser.__doc__, file=sys.stderr)
