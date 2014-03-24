@@ -7,6 +7,8 @@ They are very similar. The most notable difference is:
 
 """
 
+from __future__ import division
+
 from numbers import Integral
 
 from future.builtins.types.newbytes import newbytes
@@ -157,6 +159,12 @@ class newint(with_metaclass(BaseNewInt, long)):
     def __rfloordiv__(self, other):
         return newint(super(newint, self).__rfloordiv__(other))
 
+    def __ifloordiv__(self, other):
+        # long has no __ifloordiv__ method
+        mylong = long(self)
+        mylong //= other
+        return newint(mylong)
+
     def __mod__(self, other):
         return newint(super(newint, self).__mod__(other))
 
@@ -222,6 +230,18 @@ class newint(with_metaclass(BaseNewInt, long)):
     
     def __invert__(self):
         return newint(super(newint, self).__invert__())
+
+    def __int__(self):
+        return self
+
+    def __nonzero__(self):
+        return self.__bool__()
+
+    def __bool__(self):
+        """
+        So subclasses can override this, Py3-style
+        """
+        return super(newint, self).__nonzero__()
 
     def __native__(self):
         return long(self)
