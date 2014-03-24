@@ -2,6 +2,15 @@ What's new
 **********
 
 
+.. whats-new-0.11.5:
+
+What's new in version 0.11.5
+============================
+
+This is a minor bugfix release contains small improvements to way the standard
+library hook interact with the ``sys.modules`` cache.
+
+
 .. whats-new-0.11.4:
 
 What's new in version 0.11.4
