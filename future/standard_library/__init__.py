@@ -98,7 +98,7 @@ import types
 import copy
 import os
 
-from future import utils
+from future.utils import PY2, PY3
 
 # The modules that are defined under the same names on Py3 but with
 # different contents in a significant way (e.g. submodules) are:
@@ -108,7 +108,7 @@ from future import utils
 #   test
 #   email
 
-REPLACED_MODULES = set(['test', 'urllib', 'pickle', 'email'])  # add dbm when we support it
+REPLACED_MODULES = set(['test', 'urllib', 'pickle'])  # add email and dbm when we support it
 
 # The following module names are not present in Python 2.x, so they cause no
 # potential clashes:
@@ -163,7 +163,7 @@ RENAMES = {
            # 'dbm': 'dbm.ndbm',
            # 'gdbm': 'dbm.gnu',
            'future.standard_library.xmlrpc': 'xmlrpc',
-           'future.standard_library.email': 'email',    # for use by urllib
+           # 'future.standard_library.email': 'email',    # for use by urllib
            # 'DocXMLRPCServer': 'xmlrpc.server',
            # 'SimpleXMLRPCServer': 'xmlrpc.server',
            # 'httplib': 'http.client',
@@ -179,17 +179,15 @@ RENAMES = {
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
            # 'abc': 'collections.abc',   # for Py33
+           # 'future.utils.six.moves.html': 'html',
+           # 'future.utils.six.moves.http': 'http',
            'future.standard_library.html': 'html',
            'future.standard_library.http': 'http',
-           # 'future.standard_library.moves.urllib': 'urllib',
            'future.standard_library.urllib': 'urllib',
+           # 'future.utils.six.moves.urllib': 'urllib',
+           # 'future.utils.six.moves._markupbase': '_markupbase',
            'future.standard_library._markupbase': '_markupbase',
           }
-
-
-REPLACED_MODULES = set(['test', 'urllib', 'pickle', 'email'])  # add dbm when we support it
-# These are entirely new in Python 3.x, so they cause no potential clashes
-#   xmlrpc, tkinter, http, html
 
 
 class WarnOnImport(object):
@@ -271,14 +269,17 @@ class RenameImport(object):
             try:
                 path = package.__path__
             except AttributeError:
-                logging.debug('Debug me: no __path__. '
-                              'Should anything special be done here?')
-                pass
-            # if packagename == 'future':
-            #     path = FIXME
+                import pdb; pdb.set_trace()
+                # This could be e.g. moves.
+                logging.debug('Package {0} has no __path__.'.format(package))
+                if name in sys.modules:
+                    return sys.modules[name]
+                logging.debug('What to do here?')
+                
         name = bits[0]
         if name == 'moves':
             # imp.find_module doesn't find this fake module
+            from future.utils.six import moves
             return moves
         else:
             module_info = imp.find_module(name, path)
@@ -378,12 +379,13 @@ class hooks(object):
         logging.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
-        scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
+        self.scrubbed = scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
         install_hooks(keep_sys_modules=True)
         return self
 
     def __exit__(self, *args):
         logging.debug('Exiting hooks context manager')
+        sys.modules.update(self.scrubbed)
         if not self.hooks_were_installed:
             remove_hooks(keep_sys_modules=True)
             scrub_future_sys_modules()
@@ -391,7 +393,7 @@ class hooks(object):
 
 # Sanity check for is_py2_stdlib_module(): We aren't replacing any
 # builtin modules names:
-if utils.PY2:
+if PY2:
     assert len(set(RENAMES.values()) & set(sys.builtin_module_names)) == 0
 
 def is_py2_stdlib_module(m):
@@ -399,7 +401,7 @@ def is_py2_stdlib_module(m):
     Tries to infer whether the module m is from the Python 2 standard library.
     This may not be reliable on all systems.
     """
-    if utils.PY3:
+    if PY3:
         return False
     if not 'stdlib_path' in is_py2_stdlib_module.__dict__:
         stdlib_files = [contextlib.__file__, os.__file__, copy.__file__]
@@ -430,8 +432,9 @@ def scrub_py2_sys_modules():
     would interfere with Py3-style imports using ``future.standard_library``
     import hooks.
     """
-    if utils.PY3:
-        return
+    if PY3:
+        return {}
+    scrubbed = {}
     for modulename in REPLACED_MODULES:
         if not modulename in sys.modules:
             continue
@@ -439,8 +442,10 @@ def scrub_py2_sys_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
+            logging.warn('Deleting (Py2) {} from sys.modules'.format(modulename))
+            scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]
+    return scrubbed
 
 
 def scrub_future_sys_modules():
@@ -463,8 +468,9 @@ def scrub_future_sys_modules():
         value: either future.standard_library module or py2 module with
                another name
     """
-    if utils.PY3:
-        return
+    scrubbed = {}
+    if PY3:
+        return {}
     for modulename, module in sys.modules.items():
         if modulename.startswith('future'):
             logging.debug('Not removing', modulename)
@@ -482,45 +488,17 @@ def scrub_future_sys_modules():
                 # This happens for e.g. __future__ imports. Delete it.
                 logging.debug('Deleting empty module {0} from sys.modules'
                               .format(modulename))
+                # Maybe we don't need to keep these ...
+                # scrubbed[modulename] = sys.modules[modulename]
                 del sys.modules[modulename]
                 continue
 
             logging.warn('Deleting (future) {0} from sys.modules'
                          .format(modulename))
 
+            scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]
-
-            # Delete it whether or not the name clashes with a Py2 module name
-            # if modulename not in REPLACED_MODULES:
-            #     logging.debug('Deleting (future) {0} from sys.modules'.format(modulename))
-            #     del sys.modules[modulename]
-            #     continue
-
-            # import pdb
-            # pdb.set_trace()
-
-            # # If it does clash with a Py2 module name (e.g. test or urllib),
-            # # delete it anyway, because it would prevent normal imports from
-            # # working.
-
-            # if modulename in REPLACED_MODULES:
-            #     logging.debug('Deleting (future) {0} from sys.modules'.format(modulename))
-            #     del sys.modules[modulename]
-            #     continue
-
-            # # builtins has no __file__:
-            # if not hasattr(module, '__file__'):
-            #     pass
-
-            # if hasattr(module, '__file__'):
-            #     if not os.path.join('future', 'standard_library') in module.__file__:
-            #         import pdb; pdb.set_trace()
-            #         # Why would this occur?
-            #         s = ('Please report this unknown condition as an issue on '
-            #              'https://github.com/PythonCharmers/python-future: '
-            #              '{0}, {1}').format(modulename, module.__file__)
-            #         logging.warn(s)
-            #         continue
+    return scrubbed
 
 
 class suspend_hooks(object):
@@ -540,7 +518,7 @@ class suspend_hooks(object):
     def __enter__(self):
         self.hooks_were_installed = detect_hooks()
         remove_hooks(keep_sys_modules=True)
-        scrub_future_sys_modules()
+        self.scrubbed = scrub_future_sys_modules()
         return self
     def __exit__(self, *args):
         if self.hooks_were_installed:
@@ -548,6 +526,7 @@ class suspend_hooks(object):
             install_hooks(keep_sys_modules=True)
             # TODO: add any previously scrubbed modules back to the sys.modules
             # cache?
+            sys.modules.update(self.scrubbed)
 
 
 def install_hooks(keep_sys_modules=False):
@@ -559,7 +538,7 @@ def install_hooks(keep_sys_modules=False):
 
     To leave ``sys.modules`` cache alone, pass keep_sys_modules=True.
     """
-    if utils.PY3:
+    if PY3:
         return
     if not keep_sys_modules:
         scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
@@ -595,7 +574,7 @@ def remove_hooks(keep_sys_modules=False):
 
     To leave the ``sys.modules`` cache alone, pass keep_sys_modules=True.
     """
-    if utils.PY3:
+    if PY3:
         return
     logging.debug('Uninstalling hooks ...')
     # Loop backwards, so deleting items keeps the ordering:
@@ -628,5 +607,26 @@ def detect_hooks():
 
 
 # As of v0.12, this no longer happens implicitly:
-# if not utils.PY3:
+# if not PY3:
 #     install_hooks()
+
+if not hasattr(sys, 'py2_modules'):
+    sys.py2_modules = {}
+
+def cache_py2_modules():
+    if len(sys.py2_modules) != 0:
+        return
+    assert not detect_hooks()
+    import urllib
+    import email
+    import test
+    import pickle
+    # import dbm
+    sys.py2_modules['urllib'] = urllib
+    sys.py2_modules['email'] = email
+    sys.py2_modules['test'] = test
+    sys.py2_modules['pickle'] = pickle
+    # sys.py2_modules['dbm'] = dbm
+
+
+cache_py2_modules()
