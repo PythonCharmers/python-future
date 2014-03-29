@@ -42,6 +42,7 @@ from email import encoders
 from email import iterators
 from email import base64mime
 from email import quoprimime
+import email.feedparser
 
 from test.support import unlink
 from test.test_email import openfile, TestEmailBase

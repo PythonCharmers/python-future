@@ -16,6 +16,10 @@ from future.standard_library.email.feedparser import FeedParser, BytesFeedParser
 from future.standard_library.email.message import Message
 from future.standard_library.email._policybase import compat32
 
+from future.utils import surrogateescape
+surrogateescape.register_surrogateescape()
+# Can this be removed again?
+# Should this be done globally by ``future``?
 
 
 class Parser(object):
