@@ -218,6 +218,7 @@ if utils.PY3:
     bytes = builtins.bytes
     dict = builtins.dict
     int = builtins.int
+    list = builtins.list
     object = builtins.object
     range = builtins.range
     str = builtins.str
@@ -226,8 +227,9 @@ else:
     from .newbytes import newbytes as bytes
     from .newdict import newdict as dict
     from .newint import newint as int
+    from .newlist import newlist as list
     from .newrange import newrange as range
     from .newobject import newobject as object
     from .newstr import newstr as str
-    __all__ = ['bytes', 'dict', 'int', 'range', 'str']
+    __all__ = ['bytes', 'dict', 'int', 'list', 'range', 'str']
 

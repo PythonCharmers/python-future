@@ -141,6 +141,13 @@ Python bug #). This includes custom ``execfile()`` and ``cmp()`` functions.
 ``futurize`` now invokes imports of these functions from ``past.builtins``.
 
 
+``list`` type
+-------------
+
+There is a new ``list`` type in ``future.builtins`` that supports a ``.copy()``
+method as Python 3's ``list`` type does.
+
+
 Bug fixes
 ---------
 
