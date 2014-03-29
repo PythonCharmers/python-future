@@ -54,20 +54,30 @@ def surrogateescape(exc):
             elif code <= 0x7F:
                 decoded.append(_unichr(code))
             else:
-                print("RAISE!")
+                # # It may be a bad byte
+                # # Try swallowing it.
+                # continue
+                # print("RAISE!")
                 raise exc
         decoded = str().join(decoded)
         return (decoded, exc.end)
+
     else:
-        print(exc.args)
-        ch = exc.object[exc.start:exc.end]
-        code = ord(ch)
-        if not 0xDC80 <= code <= 0xDCFF:
-            print("RAISE!")
-            raise exc
-        print(exc.start)
-        byte = _unichr(code - 0xDC00)
-        print(repr(byte))
+        # This doesn't seem to work ...
+        # print(exc.args)
+        encoded = []
+        for ch in exc.object[exc.start:exc.end]:
+            if utils.PY3:
+                code = ch
+            else:
+                code = ord(ch)
+            if not 0xDC80 <= code <= 0xDCFF:
+                # print("RAISE!")
+                raise exc
+            # print(exc.start)
+            encoded.append(_unichr(code - 0xDC00))
+        byte = bytes().join(encoded)
+        # print(repr(byte))
         return (byte, exc.end)
 
 
