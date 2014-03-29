@@ -1,11 +1,14 @@
 """Unit tests for new super() implementation."""
 
+from __future__ import absolute_import, division, unicode_literals
 import sys
 import unittest
-from test import support
+
+from future.tests.base import unittest
+from future.builtins import super
 
 
-class A:
+class A(object):
     def f(self):
         return 'A'
     @classmethod
@@ -94,14 +97,14 @@ class TestSuper(unittest.TestCase):
 
     def test___class___instancemethod(self):
         # See issue #14857
-        class X:
+        class X(object):
             def f(self):
                 return __class__
         self.assertIs(X().f(), X)
 
     def test___class___classmethod(self):
         # See issue #14857
-        class X:
+        class X(object):
             @classmethod
             def f(cls):
                 return __class__
@@ -109,7 +112,7 @@ class TestSuper(unittest.TestCase):
 
     def test___class___staticmethod(self):
         # See issue #14857
-        class X:
+        class X(object):
             @staticmethod
             def f():
                 return __class__
@@ -123,15 +126,15 @@ class TestSuper(unittest.TestCase):
             del x
             super()
         self.assertRaises(RuntimeError, f, None)
-        class X:
+        class X(object):
             def f(x):
-                nonlocal __class__
+                # nonlocal __class__
                 del __class__
                 super()
         self.assertRaises(RuntimeError, X().f)
 
     def test_cell_as_self(self):
-        class X:
+        class X(object):
             def meth(self):
                 super()
 
@@ -142,10 +145,6 @@ class TestSuper(unittest.TestCase):
             return g
         c = f().__closure__[0]
         self.assertRaises(TypeError, X.meth, c)
-
-
-def test_main():
-    support.run_unittest(TestSuper)
 
 
 if __name__ == "__main__":
