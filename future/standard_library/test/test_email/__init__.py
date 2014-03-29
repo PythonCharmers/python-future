@@ -15,7 +15,7 @@ with standard_library.hooks():
     import email
     from email.message import Message
     from email._policybase import compat32
-from future.tests.test_email import __file__ as landmark
+    from test.test_email import __file__ as landmark
 
 # Run all tests in package for '-m unittest test.test_email'
 def load_tests(loader, standard_tests, pattern):

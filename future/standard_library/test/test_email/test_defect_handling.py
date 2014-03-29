@@ -1,16 +1,13 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import str
 from future import standard_library
-standard_library.install_hooks()
+
 import textwrap
 import unittest
 import contextlib
-from email import policy
-from email import errors
-from test.test_email import TestEmailBase
-
+with standard_library.hooks():
+    from email import policy, errors
+    from test.email import TestEmailBase
 
 class TestDefectsBase(object):
 

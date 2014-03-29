@@ -17,11 +17,14 @@ __all__ = [
 import re
 import binascii
 
-import future.standard_library.email.quoprimime
-import future.standard_library.email.base64mime
-
+from future.standard_library import email
+from future.standard_library.email import base64mime
 from future.standard_library.email.errors import HeaderParseError
 import future.standard_library.email.charset as _charset
+
+# Helpers
+from future.standard_library.email.quoprimime import _max_append, header_decode
+
 Charset = _charset.Charset
 
 NL = '\n'
@@ -54,10 +57,6 @@ fcre = re.compile(r'[\041-\176]+:$')
 # Find a header embedded in a putative header value.  Used to check for
 # header injection attack.
 _embeded_header = re.compile(r'\n[^ \t]+:')
-
-
-# Helpers
-_max_append = future.standard_library.email.quoprimime._max_append
 
 
 def decode_header(header):
@@ -119,14 +118,14 @@ def decode_header(header):
             # This is an unencoded word.
             decoded_words.append((encoded_string, charset))
         elif encoding == 'q':
-            word = future.standard_library.email.quoprimime.header_decode(encoded_string)
+            word = header_decode(encoded_string)
             decoded_words.append((word, charset))
         elif encoding == 'b':
             paderr = len(encoded_string) % 4   # Postel's law: add missing padding
             if paderr:
                 encoded_string += '==='[:4 - paderr]
             try:
-                word = email.base64mime.decode(encoded_string)
+                word = base64mime.decode(encoded_string)
             except binascii.Error:
                 raise HeaderParseError('Base64 decoding error')
             else:

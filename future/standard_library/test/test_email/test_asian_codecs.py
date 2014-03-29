@@ -1,21 +1,18 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
 # Copyright (C) 2002-2006 Python Software Foundation
 # Contact: email-sig@python.org
 # email package unit tests for (optional) Asian codecs
 
-import unittest
-from test.support import run_unittest
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import str
+from future import standard_library
 
-from test.test_email.test_email import TestEmailBase
-from email.charset import Charset
-from email.header import Header, decode_header
-from email.message import Message
+import unittest
+from future.standard_library.test.support import run_unittest
+from future.standard_library.test.test_email.test_email import TestEmailBase
+with standard_library.hooks():
+    from email.charset import Charset
+    from email.header import Header, decode_header
+    from email.message import Message
 
 # We're compatible with Python 2.3, but it doesn't have the built-in Asian
 # codecs, so we have to skip all these tests.
@@ -25,7 +22,6 @@ except LookupError:
     raise unittest.SkipTest
 
 
-
 class TestEmailAsianCodecs(TestEmailBase):
     def test_japanese_codecs(self):
         eq = self.ndiffAssertEqual

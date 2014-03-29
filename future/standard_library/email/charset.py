@@ -17,9 +17,7 @@ __all__ = [
 
 from functools import partial
 
-import future.standard_library.email.base64mime
-import future.standard_library.email.quoprimime
-
+from future.standard_library import email
 from future.standard_library.email import errors
 from future.standard_library.email.encoders import encode_7or8bit
 

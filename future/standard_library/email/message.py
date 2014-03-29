@@ -4,12 +4,8 @@
 # Contact: email-sig@python.org
 
 """Basic message object for the email package object model."""
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import zip
-from future.builtins import range
-from future.builtins import str
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import list, range, str, zip
 
 __all__ = ['Message']
 
@@ -126,7 +122,7 @@ class Message(object):
     """
     def __init__(self, policy=compat32):
         self.policy = policy
-        self._headers = []
+        self._headers = list()
         self._unixfrom = None
         self._payload = None
         self._charset = None
@@ -370,7 +366,7 @@ class Message(object):
         Does not raise an exception if the header is missing.
         """
         name = name.lower()
-        newheaders = []
+        newheaders = list()
         for k, v in self._headers:
             if k.lower() != name:
                 newheaders.append((k, v))

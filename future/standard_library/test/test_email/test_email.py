@@ -7,15 +7,7 @@ from __future__ import division
 from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
-from future.builtins import open
-from future.builtins import int
-from future.builtins import super
-from future.builtins import chr
-from future.builtins import range
-from future.builtins import bytes
-from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
+from future.builtins import open, int, super, chr, range, bytes, str
 
 import re
 import time
@@ -25,6 +17,9 @@ import textwrap
 
 from io import StringIO, BytesIO
 from itertools import chain
+
+from future import standard_library
+standard_library.install_hooks()
 
 import email
 import email.policy
@@ -54,6 +49,8 @@ from test.test_email import openfile, TestEmailBase
 # These imports are documented to work, but we are testing them using a
 # different path, so we import them here just to make sure they are importable.
 from email.parser import FeedParser, BytesFeedParser
+
+standard_library.remove_hooks()
 
 NL = '\n'
 EMPTYSTRING = ''
