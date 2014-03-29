@@ -135,9 +135,9 @@ On Python 3, as usual, ``object`` simply points to ``builtins.object``.
 past.builtins
 -------------
 The ``past.builtins`` package has been extended to add Py3 support for
-additional Py2 constructs that are not adequately handled by ``lib2to3`` (see upstream bug #). This
-includes custom ``execfile()`` and ``cmp()`` functions. ``futurize`` now
-invokes imports of these functions from ``past.builtins``.
+additional Py2 constructs that are not adequately handled by ``lib2to3`` (see
+upstream bug #). This includes custom ``execfile()`` and ``cmp()`` functions.
+``futurize`` now invokes imports of these functions from ``past.builtins``.
 
 
 Relative imports from Cython modules

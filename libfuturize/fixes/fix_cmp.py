@@ -1,16 +1,12 @@
 # coding: utf-8
 """
-Fixer for the execfile() function on Py2, which was removed in Py3.
-
-The Lib/lib2to3/fixes/fix_execfile.py module has some problems: see
-python-future issue #37. This fixer merely imports execfile() from
-past.builtins and leaves the code alone.
+Fixer for the cmp() function on Py2, which was removed in Py3.
 
 Adds this import line::
 
-    from past.builtins import execfile
+    from past.builtins import cmp
 
-for the function execfile() that was removed from Py3.
+if cmp() is called in the code.
 """
 
 from __future__ import unicode_literals
@@ -19,10 +15,10 @@ from lib2to3 import fixer_base
 from libfuturize.fixer_util import touch_import_top
 
 
-expression = "name='execfile'"
+expression = "name='cmp'"
 
 
-class FixExecfile(fixer_base.BaseFix):
+class FixCmp(fixer_base.BaseFix):
     BM_compatible = True
     run_order = 9
 

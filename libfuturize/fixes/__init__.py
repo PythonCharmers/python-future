@@ -75,6 +75,7 @@ libfuturize_fix_names_stage1 = set([
 
 libfuturize_fix_names_stage2 = set([
     # 'libfuturize.fixes.fix_add__future__imports_except_unicode_literals',  # just in case
+    'libfuturize.fixes.fix_cmp',
     'libfuturize.fixes.fix_execfile',
     'libfuturize.fixes.fix_future_builtins',
     'libfuturize.fixes.fix_future_standard_library',
