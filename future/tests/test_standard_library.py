@@ -46,12 +46,18 @@ class TestStandardLibraryRenames(CodeHandler):
         Tests whether the internal is_py2_stdlib_module function (called by the
         sys.modules scrubbing functions) is reliable.
         """
-        py2modules = [sys, tempfile, os, copy, textwrap]
         externalmodules = [standard_library, utils]
-        self.assertTrue(all([standard_library.is_py2_stdlib_module(module)
-                             for module in py2modules]))
         self.assertTrue(not any([standard_library.is_py2_stdlib_module(module)
                              for module in externalmodules]))
+
+        py2modules = [sys, tempfile, os, copy, textwrap]
+        if utils.PY2:
+            self.assertTrue(all([standard_library.is_py2_stdlib_module(module)
+                                 for module in py2modules]))
+        else:
+            self.assertTrue(
+                    not any ([standard_library.is_py2_stdlib_module(module)
+                              for module in py2modules]))
 
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
@@ -392,7 +398,7 @@ class write_module(object):
         self.tempdir = tempdir
 
     def __enter__(self):
-        print('Creating {}/test_imports_future_stdlib ...'.format(self.tempdir))
+        print('Creating {0}/test_imports_future_stdlib ...'.format(self.tempdir))
         with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
             f.write(textwrap.dedent(self.code))
         sys.path.insert(0, self.tempdir)

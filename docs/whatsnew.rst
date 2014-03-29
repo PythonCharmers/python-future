@@ -91,23 +91,18 @@ Use them like this::
         from email import message_from_bytes    # etc.
 
 
-``past.builtins`` module improved
----------------------------------
+``newobject`` base object defines fallback Py2-compatible special methods
+-------------------------------------------------------------------------
 
-The ``past.builtins`` module is much more compatible with the
-corresponding builtins on Python 2; many more of the Py2 unit tests pass
-on Py3. For example, functions like ``map()`` and ``filter()``
-now behave as they do on Py2 with with ``None`` as the first argument.
+There is a new ``future.bytes.object`` base class that can streamline Py3/2
+compatible code by providing fallback Py2-compatible special methods for its
+subclasses. It provides ``next()`` and ``__nonzero__()`` as fallback methods on
+Py2 when its subclasses define the corresponding Py3-style ``__next__()`` and
+``__bool__()`` methods.
 
-
-``newobject`` base object defines Py2-compatible special methods
------------------------------------------------------------------
-
-There is a new ``future.bytes.object`` class that can streamline Py3/2
-compatible code by providing fallback special methods for its subclasses for
-Py2 compatibility.  This obviates the need to add compatibility hacks or
-decorators to the code such as the ``@implements_iterator`` for classes that
-define a Py3-style ``__next__`` method.
+This obviates the need to add certain compatibility hacks or decorators to the
+code such as the ``@implements_iterator`` for classes that define a Py3-style
+``__next__`` method.
 
 In this example, the code defines a Py3-style iterator with a ``__next__``
 method. The ``object`` class defines a ``next`` method for Python 2 that maps
@@ -129,21 +124,21 @@ to ``__next__``::
 currently these include ``__nonzero__`` (mapped to ``__bool__``) and
 ``__long__`` (mapped to ``__int__``).
     
-On Python 3, as usual, ``object`` simply points to ``builtins.object``.
+On Python 3, as usual, ``object`` simply refers to ``builtins.object``.
 
 
-past.builtins
--------------
-The ``past.builtins`` package has been extended to add Py3 support for
+``past.builtins`` module improved
+---------------------------------
+
+The ``past.builtins`` module is much more compatible with the corresponding
+builtins on Python 2; many more of the Py2 unit tests pass on Py3. For example,
+functions like ``map()`` and ``filter()`` now behave as they do on Py2 with with
+``None`` as the first argument.
+
+The ``past.builtins`` module has also been extended to add Py3 support for
 additional Py2 constructs that are not adequately handled by ``lib2to3`` (see
-upstream bug #). This includes custom ``execfile()`` and ``cmp()`` functions.
+Python bug #). This includes custom ``execfile()`` and ``cmp()`` functions.
 ``futurize`` now invokes imports of these functions from ``past.builtins``.
-
-
-Relative imports from Cython modules
-------------------------------------
-
-...
 
 
 Bug fixes
@@ -164,16 +159,41 @@ Many small improvements and fixes have been made across the project. Some highli
   ``urllib.parse``) and not the corresponding ``future.standard_library.*``
   modules (such as ``future.standard_library.urllib.parse``.
 
-- The zero-argument ``super()`` function now works from within
-  ``staticmethod``s such as those called ``__new__``.
+
+.. whats-new-0.11.5:
+
+.. What's new in version 0.11.5
+.. ============================
+.. 
+.. This is a minor bugfix release contains small improvements to way the standard
+.. library hook interact with the ``sys.modules`` cache.
+
+
+.. whats-new-0.11.4:
+
+What's new in version 0.11.4
+============================
+
+This release contains various small improvements and fixes:
+
+- This release restores Python 2.6 compatibility. (Issue #42).
+
+- The ``fix_absolute_import`` fixer now supports Cython ``.pyx`` modules. (Issue
+  #35).
+
+- Right-division with ``newint`` objects is fixed. (Issue #38).
+
+- The ``fix_dict`` fixer has been moved to stage2 of ``futurize``.
 
 - Calls to ``bytes(string, encoding[, errors])`` now work with ``encoding`` and
   ``errors`` passed as positional arguments. Previously this only worked if
-  ``encoding`` and ``errors`` were specified as keyword arguments.
+  ``encoding`` and ``errors`` were passed as keyword arguments.
+
+
+- The 0-argument ``super()`` function now works from inside static methods such
+  as ``__new__``. (Issue #36).
 
 - ``future.utils.native(d)`` calls now work for ``future.builtins.dict`` objects.
-
-- Right-division with ``newint`` objects is fixed. (Issue #38).
 
 
 .. whats-new-0.11.3:
@@ -604,6 +624,9 @@ Summary of all changes
 
 What's new in version 0.11.x
 ============================
+
+v0.11.4:
+  * Restore Py2.6 compatibility
 
 v0.11.3:
   * The ``futurize`` and ``pasteurize`` scripts add an explicit call to

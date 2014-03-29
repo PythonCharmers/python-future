@@ -58,7 +58,7 @@ def newnext(iterator, default=_SENTINEL):
             try:
                 return iterator.next()
             except AttributeError:
-                raise TypeError("'{}' object is not an iterator".format(
+                raise TypeError("'{0}' object is not an iterator".format(
                                            iterator.__class__.__name__))
     except StopIteration as e:
         if default is _SENTINEL:

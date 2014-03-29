@@ -160,7 +160,6 @@ class TestFuturizeAnnotations(CodeHandler):
         """
         self.convert_check(b, a, from3=True)
 
-    @unittest.expectedFailure
     def test_multiple_param_annotations(self):
         b = "def foo(bar:'spam'=False, baz:'eggs'=True, ham:False='spaghetti'): pass"
         a = "def foo(bar=False, baz=True, ham='spaghetti'): pass"
@@ -178,7 +177,6 @@ class TestFuturizeAnnotations(CodeHandler):
         """
         self.convert_check(b, a, from3=True)
 
-    @unittest.expectedFailure
     def test_mixed_annotations(self):
         b = "def foo(bar=False, baz:'eggs'=True, ham:False='spaghetti') -> 'zombies': pass"
         a = "def foo(bar=False, baz=True, ham='spaghetti'): pass"

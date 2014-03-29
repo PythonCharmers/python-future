@@ -1,5 +1,7 @@
-Currently three tests have errors on Py2.7 with module import errors (http.client
-and test.support) when the test suite is run with:
+Currently the tests are passing on OS X on Python 2.6, 2.7 and 3.3.
+
+On Linux they are currently failing with ImportErrors for test.support when the
+test suite is run with:
 
     $ python setup.py test
 

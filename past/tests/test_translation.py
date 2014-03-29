@@ -47,7 +47,7 @@ class TestTranslate(unittest.TestCase):
         install_hooks(modulename)
         # print('Hooks installed')
         # assert len(sys.meta_path) == 1 + meta_path_len
-        # print('sys.meta_path is: {}'.format(sys.meta_path))
+        # print('sys.meta_path is: {0}'.format(sys.meta_path))
         module = None
 
         sys.path.insert(0, self.tempdir)

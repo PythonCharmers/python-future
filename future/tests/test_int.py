@@ -428,6 +428,88 @@ class IntTestCases(unittest.TestCase):
             assert divmod(int(x), int(-y)) == divmod(x, -y)
             assert divmod(int(-x), int(-y)) == divmod(-x, -y)
 
+    def test_div(self):
+        """
+        Issue #38
+        """
+        a = int(3)
+        self.assertEqual(a / 5., 0.6)
+        self.assertEqual(a / 5, 0.6)    # the __future__.division import is in
+                                        # effect
+
+    def test_truediv(self):
+        """
+        Test int.__truediv__ and friends (rtruediv, itruediv)
+        """
+        a = int(3)
+        self.assertEqual(a / 2, 1.5)  # since "from __future__ import division"
+                                      # is in effect
+        self.assertEqual(type(a / 2), float)
+
+        b = int(2)
+        self.assertEqual(a / b, 1.5)  # since "from __future__ import division"
+                                      # is in effect
+        self.assertEqual(type(a / b), float)
+
+        c = int(3) / b
+        self.assertEqual(c, 1.5)
+        self.assertTrue(isinstance(c, float))
+
+        d = int(5)
+        d /= 5
+        self.assertEqual(d, 1.0)
+        self.assertTrue(isinstance(d, float))
+
+        e = int(10)
+        f = int(20)
+        e /= f
+        self.assertEqual(e, 0.5)
+        self.assertTrue(isinstance(e, float))
+
+
+    def test_idiv(self):
+        a = int(3)
+        a /= 2
+        self.assertEqual(a, 1.5)
+        self.assertTrue(isinstance(a, float))
+        b = int(10)
+        b /= 2
+        self.assertEqual(b, 5.0)
+        self.assertTrue(isinstance(b, float))
+        c = int(-3)
+        c /= 2.0
+        self.assertEqual(c, -1.5)
+        self.assertTrue(isinstance(c, float))
+
+    def test_floordiv(self):
+        a = int(3)
+        self.assertEqual(a // 2, 1)
+        self.assertEqual(type(a // 2), int)    # i.e. another newint
+        self.assertTrue(isinstance(a // 2, int))
+
+        b = int(2)
+        self.assertEqual(a // b, 1)
+        self.assertEqual(type(a // b), int)    # i.e. another newint
+        self.assertTrue(isinstance(a // b, int))
+
+        c = 3 // b
+        self.assertEqual(c, 1)
+        self.assertEqual(type(c), int)         # i.e. another newint
+        self.assertTrue(isinstance(c, int))
+
+        d = int(5)
+        d //= 5
+        self.assertEqual(d, 1)
+        self.assertEqual(type(d), int)         # i.e. another newint
+        self.assertTrue(isinstance(d, int))
+
+        e = int(10)
+        f = int(20)
+        e //= f
+        self.assertEqual(e, 0)
+        self.assertEqual(type(e), int)         # i.e. another newint
+        self.assertTrue(isinstance(e, int))
+
 
     def test_div(self):
         """
