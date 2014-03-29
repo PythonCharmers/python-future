@@ -293,7 +293,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
          ('itertools', 'zip_longest','itertools', 'izip_longest'),
          ('sys', 'intern','__builtin__', 'intern'),
-         # The email module has no ASCII flag in Py2, but this is the default.
+         # The re module has no ASCII flag in Py2, but this is the default.
          # Set re.ASCII to a zero constant. io.SEEK_SET just happens to be one.
          ('re', 'ASCII','io', 'SEEK_SET'),
          ('base64', 'encodebytes','base64', 'encodestring'),
@@ -442,7 +442,7 @@ def scrub_py2_sys_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.warn('Deleting (Py2) {} from sys.modules'.format(modulename))
+            logging.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
             scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]
     return scrubbed
@@ -493,8 +493,8 @@ def scrub_future_sys_modules():
                 del sys.modules[modulename]
                 continue
 
-            logging.warn('Deleting (future) {0} from sys.modules'
-                         .format(modulename))
+            logging.debug('Deleting (future) {0} from sys.modules'
+                          .format(modulename))
 
             scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]

@@ -8,7 +8,7 @@ with standard_library.hooks():
     import urllib.request
     import urllib.error
     import http.client
-    from test import support
+    # from test import support
     import email.message
 
 import io
