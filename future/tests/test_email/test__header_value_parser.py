@@ -1,10 +1,6 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import bytes
-from future.builtins import range
-from future.builtins import str
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import bytes, range, str
 from future import standard_library
 import string
 import unittest

@@ -4,7 +4,6 @@ import unittest
 import sys
 
 class ImportUrllibTest(unittest.TestCase):
-    @unittest.expectedFailure
     def test_urllib(self):
         """
         This should perhaps fail: importing urllib first means that the import hooks
@@ -18,4 +17,5 @@ class ImportUrllibTest(unittest.TestCase):
         print(urllib.__file__)
         print(urllib.response.__file__)
 
-unittest.main()
+if __name__ == '__main__':
+    unittest.main()

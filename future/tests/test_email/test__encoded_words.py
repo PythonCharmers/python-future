@@ -1,13 +1,12 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, division, unicode_literals
 from future import standard_library
-import unittest
 with standard_library.hooks():
     from email import _encoded_words as _ew
     from email import errors
 from future.tests.test_email import TestEmailBase
+from future.tests.base import unittest
 
 
 class TestDecodeQ(TestEmailBase):

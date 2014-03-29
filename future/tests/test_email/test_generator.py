@@ -1,16 +1,12 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, division, unicode_literals
 import io
 import textwrap
 import unittest
-from email import message_from_string, message_from_bytes
-from email.generator import Generator, BytesGenerator
-from email import policy
-from test.test_email import TestEmailBase, parameterize
+from future.standard_library.email import message_from_string, message_from_bytes
+from future.standard_library.email.generator import Generator, BytesGenerator
+from future.standard_library.email import policy
+from future.tests.test_email import TestEmailBase, parameterize
 
 
 @parameterize

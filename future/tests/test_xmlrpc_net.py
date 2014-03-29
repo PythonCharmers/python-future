@@ -1,18 +1,17 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future import standard_library
 #!/usr/bin/env python3
+from __future__ import absolute_import, division, unicode_literals
 
-import collections.abc
+import collections
 import errno
 import socket
 import sys
 import unittest
-from test import support
+from future.standard_library.test import support
 
-import xmlrpc.client as xmlrpclib
+from future import standard_library
+with standard_library.hooks():
+    import xmlrpc.client as xmlrpclib
+
 
 class CurrentTimeTest(unittest.TestCase):
 
@@ -54,7 +53,7 @@ class CurrentTimeTest(unittest.TestCase):
 
         # Perform a minimal sanity check on the result, just to be sure
         # the request means what we think it means.
-        self.assertIsInstance(builders, collections.abc.Sequence)
+        self.assertIsInstance(builders, collections.Sequence)
         self.assertTrue([x for x in builders if "3.x" in x], builders)
 
 
