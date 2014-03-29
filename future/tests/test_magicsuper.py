@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import future.builtins.newsuper
 from future.builtins import super
 from future.tests.base import unittest
-from future.utils import PY2
+from future import utils
 
 
 class TestMagicSuper(unittest.TestCase):
@@ -51,6 +51,7 @@ class TestMagicSuper(unittest.TestCase):
         ss = SubSub()
         self.assertEquals(ss.hello(),"hello world")
 
+    @unittest.skipIf(utils.PY3, "this test isn't relevant on Py3")
     def test_fails_for_oldstyle_class(self):
         class OldStyle:
             def testme(self):
@@ -72,7 +73,7 @@ class TestMagicSuper(unittest.TestCase):
         assert sobj1.__thisclass__ is sobj2.__thisclass__
 
     def test_call_with_args_does_nothing(self):
-        if PY2:
+        if utils.PY2:
             from __builtin__ import super as builtin_super
         else:
             from builtins import super as builtin_super
@@ -93,6 +94,7 @@ class TestMagicSuper(unittest.TestCase):
             self.assertSuperEquals(builtin_super(cls), super(cls))
             self.assertSuperEquals(builtin_super(cls,obj), super(cls,obj))
 
+    @unittest.skipIf(utils.PY3, "this test isn't relevant for Py3's super()")
     def test_superm(self):
         class Base(object):
             def getit(self):
