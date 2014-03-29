@@ -236,6 +236,10 @@ def main(args=None):
                               "\n".join("  " + myf for myf in found),
                               file=sys.stderr)
                         return 2
+                    elif len(found) == 0:
+                        print("Unknown fixer. Use --list-fixes or -l for a list.",
+                              file=sys.stderr)
+                        return 2
                     explicit.add(found[0])
         requested = avail_fixes.union(explicit) if all_present else explicit
     else:
