@@ -65,7 +65,10 @@ class TestMagicSuper(unittest.TestCase):
         self.assertRaises(RuntimeError,not_a_method)
         def not_a_method(self):
             super().not_a_method()
-        self.assertRaises(RuntimeError,not_a_method,self)
+        if utils.PY2:
+            self.assertRaises(RuntimeError,not_a_method,self)
+        else:
+            self.assertRaises(AttributeError,not_a_method,self)
 
     def assertSuperEquals(self,sobj1,sobj2):
         assert sobj1.__self__ is sobj2.__self__
