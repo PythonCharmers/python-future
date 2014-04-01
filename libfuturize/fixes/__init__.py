@@ -24,7 +24,7 @@ lib2to3_fix_names_stage1 = set([
                                         # adds ``from __future__ import print_function``
     # 'lib2to3.fixes.fix_raise',   # uses incompatible with_traceback() method on exceptions
     'lib2to3.fixes.fix_reduce',    # reduce is available in functools on Py2.6/Py2.7
-    'lib2to3.fixes.fix_renames',
+    'lib2to3.fixes.fix_renames',        # sys.maxint -> sys.maxsize
     # 'lib2to3.fixes.fix_set_literal',  # this is unnecessary and breaks Py2.6 support
     'lib2to3.fixes.fix_repr',
     'lib2to3.fixes.fix_standarderror',
