@@ -7,6 +7,12 @@ from future.utils import PY3, exec_
 if PY3:
     def apply(f, *args, **kw):
         return f(*args, **kw)
+    from past.builtins import str as oldstr
+    def chr(i):
+        """
+        Return a byte-string of one character with ordinal i; 0 <= i <= 256
+        """
+        return oldstr(bytes((i,)))
     cmp = lambda a, b: (a > b) - (a < b)
     from sys import intern
     raw_input = input
@@ -17,6 +23,7 @@ if PY3:
 else:
     import __builtin__
     apply = __builtin__.apply
+    chr = __builtin__.chr
     cmp = __builtin__.cmp
     execfile = __builtin__.execfile
     intern = __builtin__.intern
@@ -79,7 +86,7 @@ if PY3:
 #                     __builtin__.execfile(filename)
 
 if PY3:
-    __all__ = ['apply', 'cmp', 'execfile', 'intern', 'raw_input',
+    __all__ = ['apply', 'chr', 'cmp', 'execfile', 'intern', 'raw_input',
                'reload', 'unichr', 'unicode', 'xrange']
 else:
     __all__ = []
