@@ -17,10 +17,13 @@ lib2to3_fix_names_stage1 = set([
     'lib2to3.fixes.fix_isinstance',
     'lib2to3.fixes.fix_methodattrs',
     'lib2to3.fixes.fix_ne',
+    'lib2to3.fixes.fix_next',
     'lib2to3.fixes.fix_numliterals',    # turns 1L into 1, 0755 into 0o755
     'lib2to3.fixes.fix_paren',
-    # 'lib2to3.fixes.fix_print',
+    # 'lib2to3.fixes.fix_print',        # see the libfuturize fixer that also
+                                        # adds ``from __future__ import print_function``
     # 'lib2to3.fixes.fix_raise',   # uses incompatible with_traceback() method on exceptions
+    'lib2to3.fixes.fix_reduce',    # reduce is available in functools on Py2.6/Py2.7
     'lib2to3.fixes.fix_renames',
     # 'lib2to3.fixes.fix_set_literal',  # this is unnecessary and breaks Py2.6 support
     'lib2to3.fixes.fix_repr',
@@ -54,12 +57,10 @@ lib2to3_fix_names_stage2 = set([
     'lib2to3.fixes.fix_long',
     'lib2to3.fixes.fix_map',
     # 'lib2to3.fixes.fix_metaclass', # causes SyntaxError in Py2! Use the one from ``six`` instead
-    'lib2to3.fixes.fix_next',
-    'lib2to3.fixes.fix_nonzero',     # TODO: add a decorator for mapping __bool__ to __nonzero__
+    'lib2to3.fixes.fix_nonzero',     # TODO: cause this to import ``object`` and/or add a decorator for mapping __bool__ to __nonzero__
     'lib2to3.fixes.fix_operator',    # we will need support for this by e.g. extending the Py2 operator module to provide those functions in Py3
     'lib2to3.fixes.fix_raw_input',
     # 'lib2to3.fixes.fix_unicode',   # strips off the u'' prefix, which removes a potentially helpful source of information for disambiguating unicode/byte strings
-    'lib2to3.fixes.fix_reduce',
     # 'lib2to3.fixes.fix_urllib',    # included in libfuturize.fix_future_standard_library_urllib
     'lib2to3.fixes.fix_xrange',
     'lib2to3.fixes.fix_zip',
@@ -81,7 +82,6 @@ libfuturize_fix_names_stage2 = set([
     'libfuturize.fixes.fix_future_standard_library',
     'libfuturize.fixes.fix_future_standard_library_urllib',
     'libfuturize.fixes.fix_metaclass',
-    # TODO: add int(33243) calls for what used to be 33243L
     'libfuturize.fixes.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing
     'libfuturize.fixes.fix_unicode_keep_u',
     # 'libfuturize.fixes.fix_unicode_literals_import',

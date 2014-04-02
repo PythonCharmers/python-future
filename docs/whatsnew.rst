@@ -166,6 +166,8 @@ Many small improvements and fixes have been made across the project. Some highli
   ``urllib.parse``) and not the corresponding ``future.standard_library.*``
   modules (such as ``future.standard_library.urllib.parse``.
 
+- The ``fix_next`` and ``fix_reduce`` fixers have been moved to stage 1 of
+  ``futurize``.
 
 .. whats-new-0.11.5:
 
