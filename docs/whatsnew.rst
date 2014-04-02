@@ -169,6 +169,10 @@ Many small improvements and fixes have been made across the project. Some highli
 - The ``fix_next`` and ``fix_reduce`` fixers have been moved to stage 1 of
   ``futurize``.
 
+- ``futurize``: Shebang lines such as ``#!/usr/bin/env python`` are no longer occasionally
+  displaced by ``from __future__ import ...`` statements.
+
+
 .. whats-new-0.11.5:
 
 .. What's new in version 0.11.5

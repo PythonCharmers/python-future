@@ -6,7 +6,22 @@ import tempfile
 from subprocess import Popen, PIPE
 import os
 
+from libfuturize.fixer_util import is_shebang_comment
+from lib2to3.fixer_util import FromImport
+from lib2to3.pytree import Leaf, Node
+from lib2to3.pygram import token
+
 from future.tests.base import CodeHandler, unittest, skip26
+
+
+class TestLibFuturize(unittest.TestCase):
+    def test_is_shebang_comment(self):
+        """
+        Tests whether the libfuturize.fixer_util.is_shebang_comment() function is working
+        """
+        node = FromImport(u'math', [Leaf(token.NAME, u'cos', prefix=" ")])
+        node.prefix = u'#!/usr/bin/env python\n'
+        self.assertTrue(is_shebang_comment(node))
 
 
 class TestFuturizeSimple(CodeHandler):
@@ -18,6 +33,97 @@ class TestFuturizeSimple(CodeHandler):
     def setUp(self):
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         super(TestFuturizeSimple, self).setUp()
+
+    def test_shebang_blank_with_future_division_import(self):
+        """
+        Issue #43: Is shebang line preserved as the first
+        line by futurize when followed by a blank line?
+        """
+        before = """
+        #!/usr/bin/env python
+
+        import math
+        1 / 5
+        """
+        after = """
+        #!/usr/bin/env python
+        from __future__ import division
+
+        import math
+        1 / 5
+        """
+        self.convert_check(before, after)
+
+    def test_shebang_blank_with_print_import(self):
+        before = """
+        #!/usr/bin/env python
+
+        import math
+        print 'Hello'
+        """
+        after = """
+        #!/usr/bin/env python
+        from __future__ import print_function
+
+        import math
+        print('Hello')
+        """
+        self.convert_check(before, after)
+
+    def test_shebang_comment(self):
+        """
+        Issue #43: Is shebang line preserved as the first
+        line by futurize when followed by a comment?
+        """
+        before = """
+        #!/usr/bin/env python
+        # some comments
+        # and more comments
+
+        import math
+        1 / 5
+        print 'Hello!'
+        """
+        after = """
+        #!/usr/bin/env python
+        # some comments
+        # and more comments
+        from __future__ import division
+        from __future__ import print_function
+
+        import math
+        1 / 5
+        print('Hello')
+        """
+        self.convert_check(before, after)
+
+    def test_shebang_docstring(self):
+        """
+        Issue #43: Is shebang line preserved as the first
+        line by futurize when followed by a docstring?
+        """
+        before = '''
+        #!/usr/bin/env python
+        """
+        a doc string
+        """
+        import math
+        1 / 5
+        print 'Hello!'
+        '''
+        after = '''
+        #!/usr/bin/env python
+        """
+        a doc string
+        """
+        from __future__ import division
+        from __future__ import print_function
+
+        import math
+        1 / 5
+        print('Hello')
+        '''
+        self.convert_check(before, after)
 
     @unittest.expectedFailure
     def test_problematic_string(self):
