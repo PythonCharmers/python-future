@@ -414,7 +414,7 @@ def check_future_import(node):
         assert False, "strange import: %s" % savenode
 
 
-SHEBANG_REGEX = ur'''^#!\s*.*python'''
+SHEBANG_REGEX = r'^#!\s*.*python'
 
 def is_shebang_comment(node):
     """
