@@ -163,11 +163,11 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
 
     @no(unicode)
     def find(self, sub, *args):
-        return newbytes(super(newbytes, self).find(sub, *args))
+        return super(newbytes, self).find(sub, *args)
 
     @no(unicode)
     def rfind(self, sub, *args):
-        return newbytes(super(newbytes, self).rfind(sub, *args))
+        return super(newbytes, self).rfind(sub, *args)
 
     @no(unicode, (1, 2))
     def replace(self, old, new, *args):

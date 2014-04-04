@@ -168,6 +168,18 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(b4, b'ZYXWABCD')
         self.assertTrue(isinstance(b4, bytes))
 
+    def test_find_not_found(self):
+        self.assertEqual(-1, bytes(b'ABCDE').find(b':'))
+
+    def test_find_found(self):
+        self.assertEqual(2, bytes(b'AB:CD:E').find(b':'))
+
+    def test_rfind_not_found(self):
+        self.assertEqual(-1, bytes(b'ABCDE').find(b':'))
+
+    def test_rfind_found(self):
+        self.assertEqual(4, bytes(b'AB:CD:E').find(b':'))
+
     def test_bytes_join_bytes(self):
         b = bytes(b' * ')
         strings = [b'AB', b'EFGH', b'IJKL']
