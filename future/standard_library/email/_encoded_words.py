@@ -10,6 +10,7 @@ from __future__ import absolute_import
 from future.builtins import bytes
 from future.builtins import chr
 from future.builtins import int
+from future.builtins import str
 
 # An ecoded word looks like this:
 #
@@ -71,14 +72,14 @@ _q_byte_subber = functools.partial(re.compile(br'=([a-fA-F0-9]{2})').sub,
         lambda m: bytes([int(m.group(1), 16)]))
 
 def decode_q(encoded):
-    encoded = encoded.replace(b'_', b' ')
+    encoded = bytes(encoded.replace(b'_', b' '))
     return _q_byte_subber(encoded), []
 
 
 # dict mapping bytes to their encoded form
 class _QByteMap(dict):
 
-    safe = b'-!*+/' + ascii_letters.encode('ascii') + digits.encode('ascii')
+    safe = bytes(b'-!*+/' + ascii_letters.encode('ascii') + digits.encode('ascii'))
 
     def __missing__(self, key):
         if key in self.safe:
@@ -93,10 +94,10 @@ _q_byte_map = _QByteMap()
 _q_byte_map[ord(' ')] = '_'
 
 def encode_q(bstring):
-    return ''.join(_q_byte_map[x] for x in bstring)
+    return str(''.join(_q_byte_map[x] for x in bytes(bstring)))
 
 def len_q(bstring):
-    return sum(len(_q_byte_map[x]) for x in bstring)
+    return sum(len(_q_byte_map[x]) for x in bytes(bstring))
 
 
 #
@@ -224,4 +225,4 @@ def encode(string, charset='utf-8', encoding=None, lang=''):
     encoded = _cte_encoders[encoding](bstring)
     if lang:
         lang = '*' + lang
-    return "=?{}{}?{}?{}?=".format(charset, lang, encoding, encoded)
+    return "=?{0}{1}?{2}?{3}?=".format(charset, lang, encoding, encoded)

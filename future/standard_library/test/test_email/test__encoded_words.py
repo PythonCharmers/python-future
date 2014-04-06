@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, division, unicode_literals
+
 from future import standard_library
 from future.standard_library.email import _encoded_words as _ew
 from future.standard_library.email import errors
