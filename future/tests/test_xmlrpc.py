@@ -10,7 +10,7 @@ with standard_library.hooks():
     import xmlrpc.client as xmlrpclib
     import xmlrpc.server
     import http.client
-    from test import support
+from future.standard_library.backports.test import support
 import socket
 import os
 import re

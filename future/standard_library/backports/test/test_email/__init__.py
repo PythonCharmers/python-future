@@ -10,12 +10,12 @@ from future import standard_library
 import os
 import sys
 import unittest
-with standard_library.hooks():
-    import test.support
-    import email
-    from email.message import Message
-    from email._policybase import compat32
-    from test.test_email import __file__ as landmark
+import test.support
+
+from future.standard_library.backports import email
+from future.standard_library.backports.email.message import Message
+from future.standard_library.backports.email._policybase import compat32
+from future.standard_library.backports.test.test_email import __file__ as landmark
 
 # Run all tests in package for '-m unittest test.test_email'
 def load_tests(loader, standard_tests, pattern):
