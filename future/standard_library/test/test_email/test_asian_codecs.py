@@ -9,10 +9,9 @@ from future import standard_library
 import unittest
 from future.standard_library.test.support import run_unittest
 from future.standard_library.test.test_email.test_email import TestEmailBase
-with standard_library.hooks():
-    from email.charset import Charset
-    from email.header import Header, decode_header
-    from email.message import Message
+from future.standard_library.email.charset import Charset
+from future.standard_library.email.header import Header, decode_header
+from future.standard_library.email.message import Message
 
 # We're compatible with Python 2.3, but it doesn't have the built-in Asian
 # codecs, so we have to skip all these tests.

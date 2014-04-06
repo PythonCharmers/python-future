@@ -5,9 +5,8 @@ from future import standard_library
 import textwrap
 import unittest
 import contextlib
-with standard_library.hooks():
-    from email import policy, errors
-    from test.email import TestEmailBase
+from future.standard_library.email import policy, errors
+from future.standard_library.test.email import TestEmailBase
 
 class TestDefectsBase(object):
 

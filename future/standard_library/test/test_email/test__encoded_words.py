@@ -2,10 +2,9 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from future import standard_library
-with standard_library.hooks():
-    from email import _encoded_words as _ew
-    from email import errors
-    from test.email import TestEmailBase
+from future.standard_library.email import _encoded_words as _ew
+from future.standard_library.email import errors
+from future.standard_library.test.test_email import TestEmailBase
 from future.tests.base import unittest
 
 

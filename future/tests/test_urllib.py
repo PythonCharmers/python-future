@@ -1,15 +1,14 @@
+"""Regresssion tests for urllib"""
 from __future__ import absolute_import, division, unicode_literals
 from future.builtins import bytes, chr, hex, open, range, str
 from future import standard_library
-"""Regresssion tests for urllib"""
 
-with standard_library.hooks():
-    import urllib.parse
-    import urllib.request
-    import urllib.error
-    import http.client
-    # from test import support
-    import email.message
+from future.standard_library.urllib import parse as urllib_parse
+from future.standard_library.urllib import request as urllib_request
+from future.standard_library.urllib import error as urllib_error
+from future.standard_library.http import client as http_client
+from future.standard_library.test import support
+from future.standard_library.email import message as email_message
 
 import io
 import unittest
@@ -36,12 +35,12 @@ def urlopen(url, data=None, proxies=None):
     """urlopen(url [, data]) -> open file-like object"""
     global _urlopener
     if proxies is not None:
-        opener = urllib.request.FancyURLopener(proxies=proxies)
+        opener = urllib_request.FancyURLopener(proxies=proxies)
     elif not _urlopener:
         with support.check_warnings(
                 ('FancyURLopener style of invoking requests is deprecated.',
                 DeprecationWarning)):
-            opener = urllib.request.FancyURLopener()
+            opener = urllib_request.FancyURLopener()
         _urlopener = opener
     else:
         opener = _urlopener
@@ -78,7 +77,7 @@ class FakeHTTPMixin(object):
                 if self.io_refs == 0:
                     io.BytesIO.close(self)
 
-        class FakeHTTPConnection(http.client.HTTPConnection):
+        class FakeHTTPConnection(http_client.HTTPConnection):
 
             # buffer to store data for verification in urlopen tests.
             buf = None
@@ -86,11 +85,11 @@ class FakeHTTPMixin(object):
             def connect(self):
                 self.sock = FakeSocket(fakedata)
 
-        self._connection_class = http.client.HTTPConnection
-        http.client.HTTPConnection = FakeHTTPConnection
+        self._connection_class = http_client.HTTPConnection
+        http_client.HTTPConnection = FakeHTTPConnection
 
     def unfakehttp(self):
-        http.client.HTTPConnection = self._connection_class
+        http_client.HTTPConnection = self._connection_class
 
 
 class urlopen_FileTests(unittest.TestCase):
@@ -173,7 +172,7 @@ class urlopen_FileTests(unittest.TestCase):
             self.assertEqual(line, self.text)
 
     def test_relativelocalfile(self):
-        self.assertRaises(ValueError,urllib.request.urlopen,'./' + self.pathname)
+        self.assertRaises(ValueError,urllib_request.urlopen,'./' + self.pathname)
 
 class ProxyTests(unittest.TestCase):
 
@@ -192,12 +191,12 @@ class ProxyTests(unittest.TestCase):
 
     def test_getproxies_environment_keep_no_proxies(self):
         self.env.set('NO_PROXY', 'localhost')
-        proxies = urllib.request.getproxies_environment()
+        proxies = urllib_request.getproxies_environment()
         # getproxies_environment use lowered case truncated (no '_proxy') keys
         self.assertEqual('localhost', proxies['no'])
         # List of no_proxies with space.
         self.env.set('NO_PROXY', 'localhost, anotherdomain.com, newdomain.com')
-        self.assertTrue(urllib.request.proxy_bypass_environment('anotherdomain.com'))
+        self.assertTrue(urllib_request.proxy_bypass_environment('anotherdomain.com'))
 
 class urlopen_HttpTests(unittest.TestCase, FakeHTTPMixin):
     """Test urlopen() opening a fake http connection."""
@@ -218,7 +217,7 @@ class urlopen_HttpTests(unittest.TestCase, FakeHTTPMixin):
         url = 'http://docs.python.org/library/urllib.html#OK'
         self.fakehttp(b"HTTP/1.1 200 OK\r\n\r\nHello!")
         try:
-            fp = urllib.request.urlopen(url)
+            fp = urllib_request.urlopen(url)
             self.assertEqual(fp.geturl(), url)
         finally:
             self.unfakehttp()
@@ -265,7 +264,7 @@ Connection: close
 Content-Type: text/html; charset=iso-8859-1
 ''')
         try:
-            self.assertRaises(urllib.error.HTTPError, urlopen,
+            self.assertRaises(urllib_error.HTTPError, urlopen,
                               "http://python.org/")
         finally:
             self.unfakehttp()
@@ -328,7 +327,7 @@ Content-Type: text/html; charset=iso-8859-1
         try:
             userpass = "a b:c d"
             url = "http://{}@python.org/".format(userpass)
-            fakehttp_wrapper = http.client.HTTPConnection
+            fakehttp_wrapper = http_client.HTTPConnection
             authorization = ("Authorization: Basic %s\r\n" %
                              b64encode(userpass.encode("ASCII")).decode("ASCII"))
             fp = urlopen(url)
@@ -344,7 +343,7 @@ Content-Type: text/html; charset=iso-8859-1
 
     def test_URLopener_deprecation(self):
         with support.check_warnings(('',DeprecationWarning)):
-            urllib.request.URLopener()
+            urllib_request.URLopener()
 
 class urlretrieve_FileTests(unittest.TestCase):
     """Test urllib.urlretrieve() on local files"""
@@ -382,7 +381,7 @@ class urlretrieve_FileTests(unittest.TestCase):
             filePath.encode("utf-8")
         except UnicodeEncodeError:
             raise unittest.SkipTest("filePath is not encodable to utf8")
-        return "file://%s" % urllib.request.pathname2url(filePath)
+        return "file://%s" % urllib_request.pathname2url(filePath)
 
     def createNewTempFile(self, data=b""):
         """Creates a new temporary file containing the specified data,
@@ -406,7 +405,7 @@ class urlretrieve_FileTests(unittest.TestCase):
     def test_basic(self):
         # Make sure that a local file just gets its own location returned and
         # a headers value is returned.
-        result = urllib.request.urlretrieve("file:%s" % support.TESTFN)
+        result = urllib_request.urlretrieve("file:%s" % support.TESTFN)
         self.assertEqual(result[0], support.TESTFN)
         self.assertIsInstance(result[1], email.message.Message,
                               "did not get a email.message.Message instance "
@@ -416,7 +415,7 @@ class urlretrieve_FileTests(unittest.TestCase):
         # Test that setting the filename argument works.
         second_temp = "%s.2" % support.TESTFN
         self.registerFileForCleanUp(second_temp)
-        result = urllib.request.urlretrieve(self.constructLocalFileUrl(
+        result = urllib_request.urlretrieve(self.constructLocalFileUrl(
             support.TESTFN), second_temp)
         self.assertEqual(second_temp, result[0])
         self.assertTrue(os.path.exists(second_temp), "copy of the file was not "
@@ -440,7 +439,7 @@ class urlretrieve_FileTests(unittest.TestCase):
             count_holder[0] = count_holder[0] + 1
         second_temp = "%s.2" % support.TESTFN
         self.registerFileForCleanUp(second_temp)
-        urllib.request.urlretrieve(
+        urllib_request.urlretrieve(
             self.constructLocalFileUrl(support.TESTFN),
             second_temp, hooktester)
 
@@ -450,7 +449,7 @@ class urlretrieve_FileTests(unittest.TestCase):
         def hooktester(block_count, block_read_size, file_size, _report=report):
             _report.append((block_count, block_read_size, file_size))
         srcFileName = self.createNewTempFile()
-        urllib.request.urlretrieve(self.constructLocalFileUrl(srcFileName),
+        urllib_request.urlretrieve(self.constructLocalFileUrl(srcFileName),
             support.TESTFN, hooktester)
         self.assertEqual(len(report), 1)
         self.assertEqual(report[0][2], 0)
@@ -463,7 +462,7 @@ class urlretrieve_FileTests(unittest.TestCase):
         def hooktester(block_count, block_read_size, file_size, _report=report):
             _report.append((block_count, block_read_size, file_size))
         srcFileName = self.createNewTempFile(b"x" * 5)
-        urllib.request.urlretrieve(self.constructLocalFileUrl(srcFileName),
+        urllib_request.urlretrieve(self.constructLocalFileUrl(srcFileName),
             support.TESTFN, hooktester)
         self.assertEqual(len(report), 2)
         self.assertEqual(report[0][2], 5)
@@ -477,7 +476,7 @@ class urlretrieve_FileTests(unittest.TestCase):
         def hooktester(block_count, block_read_size, file_size, _report=report):
             _report.append((block_count, block_read_size, file_size))
         srcFileName = self.createNewTempFile(b"x" * 8193)
-        urllib.request.urlretrieve(self.constructLocalFileUrl(srcFileName),
+        urllib_request.urlretrieve(self.constructLocalFileUrl(srcFileName),
             support.TESTFN, hooktester)
         self.assertEqual(len(report), 3)
         self.assertEqual(report[0][2], 8193)
@@ -503,9 +502,9 @@ FF
         def _reporthook(par1, par2, par3):
             pass
 
-        with self.assertRaises(urllib.error.ContentTooShortError):
+        with self.assertRaises(urllib_error.ContentTooShortError):
             try:
-                urllib.request.urlretrieve('http://example.com/',
+                urllib_request.urlretrieve('http://example.com/',
                                            reporthook=_reporthook)
             finally:
                 self.unfakehttp()
@@ -520,9 +519,9 @@ Content-Type: text/html; charset=iso-8859-1
 
 FF
 ''')
-        with self.assertRaises(urllib.error.ContentTooShortError):
+        with self.assertRaises(urllib_error.ContentTooShortError):
             try:
-                urllib.request.urlretrieve('http://example.com/')
+                urllib_request.urlretrieve('http://example.com/')
             finally:
                 self.unfakehttp()
 
@@ -559,42 +558,42 @@ class QuotingTests(unittest.TestCase):
                                  "abcdefghijklmnopqrstuvwxyz",
                                  "0123456789",
                                  "_.-"])
-        result = urllib.parse.quote(do_not_quote)
+        result = urllib_parse.quote(do_not_quote)
         self.assertEqual(do_not_quote, result,
                          "using quote(): %r != %r" % (do_not_quote, result))
-        result = urllib.parse.quote_plus(do_not_quote)
+        result = urllib_parse.quote_plus(do_not_quote)
         self.assertEqual(do_not_quote, result,
                         "using quote_plus(): %r != %r" % (do_not_quote, result))
 
     def test_default_safe(self):
         # Test '/' is default value for 'safe' parameter
-        self.assertEqual(urllib.parse.quote.__defaults__[0], '/')
+        self.assertEqual(urllib_parse.quote.__defaults__[0], '/')
 
     def test_safe(self):
         # Test setting 'safe' parameter does what it should do
         quote_by_default = "<>"
-        result = urllib.parse.quote(quote_by_default, safe=quote_by_default)
+        result = urllib_parse.quote(quote_by_default, safe=quote_by_default)
         self.assertEqual(quote_by_default, result,
                          "using quote(): %r != %r" % (quote_by_default, result))
-        result = urllib.parse.quote_plus(quote_by_default,
+        result = urllib_parse.quote_plus(quote_by_default,
                                          safe=quote_by_default)
         self.assertEqual(quote_by_default, result,
                          "using quote_plus(): %r != %r" %
                          (quote_by_default, result))
         # Safe expressed as bytes rather than str
-        result = urllib.parse.quote(quote_by_default, safe=b"<>")
+        result = urllib_parse.quote(quote_by_default, safe=b"<>")
         self.assertEqual(quote_by_default, result,
                          "using quote(): %r != %r" % (quote_by_default, result))
         # "Safe" non-ASCII characters should have no effect
         # (Since URIs are not allowed to have non-ASCII characters)
-        result = urllib.parse.quote("a\xfcb", encoding="latin-1", safe="\xfc")
-        expect = urllib.parse.quote("a\xfcb", encoding="latin-1", safe="")
+        result = urllib_parse.quote("a\xfcb", encoding="latin-1", safe="\xfc")
+        expect = urllib_parse.quote("a\xfcb", encoding="latin-1", safe="")
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" %
                          (expect, result))
         # Same as above, but using a bytes rather than str
-        result = urllib.parse.quote("a\xfcb", encoding="latin-1", safe=b"\xfc")
-        expect = urllib.parse.quote("a\xfcb", encoding="latin-1", safe="")
+        result = urllib_parse.quote("a\xfcb", encoding="latin-1", safe=b"\xfc")
+        expect = urllib_parse.quote("a\xfcb", encoding="latin-1", safe="")
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" %
                          (expect, result))
@@ -607,12 +606,12 @@ class QuotingTests(unittest.TestCase):
         should_quote.append(chr(127)) # For 0x7F
         should_quote = ''.join(should_quote)
         for char in should_quote:
-            result = urllib.parse.quote(char)
+            result = urllib_parse.quote(char)
             self.assertEqual(hexescape(char), result,
                              "using quote(): "
                              "%s should be escaped to %s, not %s" %
                              (char, hexescape(char), result))
-            result = urllib.parse.quote_plus(char)
+            result = urllib_parse.quote_plus(char)
             self.assertEqual(hexescape(char), result,
                              "using quote_plus(): "
                              "%s should be escapes to %s, not %s" %
@@ -620,56 +619,56 @@ class QuotingTests(unittest.TestCase):
         del should_quote
         partial_quote = "ab[]cd"
         expected = "ab%5B%5Dcd"
-        result = urllib.parse.quote(partial_quote)
+        result = urllib_parse.quote(partial_quote)
         self.assertEqual(expected, result,
                          "using quote(): %r != %r" % (expected, result))
-        result = urllib.parse.quote_plus(partial_quote)
+        result = urllib_parse.quote_plus(partial_quote)
         self.assertEqual(expected, result,
                          "using quote_plus(): %r != %r" % (expected, result))
 
     def test_quoting_space(self):
         # Make sure quote() and quote_plus() handle spaces as specified in
         # their unique way
-        result = urllib.parse.quote(' ')
+        result = urllib_parse.quote(' ')
         self.assertEqual(result, hexescape(' '),
                          "using quote(): %r != %r" % (result, hexescape(' ')))
-        result = urllib.parse.quote_plus(' ')
+        result = urllib_parse.quote_plus(' ')
         self.assertEqual(result, '+',
                          "using quote_plus(): %r != +" % result)
         given = "a b cd e f"
         expect = given.replace(' ', hexescape(' '))
-        result = urllib.parse.quote(given)
+        result = urllib_parse.quote(given)
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
         expect = given.replace(' ', '+')
-        result = urllib.parse.quote_plus(given)
+        result = urllib_parse.quote_plus(given)
         self.assertEqual(expect, result,
                          "using quote_plus(): %r != %r" % (expect, result))
 
     def test_quoting_plus(self):
-        self.assertEqual(urllib.parse.quote_plus('alpha+beta gamma'),
+        self.assertEqual(urllib_parse.quote_plus('alpha+beta gamma'),
                          'alpha%2Bbeta+gamma')
-        self.assertEqual(urllib.parse.quote_plus('alpha+beta gamma', '+'),
+        self.assertEqual(urllib_parse.quote_plus('alpha+beta gamma', '+'),
                          'alpha+beta+gamma')
         # Test with bytes
-        self.assertEqual(urllib.parse.quote_plus(b'alpha+beta gamma'),
+        self.assertEqual(urllib_parse.quote_plus(b'alpha+beta gamma'),
                          'alpha%2Bbeta+gamma')
         # Test with safe bytes
-        self.assertEqual(urllib.parse.quote_plus('alpha+beta gamma', b'+'),
+        self.assertEqual(urllib_parse.quote_plus('alpha+beta gamma', b'+'),
                          'alpha+beta+gamma')
 
     def test_quote_bytes(self):
         # Bytes should quote directly to percent-encoded values
         given = b"\xa2\xd8ab\xff"
         expect = "%A2%D8ab%FF"
-        result = urllib.parse.quote(given)
+        result = urllib_parse.quote(given)
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
         # Encoding argument should raise type error on bytes input
-        self.assertRaises(TypeError, urllib.parse.quote, given,
+        self.assertRaises(TypeError, urllib_parse.quote, given,
                             encoding="latin-1")
         # quote_from_bytes should work the same
-        result = urllib.parse.quote_from_bytes(given)
+        result = urllib_parse.quote_from_bytes(given)
         self.assertEqual(expect, result,
                          "using quote_from_bytes(): %r != %r"
                          % (expect, result))
@@ -678,40 +677,40 @@ class QuotingTests(unittest.TestCase):
         # Characters in Latin-1 range, encoded by default in UTF-8
         given = "\xa2\xd8ab\xff"
         expect = "%C2%A2%C3%98ab%C3%BF"
-        result = urllib.parse.quote(given)
+        result = urllib_parse.quote(given)
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
         # Characters in Latin-1 range, encoded by with None (default)
-        result = urllib.parse.quote(given, encoding=None, errors=None)
+        result = urllib_parse.quote(given, encoding=None, errors=None)
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
         # Characters in Latin-1 range, encoded with Latin-1
         given = "\xa2\xd8ab\xff"
         expect = "%A2%D8ab%FF"
-        result = urllib.parse.quote(given, encoding="latin-1")
+        result = urllib_parse.quote(given, encoding="latin-1")
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
         # Characters in BMP, encoded by default in UTF-8
         given = "\u6f22\u5b57"              # "Kanji"
         expect = "%E6%BC%A2%E5%AD%97"
-        result = urllib.parse.quote(given)
+        result = urllib_parse.quote(given)
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
         # Characters in BMP, encoded with Latin-1
         given = "\u6f22\u5b57"
-        self.assertRaises(UnicodeEncodeError, urllib.parse.quote, given,
+        self.assertRaises(UnicodeEncodeError, urllib_parse.quote, given,
                                     encoding="latin-1")
         # Characters in BMP, encoded with Latin-1, with replace error handling
         given = "\u6f22\u5b57"
         expect = "%3F%3F"                   # "??"
-        result = urllib.parse.quote(given, encoding="latin-1",
+        result = urllib_parse.quote(given, encoding="latin-1",
                                     errors="replace")
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
         # Characters in BMP, Latin-1, with xmlcharref error handling
         given = "\u6f22\u5b57"
         expect = "%26%2328450%3B%26%2323383%3B"     # "&#28450;&#23383;"
-        result = urllib.parse.quote(given, encoding="latin-1",
+        result = urllib_parse.quote(given, encoding="latin-1",
                                     errors="xmlcharrefreplace")
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
@@ -720,13 +719,13 @@ class QuotingTests(unittest.TestCase):
         # Encoding (latin-1) test for quote_plus
         given = "\xa2\xd8 \xff"
         expect = "%A2%D8+%FF"
-        result = urllib.parse.quote_plus(given, encoding="latin-1")
+        result = urllib_parse.quote_plus(given, encoding="latin-1")
         self.assertEqual(expect, result,
                          "using quote_plus(): %r != %r" % (expect, result))
         # Errors test for quote_plus
         given = "ab\u6f22\u5b57 cd"
         expect = "ab%3F%3F+cd"
-        result = urllib.parse.quote_plus(given, encoding="latin-1",
+        result = urllib_parse.quote_plus(given, encoding="latin-1",
                                          errors="replace")
         self.assertEqual(expect, result,
                          "using quote_plus(): %r != %r" % (expect, result))
@@ -745,66 +744,66 @@ class UnquotingTests(unittest.TestCase):
         for num in range(128):
             given = hexescape(chr(num))
             expect = chr(num)
-            result = urllib.parse.unquote(given)
+            result = urllib_parse.unquote(given)
             self.assertEqual(expect, result,
                              "using unquote(): %r != %r" % (expect, result))
-            result = urllib.parse.unquote_plus(given)
+            result = urllib_parse.unquote_plus(given)
             self.assertEqual(expect, result,
                              "using unquote_plus(): %r != %r" %
                              (expect, result))
             escape_list.append(given)
         escape_string = ''.join(escape_list)
         del escape_list
-        result = urllib.parse.unquote(escape_string)
+        result = urllib_parse.unquote(escape_string)
         self.assertEqual(result.count('%'), 1,
                          "using unquote(): not all characters escaped: "
                          "%s" % result)
-        self.assertRaises((TypeError, AttributeError), urllib.parse.unquote, None)
-        self.assertRaises((TypeError, AttributeError), urllib.parse.unquote, ())
+        self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, None)
+        self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, ())
         with support.check_warnings(('', BytesWarning), quiet=True):
-            self.assertRaises((TypeError, AttributeError), urllib.parse.unquote, b'')
+            self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, b'')
 
     def test_unquoting_badpercent(self):
         # Test unquoting on bad percent-escapes
         given = '%xab'
         expect = given
-        result = urllib.parse.unquote(given)
+        result = urllib_parse.unquote(given)
         self.assertEqual(expect, result, "using unquote(): %r != %r"
                          % (expect, result))
         given = '%x'
         expect = given
-        result = urllib.parse.unquote(given)
+        result = urllib_parse.unquote(given)
         self.assertEqual(expect, result, "using unquote(): %r != %r"
                          % (expect, result))
         given = '%'
         expect = given
-        result = urllib.parse.unquote(given)
+        result = urllib_parse.unquote(given)
         self.assertEqual(expect, result, "using unquote(): %r != %r"
                          % (expect, result))
         # unquote_to_bytes
         given = '%xab'
         expect = bytes(given, 'ascii')
-        result = urllib.parse.unquote_to_bytes(given)
+        result = urllib_parse.unquote_to_bytes(given)
         self.assertEqual(expect, result, "using unquote_to_bytes(): %r != %r"
                          % (expect, result))
         given = '%x'
         expect = bytes(given, 'ascii')
-        result = urllib.parse.unquote_to_bytes(given)
+        result = urllib_parse.unquote_to_bytes(given)
         self.assertEqual(expect, result, "using unquote_to_bytes(): %r != %r"
                          % (expect, result))
         given = '%'
         expect = bytes(given, 'ascii')
-        result = urllib.parse.unquote_to_bytes(given)
+        result = urllib_parse.unquote_to_bytes(given)
         self.assertEqual(expect, result, "using unquote_to_bytes(): %r != %r"
                          % (expect, result))
-        self.assertRaises((TypeError, AttributeError), urllib.parse.unquote_to_bytes, None)
-        self.assertRaises((TypeError, AttributeError), urllib.parse.unquote_to_bytes, ())
+        self.assertRaises((TypeError, AttributeError), urllib_parse.unquote_to_bytes, None)
+        self.assertRaises((TypeError, AttributeError), urllib_parse.unquote_to_bytes, ())
 
     def test_unquoting_mixed_case(self):
         # Test unquoting on mixed-case hex digits in the percent-escapes
         given = '%Ab%eA'
         expect = b'\xab\xea'
-        result = urllib.parse.unquote_to_bytes(given)
+        result = urllib_parse.unquote_to_bytes(given)
         self.assertEqual(expect, result,
                          "using unquote_to_bytes(): %r != %r"
                          % (expect, result))
@@ -814,10 +813,10 @@ class UnquotingTests(unittest.TestCase):
         # interspersed
         given = 'ab%sd' % hexescape('c')
         expect = "abcd"
-        result = urllib.parse.unquote(given)
+        result = urllib_parse.unquote(given)
         self.assertEqual(expect, result,
                          "using quote(): %r != %r" % (expect, result))
-        result = urllib.parse.unquote_plus(given)
+        result = urllib_parse.unquote_plus(given)
         self.assertEqual(expect, result,
                          "using unquote_plus(): %r != %r" % (expect, result))
 
@@ -825,25 +824,25 @@ class UnquotingTests(unittest.TestCase):
         # Test difference between unquote() and unquote_plus()
         given = "are+there+spaces..."
         expect = given
-        result = urllib.parse.unquote(given)
+        result = urllib_parse.unquote(given)
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
         expect = given.replace('+', ' ')
-        result = urllib.parse.unquote_plus(given)
+        result = urllib_parse.unquote_plus(given)
         self.assertEqual(expect, result,
                          "using unquote_plus(): %r != %r" % (expect, result))
 
     def test_unquote_to_bytes(self):
         given = 'br%C3%BCckner_sapporo_20050930.doc'
         expect = b'br\xc3\xbcckner_sapporo_20050930.doc'
-        result = urllib.parse.unquote_to_bytes(given)
+        result = urllib_parse.unquote_to_bytes(given)
         self.assertEqual(expect, result,
                          "using unquote_to_bytes(): %r != %r"
                          % (expect, result))
         # Test on a string with unescaped non-ASCII characters
         # (Technically an invalid URI; expect those characters to be UTF-8
         # encoded).
-        result = urllib.parse.unquote_to_bytes("\u6f22%C3%BC")
+        result = urllib_parse.unquote_to_bytes("\u6f22%C3%BC")
         expect = b'\xe6\xbc\xa2\xc3\xbc'    # UTF-8 for "\u6f22\u00fc"
         self.assertEqual(expect, result,
                          "using unquote_to_bytes(): %r != %r"
@@ -851,7 +850,7 @@ class UnquotingTests(unittest.TestCase):
         # Test with a bytes as input
         given = b'%A2%D8ab%FF'
         expect = b'\xa2\xd8ab\xff'
-        result = urllib.parse.unquote_to_bytes(given)
+        result = urllib_parse.unquote_to_bytes(given)
         self.assertEqual(expect, result,
                          "using unquote_to_bytes(): %r != %r"
                          % (expect, result))
@@ -859,7 +858,7 @@ class UnquotingTests(unittest.TestCase):
         # (Technically an invalid URI; expect those bytes to be preserved)
         given = b'%A2\xd8ab%FF'
         expect = b'\xa2\xd8ab\xff'
-        result = urllib.parse.unquote_to_bytes(given)
+        result = urllib_parse.unquote_to_bytes(given)
         self.assertEqual(expect, result,
                          "using unquote_to_bytes(): %r != %r"
                          % (expect, result))
@@ -868,16 +867,16 @@ class UnquotingTests(unittest.TestCase):
         # Characters in the Latin-1 range, encoded with UTF-8
         given = 'br%C3%BCckner_sapporo_20050930.doc'
         expect = 'br\u00fcckner_sapporo_20050930.doc'
-        result = urllib.parse.unquote(given)
+        result = urllib_parse.unquote(given)
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
         # Characters in the Latin-1 range, encoded with None (default)
-        result = urllib.parse.unquote(given, encoding=None, errors=None)
+        result = urllib_parse.unquote(given, encoding=None, errors=None)
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
 
         # Characters in the Latin-1 range, encoded with Latin-1
-        result = urllib.parse.unquote('br%FCckner_sapporo_20050930.doc',
+        result = urllib_parse.unquote('br%FCckner_sapporo_20050930.doc',
                                       encoding="latin-1")
         expect = 'br\u00fcckner_sapporo_20050930.doc'
         self.assertEqual(expect, result,
@@ -886,38 +885,38 @@ class UnquotingTests(unittest.TestCase):
         # Characters in BMP, encoded with UTF-8
         given = "%E6%BC%A2%E5%AD%97"
         expect = "\u6f22\u5b57"             # "Kanji"
-        result = urllib.parse.unquote(given)
+        result = urllib_parse.unquote(given)
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
 
         # Decode with UTF-8, invalid sequence
         given = "%F3%B1"
         expect = "\ufffd"                   # Replacement character
-        result = urllib.parse.unquote(given)
+        result = urllib_parse.unquote(given)
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
 
         # Decode with UTF-8, invalid sequence, replace errors
-        result = urllib.parse.unquote(given, errors="replace")
+        result = urllib_parse.unquote(given, errors="replace")
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
 
         # Decode with UTF-8, invalid sequence, ignoring errors
         given = "%F3%B1"
         expect = ""
-        result = urllib.parse.unquote(given, errors="ignore")
+        result = urllib_parse.unquote(given, errors="ignore")
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
 
         # A mix of non-ASCII and percent-encoded characters, UTF-8
-        result = urllib.parse.unquote("\u6f22%C3%BC")
+        result = urllib_parse.unquote("\u6f22%C3%BC")
         expect = '\u6f22\u00fc'
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
 
         # A mix of non-ASCII and percent-encoded characters, Latin-1
         # (Note, the string contains non-Latin-1-representable characters)
-        result = urllib.parse.unquote("\u6f22%FC", encoding="latin-1")
+        result = urllib_parse.unquote("\u6f22%FC", encoding="latin-1")
         expect = '\u6f22\u00fc'
         self.assertEqual(expect, result,
                          "using unquote(): %r != %r" % (expect, result))
@@ -938,7 +937,7 @@ class urlencode_Tests(unittest.TestCase):
 
         """
         expect_somewhere = ["1st=1", "2nd=2", "3rd=3"]
-        result = urllib.parse.urlencode(given)
+        result = urllib_parse.urlencode(given)
         for expected in expect_somewhere:
             self.assertIn(expected, result,
                          "testing %s: %s not found in %s" %
@@ -971,20 +970,20 @@ class urlencode_Tests(unittest.TestCase):
         # Make sure keys and values are quoted using quote_plus()
         given = {"&":"="}
         expect = "%s=%s" % (hexescape('&'), hexescape('='))
-        result = urllib.parse.urlencode(given)
+        result = urllib_parse.urlencode(given)
         self.assertEqual(expect, result)
         given = {"key name":"A bunch of pluses"}
         expect = "key+name=A+bunch+of+pluses"
-        result = urllib.parse.urlencode(given)
+        result = urllib_parse.urlencode(given)
         self.assertEqual(expect, result)
 
     def test_doseq(self):
         # Test that passing True for 'doseq' parameter works correctly
         given = {'sequence':['1', '2', '3']}
-        expect = "sequence=%s" % urllib.parse.quote_plus(str(['1', '2', '3']))
-        result = urllib.parse.urlencode(given)
+        expect = "sequence=%s" % urllib_parse.quote_plus(str(['1', '2', '3']))
+        result = urllib_parse.urlencode(given)
         self.assertEqual(expect, result)
-        result = urllib.parse.urlencode(given, True)
+        result = urllib_parse.urlencode(given, True)
         for value in given["sequence"]:
             expect = "sequence=%s" % value
             self.assertIn(expect, result)
@@ -992,89 +991,89 @@ class urlencode_Tests(unittest.TestCase):
                          "Expected 2 '&'s, got %s" % result.count('&'))
 
     def test_empty_sequence(self):
-        self.assertEqual("", urllib.parse.urlencode({}))
-        self.assertEqual("", urllib.parse.urlencode([]))
+        self.assertEqual("", urllib_parse.urlencode({}))
+        self.assertEqual("", urllib_parse.urlencode([]))
 
     def test_nonstring_values(self):
-        self.assertEqual("a=1", urllib.parse.urlencode({"a": 1}))
-        self.assertEqual("a=None", urllib.parse.urlencode({"a": None}))
+        self.assertEqual("a=1", urllib_parse.urlencode({"a": 1}))
+        self.assertEqual("a=None", urllib_parse.urlencode({"a": None}))
 
     def test_nonstring_seq_values(self):
-        self.assertEqual("a=1&a=2", urllib.parse.urlencode({"a": [1, 2]}, True))
+        self.assertEqual("a=1&a=2", urllib_parse.urlencode({"a": [1, 2]}, True))
         self.assertEqual("a=None&a=a",
-                         urllib.parse.urlencode({"a": [None, "a"]}, True))
+                         urllib_parse.urlencode({"a": [None, "a"]}, True))
         data = collections.OrderedDict([("a", 1), ("b", 1)])
         self.assertEqual("a=a&a=b",
-                         urllib.parse.urlencode({"a": data}, True))
+                         urllib_parse.urlencode({"a": data}, True))
 
     def test_urlencode_encoding(self):
         # ASCII encoding. Expect %3F with errors="replace'
         given = (('\u00a0', '\u00c1'),)
         expect = '%3F=%3F'
-        result = urllib.parse.urlencode(given, encoding="ASCII", errors="replace")
+        result = urllib_parse.urlencode(given, encoding="ASCII", errors="replace")
         self.assertEqual(expect, result)
 
         # Default is UTF-8 encoding.
         given = (('\u00a0', '\u00c1'),)
         expect = '%C2%A0=%C3%81'
-        result = urllib.parse.urlencode(given)
+        result = urllib_parse.urlencode(given)
         self.assertEqual(expect, result)
 
         # Latin-1 encoding.
         given = (('\u00a0', '\u00c1'),)
         expect = '%A0=%C1'
-        result = urllib.parse.urlencode(given, encoding="latin-1")
+        result = urllib_parse.urlencode(given, encoding="latin-1")
         self.assertEqual(expect, result)
 
     def test_urlencode_encoding_doseq(self):
         # ASCII Encoding. Expect %3F with errors="replace'
         given = (('\u00a0', '\u00c1'),)
         expect = '%3F=%3F'
-        result = urllib.parse.urlencode(given, doseq=True,
+        result = urllib_parse.urlencode(given, doseq=True,
                                         encoding="ASCII", errors="replace")
         self.assertEqual(expect, result)
 
         # ASCII Encoding. On a sequence of values.
         given = (("\u00a0", (1, "\u00c1")),)
         expect = '%3F=1&%3F=%3F'
-        result = urllib.parse.urlencode(given, True,
+        result = urllib_parse.urlencode(given, True,
                                         encoding="ASCII", errors="replace")
         self.assertEqual(expect, result)
 
         # Utf-8
         given = (("\u00a0", "\u00c1"),)
         expect = '%C2%A0=%C3%81'
-        result = urllib.parse.urlencode(given, True)
+        result = urllib_parse.urlencode(given, True)
         self.assertEqual(expect, result)
 
         given = (("\u00a0", (42, "\u00c1")),)
         expect = '%C2%A0=42&%C2%A0=%C3%81'
-        result = urllib.parse.urlencode(given, True)
+        result = urllib_parse.urlencode(given, True)
         self.assertEqual(expect, result)
 
         # latin-1
         given = (("\u00a0", "\u00c1"),)
         expect = '%A0=%C1'
-        result = urllib.parse.urlencode(given, True, encoding="latin-1")
+        result = urllib_parse.urlencode(given, True, encoding="latin-1")
         self.assertEqual(expect, result)
 
         given = (("\u00a0", (42, "\u00c1")),)
         expect = '%A0=42&%A0=%C1'
-        result = urllib.parse.urlencode(given, True, encoding="latin-1")
+        result = urllib_parse.urlencode(given, True, encoding="latin-1")
         self.assertEqual(expect, result)
 
     def test_urlencode_bytes(self):
         given = ((b'\xa0\x24', b'\xc1\x24'),)
         expect = '%A0%24=%C1%24'
-        result = urllib.parse.urlencode(given)
+        result = urllib_parse.urlencode(given)
         self.assertEqual(expect, result)
-        result = urllib.parse.urlencode(given, True)
+        result = urllib_parse.urlencode(given, True)
         self.assertEqual(expect, result)
 
         # Sequence of values
         given = ((b'\xa0\x24', (42, b'\xc1\x24')),)
         expect = '%A0%24=42&%A0%24=%C1%24'
-        result = urllib.parse.urlencode(given, True)
+        result = urllib_parse.urlencode(given, True)
         self.assertEqual(expect, result)
 
     def test_urlencode_encoding_safe_parameter(self):
@@ -1083,37 +1082,37 @@ class urlencode_Tests(unittest.TestCase):
         # Default utf-8 encoding
 
         given = ((b'\xa0\x24', b'\xc1\x24'),)
-        result = urllib.parse.urlencode(given, safe=":$")
+        result = urllib_parse.urlencode(given, safe=":$")
         expect = '%A0$=%C1$'
         self.assertEqual(expect, result)
 
         given = ((b'\xa0\x24', b'\xc1\x24'),)
-        result = urllib.parse.urlencode(given, doseq=True, safe=":$")
+        result = urllib_parse.urlencode(given, doseq=True, safe=":$")
         expect = '%A0$=%C1$'
         self.assertEqual(expect, result)
 
         # Safe parameter in sequence
         given = ((b'\xa0\x24', (b'\xc1\x24', 0xd, 42)),)
         expect = '%A0$=%C1$&%A0$=13&%A0$=42'
-        result = urllib.parse.urlencode(given, True, safe=":$")
+        result = urllib_parse.urlencode(given, True, safe=":$")
         self.assertEqual(expect, result)
 
         # Test all above in latin-1 encoding
 
         given = ((b'\xa0\x24', b'\xc1\x24'),)
-        result = urllib.parse.urlencode(given, safe=":$",
+        result = urllib_parse.urlencode(given, safe=":$",
                                         encoding="latin-1")
         expect = '%A0$=%C1$'
         self.assertEqual(expect, result)
 
         given = ((b'\xa0\x24', b'\xc1\x24'),)
         expect = '%A0$=%C1$'
-        result = urllib.parse.urlencode(given, doseq=True, safe=":$",
+        result = urllib_parse.urlencode(given, doseq=True, safe=":$",
                                         encoding="latin-1")
 
         given = ((b'\xa0\x24', (b'\xc1\x24', 0xd, 42)),)
         expect = '%A0$=%C1$&%A0$=13&%A0$=42'
-        result = urllib.parse.urlencode(given, True, safe=":$",
+        result = urllib_parse.urlencode(given, True, safe=":$",
                                         encoding="latin-1")
         self.assertEqual(expect, result)
 
@@ -1124,11 +1123,11 @@ class Pathname_Tests(unittest.TestCase):
         # Make sure simple tests pass
         expected_path = os.path.join("parts", "of", "a", "path")
         expected_url = "parts/of/a/path"
-        result = urllib.request.pathname2url(expected_path)
+        result = urllib_request.pathname2url(expected_path)
         self.assertEqual(expected_url, result,
                          "pathname2url() failed; %s != %s" %
                          (result, expected_url))
-        result = urllib.request.url2pathname(expected_url)
+        result = urllib_request.url2pathname(expected_url)
         self.assertEqual(expected_path, result,
                          "url2pathame() failed; %s != %s" %
                          (result, expected_path))
@@ -1137,25 +1136,25 @@ class Pathname_Tests(unittest.TestCase):
         # Test automatic quoting and unquoting works for pathnam2url() and
         # url2pathname() respectively
         given = os.path.join("needs", "quot=ing", "here")
-        expect = "needs/%s/here" % urllib.parse.quote("quot=ing")
-        result = urllib.request.pathname2url(given)
+        expect = "needs/%s/here" % urllib_parse.quote("quot=ing")
+        result = urllib_request.pathname2url(given)
         self.assertEqual(expect, result,
                          "pathname2url() failed; %s != %s" %
                          (expect, result))
         expect = given
-        result = urllib.request.url2pathname(result)
+        result = urllib_request.url2pathname(result)
         self.assertEqual(expect, result,
                          "url2pathname() failed; %s != %s" %
                          (expect, result))
         given = os.path.join("make sure", "using_quote")
-        expect = "%s/using_quote" % urllib.parse.quote("make sure")
-        result = urllib.request.pathname2url(given)
+        expect = "%s/using_quote" % urllib_parse.quote("make sure")
+        result = urllib_request.pathname2url(given)
         self.assertEqual(expect, result,
                          "pathname2url() failed; %s != %s" %
                          (expect, result))
         given = "make+sure/using_unquote"
         expect = os.path.join("make+sure", "using_unquote")
-        result = urllib.request.url2pathname(given)
+        result = urllib_request.url2pathname(given)
         self.assertEqual(expect, result,
                          "url2pathname() failed; %s != %s" %
                          (expect, result))
@@ -1166,15 +1165,15 @@ class Pathname_Tests(unittest.TestCase):
         given = ('/C:/', '///C:/', '/C|//')
         expect = 'C:\\'
         for url in given:
-            result = urllib.request.url2pathname(url)
+            result = urllib_request.url2pathname(url)
             self.assertEqual(expect, result,
-                             'urllib.request..url2pathname() failed; %s != %s' %
+                             'urllib_request..url2pathname() failed; %s != %s' %
                              (expect, result))
         given = '///C|/path'
         expect = 'C:\\path'
-        result = urllib.request.url2pathname(given)
+        result = urllib_request.url2pathname(given)
         self.assertEqual(expect, result,
-                         'urllib.request.url2pathname() failed; %s != %s' %
+                         'urllib_request.url2pathname() failed; %s != %s' %
                          (expect, result))
 
 class Utility_Tests(unittest.TestCase):
@@ -1184,27 +1183,27 @@ class Utility_Tests(unittest.TestCase):
         """Some of password examples are not sensible, but it is added to
         confirming to RFC2617 and addressing issue4675.
         """
-        self.assertEqual(('user', 'ab'),urllib.parse.splitpasswd('user:ab'))
-        self.assertEqual(('user', 'a\nb'),urllib.parse.splitpasswd('user:a\nb'))
-        self.assertEqual(('user', 'a\tb'),urllib.parse.splitpasswd('user:a\tb'))
-        self.assertEqual(('user', 'a\rb'),urllib.parse.splitpasswd('user:a\rb'))
-        self.assertEqual(('user', 'a\fb'),urllib.parse.splitpasswd('user:a\fb'))
-        self.assertEqual(('user', 'a\vb'),urllib.parse.splitpasswd('user:a\vb'))
-        self.assertEqual(('user', 'a:b'),urllib.parse.splitpasswd('user:a:b'))
-        self.assertEqual(('user', 'a b'),urllib.parse.splitpasswd('user:a b'))
-        self.assertEqual(('user 2', 'ab'),urllib.parse.splitpasswd('user 2:ab'))
-        self.assertEqual(('user+1', 'a+b'),urllib.parse.splitpasswd('user+1:a+b'))
+        self.assertEqual(('user', 'ab'),urllib_parse.splitpasswd('user:ab'))
+        self.assertEqual(('user', 'a\nb'),urllib_parse.splitpasswd('user:a\nb'))
+        self.assertEqual(('user', 'a\tb'),urllib_parse.splitpasswd('user:a\tb'))
+        self.assertEqual(('user', 'a\rb'),urllib_parse.splitpasswd('user:a\rb'))
+        self.assertEqual(('user', 'a\fb'),urllib_parse.splitpasswd('user:a\fb'))
+        self.assertEqual(('user', 'a\vb'),urllib_parse.splitpasswd('user:a\vb'))
+        self.assertEqual(('user', 'a:b'),urllib_parse.splitpasswd('user:a:b'))
+        self.assertEqual(('user', 'a b'),urllib_parse.splitpasswd('user:a b'))
+        self.assertEqual(('user 2', 'ab'),urllib_parse.splitpasswd('user 2:ab'))
+        self.assertEqual(('user+1', 'a+b'),urllib_parse.splitpasswd('user+1:a+b'))
 
     def test_thishost(self):
-        """Test the urllib.request.thishost utility function returns a tuple"""
-        self.assertIsInstance(urllib.request.thishost(), tuple)
+        """Test the urllib_request.thishost utility function returns a tuple"""
+        self.assertIsInstance(urllib_request.thishost(), tuple)
 
 
 class URLopener_Tests(unittest.TestCase):
     """Testcase to test the open method of URLopener class."""
 
     def test_quoted_open(self):
-        class DummyURLopener(urllib.request.URLopener):
+        class DummyURLopener(urllib_request.URLopener):
             def open_spam(self, url):
                 return url
         with support.check_warnings(
@@ -1297,17 +1296,17 @@ class URLopener_Tests(unittest.TestCase):
 #         ftp.close()
 
 class RequestTests(unittest.TestCase):
-    """Unit tests for urllib.request.Request."""
+    """Unit tests for urllib_request.Request."""
 
     def test_default_values(self):
-        Request = urllib.request.Request
+        Request = urllib_request.Request
         request = Request("http://www.python.org")
         self.assertEqual(request.get_method(), 'GET')
         request = Request("http://www.python.org", {})
         self.assertEqual(request.get_method(), 'POST')
 
     def test_with_method_arg(self):
-        Request = urllib.request.Request
+        Request = urllib_request.Request
         request = Request("http://www.python.org", method='HEAD')
         self.assertEqual(request.method, 'HEAD')
         self.assertEqual(request.get_method(), 'HEAD')

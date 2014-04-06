@@ -190,7 +190,7 @@ class TestBuiltins(unittest.TestCase):
 from future import standard_library
 with standard_library.hooks():
     import builtins
-    from test.support import TESTFN, unlink,  run_unittest, check_warnings
+from future.standard_library.test.support import TESTFN, unlink,  run_unittest, check_warnings
 import ast
 import collections
 
@@ -516,10 +516,6 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(chr(0x00100001), "\U00100001")
         self.assertEqual(chr(0x0010FFFE), "\U0010FFFE")
         self.assertEqual(chr(0x0010FFFF), "\U0010FFFF")
-
-    # We disable this test, because __builtin__ becomes builtins on Py2
-    # def test_cmp(self):
-    #     self.assertTrue(not hasattr(builtins, "cmp"))
 
     def test_compile(self):
         compile('print(1)\n', '', 'exec')

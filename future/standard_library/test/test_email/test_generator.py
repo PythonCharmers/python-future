@@ -6,7 +6,7 @@ import unittest
 from future.standard_library.email import message_from_string, message_from_bytes
 from future.standard_library.email.generator import Generator, BytesGenerator
 from future.standard_library.email import policy
-from future.tests.test_email import TestEmailBase, parameterize
+from future.standard_library.test.test_email import TestEmailBase, parameterize
 
 
 @parameterize

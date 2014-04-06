@@ -6,11 +6,11 @@ from future.builtins import open
 from future.builtins import range
 from future.builtins import super
 from future.builtins import str
-from future import standard_library
+from future import utils
 import os
 import sys
 import unittest
-import test.support
+from future.standard_library.test import support as test_support
 
 from future.standard_library import email
 from future.standard_library.email.message import Message
@@ -33,7 +33,7 @@ def test_main():
     # Unittest mucks with the path, so we have to save and restore
     # it to keep regrtest happy.
     savepath = sys.path[:]
-    test.support._run_suite(unittest.defaultTestLoader.discover(here))
+    test_support._run_suite(unittest.defaultTestLoader.discover(here))
     sys.path[:] = savepath
 
 
@@ -153,7 +153,10 @@ def parameterize(cls):
                     test = (lambda self, name=name, params=params:
                                     getattr(self, name)(*params))
                     testname = testnameroot + '_' + paramname
-                    test.__name__ = testname
+                    if utils.PY2:
+                        test.__name__ = utils.text_to_native_str(testname)
+                    else:
+                        test.__name__ = testname
                     testfuncs[testname] = test
     for key, value in testfuncs.items():
         setattr(cls, key, value)
