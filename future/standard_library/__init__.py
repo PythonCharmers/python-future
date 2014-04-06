@@ -392,7 +392,7 @@ class hooks(object):
         logging.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
-        # scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
+        self.scrubbed = scrub_py2_sys_modules()
         install_hooks(keep_sys_modules=True)
         return self
 
@@ -401,7 +401,7 @@ class hooks(object):
         sys.modules.update(self.scrubbed)
         if not self.hooks_were_installed:
             remove_hooks(keep_sys_modules=True)
-            # scrub_future_sys_modules()
+            scrub_future_sys_modules()
 
 
 # Sanity check for is_py2_stdlib_module(): We aren't replacing any
@@ -539,7 +539,7 @@ class suspend_hooks(object):
             install_hooks(keep_sys_modules=True)
             # TODO: add any previously scrubbed modules back to the sys.modules
             # cache?
-            sys.modules.update(self.scrubbed)
+            # sys.modules.update(self.scrubbed)
 
 
 def install_hooks(keep_sys_modules=True):
