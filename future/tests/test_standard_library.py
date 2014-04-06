@@ -383,4 +383,4 @@ class TestStandardLibraryRenames(CodeHandler):
 
 
 if __name__ == '__main__':
-    unittest.main(verbosity=9)
+    unittest.main()

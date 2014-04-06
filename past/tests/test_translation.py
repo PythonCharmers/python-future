@@ -79,7 +79,6 @@ class TestTranslate(unittest.TestCase):
         self.assertEqual(module.x, 7)
         
     @skip26
-    @unittest.expectedFailure
     def test_div(self):
         code = """
         x = 3 / 2
