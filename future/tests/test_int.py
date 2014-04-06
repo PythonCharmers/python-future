@@ -12,6 +12,11 @@ from future.utils import PY26
 import sys
 import random
 
+try:
+    import numpy as np
+except ImportError:
+    np = None
+
 standard_library.install_hooks()
 try:
     from test import support
@@ -593,6 +598,21 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(e, 0)
         self.assertEqual(type(e), int)         # i.e. another newint
         self.assertTrue(isinstance(e, int))
+
+    @unittest.skipIf(np is None, "test requires NumPy")
+    @unittest.expectedFailure
+    def test_numpy_cast_as_long_and_newint(self):
+        """
+        NumPy currently doesn't like subclasses of ``long``. This should be fixed.
+        """
+        class longsubclass(long):
+            pass
+
+        a = np.arange(10**3, dtype=np.float64).reshape(10, 100)
+        b = a.astype(longsubclass)
+        c = a.astype(int)
+        print(b.dtype)
+        assert b.dtype == np.int64 == c.dtype
 
 
 if __name__ == "__main__":
