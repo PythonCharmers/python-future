@@ -108,6 +108,7 @@ class TestStandardLibraryRenames(CodeHandler):
         old_meta_path = copy.copy(sys.meta_path)
 
         standard_library.disable_hooks()
+        standard_library.scrub_future_sys_modules()
         if utils.PY2:
             self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
         else:
@@ -343,11 +344,6 @@ class TestStandardLibraryRenames(CodeHandler):
         import future.standard_library.urllib.error
         import future.standard_library.urllib.response
         self.assertTrue(True)
-
-    def test_urllib_parse(self):
-        import future.standard_library.urllib.parse as urllib_parse
-        URL = 'http://pypi.python.org/test_url/spaces oh no/'
-        self.assertEqual(urllib_parse.quote(URL), 'http%3A//pypi.python.org/test_url/spaces%20oh%20no/')
 
     def test_underscore_prefixed_modules(self):
         import _thread
