@@ -64,7 +64,7 @@ class Parser(object):
             data = fp.read(8192)
             if not data:
                 break
-            feedparser.feed()
+            feedparser.feed(data)
         return feedparser.close()
 
     def parsestr(self, text, headersonly=False):
