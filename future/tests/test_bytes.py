@@ -175,10 +175,10 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(2, bytes(b'AB:CD:E').find(b':'))
 
     def test_rfind_not_found(self):
-        self.assertEqual(-1, bytes(b'ABCDE').find(b':'))
+        self.assertEqual(-1, bytes(b'ABCDE').rfind(b':'))
 
     def test_rfind_found(self):
-        self.assertEqual(4, bytes(b'AB:CD:E').find(b':'))
+        self.assertEqual(5, bytes(b'AB:CD:E').rfind(b':'))
 
     def test_bytes_join_bytes(self):
         b = bytes(b' * ')
