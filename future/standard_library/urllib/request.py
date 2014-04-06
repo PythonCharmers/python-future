@@ -1317,9 +1317,9 @@ if hasattr(http_client, 'HTTPSConnection'):
 
 class HTTPCookieProcessor(BaseHandler):
     def __init__(self, cookiejar=None):
-        import http.cookiejar
+        import future.standard_library.http.cookiejar as http_cookiejar
         if cookiejar is None:
-            cookiejar = http.cookiejar.CookieJar()
+            cookiejar = http_cookiejar.CookieJar()
         self.cookiejar = cookiejar
 
     def http_request(self, request):
@@ -1903,7 +1903,7 @@ class URLopener(object):
 
     def open_local_file(self, url):
         """Use local file."""
-        # Not needed: from future.standard_library.email import utils as email_utils
+        from future.standard_library.email import utils as email_utils
         import mimetypes
         host, file = splithost(url)
         localname = url2pathname(file)
