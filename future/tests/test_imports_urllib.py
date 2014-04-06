@@ -5,17 +5,11 @@ import sys
 
 class ImportUrllibTest(unittest.TestCase):
     def test_urllib(self):
-        """
-        This should perhaps fail: importing urllib first means that the import hooks
-        won't be consulted when importing urllib.response.
-        """
         import urllib
-        print(urllib.__file__)
-        from future import standard_library
-        with standard_library.hooks():
-            import urllib.response
-        print(urllib.__file__)
-        print(urllib.response.__file__)
+        orig_file = urllib.__file__
+        from future.standard_library.urllib import response as urllib_response
+        self.assertEqual(orig_file, urllib.__file__)
+        print(urllib_response.__file__)
 
 if __name__ == '__main__':
     unittest.main()
