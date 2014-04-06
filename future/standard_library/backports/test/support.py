@@ -879,11 +879,12 @@ def check_syntax_error(testcase, statement):
                           '<test string>', 'exec')
 
 def open_urlresource(url, *args, **kw):
-    import urllib.request, urllib.parse
+    from future.standard_library.urllib import (request as urllib_request,
+                                                parse as urllib_parse)
 
     check = kw.pop('check', None)
 
-    filename = urllib.parse.urlparse(url)[2].split('/')[-1] # '/': it's URL!
+    filename = urllib_parse.urlparse(url)[2].split('/')[-1] # '/': it's URL!
 
     fn = os.path.join(os.path.dirname(__file__), "data", filename)
 
@@ -906,7 +907,7 @@ def open_urlresource(url, *args, **kw):
     requires('urlfetch')
 
     print('\tfetching %s ...' % url, file=get_original_stdout())
-    f = urllib.request.urlopen(url, timeout=15)
+    f = urllib_request.urlopen(url, timeout=15)
     try:
         with open(fn, "wb") as out:
             s = f.read()

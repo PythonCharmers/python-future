@@ -18,7 +18,7 @@ with standard_library.hooks():
          SimpleHTTPRequestHandler, CGIHTTPRequestHandler
     from http import server
     import http.client
-    from test import support
+    from future.standard_library.test import support
 
 import os
 import sys

@@ -115,7 +115,23 @@ class TestPasteurize(CodeHandler):
 
         self.convert_check(before, after, from3=True)
 
-        
+    def test_urllib_refactor2(self):
+        before = """
+        import urllib.request, urllib.parse
+
+        f = urllib.request.urlopen(url, timeout=15)
+        filename = urllib.parse.urlparse(url)[2].split('/')[-1]
+        """
+
+        after = """
+        from future.standard_library.urllib import request as urllib_request
+        from future.standard_library.urllib import parse as urllib_parse
+
+        f = urllib_request.urlopen(url, timeout=15)
+        filename = urllib_parse.urlparse(url)[2].split('/')[-1]
+        """
+
+ 
 class TestFuturizeAnnotations(CodeHandler):
     @unittest.expectedFailure
     def test_return_annotations_alone(self):

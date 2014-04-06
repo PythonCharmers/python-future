@@ -483,11 +483,11 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         data = r.read()
         """
         after = """
-        import urllib.request, urllib.parse, urllib.error
+        from future.standard_library.urllib import request as urllib_request
         
         URL = 'http://pypi.python.org/pypi/future/json'
         package_name = 'future'
-        r = urllib.request.urlopen(URL.format(package_name))
+        r = urllib_request.urlopen(URL.format(package_name))
         data = r.read()
         """
         self.convert_check(before, after)

@@ -22,8 +22,6 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import http, http.client, http.server
     import http.cookies, http.cookiejar
     import xmlrpc.client, xmlrpc.server
-    import urllib.request, urllib.parse
-    import urllib.error, urllib.robotparser
 
     import _thread
     import _dummythread
@@ -50,6 +48,15 @@ http://docs.pythonsprints.com/python3_porting/py-porting.html)::
         import queue
     except ImportError:
         import Queue as queue
+
+
+The ``urllib``, ``email``, ``test``, ``dbm``, and ``pickle`` modules have a
+different organization on Python 2 than on Python 3. To avoid ambiguity, these
+must be imported explicitly:
+
+    from future.standard_library.urllib import (request, parse,
+                                                error, robotparser)
+    from future.standard_library.test import support
 
 
 Limitations
@@ -174,7 +181,7 @@ RENAMES = {
            # 'BaseHTTPServer': 'http.server',
            # 'SimpleHTTPServer': 'http.server',
            # 'CGIHTTPServer': 'http.server',
-           'future.standard_library.test': 'test',  # primarily for renaming test_support to support
+           # 'future.standard_library.test': 'test',  # primarily for renaming test_support to support
            # 'commands': 'subprocess',
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
@@ -183,11 +190,17 @@ RENAMES = {
            # 'future.utils.six.moves.http': 'http',
            'future.standard_library.html': 'html',
            'future.standard_library.http': 'http',
-           'future.standard_library.urllib': 'urllib',
+           # 'future.standard_library.urllib': 'urllib',
            # 'future.utils.six.moves.urllib': 'urllib',
-           # 'future.utils.six.moves._markupbase': '_markupbase',
            'future.standard_library._markupbase': '_markupbase',
           }
+
+
+# It is complicated and apparently brittle to mess around with the
+# ``sys.modules`` cache in order to support "import urllib" meaning two
+# different things (Py2.7 urllib and backported Py3.3-like urllib) in different
+# contexts. So we require explicit imports for these modules.
+assert len(set(RENAMES.values()) & set(REPLACED_MODULES)) == 0
 
 
 class WarnOnImport(object):
@@ -379,7 +392,7 @@ class hooks(object):
         logging.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
-        self.scrubbed = scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
+        # scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
         install_hooks(keep_sys_modules=True)
         return self
 
@@ -388,7 +401,7 @@ class hooks(object):
         sys.modules.update(self.scrubbed)
         if not self.hooks_were_installed:
             remove_hooks(keep_sys_modules=True)
-            scrub_future_sys_modules()
+            # scrub_future_sys_modules()
 
 
 # Sanity check for is_py2_stdlib_module(): We aren't replacing any
@@ -442,7 +455,7 @@ def scrub_py2_sys_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
+            logging.warn('Deleting (Py2) {} from sys.modules'.format(modulename))
             scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]
     return scrubbed
@@ -529,7 +542,7 @@ class suspend_hooks(object):
             sys.modules.update(self.scrubbed)
 
 
-def install_hooks(keep_sys_modules=False):
+def install_hooks(keep_sys_modules=True):
     """
     This function installs the future.standard_library import hook into
     sys.meta_path. By default it also removes any Python 2 standard library
@@ -566,7 +579,7 @@ def enable_hooks():
     install_hooks()
 
 
-def remove_hooks(keep_sys_modules=False):
+def remove_hooks(keep_sys_modules=True):
     """
     This function removes the import hook from sys.meta_path. By default it also removes
     any submodules of ``future.standard_library`` from the ``sys.modules``
