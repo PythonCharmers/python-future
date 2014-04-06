@@ -7,8 +7,7 @@ from past.builtins import apply, cmp, execfile, intern, raw_input
 from past.builtins import reduce, reload, unichr, unicode, xrange
 
 from future import standard_library
-with standard_library.hooks():
-    from test.support import TESTFN     #, run_unittest
+from future.standard_library.test.support import TESTFN     #, run_unittest
 
 import platform
 from os import unlink
@@ -718,9 +717,9 @@ class BuiltinTest(unittest.TestCase):
         # This fails if the test is run twice with a constant string,
         # therefore append the run counter
         s = "never interned before " + str(numruns)
-        self.assertTrue(sys.intern(s) is s)
+        self.assertTrue(intern(s) is s)
         s2 = s.swapcase().swapcase()
-        self.assertTrue(sys.intern(s2) is s)
+        self.assertTrue(intern(s2) is s)
 
         # Subclasses of string can't be interned, because they
         # provide too much opportunity for insane things to happen.
