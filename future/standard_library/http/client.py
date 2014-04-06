@@ -71,15 +71,14 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import bytes, int, str, super
-from future.standard_library.urllib.parse import urlsplit
 
-import mimetools
-from future.standard_library import email_parser
-
+from future.standard_library.email import parser as email_parser
+from future.standard_library.email import message as email_message
 import io
 import os
 import socket
 import collections
+from future.standard_library.urllib.parse import urlsplit
 import warnings
 
 __all__ = ["HTTPResponse", "HTTPConnection",
@@ -224,7 +223,7 @@ _MAXLINE = 65536
 _MAXHEADERS = 100
 
 
-class HTTPMessage(mimetools.Message):
+class HTTPMessage(email_message.Message):
     # XXX The only usage of this method is in
     # http.server.CGIHTTPRequestHandler.  Maybe move the code there so
     # that it doesn't need to be part of the public API.  The API has

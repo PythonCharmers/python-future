@@ -6,11 +6,10 @@ import datetime
 import sys
 import time
 from future.tests.base import unittest
-with standard_library.hooks():
-    import xmlrpc.client as xmlrpclib
-    import xmlrpc.server
-    import http.client
-from future.standard_library.backports.test import support
+import future.standard_library.xmlrpc.client as xmlrpclib
+import future.standard_library.xmlrpc.server as xmlrpc_server
+import future.standard_library.http.client as http_client
+from future.standard_library.test import support
 import socket
 import os
 import re
@@ -253,8 +252,8 @@ class FaultTestCase(unittest.TestCase):
         # this will raise AttributeError because code don't want us to use
         # private methods
         self.assertRaises(AttributeError,
-                          xmlrpc.server.resolve_dotted_attribute, str, '__add')
-        self.assertTrue(xmlrpc.server.resolve_dotted_attribute(str, 'title'))
+                          xmlrpc_server.resolve_dotted_attribute, str, '__add')
+        self.assertTrue(xmlrpc_server.resolve_dotted_attribute(str, 'title'))
 
 class DateTimeTestCase(unittest.TestCase):
     @unittest.skipIf(mock is None, "this test requires the mock library")
@@ -389,7 +388,7 @@ def http_server(evt, numrequests, requestHandler=None):
         '''This is my function'''
         return True
 
-    class MyXMLRPCServer(xmlrpc.server.SimpleXMLRPCServer):
+    class MyXMLRPCServer(xmlrpc_server.SimpleXMLRPCServer):
         def get_request(self):
             # Ensure the socket is always non-blocking.  On Linux, socket
             # attributes are not inherited like they are on *BSD and Windows.
@@ -398,7 +397,7 @@ def http_server(evt, numrequests, requestHandler=None):
             return s, port
 
     if not requestHandler:
-        requestHandler = xmlrpc.server.SimpleXMLRPCRequestHandler
+        requestHandler = xmlrpc_server.SimpleXMLRPCRequestHandler
     serv = MyXMLRPCServer(("localhost", 0), requestHandler,
                           logRequests=False, bind_and_activate=False)
     try:
@@ -444,7 +443,7 @@ def http_multi_server(evt, numrequests, requestHandler=None):
         '''This is my function'''
         return True
 
-    class MyXMLRPCServer(xmlrpc.server.MultiPathXMLRPCServer):
+    class MyXMLRPCServer(xmlrpc_server.MultiPathXMLRPCServer):
         def get_request(self):
             # Ensure the socket is always non-blocking.  On Linux, socket
             # attributes are not inherited like they are on *BSD and Windows.
@@ -453,7 +452,7 @@ def http_multi_server(evt, numrequests, requestHandler=None):
             return s, port
 
     if not requestHandler:
-        requestHandler = xmlrpc.server.SimpleXMLRPCRequestHandler
+        requestHandler = xmlrpc_server.SimpleXMLRPCRequestHandler
     class MyRequestHandler(requestHandler):
         rpc_paths = []
 
@@ -476,7 +475,7 @@ def http_multi_server(evt, numrequests, requestHandler=None):
         serv.server_activate()
         paths = ["/foo", "/foo/bar"]
         for path in paths:
-            d = serv.add_dispatcher(path, xmlrpc.server.SimpleXMLRPCDispatcher())
+            d = serv.add_dispatcher(path, xmlrpc_server.SimpleXMLRPCDispatcher())
             d.register_introspection_functions()
             d.register_multicall_functions()
         serv.get_dispatcher(paths[0]).register_function(pow)
@@ -539,7 +538,7 @@ class BaseServerTestCase(unittest.TestCase):
 
     def setUp(self):
         # enable traceback reporting
-        xmlrpc.server.SimpleXMLRPCServer._send_traceback_header = True
+        xmlrpc_server.SimpleXMLRPCServer._send_traceback_header = True
 
         self.evt = threading.Event()
         # start server thread to handle requests
@@ -555,7 +554,7 @@ class BaseServerTestCase(unittest.TestCase):
         self.evt.wait()
 
         # disable traceback reporting
-        xmlrpc.server.SimpleXMLRPCServer._send_traceback_header = False
+        xmlrpc_server.SimpleXMLRPCServer._send_traceback_header = False
 
 class SimpleServerTestCase(BaseServerTestCase):
     def test_simple1(self):
@@ -583,9 +582,9 @@ class SimpleServerTestCase(BaseServerTestCase):
 
     # [ch] The test 404 is causing lots of false alarms.
     def XXXtest_404(self):
-        # send POST with http.client, it should return 404 header and
+        # send POST with http_client, it should return 404 header and
         # 'Not Found' message.
-        conn = httplib.client.HTTPConnection(ADDR, PORT)
+        conn = http_client.HTTPConnection(ADDR, PORT)
         conn.request('POST', '/this-is-not-valid')
         response = conn.getresponse()
         conn.close()
@@ -688,9 +687,9 @@ class SimpleServerTestCase(BaseServerTestCase):
     def test_dotted_attribute(self):
         # Raises an AttributeError because private methods are not allowed.
         self.assertRaises(AttributeError,
-                          xmlrpc.server.resolve_dotted_attribute, str, '__add')
+                          xmlrpc_server.resolve_dotted_attribute, str, '__add')
 
-        self.assertTrue(xmlrpc.server.resolve_dotted_attribute(str, 'title'))
+        self.assertTrue(xmlrpc_server.resolve_dotted_attribute(str, 'title'))
         # Get the test to run faster by sending a request with test_simple1.
         # This avoids waiting for the socket timeout.
         self.test_simple1()
@@ -701,7 +700,7 @@ class SimpleServerTestCase(BaseServerTestCase):
 
     def test_partial_post(self):
         # Check that a partial POST doesn't make the server loop: issue #14001.
-        conn = http.client.HTTPConnection(ADDR, PORT)
+        conn = http_client.HTTPConnection(ADDR, PORT)
         conn.request('POST', '/RPC2 HTTP/1.0\r\nContent-Length: 100\r\n\r\nbye')
         conn.close()
 
@@ -728,8 +727,8 @@ class MultiPathServerTestCase(BaseServerTestCase):
 class BaseKeepaliveServerTestCase(BaseServerTestCase):
     #a request handler that supports keep-alive and logs requests into a
     #class variable
-    class RequestHandler(xmlrpc.server.SimpleXMLRPCRequestHandler):
-        parentClass = xmlrpc.server.SimpleXMLRPCRequestHandler
+    class RequestHandler(xmlrpc_server.SimpleXMLRPCRequestHandler):
+        parentClass = xmlrpc_server.SimpleXMLRPCRequestHandler
         protocol_version = 'HTTP/1.1'
         myRequests = []
         def handle(self):
@@ -807,8 +806,8 @@ class KeepaliveServerTestCase2(BaseKeepaliveServerTestCase):
 class GzipServerTestCase(BaseServerTestCase):
     #a request handler that supports keep-alive and logs requests into a
     #class variable
-    class RequestHandler(xmlrpc.server.SimpleXMLRPCRequestHandler):
-        parentClass = xmlrpc.server.SimpleXMLRPCRequestHandler
+    class RequestHandler(xmlrpc_server.SimpleXMLRPCRequestHandler):
+        parentClass = xmlrpc_server.SimpleXMLRPCRequestHandler
         protocol_version = 'HTTP/1.1'
 
         def do_POST(self):
@@ -893,7 +892,7 @@ class ServerProxyTestCase(unittest.TestCase):
 
 # This is a contrived way to make a failure occur on the server side
 # in order to test the _send_traceback_header flag on the server
-class FailingMessageClass(http.client.HTTPMessage):
+class FailingMessageClass(http_client.HTTPMessage):
     def get(self, key, failobj=None):
         key = key.lower()
         if key == 'content-length':
@@ -917,18 +916,18 @@ class FailingServerTestCase(unittest.TestCase):
         # wait on the server thread to terminate
         self.evt.wait()
         # reset flag
-        xmlrpc.server.SimpleXMLRPCServer._send_traceback_header = False
+        xmlrpc_server.SimpleXMLRPCServer._send_traceback_header = False
         # reset message class
-        default_class = http.client.HTTPMessage
-        xmlrpc.server.SimpleXMLRPCRequestHandler.MessageClass = default_class
+        default_class = http_client.HTTPMessage
+        xmlrpc_server.SimpleXMLRPCRequestHandler.MessageClass = default_class
 
     def test_basic(self):
         # check that flag is false by default
-        flagval = xmlrpc.server.SimpleXMLRPCServer._send_traceback_header
+        flagval = xmlrpc_server.SimpleXMLRPCServer._send_traceback_header
         self.assertEqual(flagval, False)
 
         # enable traceback reporting
-        xmlrpc.server.SimpleXMLRPCServer._send_traceback_header = True
+        xmlrpc_server.SimpleXMLRPCServer._send_traceback_header = True
 
         # test a call that shouldn't fail just as a smoke test
         try:
@@ -942,7 +941,7 @@ class FailingServerTestCase(unittest.TestCase):
 
     def test_fail_no_info(self):
         # use the broken message class
-        xmlrpc.server.SimpleXMLRPCRequestHandler.MessageClass = FailingMessageClass
+        xmlrpc_server.SimpleXMLRPCRequestHandler.MessageClass = FailingMessageClass
 
         try:
             p = xmlrpclib.ServerProxy(URL)
@@ -958,11 +957,11 @@ class FailingServerTestCase(unittest.TestCase):
 
     def test_fail_with_info(self):
         # use the broken message class
-        xmlrpc.server.SimpleXMLRPCRequestHandler.MessageClass = FailingMessageClass
+        xmlrpc_server.SimpleXMLRPCRequestHandler.MessageClass = FailingMessageClass
 
         # Check that errors in the server send back exception/traceback
         # info when flag is set
-        xmlrpc.server.SimpleXMLRPCServer._send_traceback_header = True
+        xmlrpc_server.SimpleXMLRPCServer._send_traceback_header = True
 
         try:
             p = xmlrpclib.ServerProxy(URL)
@@ -994,7 +993,7 @@ def captured_stdout(encoding='utf-8'):
 
 class CGIHandlerTestCase(unittest.TestCase):
     def setUp(self):
-        self.cgi = xmlrpc.server.CGIXMLRPCRequestHandler()
+        self.cgi = xmlrpc_server.CGIXMLRPCRequestHandler()
 
     def tearDown(self):
         self.cgi = None
@@ -1072,7 +1071,7 @@ class UseBuiltinTypesTestCase(unittest.TestCase):
         marshaled = xmlrpclib.dumps((expected_bytes, expected_date), 'foobar')
         def foobar(*args):
             self.log.extend(args)
-        handler = xmlrpc.server.SimpleXMLRPCDispatcher(
+        handler = xmlrpc_server.SimpleXMLRPCDispatcher(
             allow_none=True, encoding=None, use_builtin_types=True)
         handler.register_function(foobar)
         handler._marshaled_dispatch(marshaled)
@@ -1083,11 +1082,11 @@ class UseBuiltinTypesTestCase(unittest.TestCase):
         self.assertIs(type(mybytes), bytes)
 
     def test_cgihandler_has_use_builtin_types_flag(self):
-        handler = xmlrpc.server.CGIXMLRPCRequestHandler(use_builtin_types=True)
+        handler = xmlrpc_server.CGIXMLRPCRequestHandler(use_builtin_types=True)
         self.assertTrue(handler.use_builtin_types)
 
     def test_xmlrpcserver_has_use_builtin_types_flag(self):
-        server = xmlrpc.server.SimpleXMLRPCServer(("localhost", 0),
+        server = xmlrpc_server.SimpleXMLRPCServer(("localhost", 0),
             use_builtin_types=True)
         server.server_close()
         self.assertTrue(server.use_builtin_types)
