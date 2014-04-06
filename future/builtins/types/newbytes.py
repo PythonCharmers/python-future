@@ -250,7 +250,7 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
             raise ValueError('substring not found')
 
     def __eq__(self, other):
-        if isinstance(other, _builtin_bytes):
+        if isinstance(other, (_builtin_bytes, bytearray)):
             return super(newbytes, self).__eq__(other)
         else:
             return False
