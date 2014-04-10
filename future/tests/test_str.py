@@ -378,5 +378,44 @@ class TestStr(unittest.TestCase):
         with self.assertRaises(TypeError):
             (3.3 + 3j) * s
 
+    @unittest.skip('Fails on Python <= 2.7.6 due to string subclass slicing bug')
+    def test_slice(self):
+        """
+        Do slices return newstr objects?
+        """
+        s = str(u'abcd')
+        self.assertEqual(s[:2], u'ab')
+        self.assertEqual(type(s[:2]), str)
+        self.assertEqual(s[-2:], u'cd')
+        self.assertEqual(type(s[-2:]), str)
+
+    @unittest.skip('Fails on Python <= 2.7.6 due to string subclass slicing bug')
+    def test_subclassing(self):
+        """
+        Can newstr be subclassed and do str methods then return instances of
+        the same class? (This is the Py3 behaviour).
+        """
+        class SubClass(str):
+            pass
+        s = SubClass(u'abcd')
+        self.assertEqual(type(s), SubClass)
+        self.assertEqual(type(s + s), str)
+        self.assertEqual(type(s[0]), str)
+        self.assertEqual(type(s[:2]), str)
+        self.assertEqual(type(s.join([u'_', u'_', u'_'])), str)
+
+    def test_subclassing_2(self):
+        """
+        Tests __new__ method in subclasses. Fails in versions <= 0.11.4
+        """
+        class SubClass(str):
+            def __new__(cls, *args, **kwargs):
+                self = str.__new__(cls, *args, **kwargs)
+                assert type(self) == SubClass
+                return self
+        s = SubClass(u'abcd')
+        self.assertTrue(True)
+
+
 if __name__ == '__main__':
     unittest.main()
