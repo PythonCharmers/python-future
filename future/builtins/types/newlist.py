@@ -55,7 +55,24 @@ class newlist(with_metaclass(BaseNewList, _builtin_list, newobject)):
         else:
             value = args[0]
         return super(newlist, cls).__new__(cls, value)
-        
+
+    def __add__(self, value):
+        return newlist(super(newlist, self).__add__(value))
+
+    def __radd__(self, left):
+        " left + self "
+        try:
+            return newlist(left) + self
+        except:
+            return NotImplemented
+
+    def __getitem__(self, y):
+        """x.__getitem__(y) <==> x[y]"""
+        if isinstance(y, slice):
+            return newlist(super(newlist, self).__getitem__(y))
+        else:
+            return super(newlist, self).__getitem__(y)
+
     def __native__(self):
         """
         Hook for the future.utils.native() function
