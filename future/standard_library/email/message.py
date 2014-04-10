@@ -16,6 +16,7 @@ import binascii
 from io import BytesIO, StringIO
 
 # Intrapackage imports
+from future.utils import as_native_str
 from future.standard_library.email import utils
 from future.standard_library.email import errors
 from future.standard_library.email._policybase import compat32
@@ -132,6 +133,7 @@ class Message(object):
         # Default content type
         self._default_type = 'text/plain'
 
+    @as_native_str(encoding='utf-8')
     def __str__(self):
         """Return the entire formatted message as a string.
         This includes the headers, body, and envelope header.
@@ -139,7 +141,7 @@ class Message(object):
         return self.as_string()
 
     def as_string(self, unixfrom=False, maxheaderlen=0):
-        """Return the entire formatted message as a string.
+        """Return the entire formatted message as a (unicode) string.
         Optional `unixfrom' when True, means include the Unix From_ envelope
         header.
 

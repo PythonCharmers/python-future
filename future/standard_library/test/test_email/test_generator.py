@@ -7,6 +7,7 @@ from future.standard_library.email import message_from_string, message_from_byte
 from future.standard_library.email.generator import Generator, BytesGenerator
 from future.standard_library.email import policy
 from future.standard_library.test.test_email import TestEmailBase, parameterize
+from future.builtins import str
 
 
 @parameterize
