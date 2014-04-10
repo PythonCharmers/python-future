@@ -37,6 +37,11 @@ class newlist(with_metaclass(BaseNewList, _builtin_list, newobject)):
         """
         return copy.copy(self)
 
+    def clear(self):
+        """L.clear() -> None -- remove all items from L"""
+        for i in range(len(self)):
+            self.pop()
+
     def __new__(cls, *args, **kwargs):
         """
         list() -> new empty list
