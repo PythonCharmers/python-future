@@ -70,7 +70,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import int, range, str, super
+from future.builtins import int, range, str, super, list
 
 import re
 from collections import namedtuple, OrderedDict
@@ -113,7 +113,7 @@ class _Folded(object):
         self.stickyspace = None
         self.firstline = True
         self.done = []
-        self.current = []
+        self.current = list()    # uses l.clear()
 
     def newline(self):
         self.done.extend(self.current)
@@ -193,7 +193,7 @@ class TokenList(list):
     token_type = None
 
     def __init__(self, *args, **kw):
-        super().__init__(*args, **kw)
+        super(TokenList, self).__init__(*args, **kw)
         self.defects = []
 
     def __str__(self):
@@ -201,7 +201,7 @@ class TokenList(list):
 
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__,
-                             super().__repr__())
+                               super(TokenList, self).__repr__())
 
     @property
     def value(self):
@@ -253,7 +253,7 @@ class TokenList(list):
     @property
     def parts(self):
         klass = self.__class__
-        this = []
+        this = list()
         for token in self:
             if token.startswith_fws():
                 if this:
@@ -877,7 +877,7 @@ class Domain(TokenList):
 
     @property
     def domain(self):
-        return ''.join(super().value.split())
+        return ''.join(super(Domain, self).value.split())
 
 
 class DotAtom(TokenList):
@@ -963,7 +963,7 @@ class DisplayName(Phrase):
                 post = ' '
             return pre+quote_string(self.display_name)+post
         else:
-            return super().value
+            return super(DisplayName, self).value
 
 
 class LocalPart(TokenList):
