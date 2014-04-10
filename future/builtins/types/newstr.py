@@ -79,14 +79,11 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
           errors defaults to 'strict'.
         
         """
-        
         if len(args) == 0:
             return super(newstr, cls).__new__(cls)
-        # Was: elif isinstance(args[0], newstr):
-        # We use type() instead of the above because we're redefining
-        # this to be True for all unicode string subclasses. Warning:
-        # This may render newstr un-subclassable.
-        elif type(args[0]) == newstr:
+        # Special case: If someone requests str(str(u'abc')), return the same
+        # object (same id) for consistency with Py3.3
+        elif type(args[0]) == newstr and cls == newstr:
             return args[0]
         elif isinstance(args[0], unicode):
             value = args[0]
@@ -108,6 +105,11 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         return value[1:]
 
     def __getitem__(self, y):
+        """
+        Warning: Python <= 2.7.6 has a bug that causes this method never to be called
+        when y is a slice object. Therefore the type of newstr()[:2] is wrong
+        (unicode instead of newstr).
+        """
         return newstr(super(newstr, self).__getitem__(y))
 
     def __contains__(self, key):
