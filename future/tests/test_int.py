@@ -17,16 +17,14 @@ try:
 except ImportError:
     np = None
 
-standard_library.install_hooks()
 try:
-    from test import support
+    from future.standard_library.test import support
 except ImportError:
     def cpython_only(f):
         return f
 else:
     cpython_only = support.cpython_only
 
-standard_library.remove_hooks()
 
 L = [
         ('0', 0),

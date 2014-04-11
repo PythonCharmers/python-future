@@ -5,10 +5,9 @@ from future import standard_library
 
 import unittest
 from future.standard_library.email.message import Message
-with standard_library.hooks():
-    from test import support
-    import urllib.request
-    import email.message
+import future.standard_library.email.message as email_message
+from future.standard_library.test import support
+import future.standard_library.urllib.request as urllib_request
 
 import contextlib
 import socket
@@ -30,7 +29,7 @@ class URLTimeoutTest(unittest.TestCase):
 
     def testURLread(self):
         with support.transient_internet("www.python.org"):
-            f = urllib.request.urlopen("http://www.python.org/")
+            f = urllib_request.urlopen("http://www.python.org/")
             x = f.read()
 
 
@@ -53,7 +52,7 @@ class urlopenNetworkTests(unittest.TestCase):
     def urlopen(self, *args, **kwargs):
         resource = args[0]
         with support.transient_internet(resource):
-            r = urllib.request.urlopen(*args, **kwargs)
+            r = urllib_request.urlopen(*args, **kwargs)
             try:
                 yield r
             finally:
@@ -80,9 +79,9 @@ class urlopenNetworkTests(unittest.TestCase):
         # Test 'info'.
         with self.urlopen("http://www.python.org/") as open_url:
             info_obj = open_url.info()
-            self.assertIsInstance(info_obj, email.message.Message,
+            self.assertIsInstance(info_obj, email_message.Message,
                                   "object returned by 'info' is not an "
-                                  "instance of email.message.Message")
+                                  "instance of email_message.Message")
             self.assertEqual(info_obj.get_content_subtype(), "html")
 
     def test_geturl(self):
@@ -96,7 +95,7 @@ class urlopenNetworkTests(unittest.TestCase):
         # test getcode() with the fancy opener to get 404 error codes
         URL = "http://www.python.org/XXXinvalidXXX"
         with support.transient_internet(URL):
-            open_url = urllib.request.FancyURLopener().open(URL)
+            open_url = urllib_request.FancyURLopener().open(URL)
             try:
                 code = open_url.getcode()
             finally:
@@ -136,18 +135,18 @@ class urlopenNetworkTests(unittest.TestCase):
                           # domain will be spared to serve its defined
                           # purpose.
                           # urllib.urlopen, "http://www.sadflkjsasadf.com/")
-                          urllib.request.urlopen,
+                          urllib_request.urlopen,
                           "http://sadflkjsasf.i.nvali.d/")
 
 
 class urlretrieveNetworkTests(unittest.TestCase):
-    """Tests urllib.request.urlretrieve using the network."""
+    """Tests urllib_request.urlretrieve using the network."""
 
     @contextlib.contextmanager
     def urlretrieve(self, *args, **kwargs):
         resource = args[0]
         with support.transient_internet(resource):
-            file_location, info = urllib.request.urlretrieve(*args, **kwargs)
+            file_location, info = urllib_request.urlretrieve(*args, **kwargs)
             try:
                 yield file_location, info
             finally:
@@ -174,8 +173,8 @@ class urlretrieveNetworkTests(unittest.TestCase):
     def test_header(self):
         # Make sure header returned as 2nd value from urlretrieve is good.
         with self.urlretrieve("http://www.python.org/") as (file_location, info):
-            self.assertIsInstance(info, email.message.Message,
-                                  "info is not an instance of email.message.Message")
+            self.assertIsInstance(info, email_message.Message,
+                                  "info is not an instance of email_message.Message")
 
     logo = "http://www.python.org/static/community_logos/python-logo-master-v3-TM.png"
 

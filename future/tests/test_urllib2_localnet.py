@@ -7,12 +7,11 @@ from future.builtins import bytes, int, str, super
 from future import standard_library
 
 import os
-import email
-with standard_library.hooks():
-    import urllib.parse
-    import urllib.request
-    import http.server
-    from test import support
+import future.standard_library.email as email
+import future.standard_library.urllib.parse as urllib_parse
+import future.standard_library.urllib.request as urllib_request
+import future.standard_library.http.server as http_server
+from future.standard_library.test import support
 from future.tests.base import unittest
 import hashlib
 threading = support.import_module('threading')
@@ -24,15 +23,15 @@ CERT_localhost = os.path.join(here, 'keycert.pem')
 # Self-signed cert file for 'fakehostname'
 CERT_fakehostname = os.path.join(here, 'keycert2.pem')
 
-# Loopback http server infrastructure
+# Loopback http_server infrastructure
 
-class LoopbackHttpServer(http.server.HTTPServer):
+class LoopbackHttpServer(http_server.HTTPServer):
     """HTTP server w/ a few modifications that make it useful for
     loopback testing purposes.
     """
 
     def __init__(self, server_address, RequestHandlerClass):
-        http.server.HTTPServer.__init__(self,
+        http_server.HTTPServer.__init__(self,
                                         server_address,
                                         RequestHandlerClass)
 
@@ -53,7 +52,7 @@ class LoopbackHttpServer(http.server.HTTPServer):
         return (request, client_address)
 
 class LoopbackHttpServerThread(threading.Thread):
-    """Stoppable thread that runs a loopback http server."""
+    """Stoppable thread that runs a loopback http_server."""
 
     def __init__(self, request_handler):
         threading.Thread.__init__(self)
@@ -188,7 +187,7 @@ class DigestAuthHandler(object):
             auth_validated = False
 
             # MSIE uses short_path in its validation, but Python's
-            # urllib.request uses the full path, so we're going to see if
+            # urllib_request uses the full path, so we're going to see if
             # either of them works here.
 
             for path in [request_handler.path, request_handler.short_path]:
@@ -204,7 +203,7 @@ class DigestAuthHandler(object):
 
 # Proxy test infrastructure
 
-class FakeProxyHandler(http.server.BaseHTTPRequestHandler):
+class FakeProxyHandler(http_server.BaseHTTPRequestHandler):
     """This is a 'fake proxy' that makes it look like the entire
     internet has gone down due to a sudden zombie invasion.  It main
     utility is in providing us with authentication support for
@@ -215,7 +214,7 @@ class FakeProxyHandler(http.server.BaseHTTPRequestHandler):
         # This has to be set before calling our parent's __init__(), which will
         # try to call do_GET().
         self.digest_auth_handler = digest_auth_handler
-        http.server.BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
+        http_server.BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
 
     def log_message(self, format, *args):
         # Uncomment the next line for debugging.
@@ -223,7 +222,7 @@ class FakeProxyHandler(http.server.BaseHTTPRequestHandler):
         pass
 
     def do_GET(self):
-        (scm, netloc, path, params, query, fragment) = urllib.parse.urlparse(
+        (scm, netloc, path, params, query, fragment) = urllib_parse.urlparse(
             self.path, "http")
         self.short_path = path
         if self.digest_auth_handler.handle_request(self):
@@ -256,9 +255,9 @@ class ProxyAuthTests(unittest.TestCase):
         self.server.start()
         self.server.ready.wait()
         proxy_url = "http://127.0.0.1:%d" % self.server.port
-        handler = urllib.request.ProxyHandler({"http" : proxy_url})
-        self.proxy_digest_handler = urllib.request.ProxyDigestAuthHandler()
-        self.opener = urllib.request.build_opener(
+        handler = urllib_request.ProxyHandler({"http" : proxy_url})
+        self.proxy_digest_handler = urllib_request.ProxyDigestAuthHandler()
+        self.opener = urllib_request.build_opener(
             handler, self.proxy_digest_handler)
 
     def tearDown(self):
@@ -307,7 +306,7 @@ class ProxyAuthTests(unittest.TestCase):
 
 def GetRequestHandler(responses):
 
-    class FakeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
+    class FakeHTTPRequestHandler(http_server.BaseHTTPRequestHandler):
 
         server_version = "TestHTTP/"
         requests = []
@@ -349,7 +348,7 @@ def GetRequestHandler(responses):
 
 
 class TestUrlopen(unittest.TestCase):
-    """Tests urllib.request.urlopen using the network.
+    """Tests urllib_request.urlopen using the network.
 
     These tests are not exhaustive.  Assuming that testing using files does a
     good job overall of some of the basic interface features.  There are no
@@ -374,7 +373,7 @@ class TestUrlopen(unittest.TestCase):
     def urlopen(self, url, data=None, **kwargs):
         l = []
         self.skipTest('urlopen is waiting forever ...')
-        f = urllib.request.urlopen(url, data, **kwargs)
+        f = urllib_request.urlopen(url, data, **kwargs)
         try:
             # Exercise various methods
             l.extend(f.readlines(200))
@@ -398,7 +397,7 @@ class TestUrlopen(unittest.TestCase):
         return handler
 
     def start_https_server(self, responses=None, certfile=CERT_localhost):
-        if not hasattr(urllib.request, 'HTTPSHandler'):
+        if not hasattr(urllib_request, 'HTTPSHandler'):
             self.skipTest('ssl support required')
         with standard_library.hooks():
             from test.ssl_servers import make_https_server
@@ -500,15 +499,15 @@ class TestUrlopen(unittest.TestCase):
 
     def test_sending_headers(self):
         handler = self.start_server()
-        req = urllib.request.Request("http://localhost:%s/" % handler.port,
+        req = urllib_request.Request("http://localhost:%s/" % handler.port,
                                      headers={"Range": "bytes=20-39"})
-        urllib.request.urlopen(req)
+        urllib_request.urlopen(req)
         self.assertEqual(handler.headers_received["Range"], "bytes=20-39")
 
     @unittest.skip('urlopen is waiting forever')
     def test_basic(self):
         handler = self.start_server()
-        open_url = urllib.request.urlopen("http://localhost:%s" % handler.port)
+        open_url = urllib_request.urlopen("http://localhost:%s" % handler.port)
         for attr in ("read", "close", "info", "geturl"):
             self.assertTrue(hasattr(open_url, attr), "object returned from "
                          "urlopen lacks the %s attribute" % attr)
@@ -521,12 +520,12 @@ class TestUrlopen(unittest.TestCase):
     def test_info(self):
         handler = self.start_server()
         try:
-            open_url = urllib.request.urlopen(
+            open_url = urllib_request.urlopen(
                 "http://localhost:%s" % handler.port)
             info_obj = open_url.info()
-            self.assertIsInstance(info_obj, email.message.Message,
+            self.assertIsInstance(info_obj, email_message.Message,
                                   "object returned by 'info' is not an "
-                                  "instance of email.message.Message")
+                                  "instance of email_message.Message")
             self.assertEqual(info_obj.get_content_subtype(), "plain")
         finally:
             self.server.stop()
@@ -535,7 +534,7 @@ class TestUrlopen(unittest.TestCase):
     def test_geturl(self):
         # Make sure same URL as opened is returned by geturl.
         handler = self.start_server()
-        open_url = urllib.request.urlopen("http://localhost:%s" % handler.port)
+        open_url = urllib_request.urlopen("http://localhost:%s" % handler.port)
         url = open_url.geturl()
         self.assertEqual(url, "http://localhost:%s" % handler.port)
 
@@ -565,14 +564,14 @@ class TestUrlopen(unittest.TestCase):
                           # failing if the ISP hijacks all invalid domain
                           # requests.  The real solution would be to be able to
                           # parameterize the framework with a mock resolver.
-                          urllib.request.urlopen,
+                          urllib_request.urlopen,
                           "http://sadflkjsasf.i.nvali.d./")
 
     @unittest.skip('urlopen is waiting forever')
     def test_iteration(self):
         expected_response = b"pycon 2008..."
         handler = self.start_server([(200, [], expected_response)])
-        data = urllib.request.urlopen("http://localhost:%s" % handler.port)
+        data = urllib_request.urlopen("http://localhost:%s" % handler.port)
         for line in data:
             self.assertEqual(line, expected_response)
 
@@ -581,7 +580,7 @@ class TestUrlopen(unittest.TestCase):
         lines = [b"We\n", b"got\n", b"here\n", b"verylong " * 8192 + b"\n"]
         expected_response = b"".join(lines)
         handler = self.start_server([(200, [], expected_response)])
-        data = urllib.request.urlopen("http://localhost:%s" % handler.port)
+        data = urllib_request.urlopen("http://localhost:%s" % handler.port)
         for index, line in enumerate(data):
             self.assertEqual(line, lines[index],
                              "Fetched line number %s doesn't match expected:\n"

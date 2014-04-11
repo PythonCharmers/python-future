@@ -5,10 +5,9 @@ from future.builtins import open, range
 from future import standard_library, utils
 
 import unittest
-with standard_library.hooks():
-    from test import support
-    import urllib.error
-    import urllib.request
+from future.standard_library.test import support 
+import future.standard_library.urllib.error as urllib_error
+import future.standard_library.urllib.request as urllib_request
 
 from .test_urllib2 import sanepathname2url
 import os
@@ -40,8 +39,8 @@ def _wrap_with_retry_thrice(func, exc):
 
 # Connecting to remote hosts is flaky.  Make it more robust by retrying
 # the connection several times.
-_urlopen_with_retry = _wrap_with_retry_thrice(urllib.request.urlopen,
-                                              urllib.error.URLError)
+_urlopen_with_retry = _wrap_with_retry_thrice(urllib_request.urlopen,
+                                              urllib_error.URLError)
 
 
 class AuthTests(unittest.TestCase):
@@ -125,13 +124,13 @@ class OtherNetworkTests(unittest.TestCase):
             urls = [
                 'file:' + sanepathname2url(os.path.abspath(TESTFN)),
                 ('file:///nonsensename/etc/passwd', None,
-                 urllib.error.URLError),
+                 urllib_error.URLError),
                 ]
             self._test_urls(urls, self._extra_handlers(), retry=True)
         finally:
             os.remove(TESTFN)
 
-        self.assertRaises(ValueError, urllib.request.urlopen,'./relative_path/to/file')
+        self.assertRaises(ValueError, urllib_request.urlopen,'./relative_path/to/file')
 
     # XXX Following test depends on machine configurations that are internal
     # to CNRI.  Need to set up a public server with the right authentication
@@ -164,16 +163,16 @@ class OtherNetworkTests(unittest.TestCase):
     def test_urlwithfrag(self):
         urlwith_frag = "http://docs.python.org/2/glossary.html#glossary"
         with support.transient_internet(urlwith_frag):
-            req = urllib.request.Request(urlwith_frag)
-            res = urllib.request.urlopen(req)
+            req = urllib_request.Request(urlwith_frag)
+            res = urllib_request.urlopen(req)
             self.assertEqual(res.geturl(),
                     "http://docs.python.org/2/glossary.html#glossary")
 
     def test_custom_headers(self):
         url = "http://www.example.com"
         with support.transient_internet(url):
-            opener = urllib.request.build_opener()
-            request = urllib.request.Request(url)
+            opener = urllib_request.build_opener()
+            request = urllib_request.Request(url)
             self.assertFalse(request.header_items())
             opener.open(request)
             self.assertTrue(request.header_items())
@@ -190,7 +189,7 @@ class OtherNetworkTests(unittest.TestCase):
 
         with support.transient_internet(URL):
             try:
-                with urllib.request.urlopen(URL) as res:
+                with urllib_request.urlopen(URL) as res:
                     pass
             except ValueError as e:
                 self.fail("urlopen failed for site not sending \
@@ -198,7 +197,7 @@ class OtherNetworkTests(unittest.TestCase):
             else:
                 self.assertTrue(res)
 
-            req = urllib.request.urlopen(URL)
+            req = urllib_request.urlopen(URL)
             res = req.read()
             self.assertTrue(res)
 
@@ -207,9 +206,9 @@ class OtherNetworkTests(unittest.TestCase):
         import logging
         debug = logging.getLogger("test_urllib2").debug
 
-        urlopen = urllib.request.build_opener(*handlers).open
+        urlopen = urllib_request.build_opener(*handlers).open
         if retry:
-            urlopen = _wrap_with_retry_thrice(urlopen, urllib.error.URLError)
+            urlopen = _wrap_with_retry_thrice(urlopen, urllib_error.URLError)
 
         for url in urls:
             if isinstance(url, tuple):
@@ -227,7 +226,7 @@ class OtherNetworkTests(unittest.TestCase):
                         msg = ("Didn't get expected error(s) %s for %s %s, got %s: %s" %
                                (expected_err, url, req, type(err), err))
                         self.assertIsInstance(err, expected_err, msg)
-                except urllib.error.URLError as err:
+                except urllib_error.URLError as err:
                     if isinstance(err[0], socket.timeout):
                         print("<timeout: %s>" % url, file=sys.stderr)
                         continue
@@ -249,7 +248,7 @@ class OtherNetworkTests(unittest.TestCase):
     def _extra_handlers(self):
         handlers = []
 
-        cfh = urllib.request.CacheFTPHandler()
+        cfh = urllib_request.CacheFTPHandler()
         self.addCleanup(cfh.clear_cache)
         cfh.setTimeout(1)
         handlers.append(cfh)
@@ -378,7 +377,7 @@ class HTTPSTests(unittest.TestCase):
         # so we rely on a third-party test site.
         expect_sni = ssl.HAS_SNI
         with support.transient_internet("XXX"):
-            u = urllib.request.urlopen("XXX")
+            u = urllib_request.urlopen("XXX")
             contents = u.readall()
             if expect_sni:
                 self.assertIn(b"Great", contents)
