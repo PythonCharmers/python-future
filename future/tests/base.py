@@ -36,6 +36,58 @@ def reformat(code):
     return dedent(code)
 
 
+def order_future_lines(code):
+    """
+    Returns the code block with any ``__future__`` import lines sorted, and
+    then any ``future`` import lines sorted.
+
+    This only sorts the lines within the expected blocks:
+    __future__ first, then future imports, then regular code.
+
+    See test_order_future_lines() for an example.
+    """
+
+    # We need .splitlines(keepends=True), which doesn't exist on Py2,
+    # so we use this instead:
+    lines = code.split('\n')
+
+    uufuture_line_numbers = [i for i, line in enumerate(lines)
+                               if line.startswith('from __future__ import ')]
+
+    future_line_numbers = [i for i, line in enumerate(lines)
+                             if line.startswith('from future')]
+
+    assert code.lstrip() == code, ('internal usage error: '
+            'dedent the code before calling order_future_lines()')
+
+    def mymax(numbers):
+        return max(numbers) if len(numbers) > 0 else 0
+
+    def mymin(numbers):
+        return min(numbers) if len(numbers) > 0 else 0
+
+    assert mymax(uufuture_line_numbers) <= mymin(future_line_numbers), \
+            'the __future__ and future imports are out of order'
+
+    uul = sorted([lines[i] for i in uufuture_line_numbers])
+    sorted_uufuture_lines = dict(zip(uufuture_line_numbers, uul))
+
+    fl = sorted([lines[i] for i in future_line_numbers])
+    sorted_future_lines = dict(zip(future_line_numbers, fl))
+
+    # Replace the old unsorted "from __future__ import ..." lines with the
+    # new sorted ones:
+    new_lines = []
+    for i in range(len(lines)):
+        if i in uufuture_line_numbers:
+            new_lines.append(sorted_uufuture_lines[i])
+        elif i in future_line_numbers:
+            new_lines.append(sorted_future_lines[i])
+        else:
+            new_lines.append(lines[i])
+    return '\n'.join(new_lines)
+
+
 class CodeHandler(unittest.TestCase):
     """
     Handy mixin for test classes for writing / reading / futurizing /
@@ -119,12 +171,10 @@ class CodeHandler(unittest.TestCase):
         If ignore_imports is True, passes the code blocks into the
         strip_future_imports method.
         """
-        # self.assertEqual(expected.rstrip(),
-        #                  self.order_future_lines(output).rstrip())
         if ignore_imports:
             output = self.strip_future_imports(output)
             expected = self.strip_future_imports(expected)
-        self.assertEqual(self.order_future_lines(output.rstrip()),
+        self.assertEqual(order_future_lines(output.rstrip()),
                          expected.rstrip())
 
     def strip_future_imports(self, code):
@@ -184,70 +234,6 @@ class CodeHandler(unittest.TestCase):
 
         self.compare(output, reformat(headers + expected),
                     ignore_imports=ignore_imports)
-
-    def order_future_lines(self, code):
-        """
-        TODO: simplify this hideous code ...
-
-        Returns the code block with any ``__future__`` import lines sorted, and
-        then any ``future`` import lines sorted.
-
-        This only sorts the lines within the expected blocks:
-        __future__ first, then future imports, then regular code.
-
-        Example:
-        >>> code = '''
-                   # comment here
-                   from __future__ import print_function
-                   from __future__ import absolute_import
-                                     # blank line or comment here
-                   from future.builtins import zzz
-                   from future.builtins import blah
-                   # another comment
-
-                   code_here
-                   more_code_here
-                   '''
-        """
-        # We need .splitlines(keepends=True), which doesn't exist on Py2,
-        # so we use this instead:
-        lines = code.split('\n')
-
-        uufuture_line_numbers = [i for i, line in enumerate(lines)
-                                   if line.startswith('from __future__ import ')]
-
-        future_line_numbers = [i for i, line in enumerate(lines)
-                                 if line.startswith('from future')]
-
-        assert code.lstrip() == code, ('internal usage error: '
-                'dedent the code before calling order_future_lines()')
-
-        def mymax(numbers):
-            return max(numbers) if len(numbers) > 0 else 0
-
-        def mymin(numbers):
-            return min(numbers) if len(numbers) > 0 else 0
-
-        assert mymax(uufuture_line_numbers) <= mymin(future_line_numbers), \
-                'the __future__ and future imports are out of order'
-
-        uul = sorted([lines[i] for i in uufuture_line_numbers])
-        sorted_uufuture_lines = dict(zip(uufuture_line_numbers, uul))
-
-        fl = sorted([lines[i] for i in future_line_numbers])
-        sorted_future_lines = dict(zip(future_line_numbers, fl))
-
-        # Replace the old unsorted "from __future__ import ..." lines with the
-        # new sorted ones:
-        new_lines = []
-        for i in range(len(lines)):
-            if i in uufuture_line_numbers:
-                new_lines.append(sorted_uufuture_lines[i])
-            elif i in future_line_numbers:
-                new_lines.append(sorted_future_lines[i])
-            else:
-                new_lines.append(lines[i])
-        return '\n'.join(new_lines)
 
     def unchanged(self, code, **kwargs):
         """
