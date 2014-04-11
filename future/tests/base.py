@@ -27,7 +27,7 @@ if "check_output" not in dir(subprocess): # duck punch it in!
     subprocess.check_output = f
 
 
-def reformat(code):
+def reformat_code(code):
     """
     Removes any leading \n and dedents.
     """
@@ -104,7 +104,7 @@ class CodeHandler(unittest.TestCase):
         # self.headers1 = """
         # from __future__ import absolute_import, division, print_function
         # """
-        self.headers1 = reformat("""
+        self.headers1 = reformat_code("""
         from __future__ import absolute_import
         from __future__ import division
         from __future__ import print_function
@@ -119,7 +119,7 @@ class CodeHandler(unittest.TestCase):
         # from future import standard_library
         # from future.builtins import *
         # """
-        self.headers2 = reformat("""
+        self.headers2 = reformat_code("""
         from __future__ import absolute_import
         from __future__ import division
         from __future__ import print_function
@@ -152,7 +152,7 @@ class CodeHandler(unittest.TestCase):
         interpreters in self.interpreters.
         """
         if reformat:
-            code = reformat(code)
+            code = reformat_code(code)
         self._write_test_script(code)
         self._futurize_test_script(stages=stages, all_imports=all_imports,
                                    from3=from3)
@@ -211,7 +211,8 @@ class CodeHandler(unittest.TestCase):
         """
         Convenience method that calls convert() and compare().
 
-        Reformats the code blocks automatically using the reformat() function.
+        Reformats the code blocks automatically using the reformat_code()
+        function.
 
         If all_imports is passed, we add the appropriate import headers
         for the stage(s) selected to the ``expected`` code-block, so they
@@ -232,7 +233,7 @@ class CodeHandler(unittest.TestCase):
         else:
             headers = ''
 
-        self.compare(output, reformat(headers + expected),
+        self.compare(output, reformat_code(headers + expected),
                     ignore_imports=ignore_imports)
 
     def unchanged(self, code, **kwargs):

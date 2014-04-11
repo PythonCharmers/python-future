@@ -11,7 +11,7 @@ from lib2to3.fixer_util import FromImport
 from lib2to3.pytree import Leaf, Node
 from lib2to3.pygram import token
 
-from future.tests.base import (CodeHandler, unittest, skip26, reformat,
+from future.tests.base import (CodeHandler, unittest, skip26, reformat_code,
                                order_future_lines)
 
 
@@ -862,8 +862,8 @@ class TestFuturizeStage1(CodeHandler):
                code_here
                more_code_here
                '''
-        self.assertEqual(order_future_lines(reformat(before)),
-                         reformat(after))
+        self.assertEqual(order_future_lines(reformat_code(before)),
+                         reformat_code(after))
 
 
 if __name__ == '__main__':
