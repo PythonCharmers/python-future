@@ -292,14 +292,14 @@ def touch_import_top(package, name_to_import, node):
     """Works like `does_tree_import` but adds an import statement at the
     top if it was not imported (but below any __future__ imports).
 
-    Calling this multiple times adds them in reverse order.
+    Based on lib2to3.fixer_util.touch_import()
+
+    Calling this multiple times adds the imports in reverse order.
         
     Also adds "standard_library.install_hooks()" after "from future import
-    standard_library". This should probably be factored into another function
-    somehow.
-
-    Based on lib2to3.fixer_util.touch_import()
+    standard_library". This should probably be factored into another function.
     """
+
     root = find_root(node)
 
     if does_tree_import(package, name_to_import, root):
