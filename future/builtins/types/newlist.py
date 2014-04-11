@@ -16,17 +16,18 @@ import sys
 import copy
 
 from future.utils import with_metaclass
+from future.builtins.types.newobject import newobject, BaseNewObject
 
 
 _builtin_list = list
 ver = sys.version_info[:2]
 
 
-class BaseNewList(type):
+class BaseNewList(BaseNewObject):
     def __instancecheck__(cls, instance):
         return isinstance(instance, _builtin_list)
 
-class newlist(with_metaclass(BaseNewList, _builtin_list)):
+class newlist(with_metaclass(BaseNewList, _builtin_list, newobject)):
     """
     A backport of the Python 3 list object to Py2
     """
@@ -35,6 +36,11 @@ class newlist(with_metaclass(BaseNewList, _builtin_list)):
         L.copy() -> list -- a shallow copy of L
         """
         return copy.copy(self)
+
+    def clear(self):
+        """L.clear() -> None -- remove all items from L"""
+        for i in range(len(self)):
+            self.pop()
 
     def __new__(cls, *args, **kwargs):
         """
@@ -49,7 +55,24 @@ class newlist(with_metaclass(BaseNewList, _builtin_list)):
         else:
             value = args[0]
         return super(newlist, cls).__new__(cls, value)
-        
+
+    def __add__(self, value):
+        return newlist(super(newlist, self).__add__(value))
+
+    def __radd__(self, left):
+        " left + self "
+        try:
+            return newlist(left) + self
+        except:
+            return NotImplemented
+
+    def __getitem__(self, y):
+        """x.__getitem__(y) <==> x[y]"""
+        if isinstance(y, slice):
+            return newlist(super(newlist, self).__getitem__(y))
+        else:
+            return super(newlist, self).__getitem__(y)
+
     def __native__(self):
         """
         Hook for the future.utils.native() function

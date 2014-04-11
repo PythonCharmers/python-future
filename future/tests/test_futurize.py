@@ -811,6 +811,25 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.convert(code)
 
+    def test_issue_45(self):
+        """
+        Tests whether running futurize -f libfuturize.fixes.fix_future_standard_library_urllib
+        on the code below causes a ValuError (issue #45).
+        """
+        code = """
+            from __future__ import print_function
+            from urllib import urlopen, urlencode
+            oeis_url = 'http://oeis.org/'
+            def _fetch(url):
+            try:
+            f = urlopen(url)
+            result = f.read()
+            f.close()
+            return result
+            except IOError as msg:
+            raise IOError("%s\nError fetching %s." % (msg, url))
+        """
+        self.convert(code)
 
 if __name__ == '__main__':
     unittest.main()

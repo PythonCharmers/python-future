@@ -68,9 +68,12 @@ class newobject(with_metaclass(BaseNewObject, _builtin_object)):
     def __unicode__(self):
         # All subclasses of the builtin object should have __str__ defined.
         # Note that old-style classes do not have __str__ defined.
+        import pdb
+        pdb.set_trace()
         if hasattr(self, '__str__'):
-            return type(self).__str__(self)
-        s = str(self)
+            s = type(self).__str__(self)
+        else:
+            s = str(self)
         if isinstance(s, unicode):
             return s
         else:
