@@ -11,7 +11,7 @@ from lib2to3.fixer_util import FromImport
 from lib2to3.pytree import Leaf, Node
 from lib2to3.pygram import token
 
-from future.tests.base import CodeHandler, unittest, skip26
+from future.tests.base import CodeHandler, unittest, skip26, reformat
 
 
 class TestLibFuturize(unittest.TestCase):
@@ -830,6 +830,40 @@ class TestFuturizeStage1(CodeHandler):
                     raise IOError("%s\nError fetching %s." % (msg, url))
         """
         self.convert(code)
+
+    def test_order_future_lines(self):
+        """
+        Tests the internal order_future_lines() method.
+        """
+        before = '''
+               # comment here
+               from __future__ import print_function
+               from __future__ import absolute_import
+                                 # blank line or comment here
+               from future.builtins import zzz
+               from future.builtins import aaa
+               from future.builtins import blah
+               # another comment
+
+               code_here
+               more_code_here
+               '''
+        after = '''
+               # comment here
+               from __future__ import absolute_import
+               from __future__ import print_function
+                                 # blank line or comment here
+               from future.builtins import aaa
+               from future.builtins import blah
+               from future.builtins import zzz
+               # another comment
+
+               code_here
+               more_code_here
+               '''
+        self.assertEqual(self.order_future_lines(reformat(before)),
+                         reformat(after))
+
 
 if __name__ == '__main__':
     unittest.main()
