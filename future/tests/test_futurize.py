@@ -280,11 +280,21 @@ class TestFuturizeSimple(CodeHandler):
         self.convert_check(before, after, ignore_imports=False, run=False)
 
     def test_xrange(self):
-        code = '''
+        """
+        The ``from future.builtins import range`` line was being added to the
+        bottom of the file as of v0.11.4, but only using Py2.7's lib2to3.
+        (Py3.3's lib2to3 seems to work.)
+        """
+        before = """
         for i in xrange(10):
             pass
-        '''
-        self.convert(code)
+        """
+        after = """
+        from future.builtins import range
+        for i in range(10):
+            pass
+        """
+        self.convert_check(before, after, ignore_imports=False)
     
     @skip26
     @unittest.expectedFailure
