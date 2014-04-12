@@ -26,15 +26,15 @@ class TrivialTests(unittest.TestCase):
         # Verify which names are exposed
         for module in 'request', 'response', 'parse', 'error', 'robotparser':
             context = {}
-            exec('from urllib.%s import *' % module, context)
+            exec('from future.standard_library.urllib.%s import *' % module, context)
             del context['__builtins__']
             if module == 'request' and os.name == 'nt':
                 u, p = context.pop('url2pathname'), context.pop('pathname2url')
                 self.assertEqual(u.__module__, 'nturl2path')
                 self.assertEqual(p.__module__, 'nturl2path')
             for k, v in context.items():
-                self.assertEqual(v.__module__, 'urllib.%s' % module,
-                    "%r is exposed in 'urllib.%s' but defined in %r" %
+                self.assertEqual(v.__module__, 'future.standard_library.urllib.%s' % module,
+                    "%r is exposed in 'future.standard_library.urllib.%s' but defined in %r" %
                     (k, module, v.__module__))
 
     def test_trivial(self):

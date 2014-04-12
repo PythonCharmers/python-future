@@ -9,7 +9,7 @@ import future.standard_library.email as email
 import future.standard_library.email.message as email_message
 from future.standard_library.email import policy
 from future.standard_library.email.headerregistry import HeaderRegistry
-from future.test.test_email import TestEmailBase, parameterize
+from future.tests.test_email import TestEmailBase, parameterize
 from future.tests.base import unittest
 from future.builtins import str
 

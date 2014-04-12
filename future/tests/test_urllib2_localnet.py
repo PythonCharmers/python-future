@@ -11,6 +11,7 @@ from future import standard_library
 import future.standard_library.email as email
 import future.standard_library.urllib.parse as urllib_parse
 import future.standard_library.urllib.request as urllib_request
+import future.standard_library.urllib.error as urllib_error
 from future.tests.base import unittest
 from future.builtins import bytes, int, str, super
 from future.standard_library.test import support
@@ -270,13 +271,13 @@ class ProxyAuthTests(unittest.TestCase):
         self.proxy_digest_handler.add_password(self.REALM, self.URL,
                                                self.USER, self.PASSWD+"bad")
         self.digest_auth_handler.set_qop("auth")
-        self.assertRaises(urllib.error.HTTPError,
+        self.assertRaises(urllib_error.HTTPError,
                           self.opener.open,
                           self.URL)
 
     def test_proxy_with_no_password_raises_httperror(self):
         self.digest_auth_handler.set_qop("auth")
-        self.assertRaises(urllib.error.HTTPError,
+        self.assertRaises(urllib_error.HTTPError,
                           self.opener.open,
                           self.URL)
 
@@ -295,7 +296,7 @@ class ProxyAuthTests(unittest.TestCase):
         self.digest_auth_handler.set_qop("auth-int")
         try:
             result = self.opener.open(self.URL)
-        except urllib.error.URLError:
+        except urllib_error.URLError:
             # It's okay if we don't support auth-int, but we certainly
             # shouldn't receive any kind of exception here other than
             # a URLError.
@@ -442,7 +443,7 @@ class TestUrlopen(unittest.TestCase):
 
         try:
             self.urlopen("http://localhost:%s/weeble" % handler.port)
-        except urllib.error.URLError as f:
+        except urllib_error.URLError as f:
             data = f.read()
             f.close()
         else:
@@ -481,7 +482,7 @@ class TestUrlopen(unittest.TestCase):
                             cafile=CERT_localhost)
         self.assertEqual(data, b"we care a bit")
         # Bad cert
-        with self.assertRaises(urllib.error.URLError) as cm:
+        with self.assertRaises(urllib_error.URLError) as cm:
             self.urlopen("https://localhost:%s/bizarre" % handler.port,
                          cafile=CERT_fakehostname)
         # Good cert, but mismatching hostname
@@ -494,7 +495,7 @@ class TestUrlopen(unittest.TestCase):
     def test_https_with_cadefault(self):
         handler = self.start_https_server(certfile=CERT_localhost)
         # Self-signed cert should fail verification with system certificate store
-        with self.assertRaises(urllib.error.URLError) as cm:
+        with self.assertRaises(urllib_error.URLError) as cm:
             self.urlopen("https://localhost:%s/bizarre" % handler.port,
                          cadefault=True)
 
