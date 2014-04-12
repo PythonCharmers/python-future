@@ -484,7 +484,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(ValueError, chr, 0x00110000)
         self.assertRaises((OverflowError, ValueError), chr, 2**32)
 
-    @unittest.expectedFailure
+    @unittest.skip('FIXME: skip on narrow builds?')
     def test_ord_big(self):
         """
         These tests seem to fail on OS X (narrow Python build?)
@@ -501,8 +501,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(ord("\U0010FFFE"), 0x0010FFFE)
         self.assertEqual(ord("\U0010FFFF"), 0x0010FFFF)
 
-
-    @unittest.expectedFailure
+    @unittest.skip('FIXME: skip on narrow builds?')
     def test_chr_big(self):
         """
         These tests seem to fail on OS X (narrow Python build?)

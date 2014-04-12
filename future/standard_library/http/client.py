@@ -275,7 +275,6 @@ def parse_headers(fp, _class=HTTPMessage):
         if line in (b'\r\n', b'\n', b''):
             break
     hstring = bytes(b'').join(headers).decode('iso-8859-1')
-    # import pdb; pdb.set_trace()
     return email_parser.Parser(_class=_class).parsestr(hstring)
 
 
@@ -553,12 +552,17 @@ class HTTPResponse(io.RawIOBase):
         # (for example, reading in 1k chunks)
 
         ### Python-Future:
+        # TODO: debug and fix me!
         data = self.fp.read(len(b))
+        #if len(b) != len(data):
+        #    import pdb
+        #    pdb.set_trace()
         b[:] = data
         n = len(data)
         ###
         # Was:
         # n = self.fp.readinto(b)
+
         if not n and b:
             # Ideally, we would raise IncompleteRead if the content-length
             # wasn't satisfied, but it might break compatibility.
