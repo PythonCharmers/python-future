@@ -7,7 +7,7 @@ Backported for python-future from Python 3.3 test/support.py.
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future import utils
-from future.builtins import *
+from future.builtins import str, range, open, int, map, list
 
 
 # if __name__ != 'test.support':
@@ -956,7 +956,10 @@ def _filterwarnings(filters, quiet=False):
     frame = sys._getframe(2)
     registry = frame.f_globals.get('__warningregistry__')
     if registry:
-        registry.clear()
+        # Was: registry.clear()
+        # Py2-compatible:
+        for i in range(len(registry)):
+            registry.pop()
     with warnings.catch_warnings(record=True) as w:
         # Set filter "always" to record all warnings.  Because
         # test_warnings swap the module, we need to look up in
@@ -1710,7 +1713,12 @@ def modules_cleanup(oldmodules):
     # globals will be set to None which will trip up the cached functions.
     encodings = [(k, v) for k, v in sys.modules.items()
                  if k.startswith('encodings.')]
-    sys.modules.clear()
+    # Was:
+    # sys.modules.clear()
+    # Py2-compatible:
+    for i in range(len(sys.modules)):
+        sys.modules.pop()
+
     sys.modules.update(encodings)
     # XXX: This kind of problem can affect more than just encodings. In particular
     # extension modules (such as _ssl) don't cope with reloading properly.

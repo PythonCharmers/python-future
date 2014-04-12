@@ -67,7 +67,12 @@ class newlist(with_metaclass(BaseNewList, _builtin_list, newobject)):
             return NotImplemented
 
     def __getitem__(self, y):
-        """x.__getitem__(y) <==> x[y]"""
+        """
+        x.__getitem__(y) <==> x[y]
+
+        Warning: a bug in Python 2.x prevents indexing via a slice from
+        returning a newlist object.
+        """
         if isinstance(y, slice):
             return newlist(super(newlist, self).__getitem__(y))
         else:
@@ -78,6 +83,9 @@ class newlist(with_metaclass(BaseNewList, _builtin_list, newobject)):
         Hook for the future.utils.native() function
         """
         return list(self)
+
+    def __nonzero__(self):
+        return len(self) > 0
 
 
 __all__ = ['newlist']
