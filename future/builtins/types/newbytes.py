@@ -288,5 +288,14 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         # newbytes.__str__() returns e.g. "b'blah'", consistent with Py3 bytes.
         return super(newbytes, self).__str__()
 
+    def __getattribute__(self, name):
+        """
+        A trick to cause the ``hasattr`` builtin-fn to return False for
+        the 'encode' method on Py2.
+        """
+        if name in ['encode', u'encode']:
+            raise AttributeError("encode method has been disabled in newbytes")
+        return super(newbytes, self).__getattribute__(name)
+
 
 __all__ = ['newbytes']

@@ -274,6 +274,15 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
             raise TypeError(self.unorderable_err.format(type(other)))
         return super(newstr, self).__ge__(other)
 
+    def __getattribute__(self, name):
+        """
+        A trick to cause the ``hasattr`` builtin-fn to return False for
+        the 'decode' method on Py2.
+        """
+        if name in ['decode', u'decode']:
+            raise AttributeError("decode method has been disabled in newstr")
+        return super(newstr, self).__getattribute__(name)
+
     def __native__(self):
         return unicode(self)
 
