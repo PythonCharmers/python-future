@@ -44,9 +44,6 @@ class FixFutureStandardLibrary(FixImports):
 
     def transform(self, node, results):
         import_mod = results.get("module_name")
-        import pdb
-        pdb.set_trace()
-
         if import_mod:
             mod_name = import_mod.value
             new_name1, new_name2 = map(str, self.mapping[mod_name])

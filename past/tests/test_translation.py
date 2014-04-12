@@ -13,7 +13,7 @@ import os
 from subprocess import Popen, PIPE
 
 from past import utils
-from past.builtins import basestring, str as oldstr
+from past.builtins import basestring, str as oldstr, unicode
 
 from past.translation import install_hooks, remove_hooks, common_substring
 from future.tests.base import unittest, CodeHandler, skip26
@@ -87,7 +87,7 @@ class TestTranslate(unittest.TestCase):
         self.assertEqual(module.x, 1)
 
     @skip26
-    @unittest.expectedFailure    # currently fails on Py3, succeeds on Py2
+    @unittest.skipIf(utils.PY3, 'test_stdlib currently fails on Py3')
     def test_stdlib(self):
         """
         Have the old stdlib names been mapped onto the new ones?
@@ -149,7 +149,7 @@ class TestTranslate(unittest.TestCase):
         self.assertTrue(module.e)
 
     @skip26
-    @unittest.expectedFailure
+    # @unittest.expectedFailure
     def test_import_builtin_types(self):
         code = """
         s1 = 'abcd'
@@ -163,7 +163,7 @@ class TestTranslate(unittest.TestCase):
         """
         module = self.write_and_import(code, 'test_builtin_types')
         self.assertTrue(isinstance(module.s1, oldstr))
-        # self.assertTrue(isinstance(s2, oldunicode))
+        self.assertTrue(isinstance(module.s2, unicode))
         self.assertTrue(isinstance(module.b1, oldstr))
 
     def test_xrange(self):
