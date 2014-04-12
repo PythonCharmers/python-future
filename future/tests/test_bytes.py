@@ -464,6 +464,14 @@ class TestBytes(unittest.TestCase):
         with self.assertRaises(ValueError):
             b2 = bytes([254, 255, 256])
 
+    def test_bytes_hasattr_encode(self):
+        """
+        This test tests whether hasattr(b, 'encode') is False, like it is on Py3.
+        """
+        b = bytes(b'abcd')
+        self.assertFalse(hasattr(b, 'encode'))
+        self.assertTrue(hasattr(b, 'decode'))
+
 
 if __name__ == '__main__':
     unittest.main()

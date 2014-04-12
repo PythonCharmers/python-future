@@ -78,6 +78,19 @@ class TestStr(unittest.TestCase):
     def test_str_fromhex(self):
         self.assertFalse(hasattr(str, 'fromhex'))
 
+    def test_str_hasattr_decode(self):
+        """
+        This test tests whether hasattr(s, 'decode') is False, like it is on Py3.
+
+        Sometimes code (such as http.client in Py3.3) checks hasattr(mystring,
+        'decode') to determine if a string-like thing needs encoding. It would
+        be nice to have this return False so the string can be treated on Py2
+        like a Py3 string.
+        """
+        s = str(u'abcd')
+        self.assertFalse(hasattr(s, 'decode'))
+        self.assertTrue(hasattr(s, 'encode'))
+
     def test_isinstance_str(self):
         self.assertTrue(isinstance(str('blah'), str))
 
