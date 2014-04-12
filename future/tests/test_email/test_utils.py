@@ -6,7 +6,7 @@ import datetime
 import time
 import sys
 from future.standard_library.email import utils
-from future.standard_library import support as test_support
+from future.standard_library.test import support as test_support
 from future.tests.base import unittest
 
 
