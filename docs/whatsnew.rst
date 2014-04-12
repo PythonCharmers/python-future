@@ -21,6 +21,7 @@ explicitly, as follows::
     with standard_library.hooks():
         import html.parser
         import http.client
+        ...
 
 or with the functional interface::
 
@@ -86,9 +87,9 @@ Backports of the ``urllib``, ``email``, and ``xmlrpc`` modules from Python
 
 Use them like this::
 
-    with standard_library.hooks():
-        from urllib.request import Request      # etc.
-        from email import message_from_bytes    # etc.
+    from future.standard_library.urllib.request import Request    # etc.
+    from future.standard_library.email import message_from_bytes  # etc.
+    from future.standard_library.xmlrpc import client, server
 
 
 ``newobject`` base object defines fallback Py2-compatible special methods
@@ -141,11 +142,11 @@ Python bug #). This includes custom ``execfile()`` and ``cmp()`` functions.
 ``futurize`` now invokes imports of these functions from ``past.builtins``.
 
 
-``list`` type
+``newlist`` type
 -------------
 
-There is a new ``list`` type in ``future.builtins`` that supports a ``.copy()``
-method as Python 3's ``list`` type does.
+There is a new ``list`` type in ``future.builtins`` that offers ``.copy()`` and
+``.clear()`` methods like the ``list`` type in Python 3.
 
 
 Bug fixes
@@ -227,6 +228,7 @@ The ``__exit__`` function of the ``hooks`` context manager and the
 is now possible on Python 2 and 3::
 
        from future import standard_library
+       standard_library.install_hooks()
        import http.client
        standard_library.remove_hooks()
        import requests
@@ -482,7 +484,7 @@ this::
         from http.client import HTTPConnection
         # etc.
 
-If not using this decorator, it is now encouraged to add an explicit call to
+If not using this context manager, it is now encouraged to add an explicit call to
 ``standard_library.install_hooks()`` as follows::
 
     from future import standard_library

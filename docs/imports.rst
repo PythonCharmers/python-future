@@ -156,7 +156,6 @@ The modules available are::
     import html.parser
     from collections import UserList
     from itertools import filterfalse, zip_longest
-    from http.client import HttpConnection
     # and other moved modules and definitions
 
 :mod:`future` also includes backports for these stdlib modules from Py3
