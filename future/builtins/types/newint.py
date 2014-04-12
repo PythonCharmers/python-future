@@ -90,21 +90,30 @@ class newint(with_metaclass(BaseNewInt, long)):
         return value[:-1]
 
     def __add__(self, other):
-        return newint(super(newint, self).__add__(other))
+        value = super(newint, self).__add__(other)
+        if value is NotImplemented:
+            # e.g. a float
+            return long(self) + other
+        return newint(value)
 
     def __radd__(self, other):
-        return newint(super(newint, self).__radd__(other))
+        value = super(newint, self).__radd__(other)
+        return newint(value)
 
     def __sub__(self, other):
-        return newint(super(newint, self).__sub__(other))
+        value = super(newint, self).__sub__(other)
+        return newint(value)
 
     def __rsub__(self, other):
-        return newint(super(newint, self).__rsub__(other))
+        value = super(newint, self).__rsub__(other)
+        return newint(value)
 
     def __mul__(self, other):
         value = super(newint, self).__mul__(other)
         if isint(value):
             return newint(value)
+        if value is NotImplemented:
+            return long(self) * other
         return value
 
     def __rmul__(self, other):
@@ -115,34 +124,34 @@ class newint(with_metaclass(BaseNewInt, long)):
 
     def __div__(self, other):
         # We override this rather than e.g. relying on object.__div__ or
-        # long.__div__ because we want to wrap the result in a newint()
+        # long.__div__ because we want to wrap the value in a newint()
         # call if other is another int
-        result = long(self) / other
+        value = long(self) / other
         if isinstance(other, (int, long)):
-            return newint(result)
+            return newint(value)
         else:
-            return result
+            return value
 
     def __rdiv__(self, other):
-        result = other / long(self)
+        value = other / long(self)
         if isinstance(other, (int, long)):
-            return newint(result)
+            return newint(value)
         else:
-            return result
+            return value
 
     def __idiv__(self, other):
         # long has no __idiv__ method. Use __itruediv__ and cast back to newint:
-        result = self.__itruediv__(other)
+        value = self.__itruediv__(other)
         if isinstance(other, (int, long)):
-            return newint(result)
+            return newint(value)
         else:
-            return result
+            return value
 
     def __truediv__(self, other):
-        result = super(newint, self).__truediv__(other)
-        if result is NotImplemented:
-            result = long(self) / other
-        return result
+        value = super(newint, self).__truediv__(other)
+        if value is NotImplemented:
+            value = long(self) / other
+        return value
 
     def __rtruediv__(self, other):
         return super(newint, self).__rtruediv__(other)
@@ -172,12 +181,12 @@ class newint(with_metaclass(BaseNewInt, long)):
         return newint(super(newint, self).__rmod__(other))
 
     def __divmod__(self, other):
-        result = super(newint, self).__divmod__(other)
-        return (newint(result[0]), newint(result[1]))
+        value = super(newint, self).__divmod__(other)
+        return (newint(value[0]), newint(value[1]))
 
     def __rdivmod__(self, other):
-        result = super(newint, self).__rdivmod__(other)
-        return (newint(result[0]), newint(result[1]))
+        value = super(newint, self).__rdivmod__(other)
+        return (newint(value[0]), newint(value[1]))
 
     def __pow__(self, other):
         return newint(super(newint, self).__pow__(other))
