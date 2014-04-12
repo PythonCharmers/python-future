@@ -130,6 +130,14 @@ class TestList(unittest.TestCase):
         self.assertEqual(type(l), SubClass)
         self.assertEqual(l, [u'a', u'b', u'c', u'd'])
 
+    def test_bool(self):
+        l = list([])
+        l2 = list([1, 3, 5])
+        self.assertFalse(bool(l))
+        self.assertTrue(bool(l2))
+        l2.clear()
+        self.assertFalse(bool(l2))
+
 
 if __name__ == '__main__':
     unittest.main()
