@@ -6,12 +6,12 @@ from __future__ import absolute_import, division, unicode_literals
 from future.builtins import str
 from future import standard_library
 
-import unittest
 from future.standard_library.test.support import run_unittest
-from future.standard_library.test.test_email.test_email import TestEmailBase
 from future.standard_library.email.charset import Charset
 from future.standard_library.email.header import Header, decode_header
 from future.standard_library.email.message import Message
+from future.tests.base import unittest
+from future.tests.test_email.test_email import TestEmailBase
 
 # We're compatible with Python 2.3, but it doesn't have the built-in Asian
 # codecs, so we have to skip all these tests.

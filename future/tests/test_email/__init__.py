@@ -15,7 +15,7 @@ from future.standard_library.test import support as test_support
 from future.standard_library import email
 from future.standard_library.email.message import Message
 from future.standard_library.email._policybase import compat32
-from future.standard_library.test.test_email import __file__ as landmark
+from future.tests.test_email import __file__ as landmark
 
 # Run all tests in package for '-m unittest test.test_email'
 def load_tests(loader, standard_tests, pattern):
