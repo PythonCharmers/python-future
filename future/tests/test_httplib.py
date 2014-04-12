@@ -559,9 +559,9 @@ class HTTPSTest(TestCase):
             self.assertEqual(p, c.port)
 
 
-def test_main(verbose=None):
-    support.run_unittest(HeaderTests, OfflineTest, BasicTest, TimeoutTest,
-                         HTTPSTest, SourceAddressTest)
+# def test_main(verbose=None):
+#     support.run_unittest(HeaderTests, OfflineTest, BasicTest, TimeoutTest,
+#                          HTTPSTest, SourceAddressTest)
 
 if __name__ == '__main__':
-    test_main()
+    unittest.main()
