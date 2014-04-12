@@ -257,6 +257,13 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(int('100', base=2), 4)
         self.assertEqual(int(x='100', base=2), 4)
 
+    def test_newint_plus_float(self):
+        minutes = int(100)
+        second = 0.0
+        seconds = minutes*60 + second
+        self.assertEqual(seconds, 6000)
+        self.assertTrue(isinstance(seconds, float))
+
     @unittest.expectedFailure
     def test_keyword_args_2(self):
         # newint causes these to fail:
