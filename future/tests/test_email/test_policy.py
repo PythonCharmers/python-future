@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import io
 import types
 import textwrap
+from future.standard_library import email
 import future.standard_library.email.policy as email_policy
 import future.standard_library.email.parser as email_parser
 import future.standard_library.email.generator as email_generator
