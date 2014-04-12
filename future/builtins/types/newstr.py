@@ -284,7 +284,22 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         return super(newstr, self).__getattribute__(name)
 
     def __native__(self):
+        """
+        A hook for the future.utils.native() function.
+        """
         return unicode(self)
+
+    def maketrans(self):
+        raise NotImplementedError('fixme')
+
+    def isprintable(self):
+        raise NotImplementedError('fixme')
+
+    def isidentifier(self):
+        raise NotImplementedError('fixme')
+
+    def format_map(self):
+        raise NotImplementedError('fixme')
 
 
 __all__ = ['newstr']
