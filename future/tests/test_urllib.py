@@ -153,7 +153,7 @@ class urlopen_FileTests(unittest.TestCase):
         self.returned_obj.close()
 
     def test_info(self):
-        self.assertIsInstance(self.returned_obj.info(), email.message.Message)
+        self.assertIsInstance(self.returned_obj.info(), email_message.Message)
 
     def test_geturl(self):
         self.assertEqual(self.returned_obj.geturl(), self.pathname)
@@ -406,7 +406,7 @@ class urlretrieve_FileTests(unittest.TestCase):
         # a headers value is returned.
         result = urllib_request.urlretrieve("file:%s" % support.TESTFN)
         self.assertEqual(result[0], support.TESTFN)
-        self.assertIsInstance(result[1], email.message.Message,
+        self.assertIsInstance(result[1], email_message.Message,
                               "did not get a email.message.Message instance "
                               "as second returned value")
 

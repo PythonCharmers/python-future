@@ -82,7 +82,6 @@ class TestPasteurize(CodeHandler):
         self.convert_check(before, after, from3=True)
 
     # TODO: fix and test this test
-    @unittest.expectedFailure
     def test_urllib_request(self):
         """
         Example Python 3 code using the new urllib.request module.
@@ -96,20 +95,17 @@ class TestPasteurize(CodeHandler):
             URL = 'http://pypi.python.org/pypi/{}/json'
             package = 'future'
             
-            r = urllib.request.urlopen(URL.format(package_name))
+            r = urllib.request.urlopen(URL.format(package))
             pprint.pprint(r.read())
         """
         after = """
-            from future import standard_library
-            standard_library.install_hooks()
-
             import pprint
-            import urllib.request
+            import future.standard_library.urllib.request as urllib_request
 
             URL = 'http://pypi.python.org/pypi/{}/json'
             package = 'future'
             
-            r = urllib.request.urlopen(URL.format(package_name))
+            r = urllib_request.urlopen(URL.format(package))
             pprint.pprint(r.read())
         """
 

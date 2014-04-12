@@ -80,6 +80,7 @@ import socket
 import collections
 from future.standard_library.urllib.parse import urlsplit
 import warnings
+from array import array
 
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",

@@ -25,8 +25,6 @@ import sys
 import re
 import base64
 import shutil
-# Not ported yet:
-# import urllib.parse
 import tempfile
 from io import BytesIO
 
@@ -434,13 +432,7 @@ class CGIHTTPServerTestCase(BaseTestCase):
 
     @unittest.expectedFailure
     def test_post(self):
-        # urllib not ported yet:
-        try:
-            from urllib.parse import urlencode
-        except ImportError:
-            # Use this instead for Py2:
-            from urllib import urlencode
-
+        from future.standard_library.urllib.parse import urlencode
         params = urlencode(
             {'spam' : 1, 'eggs' : 'python', 'bacon' : 123456})
         headers = {'Content-type' : 'application/x-www-form-urlencoded'}

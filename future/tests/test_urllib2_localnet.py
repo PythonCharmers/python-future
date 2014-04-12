@@ -7,6 +7,7 @@ from __future__ import absolute_import
 import os
 import hashlib
 
+from future import standard_library
 import future.standard_library.email as email
 import future.standard_library.urllib.parse as urllib_parse
 import future.standard_library.urllib.request as urllib_request

@@ -272,6 +272,7 @@ class FakeResponse(object):
         headers: list of RFC822-style 'Key: value' strings
         """
         import email
+        # The email.message_from_string is available on both Py2.7 and Py3.3
         self._headers = email.message_from_string("\n".join(headers))
         self._url = url
     def info(self): return self._headers

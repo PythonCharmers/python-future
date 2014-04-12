@@ -309,7 +309,7 @@ class TestStandardLibraryRenames(CodeHandler):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    @unittest.skip("skipping in case there's no net connection")
+    # @unittest.skip("skipping in case there's no net connection")
     def test_urllib_request(self):
         import future.standard_library.urllib.request as urllib_request
         from pprint import pprint

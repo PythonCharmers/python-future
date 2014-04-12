@@ -414,6 +414,7 @@ class MockHTTPHandler(urllib_request.BaseHandler):
         self.requests = []
     def http_open(self, req):
         import future.standard_library.email as email
+        from future import standard_library
         with standard_library.hooks():
             import http.client
         import copy
