@@ -99,3 +99,5 @@ class addinfourl(addbase):
 
     def geturl(self):
         return self.url
+
+del absolute_import, division, unicode_literals, object

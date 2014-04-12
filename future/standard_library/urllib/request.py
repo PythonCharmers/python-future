@@ -1418,7 +1418,7 @@ class FileHandler(BaseHandler):
 
     # not entirely sure what the rules are here
     def open_local_file(self, req):
-        from future.standard_library.email.utils import formatdate
+        import future.standard_library.email.utils as email_utils
         import mimetypes
         host = req.host
         filename = req.selector
@@ -1426,7 +1426,7 @@ class FileHandler(BaseHandler):
         try:
             stats = os.stat(localfile)
             size = stats.st_size
-            modified = formatdate(stats.st_mtime, usegmt=True)
+            modified = email_utils.formatdate(stats.st_mtime, usegmt=True)
             mtype = mimetypes.guess_type(filename)[0]
             headers = email.message_from_string(
                 'Content-type: %s\nContent-length: %d\nLast-modified: %s\n' %
@@ -1905,7 +1905,7 @@ class URLopener(object):
 
     def open_local_file(self, url):
         """Use local file."""
-        from future.standard_library.email import utils as email_utils
+        import future.standard_library.email.utils as email_utils
         import mimetypes
         host, file = splithost(url)
         localname = url2pathname(file)
@@ -1914,7 +1914,7 @@ class URLopener(object):
         except OSError as e:
             raise URLError(e.strerror, e.filename)
         size = stats.st_size
-        modified = formatdate(stats.st_mtime, usegmt=True)
+        modified = email_utils.formatdate(stats.st_mtime, usegmt=True)
         mtype = mimetypes.guess_type(url)[0]
         headers = email.message_from_string(
             'Content-Type: %s\nContent-Length: %d\nLast-modified: %s\n' %
