@@ -116,6 +116,8 @@ import warnings
 # check for SSL
 try:
     import ssl
+    # Not available in the SSL module in Py2:
+    from ssl import SSLContext
 except ImportError:
     _have_ssl = False
 else:
