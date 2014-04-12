@@ -309,8 +309,12 @@ class TestStandardLibraryRenames(CodeHandler):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    # @unittest.skip("skipping in case there's no net connection")
-    def test_urllib_request(self):
+    @unittest.skip("ssl support has been stripped out for now ...")
+    def test_urllib_request_ssl_redirect(self):
+        """
+        This site redirects to https://...
+        It therefore requires ssl support.
+        """
         import future.standard_library.urllib.request as urllib_request
         from pprint import pprint
         URL = 'http://pypi.python.org/pypi/{0}/json'
@@ -318,6 +322,17 @@ class TestStandardLibraryRenames(CodeHandler):
         r = urllib_request.urlopen(URL.format(package))
         # pprint(r.read().decode('utf-8'))
         self.assertTrue(True)
+
+    def test_urllib_request_http(self):
+        """
+        This site (amazon.com) uses plain http (as of 2014-04-12).
+        """
+        import future.standard_library.urllib.request as urllib_request
+        from pprint import pprint
+        URL = 'http://amazon.com'
+        r = urllib_request.urlopen(URL)
+        data = r.read()
+        self.assertTrue(b'<html>' in data)
 
     def test_html_import(self):
         import html
