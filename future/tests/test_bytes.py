@@ -472,6 +472,23 @@ class TestBytes(unittest.TestCase):
         self.assertFalse(hasattr(b, 'encode'))
         self.assertTrue(hasattr(b, 'decode'))
 
+    def test_quote_from_bytes(self):
+        """
+        This test was failing in the backported urllib.parse module in quote_from_bytes
+        """
+        empty = bytes([])
+        self.assertEqual(empty, b'')
+        self.assertTrue(type(empty), bytes)
+
+        empty2 = bytes(())
+        self.assertEqual(empty2, b'')
+        self.assertTrue(type(empty2), bytes)
+
+        safe = bytes(u'Philosopher guy: 孔子. More text here.'.encode('utf-8'))
+        safe = bytes([c for c in safe if c < 128])
+        self.assertEqual(safe, b'Philosopher guy: . More text here.')
+        self.assertTrue(type(safe), bytes)
+
 
 if __name__ == '__main__':
     unittest.main()
