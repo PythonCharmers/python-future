@@ -2,11 +2,9 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
-import unittest
-from email import policy
-from test.test_email import TestEmailBase
+from future.standard_library.email import policy
+from future.tests.base import unittest
+from future.tests.test_email import TestEmailBase
 
 
 class Test(TestEmailBase):

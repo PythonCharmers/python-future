@@ -57,7 +57,6 @@ class TestRequests(CodeHandler):
             from future import standard_library
             standard_library.install_hooks()
 
-            import urllib.response
             import html.parser
             """
         with write_module(code, self.tempdir):
@@ -65,7 +64,7 @@ class TestRequests(CodeHandler):
             standard_library.remove_hooks()
             import requests
             r = requests.get('http://google.com')
-            self.assertTrue(True)
+            self.assertTrue(r)
 
         # Was:
         # try:

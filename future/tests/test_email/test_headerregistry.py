@@ -3,19 +3,16 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import range
-from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
 import datetime
 import textwrap
-import unittest
-from email import errors
-from email import policy
-from email.message import Message
-from test.test_email import TestEmailBase, parameterize
-from email import headerregistry
-from email.headerregistry import Address, Group
+from future.standard_library.email import errors
+from future.standard_library.email import policy
+from future.standard_library.email.message import Message
+from future.standard_library.email import headerregistry
+from future.standard_library.email.headerregistry import Address, Group
+from future.tests.test_email import TestEmailBase, parameterize
+from future.tests.base import unittest
+from future.builtins import range, str
 
 
 DITTO = object()

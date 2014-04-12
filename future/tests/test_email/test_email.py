@@ -12,46 +12,41 @@ from future.builtins import open, int, super, chr, range, bytes, str
 import re
 import time
 import base64
-import unittest
 import textwrap
 
 from io import StringIO, BytesIO
 from itertools import chain
 
-from future import standard_library
-standard_library.install_hooks()
+import future.standard_library.email as email
 
-import email
-import email.policy
-
-from email.charset import Charset
-from email.header import Header, decode_header, make_header
-from email.parser import Parser, HeaderParser
-from email.generator import Generator, DecodedGenerator, BytesGenerator
-from email.message import Message
-from email.mime.application import MIMEApplication
-from email.mime.audio import MIMEAudio
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email.mime.base import MIMEBase
-from email.mime.message import MIMEMessage
-from email.mime.multipart import MIMEMultipart
-from email import utils
-from email import errors
-from email import encoders
-from email import iterators
-from email import base64mime
-from email import quoprimime
-import email.feedparser
-
-from test.support import unlink
-from test.test_email import openfile, TestEmailBase
+from future.standard_library.email.charset import Charset
+from future.standard_library.email.header import Header, decode_header, make_header
+from future.standard_library.email.parser import Parser, HeaderParser
+from future.standard_library.email.generator import Generator, DecodedGenerator, BytesGenerator
+from future.standard_library.email.message import Message
+from future.standard_library.email.mime.application import MIMEApplication
+from future.standard_library.email.mime.audio import MIMEAudio
+from future.standard_library.email.mime.text import MIMEText
+from future.standard_library.email.mime.image import MIMEImage
+from future.standard_library.email.mime.base import MIMEBase
+from future.standard_library.email.mime.message import MIMEMessage
+from future.standard_library.email.mime.multipart import MIMEMultipart
+from future.standard_library.email import utils
+from future.standard_library.email import errors
+from future.standard_library.email import encoders
+from future.standard_library.email import iterators
+from future.standard_library.email import base64mime
+from future.standard_library.email import quoprimime
+import future.standard_library.email.feedparser as email_feedparser
+from future.standard_library.test.support import unlink
 
 # These imports are documented to work, but we are testing them using a
 # different path, so we import them here just to make sure they are importable.
-from email.parser import FeedParser, BytesFeedParser
+from future.standard_library.email.parser import FeedParser, BytesFeedParser
 
-standard_library.remove_hooks()
+from future.tests.base import unittest
+from future.tests.test_email import openfile, TestEmailBase
+
 
 NL = '\n'
 EMPTYSTRING = ''

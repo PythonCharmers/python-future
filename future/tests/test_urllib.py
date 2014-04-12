@@ -1,24 +1,23 @@
 """Regresssion tests for urllib"""
 from __future__ import absolute_import, division, unicode_literals
-from future.builtins import bytes, chr, hex, open, range, str
-from future import standard_library
 
+import io
+import os
+import sys
+import tempfile
+from nturl2path import url2pathname, pathname2url
+from base64 import b64encode
+import collections
+
+from future.builtins import bytes, chr, hex, open, range, str
 from future.standard_library.urllib import parse as urllib_parse
 from future.standard_library.urllib import request as urllib_request
 from future.standard_library.urllib import error as urllib_error
 from future.standard_library.http import client as http_client
 from future.standard_library.test import support
 from future.standard_library.email import message as email_message
+from future.tests.base import unittest
 
-import io
-import unittest
-import os
-import sys
-import tempfile
-from nturl2path import url2pathname, pathname2url
-
-from base64 import b64encode
-import collections
 
 def hexescape(char):
     """Escape char as RFC 2396 specifies"""

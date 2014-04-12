@@ -2,18 +2,16 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import str
-from future.builtins import super
-from future import standard_library
-standard_library.install_hooks()
 import io
 import types
 import textwrap
-import unittest
-import email.policy
-import email.parser
-import email.generator
-from email import headerregistry
+import future.standard_library.email.policy as email_policy
+import future.standard_library.email.parser as email_parser
+import future.standard_library.email.generator as email_generator
+from future.standard_library.email import headerregistry
+from future.tests.base import unittest
+from future.builtins import str, super
+
 
 def make_defaults(base_defaults, differences):
     defaults = base_defaults.copy()
@@ -31,28 +29,28 @@ class PolicyAPITests(unittest.TestCase):
         'cte_type':                 '8bit',
         'raise_on_defect':          False,
         }
-    # These default values are the ones set on email.policy.default.
+    # These default values are the ones set on email_policy.default.
     # If any of these defaults change, the docs must be updated.
     policy_defaults = compat32_defaults.copy()
     policy_defaults.update({
         'raise_on_defect':          False,
-        'header_factory':           email.policy.EmailPolicy.header_factory,
+        'header_factory':           email_policy.EmailPolicy.header_factory,
         'refold_source':            'long',
         })
 
     # For each policy under test, we give here what we expect the defaults to
     # be for that policy.  The second argument to make defaults is the
     # difference between the base defaults and that for the particular policy.
-    new_policy = email.policy.EmailPolicy()
+    new_policy = email_policy.EmailPolicy()
     policies = {
-        email.policy.compat32: make_defaults(compat32_defaults, {}),
-        email.policy.default: make_defaults(policy_defaults, {}),
-        email.policy.SMTP: make_defaults(policy_defaults,
+        email_policy.compat32: make_defaults(compat32_defaults, {}),
+        email_policy.default: make_defaults(policy_defaults, {}),
+        email_policy.SMTP: make_defaults(policy_defaults,
                                          {'linesep': '\r\n'}),
-        email.policy.HTTP: make_defaults(policy_defaults,
+        email_policy.HTTP: make_defaults(policy_defaults,
                                          {'linesep': '\r\n',
                                           'max_line_length': None}),
-        email.policy.strict: make_defaults(policy_defaults,
+        email_policy.strict: make_defaults(policy_defaults,
                                            {'raise_on_defect': True}),
         new_policy: make_defaults(policy_defaults, {}),
         }
@@ -71,7 +69,7 @@ class PolicyAPITests(unittest.TestCase):
         for policy, expected in self.policies.items():
             for attr in dir(policy):
                 if (attr.startswith('_') or
-                        isinstance(getattr(email.policy.EmailPolicy, attr),
+                        isinstance(getattr(email_policy.EmailPolicy, attr),
                               types.FunctionType)):
                     continue
                 else:
@@ -80,7 +78,7 @@ class PolicyAPITests(unittest.TestCase):
 
     def test_abc(self):
         with self.assertRaises(TypeError) as cm:
-            email.policy.Policy()
+            email_policy.Policy()
         msg = str(cm.exception)
         abstract_methods = ('fold',
                             'fold_binary',
@@ -116,8 +114,8 @@ class PolicyAPITests(unittest.TestCase):
 
     def test_policy_addition(self):
         expected = self.policy_defaults.copy()
-        p1 = email.policy.default.clone(max_line_length=100)
-        p2 = email.policy.default.clone(max_line_length=50)
+        p1 = email_policy.default.clone(max_line_length=100)
+        p2 = email_policy.default.clone(max_line_length=50)
         added = p1 + p2
         expected.update(max_line_length=50)
         for attr, value in expected.items():
@@ -126,7 +124,7 @@ class PolicyAPITests(unittest.TestCase):
         expected.update(max_line_length=100)
         for attr, value in expected.items():
             self.assertEqual(getattr(added, attr), value)
-        added = added + email.policy.default
+        added = added + email_policy.default
         for attr, value in expected.items():
             self.assertEqual(getattr(added, attr), value)
 
@@ -136,7 +134,7 @@ class PolicyAPITests(unittest.TestCase):
                 self.defects = []
         obj = Dummy()
         defect = object()
-        policy = email.policy.EmailPolicy()
+        policy = email_policy.EmailPolicy()
         policy.register_defect(obj, defect)
         self.assertEqual(obj.defects, [defect])
         defect2 = object()
@@ -154,18 +152,18 @@ class PolicyAPITests(unittest.TestCase):
         foo = self.MyObj()
         defect = self.MyDefect("the telly is broken")
         with self.assertRaisesRegex(self.MyDefect, "the telly is broken"):
-            email.policy.strict.handle_defect(foo, defect)
+            email_policy.strict.handle_defect(foo, defect)
 
     def test_handle_defect_registers_defect(self):
         foo = self.MyObj()
         defect1 = self.MyDefect("one")
-        email.policy.default.handle_defect(foo, defect1)
+        email_policy.default.handle_defect(foo, defect1)
         self.assertEqual(foo.defects, [defect1])
         defect2 = self.MyDefect("two")
-        email.policy.default.handle_defect(foo, defect2)
+        email_policy.default.handle_defect(foo, defect2)
         self.assertEqual(foo.defects, [defect1, defect2])
 
-    class MyPolicy(email.policy.EmailPolicy):
+    class MyPolicy(email_policy.EmailPolicy):
         defects = None
         def __init__(self, *args, **kw):
             super().__init__(*args, defects=[], **kw)
@@ -191,7 +189,7 @@ class PolicyAPITests(unittest.TestCase):
         self.assertEqual(foo.defects, [])
 
     def test_default_header_factory(self):
-        h = email.policy.default.header_factory('Test', 'test')
+        h = email_policy.default.header_factory('Test', 'test')
         self.assertEqual(h.name, 'Test')
         self.assertIsInstance(h, headerregistry.UnstructuredHeader)
         self.assertIsInstance(h, headerregistry.BaseHeader)
@@ -200,8 +198,8 @@ class PolicyAPITests(unittest.TestCase):
         parse = headerregistry.UnstructuredHeader.parse
 
     def test_each_Policy_gets_unique_factory(self):
-        policy1 = email.policy.EmailPolicy()
-        policy2 = email.policy.EmailPolicy()
+        policy1 = email_policy.EmailPolicy()
+        policy2 = email_policy.EmailPolicy()
         policy1.header_factory.map_to_type('foo', self.Foo)
         h = policy1.header_factory('foo', 'test')
         self.assertIsInstance(h, self.Foo)
@@ -211,7 +209,7 @@ class PolicyAPITests(unittest.TestCase):
         self.assertIsInstance(h, headerregistry.UnstructuredHeader)
 
     def test_clone_copies_factory(self):
-        policy1 = email.policy.EmailPolicy()
+        policy1 = email_policy.EmailPolicy()
         policy2 = policy1.clone()
         policy1.header_factory.map_to_type('foo', self.Foo)
         h = policy1.header_factory('foo', 'test')
@@ -220,17 +218,17 @@ class PolicyAPITests(unittest.TestCase):
         self.assertIsInstance(h, self.Foo)
 
     def test_new_factory_overrides_default(self):
-        mypolicy = email.policy.EmailPolicy()
+        mypolicy = email_policy.EmailPolicy()
         myfactory = mypolicy.header_factory
-        newpolicy = mypolicy + email.policy.strict
+        newpolicy = mypolicy + email_policy.strict
         self.assertEqual(newpolicy.header_factory, myfactory)
-        newpolicy = email.policy.strict + mypolicy
+        newpolicy = email_policy.strict + mypolicy
         self.assertEqual(newpolicy.header_factory, myfactory)
 
     def test_adding_default_policies_preserves_default_factory(self):
-        newpolicy = email.policy.default + email.policy.strict
+        newpolicy = email_policy.default + email_policy.strict
         self.assertEqual(newpolicy.header_factory,
-                         email.policy.EmailPolicy.header_factory)
+                         email_policy.EmailPolicy.header_factory)
         self.assertEqual(newpolicy.__dict__, {'raise_on_defect': True})
 
     # XXX: Need subclassing tests.
@@ -243,7 +241,7 @@ class TestPolicyPropagation(unittest.TestCase):
     # The abstract methods are used by the parser but not by the wrapper
     # functions that call it, so if the exception gets raised we know that the
     # policy was actually propagated all the way to feedparser.
-    class MyPolicy(email.policy.Policy):
+    class MyPolicy(email_policy.Policy):
         def badmethod(self, *args, **kw):
             raise Exception("test")
         fold = fold_binary = header_fetch_parser = badmethod
@@ -272,12 +270,12 @@ class TestPolicyPropagation(unittest.TestCase):
     # These are redundant, but we need them for black-box completeness.
 
     def test_parser(self):
-        p = email.parser.Parser(policy=self.MyPolicy)
+        p = email_parser.Parser(policy=self.MyPolicy)
         with self.assertRaisesRegex(Exception, "^test$"):
             p.parsestr('Subject: test\n\n')
 
     def test_bytes_parser(self):
-        p = email.parser.BytesParser(policy=self.MyPolicy)
+        p = email_parser.BytesParser(policy=self.MyPolicy)
         with self.assertRaisesRegex(Exception, "^test$"):
             p.parsebytes(b'Subject: test\n\n')
 
@@ -286,7 +284,7 @@ class TestPolicyPropagation(unittest.TestCase):
     # the rest of the propagation tests.
 
     def _make_msg(self, source='Subject: test\n\n', policy=None):
-        self.policy = email.policy.default.clone() if policy is None else policy
+        self.policy = email_policy.default.clone() if policy is None else policy
         return email.message_from_string(source, policy=self.policy)
 
     def test_parser_propagates_policy_to_message(self):
@@ -314,15 +312,15 @@ class TestPolicyPropagation(unittest.TestCase):
 
     def test_message_policy_propagates_to_generator(self):
         msg = self._make_msg("Subject: test\nTo: foo\n\n",
-                             policy=email.policy.default.clone(linesep='X'))
+                             policy=email_policy.default.clone(linesep='X'))
         s = io.StringIO()
-        g = email.generator.Generator(s)
+        g = email_generator.Generator(s)
         g.flatten(msg)
         self.assertEqual(s.getvalue(), "Subject: testXTo: fooXX")
 
     def test_message_policy_used_by_as_string(self):
         msg = self._make_msg("Subject: test\nTo: foo\n\n",
-                             policy=email.policy.default.clone(linesep='X'))
+                             policy=email_policy.default.clone(linesep='X'))
         self.assertEqual(msg.as_string(), "Subject: testXTo: fooXX")
 
 

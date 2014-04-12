@@ -1,15 +1,16 @@
+# Simple test suite for http/cookies.py
 from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
+
 from future.builtins import str
 from future import standard_library
 from future.utils import text_to_native_str
-# Simple test suite for http/cookies.py
 
 with standard_library.hooks():
-    from test.support import run_unittest, run_doctest   # , check_warnings
     from http import cookies
+from future.standard_library.test.support import run_unittest, run_doctest   # , check_warnings
 from future.tests.base import unittest
 
 import warnings

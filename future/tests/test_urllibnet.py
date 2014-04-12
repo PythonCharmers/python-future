@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import absolute_import, division, unicode_literals
-from future.builtins import int, open
-from future import standard_library
-
-import unittest
-from future.standard_library.email.message import Message
-import future.standard_library.email.message as email_message
-from future.standard_library.test import support
-import future.standard_library.urllib.request as urllib_request
 
 import contextlib
 import socket
 import sys
 import os
 import time
+
+from future.standard_library.email.message import Message
+import future.standard_library.email.message as email_message
+from future.standard_library.test import support
+import future.standard_library.urllib.request as urllib_request
+from future.tests.base import unittest
+from future.builtins import int, open
 
 
 class URLTimeoutTest(unittest.TestCase):

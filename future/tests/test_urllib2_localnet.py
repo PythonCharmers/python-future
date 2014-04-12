@@ -3,18 +3,19 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import bytes, int, str, super
-from future import standard_library
 
 import os
+import hashlib
+
 import future.standard_library.email as email
 import future.standard_library.urllib.parse as urllib_parse
 import future.standard_library.urllib.request as urllib_request
-import future.standard_library.http.server as http_server
-from future.standard_library.test import support
 from future.tests.base import unittest
-import hashlib
+from future.builtins import bytes, int, str, super
+from future.standard_library.test import support
 threading = support.import_module('threading')
+with standard_library.hooks():
+    import http.server
 
 
 here = os.path.dirname(__file__)
@@ -23,15 +24,15 @@ CERT_localhost = os.path.join(here, 'keycert.pem')
 # Self-signed cert file for 'fakehostname'
 CERT_fakehostname = os.path.join(here, 'keycert2.pem')
 
-# Loopback http_server infrastructure
+# Loopback http.server infrastructure
 
-class LoopbackHttpServer(http_server.HTTPServer):
+class LoopbackHttpServer(http.server.HTTPServer):
     """HTTP server w/ a few modifications that make it useful for
     loopback testing purposes.
     """
 
     def __init__(self, server_address, RequestHandlerClass):
-        http_server.HTTPServer.__init__(self,
+        http.server.HTTPServer.__init__(self,
                                         server_address,
                                         RequestHandlerClass)
 
@@ -52,7 +53,7 @@ class LoopbackHttpServer(http_server.HTTPServer):
         return (request, client_address)
 
 class LoopbackHttpServerThread(threading.Thread):
-    """Stoppable thread that runs a loopback http_server."""
+    """Stoppable thread that runs a loopback http.server."""
 
     def __init__(self, request_handler):
         threading.Thread.__init__(self)
@@ -203,7 +204,7 @@ class DigestAuthHandler(object):
 
 # Proxy test infrastructure
 
-class FakeProxyHandler(http_server.BaseHTTPRequestHandler):
+class FakeProxyHandler(http.server.BaseHTTPRequestHandler):
     """This is a 'fake proxy' that makes it look like the entire
     internet has gone down due to a sudden zombie invasion.  It main
     utility is in providing us with authentication support for
@@ -214,7 +215,7 @@ class FakeProxyHandler(http_server.BaseHTTPRequestHandler):
         # This has to be set before calling our parent's __init__(), which will
         # try to call do_GET().
         self.digest_auth_handler = digest_auth_handler
-        http_server.BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
+        http.server.BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
 
     def log_message(self, format, *args):
         # Uncomment the next line for debugging.
@@ -306,7 +307,7 @@ class ProxyAuthTests(unittest.TestCase):
 
 def GetRequestHandler(responses):
 
-    class FakeHTTPRequestHandler(http_server.BaseHTTPRequestHandler):
+    class FakeHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         server_version = "TestHTTP/"
         requests = []
@@ -399,8 +400,7 @@ class TestUrlopen(unittest.TestCase):
     def start_https_server(self, responses=None, certfile=CERT_localhost):
         if not hasattr(urllib_request, 'HTTPSHandler'):
             self.skipTest('ssl support required')
-        with standard_library.hooks():
-            from test.ssl_servers import make_https_server
+        from future.standard_library.test.ssl_servers import make_https_server
         if responses is None:
             responses = [(200, [], b"we care a bit")]
         handler = GetRequestHandler(responses)

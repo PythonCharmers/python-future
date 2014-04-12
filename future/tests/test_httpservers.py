@@ -10,7 +10,6 @@ Josip Dzolonga, and Michael Otteneder for the 2007/08 GHOP contest.
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future.builtins import *
 from future import standard_library, utils
 
 with standard_library.hooks():
@@ -18,7 +17,8 @@ with standard_library.hooks():
          SimpleHTTPRequestHandler, CGIHTTPRequestHandler
     from http import server
     import http.client
-    from future.standard_library.test import support
+from future.standard_library.test import support
+from future.builtins import *
 
 import os
 import sys

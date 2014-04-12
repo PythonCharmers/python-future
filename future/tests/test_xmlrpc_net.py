@@ -5,7 +5,8 @@ import collections
 import errno
 import socket
 import sys
-import unittest
+
+from future.tests.base import unittest
 from future.standard_library.test import support
 
 from future import standard_library

@@ -1,8 +1,4 @@
 from __future__ import absolute_import, division, unicode_literals
-from future.builtins import bytes, dict, int, open, str, zip
-from future import standard_library
-
-import unittest
 import os
 import io
 import socket
@@ -15,6 +11,8 @@ import future.standard_library.urllib.request as urllib_request
 # proxy config data structure but is testable on all platforms.
 from future.standard_library.urllib.request import Request, OpenerDirector, _proxy_bypass_macosx_sysconf
 import future.standard_library.urllib.error as urllib_error
+from future.tests.base import unittest
+from future.builtins import bytes, dict, int, open, str, zip
 
 
 # XXX
@@ -415,13 +413,14 @@ class MockHTTPHandler(urllib_request.BaseHandler):
         self._count = 0
         self.requests = []
     def http_open(self, req):
-        import future.standard_library.http.client as http_client
         import future.standard_library.email as email
+        with standard_library.hooks():
+            import http.client
         import copy
         self.requests.append(copy.deepcopy(req))
         if self._count == 0:
             self._count = self._count + 1
-            name = http_client.responses[self.code]
+            name = http.client.responses[self.code]
             msg = email.message_from_string(self.headers)
             return self.parent.error(
                 "http", req, MockFile(), self.code, name, msg)

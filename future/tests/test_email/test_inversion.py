@@ -7,14 +7,11 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
-
 import io
-import unittest
-from email import policy, message_from_bytes
-from email.generator import BytesGenerator
-from test.test_email import TestEmailBase, parameterize
+from future.standard_library.email import policy, message_from_bytes
+from future.standard_library.email.generator import BytesGenerator
+from future.tests.test_email import TestEmailBase, parameterize
+from future.tests.base import unittest
 
 # This is like textwrap.dedent for bytes, except that it uses \r\n for the line
 # separators on the rebuilt string.

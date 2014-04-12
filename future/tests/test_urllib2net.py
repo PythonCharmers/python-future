@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-from future.builtins import open, range
-from future import standard_library, utils
 
-import unittest
-from future.standard_library.test import support 
-import future.standard_library.urllib.error as urllib_error
-import future.standard_library.urllib.request as urllib_request
-
-from .test_urllib2 import sanepathname2url
 import os
 import socket
 import sys
+
+from future.standard_library.test import support 
+import future.standard_library.urllib.error as urllib_error
+import future.standard_library.urllib.request as urllib_request
+from future.tests.base import unittest
+from future.builtins import open, range
+from future import utils
+
+from .test_urllib2 import sanepathname2url
+
 try:
     import ssl
 except ImportError:

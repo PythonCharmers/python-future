@@ -2,14 +2,12 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import super
-from future import standard_library
 import io
-import unittest
-with standard_library.hooks():
-    import email
-    from email.message import Message
-    from future.tests.test_email import TestEmailBase
+import future.standard_library.email as email
+from future.standard_library.email.message import Message
+from future.tests.test_email import TestEmailBase
+from future.tests.base import unittest
+from future.builtins import super
 
 
 class TestCustomMessage(TestEmailBase):

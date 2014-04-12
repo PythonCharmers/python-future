@@ -311,11 +311,11 @@ class TestStandardLibraryRenames(CodeHandler):
 
     @unittest.skip("skipping in case there's no net connection")
     def test_urllib_request(self):
-        import urllib.request
+        import future.standard_library.urllib.request as urllib_request
         from pprint import pprint
         URL = 'http://pypi.python.org/pypi/{0}/json'
         package = 'future'
-        r = urllib.request.urlopen(URL.format(package))
+        r = urllib_request.urlopen(URL.format(package))
         # pprint(r.read().decode('utf-8'))
         self.assertTrue(True)
 
@@ -375,7 +375,6 @@ class TestStandardLibraryRenames(CodeHandler):
         import imp
         imp.reload(imp)
         self.assertTrue(True)
-
 
 
 if __name__ == '__main__':

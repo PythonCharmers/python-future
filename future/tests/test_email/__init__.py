@@ -9,12 +9,12 @@ from future.builtins import str
 from future import utils
 import os
 import sys
-import unittest
 from future.standard_library.test import support as test_support
 
 from future.standard_library import email
 from future.standard_library.email.message import Message
 from future.standard_library.email._policybase import compat32
+from future.tests.base import unittest
 from future.tests.test_email import __file__ as landmark
 
 # Run all tests in package for '-m unittest test.test_email'

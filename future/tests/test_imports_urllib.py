@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function
 
-import unittest
 import sys
+from future.tests.base import unittest
 
 class ImportUrllibTest(unittest.TestCase):
     def test_urllib(self):

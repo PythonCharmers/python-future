@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, unicode_literals
-from future.builtins import bytes, range, str
-from future import standard_library
 import string
-import unittest
-with standard_library.hooks():
-    from email import _header_value_parser as parser
-    from email import errors
-    from email import policy
-    from test.test_email import TestEmailBase, parameterize
+from future.standard_library.email import _header_value_parser as parser
+from future.standard_library.email import errors
+from future.standard_library.email import policy
+from future.tests.base import unittest
+from future.tests.test_email import TestEmailBase, parameterize
+from future.builtins import bytes, range, str
 
 
 class TestTokens(TestEmailBase):

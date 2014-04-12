@@ -2,14 +2,13 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future import standard_library
-standard_library.install_hooks()
 import datetime
-from email import utils
-import test.support
 import time
-import unittest
 import sys
+from future.standard_library.email import utils
+from future.test import support as test_support
+from future.tests.base import unittest
+
 
 class DateTimeTests(unittest.TestCase):
 
@@ -57,55 +56,55 @@ class DateTimeTests(unittest.TestCase):
 class LocaltimeTests(unittest.TestCase):
 
     def test_localtime_is_tz_aware_daylight_true(self):
-        test.support.patch(self, time, 'daylight', True)
+        test_support.patch(self, time, 'daylight', True)
         t = utils.localtime()
         self.assertIsNot(t.tzinfo, None)
 
     def test_localtime_is_tz_aware_daylight_false(self):
-        test.support.patch(self, time, 'daylight', False)
+        test_support.patch(self, time, 'daylight', False)
         t = utils.localtime()
         self.assertIsNot(t.tzinfo, None)
 
     def test_localtime_daylight_true_dst_false(self):
-        test.support.patch(self, time, 'daylight', True)
+        test_support.patch(self, time, 'daylight', True)
         t0 = datetime.datetime(2012, 3, 12, 1, 1)
         t1 = utils.localtime(t0, isdst=-1)
         t2 = utils.localtime(t1)
         self.assertEqual(t1, t2)
 
     def test_localtime_daylight_false_dst_false(self):
-        test.support.patch(self, time, 'daylight', False)
+        test_support.patch(self, time, 'daylight', False)
         t0 = datetime.datetime(2012, 3, 12, 1, 1)
         t1 = utils.localtime(t0, isdst=-1)
         t2 = utils.localtime(t1)
         self.assertEqual(t1, t2)
 
     def test_localtime_daylight_true_dst_true(self):
-        test.support.patch(self, time, 'daylight', True)
+        test_support.patch(self, time, 'daylight', True)
         t0 = datetime.datetime(2012, 3, 12, 1, 1)
         t1 = utils.localtime(t0, isdst=1)
         t2 = utils.localtime(t1)
         self.assertEqual(t1, t2)
 
     def test_localtime_daylight_false_dst_true(self):
-        test.support.patch(self, time, 'daylight', False)
+        test_support.patch(self, time, 'daylight', False)
         t0 = datetime.datetime(2012, 3, 12, 1, 1)
         t1 = utils.localtime(t0, isdst=1)
         t2 = utils.localtime(t1)
         self.assertEqual(t1, t2)
 
-    @test.support.run_with_tz('EST+05EDT,M3.2.0,M11.1.0')
+    @test_support.run_with_tz('EST+05EDT,M3.2.0,M11.1.0')
     def test_localtime_epoch_utc_daylight_true(self):
-        test.support.patch(self, time, 'daylight', True)
+        test_support.patch(self, time, 'daylight', True)
         t0 = datetime.datetime(1990, 1, 1, tzinfo = datetime.timezone.utc)
         t1 = utils.localtime(t0)
         t2 = t0 - datetime.timedelta(hours=5)
         t2 = t2.replace(tzinfo = datetime.timezone(datetime.timedelta(hours=-5)))
         self.assertEqual(t1, t2)
 
-    @test.support.run_with_tz('EST+05EDT,M3.2.0,M11.1.0')
+    @test_support.run_with_tz('EST+05EDT,M3.2.0,M11.1.0')
     def test_localtime_epoch_utc_daylight_false(self):
-        test.support.patch(self, time, 'daylight', False)
+        test_support.patch(self, time, 'daylight', False)
         t0 = datetime.datetime(1990, 1, 1, tzinfo = datetime.timezone.utc)
         t1 = utils.localtime(t0)
         t2 = t0 - datetime.timedelta(hours=5)
@@ -113,14 +112,14 @@ class LocaltimeTests(unittest.TestCase):
         self.assertEqual(t1, t2)
 
     def test_localtime_epoch_notz_daylight_true(self):
-        test.support.patch(self, time, 'daylight', True)
+        test_support.patch(self, time, 'daylight', True)
         t0 = datetime.datetime(1990, 1, 1)
         t1 = utils.localtime(t0)
         t2 = utils.localtime(t0.replace(tzinfo=None))
         self.assertEqual(t1, t2)
 
     def test_localtime_epoch_notz_daylight_false(self):
-        test.support.patch(self, time, 'daylight', False)
+        test_support.patch(self, time, 'daylight', False)
         t0 = datetime.datetime(1990, 1, 1)
         t1 = utils.localtime(t0)
         t2 = utils.localtime(t0.replace(tzinfo=None))
@@ -129,7 +128,7 @@ class LocaltimeTests(unittest.TestCase):
     # XXX: Need a more robust test for Olson's tzdata
     @unittest.skipIf(sys.platform.startswith('win'),
                      "Windows does not use Olson's TZ database")
-    @test.support.run_with_tz('Europe/Kiev')
+    @test_support.run_with_tz('Europe/Kiev')
     def test_variable_tzname(self):
         t0 = datetime.datetime(1984, 1, 1, tzinfo=datetime.timezone.utc)
         t1 = utils.localtime(t0)

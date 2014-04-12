@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import, division, unicode_literals
 import sys
-import unittest
 
 from future.tests.base import unittest
 from future import utils

@@ -8,8 +8,9 @@ import time
 from future.tests.base import unittest
 import future.standard_library.xmlrpc.client as xmlrpclib
 import future.standard_library.xmlrpc.server as xmlrpc_server
-import future.standard_library.http.client as http_client
 from future.standard_library.test import support
+with standard_library.hooks():
+    import http.client
 import socket
 import os
 import re
@@ -582,9 +583,9 @@ class SimpleServerTestCase(BaseServerTestCase):
 
     # [ch] The test 404 is causing lots of false alarms.
     def XXXtest_404(self):
-        # send POST with http_client, it should return 404 header and
+        # send POST with http.client, it should return 404 header and
         # 'Not Found' message.
-        conn = http_client.HTTPConnection(ADDR, PORT)
+        conn = http.client.HTTPConnection(ADDR, PORT)
         conn.request('POST', '/this-is-not-valid')
         response = conn.getresponse()
         conn.close()
@@ -700,7 +701,7 @@ class SimpleServerTestCase(BaseServerTestCase):
 
     def test_partial_post(self):
         # Check that a partial POST doesn't make the server loop: issue #14001.
-        conn = http_client.HTTPConnection(ADDR, PORT)
+        conn = http.client.HTTPConnection(ADDR, PORT)
         conn.request('POST', '/RPC2 HTTP/1.0\r\nContent-Length: 100\r\n\r\nbye')
         conn.close()
 
@@ -892,7 +893,7 @@ class ServerProxyTestCase(unittest.TestCase):
 
 # This is a contrived way to make a failure occur on the server side
 # in order to test the _send_traceback_header flag on the server
-class FailingMessageClass(http_client.HTTPMessage):
+class FailingMessageClass(http.client.HTTPMessage):
     def get(self, key, failobj=None):
         key = key.lower()
         if key == 'content-length':
@@ -918,7 +919,7 @@ class FailingServerTestCase(unittest.TestCase):
         # reset flag
         xmlrpc_server.SimpleXMLRPCServer._send_traceback_header = False
         # reset message class
-        default_class = http_client.HTTPMessage
+        default_class = http.client.HTTPMessage
         xmlrpc_server.SimpleXMLRPCRequestHandler.MessageClass = default_class
 
     def test_basic(self):

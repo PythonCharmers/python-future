@@ -1,12 +1,10 @@
 from __future__ import absolute_import, division, unicode_literals
-from future.builtins import str
-from future import standard_library
-
 import textwrap
-import unittest
 import contextlib
 from future.standard_library.email import policy, errors
-from future.standard_library.test.email import TestEmailBase
+from future.tests.test_email import TestEmailBase
+from future.tests.base import unittest
+from future.builtins import str
 
 class TestDefectsBase(object):
 

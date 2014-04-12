@@ -2,18 +2,16 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-from future.builtins import str
-from future import standard_library
-standard_library.install_hooks()
-import unittest
 import textwrap
 import copy
 import pickle
-import email
-import email.message
-from email import policy
-from email.headerregistry import HeaderRegistry
-from test.test_email import TestEmailBase, parameterize
+import future.standard_library.email as email
+import future.standard_library.email.message as email_message
+from future.standard_library.email import policy
+from future.standard_library.email.headerregistry import HeaderRegistry
+from future.test.test_email import TestEmailBase, parameterize
+from future.tests.base import unittest
+from future.builtins import str
 
 
 @parameterize
@@ -51,7 +49,7 @@ class TestPickleCopyMessage(TestEmailBase):
     msg_params = {}
 
     # Note: there will be no custom header objects in the parsed message.
-    msg_params['parsed'] = (email.message_from_string(textwrap.dedent("""\
+    msg_params['parsed'] = (email_message_from_string(textwrap.dedent("""\
         Date: Tue, 29 May 2012 09:24:26 +1000
         From: frodo@mordor.net
         To: bilbo@underhill.org
@@ -60,7 +58,7 @@ class TestPickleCopyMessage(TestEmailBase):
         I think I forgot the ring.
         """), policy=policy.default),)
 
-    msg_params['created'] = (email.message.Message(policy=policy.default),)
+    msg_params['created'] = (email_message.Message(policy=policy.default),)
     msg_params['created'][0]['Date'] = 'Tue, 29 May 2012 09:24:26 +1000'
     msg_params['created'][0]['From'] = 'frodo@mordor.net'
     msg_params['created'][0]['To'] = 'bilbo@underhill.org'

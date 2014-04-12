@@ -1,10 +1,3 @@
-from __future__ import unicode_literals
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import open
-from future import standard_library
-standard_library.install_hooks()
 # Copyright (C) 2002-2004 Python Software Foundation
 #
 # A torture test of the email package.  This should not be run as part of the
@@ -13,18 +6,24 @@ standard_library.install_hooks()
 # Python distro, but are available as part of the standalone email package at
 # http://sf.net/projects/mimelib
 
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import sys
 import os
-import unittest
 from io import StringIO
 from types import ListType
 
-from email.test.test_email import TestEmailBase
-from test.support import TestSkipped, run_unittest
+from future.tests.test_email import TestEmailBase
+from future.standard_library.test.support import TestSkipped, run_unittest
 
-import email
-from email import __file__ as testfile
-from email.iterators import _structure
+import future.standard_library.email as email
+from future.standard_library.email import __file__ as testfile
+from future.standard_library.email.iterators import _structure
+from future.tests.base import unittest
+from future.builtins import open
+
 
 def openfile(filename):
     from os.path import join, dirname, abspath
