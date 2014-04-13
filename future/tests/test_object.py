@@ -162,6 +162,37 @@ class TestNewObject(unittest.TestCase):
         self.assertFalse(isinstance(b, C))
         self.assertTrue(isinstance(c, C))
 
+    def test_types_isinstance_newobject(self):
+        a = list()
+        b = dict()
+        c = set()
+        self.assertTrue(isinstance(a, object))
+        self.assertTrue(isinstance(b, object))
+        self.assertTrue(isinstance(c, object))
+
+        # Old-style class instances on Py2 should still report as an instance
+        # of object as usual on Py2:
+        class D:
+            pass
+        d = D()
+        self.assertTrue(isinstance(d, object))
+
+        e = object()
+        self.assertTrue(isinstance(e, object))
+
+        class F(object):
+            pass
+        f = F()
+        self.assertTrue(isinstance(f, object))
+
+        class G(F):
+            pass
+        self.assertTrue(isinstance(g, object))
+
+        def h():
+            return
+        self.assertTrue(isinstance(h, object))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -46,11 +46,12 @@ _builtin_object = object
 ver = sys.version_info[:2]
 
 
-class BaseNewObject(type):
-    def __instancecheck__(cls, instance):
-        return isinstance(instance, _builtin_object)
+# Dodgy: this messes up isinstance checks with subclasses of newobject
+# class BaseNewObject(type):
+#     def __instancecheck__(cls, instance):
+#         return isinstance(instance, _builtin_object)
 
-class newobject(with_metaclass(BaseNewObject, _builtin_object)):
+class newobject(_builtin_object):
     """
     A magical object class that provides Python 2 compatibility methods::
         next
