@@ -135,6 +135,33 @@ class TestNewObject(unittest.TestCase):
         obj = MyClass()
         self.assertTrue(bool(obj))
 
+    def test_isinstance_object_subclass(self):
+        """
+        This was failing before 
+        """
+        class A(object):
+            pass
+        a = A()
+
+        class B(object):
+            pass
+        b = B()
+
+        self.assertFalse(isinstance(a, B))
+        self.assertFalse(isinstance(b, A))
+        self.assertTrue(isinstance(a, A))
+        self.assertTrue(isinstance(b, B))
+
+        class C(A):
+            pass
+        c = C()
+
+        self.assertTrue(isinstance(c, A))
+        self.assertFalse(isinstance(c, B))
+        self.assertFalse(isinstance(a, C))
+        self.assertFalse(isinstance(b, C))
+        self.assertTrue(isinstance(c, C))
+
 
 if __name__ == '__main__':
     unittest.main()
