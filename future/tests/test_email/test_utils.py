@@ -9,6 +9,13 @@ from future.standard_library.email import utils
 from future.standard_library.test import support as test_support
 from future.tests.base import unittest
 
+try:
+    datetime.timezone
+except AttributeError:
+    # Monkey-patch in the Py3.3 timezone class
+    from future.standard_library.datetime import timezone
+    datetime.timezone = timezone
+
 
 class DateTimeTests(unittest.TestCase):
 
