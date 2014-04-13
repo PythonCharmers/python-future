@@ -3,6 +3,17 @@
 See http://www.iana.org/time-zones/repository/tz-link.html for
 time zone and DST data sources.
 """
+from __future__ import division
+from __future__ import unicode_literals
+from __future__ import print_function
+from __future__ import absolute_import
+from future.builtins import str
+from future.builtins import bytes
+from future.builtins import map
+from future.builtins import round
+from future.builtins import int
+from future import standard_library
+standard_library.install_hooks()
 
 import time as _time
 import math as _math
@@ -279,7 +290,7 @@ def _cmperror(x, y):
     raise TypeError("can't compare '%s' to '%s'" % (
                     type(x).__name__, type(y).__name__))
 
-class timedelta:
+class timedelta(object):
     """Represent the difference between two datetime objects.
 
     Supported operators:
@@ -612,7 +623,7 @@ timedelta.max = timedelta(days=999999999, hours=23, minutes=59, seconds=59,
                           microseconds=999999)
 timedelta.resolution = timedelta(microseconds=1)
 
-class date:
+class date(object):
     """Concrete date type.
 
     Constructors:
@@ -905,7 +916,7 @@ date.min = date(1, 1, 1)
 date.max = date(9999, 12, 31)
 date.resolution = timedelta(days=1)
 
-class tzinfo:
+class tzinfo(object):
     """Abstract base class for time zone info classes.
 
     Subclasses must override the name(), utcoffset() and dst() methods.
@@ -974,7 +985,7 @@ class tzinfo:
 
 _tzinfo_class = tzinfo
 
-class time:
+class time(object):
     """Time with time zone.
 
     Constructors:
