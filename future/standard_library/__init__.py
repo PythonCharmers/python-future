@@ -448,14 +448,14 @@ def scrub_py2_sys_modules():
     if PY3:
         return {}
     scrubbed = {}
-    for modulename in REPLACED_MODULES:
+    for modulename in REPLACED_MODULES & set(RENAMES.keys()):
         if not modulename in sys.modules:
             continue
 
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.warn('Deleting (Py2) {} from sys.modules'.format(modulename))
+            logging.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
             scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]
     return scrubbed
