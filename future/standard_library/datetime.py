@@ -13,6 +13,7 @@ from future.builtins import map
 from future.builtins import round
 from future.builtins import int
 from future.builtins import object
+from future.utils import native_str, PY2
 
 import time as _time
 import math as _math
@@ -1827,7 +1828,13 @@ class timezone(tzinfo):
                 return cls.utc
             name = None
         elif not isinstance(name, str):
-            raise TypeError("name must be a string")
+            ###
+            # For Python-Future:
+            if PY2 and isinstance(name, native_str):
+                name = name.decode()
+            else:
+                raise TypeError("name must be a string")
+            ###
         if not cls._minoffset <= offset <= cls._maxoffset:
             raise ValueError("offset must be a timedelta"
                              " strictly between -timedelta(hours=24) and"

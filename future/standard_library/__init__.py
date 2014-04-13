@@ -282,7 +282,6 @@ class RenameImport(object):
             try:
                 path = package.__path__
             except AttributeError:
-                import pdb; pdb.set_trace()
                 # This could be e.g. moves.
                 logging.debug('Package {0} has no __path__.'.format(package))
                 if name in sys.modules:
