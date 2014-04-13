@@ -12,8 +12,7 @@ from future.builtins import bytes
 from future.builtins import map
 from future.builtins import round
 from future.builtins import int
-from future import standard_library
-standard_library.install_hooks()
+from future.builtins import object
 
 import time as _time
 import math as _math
