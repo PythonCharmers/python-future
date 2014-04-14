@@ -187,9 +187,6 @@ class TestBuiltins(unittest.TestCase):
 # Below here are the tests from Py3.3'2 test_builtin.py module
 ##############################################################
 
-from future import standard_library
-with standard_library.hooks():
-    import builtins
 from future.standard_library.test.support import TESTFN, unlink,  run_unittest, check_warnings
 import ast
 import collections
@@ -728,7 +725,11 @@ class BuiltinTest(unittest.TestCase):
 
         # Verify locals stores (used by list comps)
         eval('[locals() for i in (2,3)]', g, d)
-        eval('[locals() for i in (2,3)]', g, collections.UserDict())
+        if PY3:
+            from collections import UserDict
+        else:
+            from UserDict import UserDict
+        eval('[locals() for i in (2,3)]', g, UserDict())
 
         class SpreadSheet:
             "Sample application showing nested, calculated lookups."
