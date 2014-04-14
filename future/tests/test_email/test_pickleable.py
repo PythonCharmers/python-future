@@ -49,7 +49,7 @@ class TestPickleCopyMessage(TestEmailBase):
     msg_params = {}
 
     # Note: there will be no custom header objects in the parsed message.
-    msg_params['parsed'] = (email_message_from_string(textwrap.dedent("""\
+    msg_params['parsed'] = (email.message_from_string(textwrap.dedent("""\
         Date: Tue, 29 May 2012 09:24:26 +1000
         From: frodo@mordor.net
         To: bilbo@underhill.org
