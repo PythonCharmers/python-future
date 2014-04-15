@@ -125,8 +125,6 @@ class TestBuiltins(unittest.TestCase):
 
         self.assertFalse(isinstance('blah', (bytes, Decimal, float, int)))
 
-    @unittest.skipIf(sys.version_info[:2] == (2, 6),
-                     'not yet implemented for Py2.6')
     def test_round(self):
         """
         Note that the Python 2.x round() function fails these tests. The
