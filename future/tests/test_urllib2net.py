@@ -236,11 +236,11 @@ class OtherNetworkTests(unittest.TestCase):
                         raise
                 else:
                     try:
-                        with support.time_out, \
-                             support.socket_peer_reset, \
-                             support.ioerror_peer_reset:
-                            buf = f.read()
-                            debug("read %d bytes" % len(buf))
+                        with support.time_out:
+                            with support.socket_peer_reset:
+                                with support.ioerror_peer_reset:
+                                    buf = f.read()
+                                    debug("read %d bytes" % len(buf))
                     except socket.timeout:
                         print("<timeout: %s>" % url, file=sys.stderr)
                     f.close()

@@ -204,8 +204,8 @@ class urlretrieveNetworkTests(unittest.TestCase):
         self.assertEqual(records[0][2], expected_size)
         self.assertEqual(records[-1][2], expected_size)
 
-        block_sizes = {block_size for _, block_size, _ in records}
-        self.assertEqual({records[0][1]}, block_sizes,
+        block_sizes = set(block_size for _, block_size, _ in records)
+        self.assertEqual(set([records[0][1]]), block_sizes,
                          msg="block sizes in %s must be equal" % records_repr)
         self.assertGreaterEqual(records[-1][0]*records[0][1], expected_size,
                                 msg="number of blocks * block size must be"

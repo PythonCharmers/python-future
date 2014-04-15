@@ -478,8 +478,8 @@ def urldefrag(url):
     return _coerce_result(DefragResult(defrag, frag))
 
 _hexdig = '0123456789ABCDEFabcdef'
-_hextobyte = {(a + b).encode(): bytes([int(a + b, 16)])
-              for a in _hexdig for b in _hexdig}
+_hextobyte = dict(((a + b).encode(), bytes([int(a + b, 16)]))
+                  for a in _hexdig for b in _hexdig)
 
 def unquote_to_bytes(string):
     """unquote_to_bytes('abc%20def') -> b'abc def'."""

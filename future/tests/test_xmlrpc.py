@@ -1033,13 +1033,13 @@ class CGIHandlerTestCase(unittest.TestCase):
         </methodCall>
         """
 
-        with support.EnvironmentVarGuard() as env, \
-             captured_stdout(encoding=self.cgi.encoding) as data_out, \
-             support.captured_stdin() as data_in:
-            data_in.write(data)
-            data_in.seek(0)
-            env['CONTENT_LENGTH'] = str(len(data))
-            self.cgi.handle_request()
+        with support.EnvironmentVarGuard() as env:
+             with captured_stdout(encoding=self.cgi.encoding) as data_out:
+                  with support.captured_stdin() as data_in:
+                      data_in.write(data)
+                      data_in.seek(0)
+                      env['CONTENT_LENGTH'] = str(len(data))
+                      self.cgi.handle_request()
         data_out.seek(0)
 
         # will respond exception, if so, our goal is achieved ;)

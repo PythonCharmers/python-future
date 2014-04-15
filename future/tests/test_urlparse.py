@@ -792,7 +792,7 @@ class UrlParseTestCase(unittest.TestCase):
         # Sequence and object values.
         result = urllib_parse.urlencode({'a': [1, 2], 'b': (3, 4, 5)}, True)
         # we cannot rely on ordering here
-        assert set(result.split('&')) == {'a=1', 'a=2', 'b=3', 'b=4', 'b=5'}
+        assert set(result.split('&')) == set(['a=1', 'a=2', 'b=3', 'b=4', 'b=5'])
 
         class Trivial(object):
             def __str__(self):

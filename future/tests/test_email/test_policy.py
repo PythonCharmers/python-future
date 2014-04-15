@@ -101,7 +101,7 @@ class PolicyAPITests(unittest.TestCase):
         # None of the attributes has a default value of None, so we set them
         # all to None in the clone call and check that it worked.
         for policyclass, defaults in self.policies.items():
-            testattrdict = {attr: None for attr in defaults}
+            testattrdict = dict((attr, None) for attr in defaults)
             policy = policyclass.clone(**testattrdict)
             for attr in defaults:
                 self.assertIsNone(getattr(policy, attr))

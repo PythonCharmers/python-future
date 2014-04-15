@@ -453,9 +453,9 @@ class ParameterizedMIMEHeader(object):
             kwds['params'] = {}
         else:
             # The MIME RFCs specify that parameter ordering is arbitrary.
-            kwds['params'] = {utils._sanitize(name).lower():
-                                    utils._sanitize(value)
-                               for name, value in parse_tree.params}
+            kwds['params'] = dict((utils._sanitize(name).lower(),
+                                   utils._sanitize(value))
+                                  for name, value in parse_tree.params)
 
     def init(self, *args, **kw):
         self._params = kw.pop('params')
