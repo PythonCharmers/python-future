@@ -34,7 +34,11 @@ import re
 import subprocess
 import imp
 import time
-import sysconfig
+try:
+    import sysconfig
+except ImportError:
+    # sysconfig is not available on Python 2.6. Try using distutils.sysconfig instead:
+    from distutils import sysconfig
 import fnmatch
 import logging.handlers
 import struct

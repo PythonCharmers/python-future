@@ -306,8 +306,9 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('itertools', 'zip_longest','itertools', 'izip_longest'),
          ('sys', 'intern','__builtin__', 'intern'),
          # The re module has no ASCII flag in Py2, but this is the default.
-         # Set re.ASCII to a zero constant. io.SEEK_SET just happens to be one.
-         ('re', 'ASCII','io', 'SEEK_SET'),
+         # Set re.ASCII to a zero constant. stat.ST_MODE just happens to be one
+         # (and it exists on Py2.6+).
+         ('re', 'ASCII','stat', 'ST_MODE'),
          ('base64', 'encodebytes','base64', 'encodestring'),
          ('base64', 'decodebytes','base64', 'decodestring'),
          # urllib._urlopener	urllib.request
@@ -622,6 +623,7 @@ def detect_hooks():
 # if not PY3:
 #     install_hooks()
 
+
 if not hasattr(sys, 'py2_modules'):
     sys.py2_modules = {}
 
@@ -630,15 +632,23 @@ def cache_py2_modules():
         return
     assert not detect_hooks()
     import urllib
-    import email
-    import test
-    import pickle
-    # import dbm
     sys.py2_modules['urllib'] = urllib
+
+    import email
     sys.py2_modules['email'] = email
-    sys.py2_modules['test'] = test
+
+    import pickle
     sys.py2_modules['pickle'] = pickle
+
+    # Not all Python installations have test module. (Anaconda doesn't, for example.)
+    # try:
+    #     import test
+    # except ImportError:
+    #     sys.py2_modules['test'] = None
+    # sys.py2_modules['test'] = test
+
+    # import dbm
     # sys.py2_modules['dbm'] = dbm
 
 
-cache_py2_modules()
+# cache_py2_modules()
