@@ -502,7 +502,8 @@ class BuiltinTest(unittest.TestCase):
         execfile(TESTFN, globals, locals)
         self.assertEqual(locals['z'], 2)
 
-        class M:
+        # This test only works if we pass in a Mapping type.
+        class M(dict):
             "Test mapping interface versus possible calls from execfile()."
             def __init__(self):
                 self.z = 10
