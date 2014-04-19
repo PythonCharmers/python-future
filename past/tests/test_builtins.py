@@ -10,10 +10,13 @@ from future import standard_library
 from future.standard_library.test.support import TESTFN     #, run_unittest
 
 import platform
-from os import unlink
 import warnings
+import sys
+import io
+import random
+# import UserDict
+from os import unlink
 from operator import neg
-import sys, io, random   # , UserDict
 from future.tests.base import unittest
 
 # count the number of test runs.

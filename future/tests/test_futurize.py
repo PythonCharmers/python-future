@@ -262,9 +262,7 @@ class TestFuturizeSimple(CodeHandler):
         from future.builtins import filter
         from future.builtins import input
         from future.builtins import map
-        from future.builtins import open
         from future.builtins import range
-        from future.builtins import super
         from functools import reduce
         a = input()
         b = open(a, b, c)

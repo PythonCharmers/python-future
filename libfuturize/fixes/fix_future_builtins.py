@@ -26,8 +26,8 @@ from libfuturize.fixer_util import touch_import_top
 # We don't need isinstance any more.
 
 replaced_builtins = '''filter map zip
-                       ascii chr hex input next oct open round super
-                       bytes dict int range str'''.split()
+                       ascii chr hex input next oct
+                       bytes range str'''.split()
 
 expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtins])
 
