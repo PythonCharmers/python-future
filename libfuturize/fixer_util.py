@@ -332,9 +332,14 @@ def touch_import_top(package, name_to_import, node):
         assert end is not None
         insert_pos = end
     else:
-        # No __future__ imports
+        # No __future__ imports.
+        # We look for a docstring and insert the new node below that. If no docstring
+        # exists, just insert the node at the top.
         for idx, node in enumerate(root.children):
-            if node.type == syms.simple_stmt: # and node.children and node.children[0].type == token.STRING):
+            if node.type != syms.simple_stmt:
+                break
+            if not (node.children and node.children[0].type == token.STRING):
+                # This is the usual case.
                 break
         insert_pos = idx
 
