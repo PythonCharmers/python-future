@@ -62,7 +62,7 @@ lib2to3_fix_names_stage2 = set([
     'lib2to3.fixes.fix_raw_input',
     # 'lib2to3.fixes.fix_unicode',   # strips off the u'' prefix, which removes a potentially helpful source of information for disambiguating unicode/byte strings
     # 'lib2to3.fixes.fix_urllib',    # included in libfuturize.fix_future_standard_library_urllib
-    'lib2to3.fixes.fix_xrange',
+    # 'lib2to3.fixes.fix_xrange',    # custom one because of a bug with Py3.3's lib2to3
     'lib2to3.fixes.fix_zip',
 ])
 
@@ -82,8 +82,11 @@ libfuturize_fix_names_stage2 = set([
     'libfuturize.fixes.fix_future_standard_library',
     'libfuturize.fixes.fix_future_standard_library_urllib',
     'libfuturize.fixes.fix_metaclass',
+    'libpasteurize.fixes.fix_newstyle',
+    'libfuturize.fixes.fix_object',
     'libfuturize.fixes.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing
     'libfuturize.fixes.fix_unicode_keep_u',
     # 'libfuturize.fixes.fix_unicode_literals_import',
+    'libfuturize.fixes.fix_xrange_with_import',  # custom one because of a bug with Py3.3's lib2to3
 ])
 
