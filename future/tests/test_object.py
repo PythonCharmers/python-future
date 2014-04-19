@@ -187,10 +187,12 @@ class TestNewObject(unittest.TestCase):
 
         class G(F):
             pass
+        g = G()
         self.assertTrue(isinstance(g, object))
 
         def h():
             return
+        h = H()
         self.assertTrue(isinstance(h, object))
 
 
