@@ -125,6 +125,72 @@ class TestFuturizeSimple(CodeHandler):
         '''
         self.convert_check(before, after)
 
+    def test_oldstyle_classes(self):
+        """
+        Stage 2 should convert old-style to new-style classes. This makes
+        the new-style class explicit and reduces the gap between the
+        behaviour (e.g.  method resolution order) on Py2 and Py3. It also
+        allows us to provide ``newobject`` (see
+        test_oldstyle_classes_iterator).
+        """
+        before = """
+        class Blah:
+            pass
+        """
+        after = """
+        from future.builtins import object
+        class Blah(object):
+            pass
+        """
+        self.convert_check(before, after, ignore_imports=False)
+
+    def test_oldstyle_classes_iterator(self):
+        """
+        An old-style class used as an iterator should be converted
+        properly. This requires ``futurize`` to do both steps (adding
+        inheritance from object and adding the newobject import) in the
+        right order.
+        """
+        before = """
+        class Upper:
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def next(self):                 # note the Py3 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        assert list(Upper('hello')) == list('HELLO')
+        """
+        after = """
+        from future.builtins import next
+        from future.builtins import object
+        class Upper(object):
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def __next__(self):                 # note the Py3 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        assert list(Upper('hello')) == list('HELLO')
+        """
+        self.convert_check(before, after, ignore_imports=False)
+
+        # Try it again with this convention: class Upper():
+        before2 = """
+        class Upper():
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def next(self):                 # note the Py3 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        assert list(Upper('hello')) == list('HELLO')
+        """
+        self.convert_check(before2, after)
+
     @unittest.expectedFailure
     def test_problematic_string(self):
         """ This string generates a SyntaxError on Python 3 unless it has
@@ -733,23 +799,19 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.convert_check(before, after, stages=[1])
 
-    @unittest.expectedFailure
     def test_oldstyle_classes(self):
         """
-        We don't convert old-style classes to new-style automatically. Should we?
+        We don't convert old-style classes to new-style automatically in
+        stage 1 (but we should in stage 2). So Blah should not inherit
+        explicitly from object yet.
         """
         before = """
         class Blah:
             pass
         """
-        after = """
-        class Blah(object):
-            pass
-        """
-        self.convert_check(before, after, stages=[1])
+        self.unchanged(before, stages=[1])
 
-    @unittest.expectedFailure
-    def test_all(self):
+    def test_stdlib_modules_not_changed(self):
         """
         Standard library module names should not be changed in stage 1
         """

@@ -25,11 +25,11 @@ from libfuturize.fixer_util import touch_import_top
 #     from future.builtins.types import (bytes, dict, int, range, str)
 # We don't need isinstance any more.
 
-replaced_builtins = '''filter map zip
+replaced_builtin_fns = '''filter map zip
                        ascii chr hex input next oct
                        bytes range str'''.split()
 
-expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtins])
+expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtin_fns])
 
 
 class FixFutureBuiltins(fixer_base.BaseFix):
@@ -41,8 +41,12 @@ class FixFutureBuiltins(fixer_base.BaseFix):
     #         ...
     PATTERN = """
               power<
-                 ({0}) trailer< '(' args=[any] ')' >
+                 ({0}) trailer< '(' [arglist=any] ')' >
               rest=any* >
+              |
+              power<
+                  'map' trailer< '(' [arglist=any] ')' >
+              >
               """.format(expression)
 
     def transform(self, node, results):
