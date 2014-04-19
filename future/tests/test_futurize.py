@@ -94,7 +94,7 @@ class TestFuturizeSimple(CodeHandler):
 
         import math
         1 / 5
-        print('Hello')
+        print('Hello!')
         """
         self.convert_check(before, after)
 
@@ -119,10 +119,9 @@ class TestFuturizeSimple(CodeHandler):
         """
         from __future__ import division
         from __future__ import print_function
-
         import math
         1 / 5
-        print('Hello')
+        print('Hello!')
         '''
         self.convert_check(before, after)
 
@@ -764,11 +763,9 @@ class TestFuturizeStage1(CodeHandler):
             raise AttributeError('blah')
         except AttributeError, e:
             pass
-        print 'Number is', 1 / 2
         """
         after = """
-        from future.utils import old_div
-        import Configparser
+        import ConfigParser
         import HTMLParser
         import collections
 
@@ -777,7 +774,6 @@ class TestFuturizeStage1(CodeHandler):
             raise AttributeError('blah')
         except AttributeError as e:
             pass
-        print('Number is', old_div(1, 2))
         """
         self.convert_check(before, after, stages=[1])
         

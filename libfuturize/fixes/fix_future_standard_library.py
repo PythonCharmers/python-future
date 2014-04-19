@@ -51,16 +51,9 @@ class FixFutureStandardLibrary(FixImports):
             children = [Leaf(token.NAME, new_name1, prefix=u" "),
                         Leaf(token.NAME, u"as", prefix=u" "),
                         Leaf(token.NAME, new_name2, prefix=u" ")]
-            # newnode = Node(syms.dotted_as_name, children)]
             imp = Node(syms.dotted_as_name, children)
-            import_mod.replace(imp) # Node(dotted_as_name,
-                                    # [Name(new_name, prefix=import_mod.prefix),
-                                    #  Node(dotted_as_name,
-                                    #       [Leaf(1, u'ConfigParser'),
-                                    #        Leaf(1, u'as'),
-                                    #        Leaf(1, new_name.replace('.', '_'))
-                                    #       ])
-                                    # ]))
+            import_mod.replace(imp)
+
             if "name_import" in results:
                 # If it's not a "from x import x, y" or "import x as y" import,
                 # marked its usage to be replaced.
@@ -81,10 +74,7 @@ class FixFutureStandardLibrary(FixImports):
                 bare_name.replace(Name(new_name, prefix=bare_name.prefix))
 
     # def transform(self, node, results):
-    #     import pdb
-    #     pdb.set_trace()
     #     result = super(FixFutureStandardLibrary, self).transform(node, results)
-    #     # TODO: add a blank line between any __future__ imports and this?
     #     touch_import_top(u'future', u'standard_library', node)
     #     return result
 
