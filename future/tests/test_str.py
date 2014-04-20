@@ -429,6 +429,59 @@ class TestStr(unittest.TestCase):
         s = SubClass(u'abcd')
         self.assertTrue(True)
 
+    # From Python 3.3: test_unicode.py
+    def checkequalnofix(self, result, object, methodname, *args):
+        method = getattr(object, methodname)
+        realresult = method(*args)
+        self.assertEqual(realresult, result)
+        self.assertTrue(type(realresult) is type(result))
+
+        # if the original is returned make sure that
+        # this doesn't happen with subclasses
+        if realresult is object:
+            class usub(str):
+                def __repr__(self):
+                    return 'usub(%r)' % str.__repr__(self)
+            object = usub(object)
+            method = getattr(object, methodname)
+            realresult = method(*args)
+            self.assertEqual(realresult, result)
+            self.assertTrue(object is not realresult)
+
+    type2test = str
+
+    def test_maketrans_translate(self):
+        # these work with plain translate()
+        self.checkequalnofix('bbbc', 'abababc', 'translate',
+                             {ord('a'): None})
+        self.checkequalnofix('iiic', 'abababc', 'translate',
+                             {ord('a'): None, ord('b'): ord('i')})
+        self.checkequalnofix('iiix', 'abababc', 'translate',
+                             {ord('a'): None, ord('b'): ord('i'), ord('c'): 'x'})
+        self.checkequalnofix('c', 'abababc', 'translate',
+                             {ord('a'): None, ord('b'): ''})
+        self.checkequalnofix('xyyx', 'xzx', 'translate',
+                             {ord('z'): 'yy'})
+        # this needs maketrans()
+        self.checkequalnofix('abababc', 'abababc', 'translate',
+                             {'b': '<i>'})
+        tbl = self.type2test.maketrans({'a': None, 'b': '<i>'})
+        self.checkequalnofix('<i><i><i>c', 'abababc', 'translate', tbl)
+        # test alternative way of calling maketrans()
+        tbl = self.type2test.maketrans('abc', 'xyz', 'd')
+        self.checkequalnofix('xyzzy', 'abdcdcbdddd', 'translate', tbl)
+
+        self.assertRaises(TypeError, self.type2test.maketrans)
+        self.assertRaises(ValueError, self.type2test.maketrans, 'abc', 'defg')
+        self.assertRaises(TypeError, self.type2test.maketrans, 2, 'def')
+        self.assertRaises(TypeError, self.type2test.maketrans, 'abc', 2)
+        self.assertRaises(TypeError, self.type2test.maketrans, 'abc', 'def', 2)
+        self.assertRaises(ValueError, self.type2test.maketrans, {'xy': 2})
+        self.assertRaises(TypeError, self.type2test.maketrans, {(1,): 2})
+
+        self.assertRaises(TypeError, 'hello'.translate)
+        self.assertRaises(TypeError, 'abababc'.translate, 'abc', 'xyz')
+
 
 if __name__ == '__main__':
     unittest.main()
