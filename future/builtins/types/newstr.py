@@ -328,8 +328,29 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
                 result[ord(char)] = None
         return result
 
-    def translate(self):
-        pass
+    def translate(self, table):
+        """
+        S.translate(table) -> str
+
+        Return a copy of the string S, where all characters have been mapped
+        through the given translation table, which must be a mapping of
+        Unicode ordinals to Unicode ordinals, strings, or None.
+        Unmapped characters are left untouched. Characters mapped to None
+        are deleted.
+        """
+        l = []
+        for c in self:
+            if ord(c) in table:
+                val = table[ord(c)]
+                if val is None:
+                    continue
+                elif isinstance(val, unicode):
+                    l.append(val)
+                else:
+                    l.append(chr(val))
+            else:
+                l.append(c)
+        return ''.join(l)
 
     def isprintable(self):
         raise NotImplementedError('fixme')
