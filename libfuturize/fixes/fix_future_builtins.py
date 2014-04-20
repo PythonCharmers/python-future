@@ -27,7 +27,12 @@ from libfuturize.fixer_util import touch_import_top
 
 replaced_builtin_fns = '''filter map zip
                        ascii chr hex input next oct
-                       bytes range str'''.split()
+                       bytes range str raw_input'''.split()
+                       # This includes raw_input as a workaround for the
+                       # lib2to3 fixer for raw_input on Py3 (only), allowing
+                       # the correct import to be included. (Py3 seems to run
+                       # the fixers the wrong way around, perhaps ignoring the
+                       # run_order class attribute below ...)
 
 expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtin_fns])
 
