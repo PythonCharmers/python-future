@@ -3,13 +3,13 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
-import datetime
 import textwrap
 from future.standard_library.email import errors
 from future.standard_library.email import policy
 from future.standard_library.email.message import Message
 from future.standard_library.email import headerregistry
 from future.standard_library.email.headerregistry import Address, Group
+from future.standard_library import datetime
 from future.tests.test_email import TestEmailBase, parameterize
 from future.tests.base import unittest
 from future.builtins import range, str
