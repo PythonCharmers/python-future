@@ -298,6 +298,7 @@ class RenameImport(object):
             return imp.load_module(name, *module_info)
 
 
+# Harmless renames that we can insert.
 # (New module name, new object name, old module name, old object name)
 MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('collections', 'UserDict', 'UserDict', 'UserDict'),
@@ -311,63 +312,8 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('re', 'ASCII','stat', 'ST_MODE'),
          ('base64', 'encodebytes','base64', 'encodestring'),
          ('base64', 'decodebytes','base64', 'decodestring'),
-         # urllib._urlopener	urllib.request
-         # urllib.ContentTooShortError	urllib.error
-         # urllib.FancyURLOpener	urllib.request
-         # urllib.pathname2url	urllib.request
-         # urllib.quote	urllib.parse
-         # urllib.quote_plus	urllib.parse
-         # urllib.splitattr	urllib.parse
-         # urllib.splithost	urllib.parse
-         # urllib.splitnport	urllib.parse
-         # urllib.splitpasswd	urllib.parse
-         # urllib.splitport	urllib.parse
-         # urllib.splitquery	urllib.parse
-         # urllib.splittag	urllib.parse
-         # urllib.splittype	urllib.parse
-         # urllib.splituser	urllib.parse
-         # urllib.splitvalue	urllib.parse
-         # urllib.unquote	urllib.parse
-         # urllib.unquote_plus	urllib.parse
-         # urllib.urlcleanup	urllib.request
-         # urllib.urlencode	urllib.parse
-         # urllib.urlopen	urllib.request
-         # urllib.URLOpener	urllib.request
-         # urllib.urlretrieve	urllib.request
-         # urllib2.AbstractBasicAuthHandler	urllib.request
-         # urllib2.AbstractDigestAuthHandler	urllib.request
-         # urllib2.BaseHandler	urllib.request
-         # urllib2.build_opener	urllib.request
-         # urllib2.CacheFTPHandler	urllib.request
-         # urllib2.FileHandler	urllib.request
-         # urllib2.FTPHandler	urllib.request
-         # urllib2.HTTPBasicAuthHandler	urllib.request
-         # urllib2.HTTPCookieProcessor	urllib.request
-         # urllib2.HTTPDefaultErrorHandler	urllib.request
-         # urllib2.HTTPDigestAuthHandler	urllib.request
-         # urllib2.HTTPError	urllib.request
-         # urllib2.HTTPHandler	urllib.request
-         # urllib2.HTTPPasswordMgr	urllib.request
-         # urllib2.HTTPPasswordMgrWithDefaultRealm	urllib.request
-         # urllib2.HTTPRedirectHandler	urllib.request
-         # urllib2.HTTPSHandler	urllib.request
-         # urllib2.install_opener	urllib.request
-         # urllib2.OpenerDirector	urllib.request
-         # urllib2.ProxyBasicAuthHandler	urllib.request
-         # urllib2.ProxyDigestAuthHandler	urllib.request
-         # urllib2.ProxyHandler	urllib.request
-         # urllib2.Request	urllib.request
-         # urllib2.UnknownHandler	urllib.request
-         # urllib2.URLError	urllib.request
-         # urllib2.urlopen	urllib.request
-         # urlparse.parse_qs	urllib.parse
-         # urlparse.parse_qsl	urllib.parse
-         # urlparse.urldefrag	urllib.parse
-         # urlparse.urljoin	urllib.parse
-         # urlparse.urlparse	urllib.parse
-         # urlparse.urlsplit	urllib.parse
-         # urlparse.urlunparse	urllib.parse
-         # urlparse.urlunsplit	urllib.parse
+         ('subprocess', 'getoutput', 'commands', 'getoutput'),
+         ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
         ]
 
 
@@ -542,6 +488,22 @@ class suspend_hooks(object):
             # sys.modules.update(self.scrubbed)
 
 
+def install_aliases():
+    """
+    Run this only once.
+    """
+    if PY3:
+        return
+    if hasattr(install_aliases, 'run_already'):
+        return
+    for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
+        newmod = __import__(newmodname)
+        oldmod = __import__(oldmodname)
+        obj = getattr(oldmod, oldobjname)
+        setattr(newmod, newobjname, obj)
+    install_aliases.run_already = True
+
+
 def install_hooks(keep_sys_modules=True):
     """
     This function installs the future.standard_library import hook into
@@ -555,14 +517,11 @@ def install_hooks(keep_sys_modules=True):
         return
     if not keep_sys_modules:
         scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
+
+    install_aliases()
+
     logging.debug('sys.meta_path was: {0}'.format(sys.meta_path))
     logging.debug('Installing hooks ...')
-
-    for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
-        newmod = __import__(newmodname)
-        oldmod = __import__(oldmodname)
-        obj = getattr(oldmod, oldobjname)
-        setattr(newmod, newobjname, obj)
 
     # Add it unless it's there already
     newhook = RenameImport(RENAMES)
