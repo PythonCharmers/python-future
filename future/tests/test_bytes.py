@@ -489,6 +489,12 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(safe, b'Philosopher guy: . More text here.')
         self.assertTrue(type(safe), bytes)
 
+    def test_rstrip(self):
+        b = bytes(b'abcd')
+        c = b.rstrip(b'd')
+        self.assertEqual(c, b'abc')
+        self.assertEqual(type(c), type(b))
+
 
 if __name__ == '__main__':
     unittest.main()
