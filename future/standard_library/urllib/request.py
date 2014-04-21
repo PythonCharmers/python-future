@@ -1688,7 +1688,7 @@ class URLopener(object):
         except HTTPError:
             raise
         except socket.error as msg:
-            raise_with_traceback(IOError('socket error'), msg)
+            raise_with_traceback(IOError('socket error', msg))
 
     def open_unknown(self, fullurl, data=None):
         """Overridable interface to open unknown URL type."""

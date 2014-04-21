@@ -71,6 +71,7 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import bytes, int, str, super
+from future.utils import PY2
 
 from future.standard_library.email import parser as email_parser
 from future.standard_library.email import message as email_message
@@ -551,17 +552,18 @@ class HTTPResponse(io.RawIOBase):
         # connection, and the user is reading more bytes than will be provided
         # (for example, reading in 1k chunks)
 
-        ### Python-Future:
-        # TODO: debug and fix me!
-        data = self.fp.read(len(b))
-        #if len(b) != len(data):
-        #    import pdb
-        #    pdb.set_trace()
-        b[:] = data
-        n = len(data)
-        ###
-        # Was:
-        # n = self.fp.readinto(b)
+        if PY2:
+            ### Python-Future:
+            # TODO: debug and fix me!
+            data = self.fp.read(len(b))
+            #if len(b) != len(data):
+            #    import pdb
+            #    pdb.set_trace()
+            b[:] = data
+            n = len(data)
+            ###
+        else:
+            n = self.fp.readinto(b)
 
         if not n and b:
             # Ideally, we would raise IncompleteRead if the content-length
