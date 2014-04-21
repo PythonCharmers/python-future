@@ -224,6 +224,17 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         parts = super(newbytes, self).rpartition(sep)
         return tuple(newbytes(part) for part in parts)
 
+    @no(unicode, (1,))
+    def rindex(self, sub, *args):
+        '''
+        S.rindex(sub [,start [,end]]) -> int
+
+        Like S.rfind() but raise ValueError when the substring is not found.
+        '''
+        pos = self.rfind(sub, *args)
+        if pos == -1:
+            raise ValueError('substring not found')
+
     @no(unicode)
     def index(self, sub, *args):
         '''
@@ -298,6 +309,40 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         if name in ['encode', u'encode']:
             raise AttributeError("encode method has been disabled in newbytes")
         return super(newbytes, self).__getattribute__(name)
+
+    @no(unicode)
+    def rstrip(self, bytes_to_strip=None):
+        """
+        Strip trailing bytes contained in the argument.
+        If the argument is omitted, strip trailing ASCII whitespace.
+        """        
+        return newbytes(super(newbytes, self).rstrip(bytes_to_strip))
+
+    @no(unicode)
+    def strip(self, bytes_to_strip=None):
+        """
+        Strip leading and trailing bytes contained in the argument.
+        If the argument is omitted, strip trailing ASCII whitespace.
+        """        
+        return newbytes(super(newbytes, self).strip(bytes_to_strip))
+
+    @no(unicode)
+    def lower(self):
+        """
+        b.lower() -> copy of b
+        
+        Return a copy of b with all ASCII characters converted to lowercase.
+        """        
+        return newbytes(super(newbytes, self).lower())
+
+    @no(unicode)
+    def upper(self):
+        """
+        b.upper() -> copy of b
+        
+        Return a copy of b with all ASCII characters converted to uppercase.
+        """        
+        return newbytes(super(newbytes, self).upper())
 
 
 __all__ = ['newbytes']
