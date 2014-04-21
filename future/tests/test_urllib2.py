@@ -285,6 +285,7 @@ class MockHTTPClass(object):
         self.req_headers = []
         self.data = None
         self.raise_on_endheaders = False
+        self.sock = None
         self._tunnel_headers = {}
 
     def __call__(self, host, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
@@ -744,9 +745,9 @@ class HandlerTests(unittest.TestCase):
             "file://localhost:80%s" % urlpath,
             "file:///file_does_not_exist.txt",
             "file://%s:80%s/%s" % (socket.gethostbyname('localhost'),
-                                   os.getcwdu(), TESTFN),
+                                   os.getcwd(), TESTFN),
             "file://somerandomhost.ontheinternet.com%s/%s" %
-            (os.getcwdu(), TESTFN),
+            (os.getcwd(), TESTFN),
             ]:
             try:
                 f = open(TESTFN, "wb")
@@ -1097,7 +1098,7 @@ class HandlerTests(unittest.TestCase):
     def test_cookie_redirect(self):
         # cookies shouldn't leak into redirected requests
         from future.standard_library.http.cookiejar import CookieJar
-        from future.standard_library.test.test_http_cookiejar import interact_netscape
+        from future.tests.test_http_cookiejar import interact_netscape
 
         cj = CookieJar()
         interact_netscape(cj, "http://www.example.com/", "spam=eggs")
