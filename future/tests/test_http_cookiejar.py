@@ -320,7 +320,8 @@ class FileCookieJarTests(unittest.TestCase):
             try:
                 c.load(filename="for this test to work, a file with this "
                                 "filename should not exist")
-            except OSError as exc:
+            # Py2.7 raises IOError, which is an alias of OSError only on Py3:
+            except (OSError, IOError) as exc:
                 # an OSError subclass (likely FileNotFoundError), but not
                 # LoadError
                 self.assertIsNot(exc.__class__, LoadError)
