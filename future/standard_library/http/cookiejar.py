@@ -33,6 +33,7 @@ from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 from future.builtins import filter, int, map, open, str
+from future.utils import as_native_str
 
 __all__ = ['Cookie', 'CookieJar', 'CookiePolicy', 'DefaultCookiePolicy',
            'FileCookieJar', 'LWPCookieJar', 'LoadError', 'MozillaCookieJar']
@@ -803,6 +804,7 @@ class Cookie(object):
             namevalue = self.name
         return "<Cookie %s for %s>" % (namevalue, limit)
 
+    @as_native_str()
     def __repr__(self):
         args = []
         for name in ("version", "name", "value",
@@ -812,7 +814,12 @@ class Cookie(object):
                      "secure", "expires", "discard", "comment", "comment_url",
                      ):
             attr = getattr(self, name)
-            args.append("%s=%s" % (name, repr(attr)))
+            ### Python-Future:
+            # Avoid u'...' prefixes for unicode strings:
+            if isinstance(attr, str):
+                attr = str(attr)
+            ###
+            args.append(str("%s=%s") % (name, repr(attr)))
         args.append("rest=%s" % repr(self._rest))
         args.append("rfc2109=%s" % repr(self.rfc2109))
         return "Cookie(%s)" % ", ".join(args)
@@ -1730,6 +1737,7 @@ class CookieJar(object):
         for cookie in self: i = i + 1
         return i
 
+    @as_native_str()
     def __repr__(self):
         r = []
         for cookie in self: r.append(repr(cookie))

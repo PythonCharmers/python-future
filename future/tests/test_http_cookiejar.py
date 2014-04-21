@@ -9,7 +9,7 @@ from future.builtins import open
 import os
 import re
 import time
-import unittest
+from future.tests.base import unittest
 import future.standard_library.test.support as test_support
 import future.standard_library.urllib.request as urllib_request
 
