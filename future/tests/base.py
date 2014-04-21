@@ -4,6 +4,7 @@ import unittest
 import sys
 import subprocess
 import re
+import warnings
 if not hasattr(unittest, 'skip'):
     import unittest2 as unittest
 from textwrap import dedent
@@ -308,3 +309,119 @@ def assertRegex(self, text, expected_regex, msg=None):
 if not hasattr(unittest.TestCase, 'assertRegex'):
     bind_method(unittest.TestCase, 'assertRegex', assertRegex)
 
+class _AssertRaisesBaseContext(object):
+
+    def __init__(self, expected, test_case, callable_obj=None,
+                 expected_regex=None):
+        self.expected = expected
+        self.test_case = test_case
+        if callable_obj is not None:
+            try:
+                self.obj_name = callable_obj.__name__
+            except AttributeError:
+                self.obj_name = str(callable_obj)
+        else:
+            self.obj_name = None
+        if isinstance(expected_regex, (bytes, str)):
+            expected_regex = re.compile(expected_regex)
+        self.expected_regex = expected_regex
+        self.msg = None
+
+    def _raiseFailure(self, standardMsg):
+        msg = self.test_case._formatMessage(self.msg, standardMsg)
+        raise self.test_case.failureException(msg)
+
+    def handle(self, name, callable_obj, args, kwargs):
+        """
+        If callable_obj is None, assertRaises/Warns is being used as a
+        context manager, so check for a 'msg' kwarg and return self.
+        If callable_obj is not None, call it passing args and kwargs.
+        """
+        if callable_obj is None:
+            self.msg = kwargs.pop('msg', None)
+            return self
+        with self:
+            callable_obj(*args, **kwargs)
+
+class _AssertWarnsContext(_AssertRaisesBaseContext):
+    """A context manager used to implement TestCase.assertWarns* methods."""
+
+    def __enter__(self):
+        # The __warningregistry__'s need to be in a pristine state for tests
+        # to work properly.
+        for v in sys.modules.values():
+            if getattr(v, '__warningregistry__', None):
+                v.__warningregistry__ = {}
+        self.warnings_manager = warnings.catch_warnings(record=True)
+        self.warnings = self.warnings_manager.__enter__()
+        warnings.simplefilter("always", self.expected)
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        self.warnings_manager.__exit__(exc_type, exc_value, tb)
+        if exc_type is not None:
+            # let unexpected exceptions pass through
+            return
+        try:
+            exc_name = self.expected.__name__
+        except AttributeError:
+            exc_name = str(self.expected)
+        first_matching = None
+        for m in self.warnings:
+            w = m.message
+            if not isinstance(w, self.expected):
+                continue
+            if first_matching is None:
+                first_matching = w
+            if (self.expected_regex is not None and
+                not self.expected_regex.search(str(w))):
+                continue
+            # store warning for later retrieval
+            self.warning = w
+            self.filename = m.filename
+            self.lineno = m.lineno
+            return
+        # Now we simply try to choose a helpful failure message
+        if first_matching is not None:
+            self._raiseFailure('"{}" does not match "{}"'.format(
+                     self.expected_regex.pattern, str(first_matching)))
+        if self.obj_name:
+            self._raiseFailure("{} not triggered by {}".format(exc_name,
+                                                               self.obj_name))
+        else:
+            self._raiseFailure("{} not triggered".format(exc_name))
+
+
+def assertWarns(self, expected_warning, callable_obj=None, *args, **kwargs):
+    """Fail unless a warning of class warnClass is triggered
+       by callable_obj when invoked with arguments args and keyword
+       arguments kwargs.  If a different type of warning is
+       triggered, it will not be handled: depending on the other
+       warning filtering rules in effect, it might be silenced, printed
+       out, or raised as an exception.
+
+       If called with callable_obj omitted or None, will return a
+       context object used like this::
+
+            with self.assertWarns(SomeWarning):
+                do_something()
+
+       An optional keyword argument 'msg' can be provided when assertWarns
+       is used as a context object.
+
+       The context manager keeps a reference to the first matching
+       warning as the 'warning' attribute; similarly, the 'filename'
+       and 'lineno' attributes give you information about the line
+       of Python code from which the warning was triggered.
+       This allows you to inspect the warning after the assertion::
+
+           with self.assertWarns(SomeWarning) as cm:
+               do_something()
+           the_warning = cm.warning
+           self.assertEqual(the_warning.some_attribute, 147)
+    """
+    context = _AssertWarnsContext(expected_warning, self, callable_obj)
+    return context.handle('assertWarns', callable_obj, args, kwargs)
+
+if not hasattr(unittest.TestCase, 'assertWarns'):
+    bind_method(unittest.TestCase, 'assertWarns', assertWarns)
