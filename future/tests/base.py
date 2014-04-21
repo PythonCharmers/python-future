@@ -2,10 +2,11 @@ import os
 import tempfile
 import unittest
 import sys
+import subprocess
+import re
 if not hasattr(unittest, 'skip'):
     import unittest2 as unittest
 from textwrap import dedent
-import subprocess
 
 from future.utils import bind_method
 
@@ -292,3 +293,18 @@ skip26 = unittest.skipIf(sys.version_info[:2] == (2, 6), "this test is known to 
 
 # Renamed in Py3.3:
 unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+
+# From Py3.3:
+def assertRegex(self, text, expected_regex, msg=None):
+    """Fail the test unless the text matches the regular expression."""
+    if isinstance(expected_regex, (str, unicode)):
+        assert expected_regex, "expected_regex must not be empty."
+        expected_regex = re.compile(expected_regex)
+    if not expected_regex.search(text):
+        msg = msg or "Regex didn't match"
+        msg = '%s: %r not found in %r' % (msg, expected_regex.pattern, text)
+        raise self.failureException(msg)
+
+if not hasattr(unittest.TestCase, 'assertRegex'):
+    bind_method(unittest.TestCase, 'assertRegex', assertRegex)
+
