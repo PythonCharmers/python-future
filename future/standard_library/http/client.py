@@ -559,8 +559,8 @@ class HTTPResponse(io.RawIOBase):
             #if len(b) != len(data):
             #    import pdb
             #    pdb.set_trace()
-            b[:] = data
             n = len(data)
+            b[:n] = data
             ###
         else:
             n = self.fp.readinto(b)
