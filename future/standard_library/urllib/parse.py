@@ -488,9 +488,14 @@ def unquote_to_bytes(string):
     if not string:
         # Is it a string-like object?
         string.split
-        return b''
+        return bytes(b'')
     if isinstance(string, str):
         string = string.encode('utf-8')
+    ### For Python-Future:
+    # It is already a byte-string object, but force it to be newbytes here on
+    # Py2:
+    string = bytes(string)
+    ###
     bits = string.split(b'%')
     if len(bits) == 1:
         return string
@@ -727,6 +732,9 @@ def quote_from_bytes(bs, safe='/'):
         # Normalize 'safe' by converting to bytes and removing non-ASCII chars
         safe = str(safe).encode('ascii', 'ignore')
     else:
+        ### For Python-Future:
+        safe = bytes(safe)
+        ### 
         safe = bytes([c for c in safe if c < 128])
     if not bs.rstrip(_ALWAYS_SAFE_BYTES + safe):
         return bs.decode()
