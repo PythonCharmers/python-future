@@ -13,6 +13,7 @@ from future.standard_library.urllib.request import Request, OpenerDirector, _pro
 import future.standard_library.urllib.error as urllib_error
 from future.tests.base import unittest
 from future.builtins import bytes, dict, int, open, str, zip
+from future.utils import text_to_native_str
 
 
 # XXX
@@ -890,7 +891,8 @@ class HandlerTests(unittest.TestCase):
 
         # array.array Iterable - Content Length is calculated
 
-        iterable_array = array.array("I",[1,2,3,4])
+        iterable_array = array.array(text_to_native_str("I"),
+                                     [1,2,3,4])
 
         for headers in {}, {"Content-Length": 16}:
             req = Request("http://example.com/", iterable_array, headers)
