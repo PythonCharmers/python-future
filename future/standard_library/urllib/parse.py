@@ -638,7 +638,7 @@ class Quoter(collections.defaultdict):
     # of cached keys don't call Python code at all).
     def __init__(self, safe):
         """safe: bytes object."""
-        self.safe = _ALWAYS_SAFE.union(safe)
+        self.safe = _ALWAYS_SAFE.union(bytes(safe))
 
     def __repr__(self):
         # Without this, will just display as a defaultdict
@@ -705,9 +705,9 @@ def quote_plus(string, safe='', encoding=None, errors=None):
         (isinstance(string, bytes) and b' ' not in string)):
         return quote(string, safe, encoding, errors)
     if isinstance(safe, str):
-        space = ' '
+        space = str(' ')
     else:
-        space = b' '
+        space = bytes(b' ')
     string = quote(string, safe + space, encoding, errors)
     return string.replace(' ', '+')
 
@@ -719,13 +719,13 @@ def quote_from_bytes(bs, safe='/'):
     if not isinstance(bs, (bytes, bytearray)):
         raise TypeError("quote_from_bytes() expected bytes")
     if not bs:
-        return ''
+        return str('')
     ### For Python-Future:
     bs = bytes(bs)
     ### 
     if isinstance(safe, str):
         # Normalize 'safe' by converting to bytes and removing non-ASCII chars
-        safe = safe.encode('ascii', 'ignore')
+        safe = str(safe).encode('ascii', 'ignore')
     else:
         safe = bytes([c for c in safe if c < 128])
     if not bs.rstrip(_ALWAYS_SAFE_BYTES + safe):
@@ -734,7 +734,7 @@ def quote_from_bytes(bs, safe='/'):
         quoter = _safe_quoters[safe]
     except KeyError:
         _safe_quoters[safe] = quoter = Quoter(safe).__getitem__
-    return ''.join([quoter(char) for char in bs])
+    return str('').join([quoter(char) for char in bs])
 
 def urlencode(query, doseq=False, safe='', encoding=None, errors=None):
     """Encode a sequence of two-element tuples or dictionary into a URL query string.
@@ -812,7 +812,7 @@ def urlencode(query, doseq=False, safe='', encoding=None, errors=None):
                         else:
                             elt = quote_plus(str(elt), safe, encoding, errors)
                         l.append(k + '=' + elt)
-    return '&'.join(l)
+    return str('&').join(l)
 
 # Utilities to parse URLs (most of these return None for missing parts):
 # unwrap('<URL:type://host/path>') --> 'type://host/path'
