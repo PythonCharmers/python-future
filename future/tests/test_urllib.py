@@ -9,7 +9,7 @@ from nturl2path import url2pathname, pathname2url
 from base64 import b64encode
 import collections
 
-from future.builtins import bytes, chr, hex, open, range, str
+from future.builtins import bytes, chr, hex, open, range, str, int
 from future.standard_library.urllib import parse as urllib_parse
 from future.standard_library.urllib import request as urllib_request
 from future.standard_library.urllib import error as urllib_error
@@ -760,7 +760,7 @@ class UnquotingTests(unittest.TestCase):
         self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, None)
         self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, ())
         with support.check_warnings(('', BytesWarning), quiet=True):
-            self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, b'')
+            self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, bytes(b''))
 
     def test_unquoting_badpercent(self):
         # Test unquoting on bad percent-escapes

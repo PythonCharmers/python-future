@@ -13,6 +13,7 @@ from future.standard_library.urllib.request import Request, OpenerDirector, _pro
 import future.standard_library.urllib.error as urllib_error
 from future.tests.base import unittest
 from future.builtins import bytes, dict, int, open, str, zip
+from future.utils import text_to_native_str
 
 
 # XXX
@@ -285,6 +286,7 @@ class MockHTTPClass(object):
         self.req_headers = []
         self.data = None
         self.raise_on_endheaders = False
+        self.sock = None
         self._tunnel_headers = {}
 
     def __call__(self, host, timeout=socket._GLOBAL_DEFAULT_TIMEOUT):
@@ -744,9 +746,9 @@ class HandlerTests(unittest.TestCase):
             "file://localhost:80%s" % urlpath,
             "file:///file_does_not_exist.txt",
             "file://%s:80%s/%s" % (socket.gethostbyname('localhost'),
-                                   os.getcwdu(), TESTFN),
+                                   os.getcwd(), TESTFN),
             "file://somerandomhost.ontheinternet.com%s/%s" %
-            (os.getcwdu(), TESTFN),
+            (os.getcwd(), TESTFN),
             ]:
             try:
                 f = open(TESTFN, "wb")
@@ -889,7 +891,8 @@ class HandlerTests(unittest.TestCase):
 
         # array.array Iterable - Content Length is calculated
 
-        iterable_array = array.array("I",[1,2,3,4])
+        iterable_array = array.array(text_to_native_str("I"),
+                                     [1,2,3,4])
 
         for headers in {}, {"Content-Length": 16}:
             req = Request("http://example.com/", iterable_array, headers)
@@ -1097,7 +1100,7 @@ class HandlerTests(unittest.TestCase):
     def test_cookie_redirect(self):
         # cookies shouldn't leak into redirected requests
         from future.standard_library.http.cookiejar import CookieJar
-        from future.standard_library.test.test_http_cookiejar import interact_netscape
+        from future.tests.test_http_cookiejar import interact_netscape
 
         cj = CookieJar()
         interact_netscape(cj, "http://www.example.com/", "spam=eggs")

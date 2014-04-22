@@ -1,8 +1,8 @@
 """
 Tests for the http.client module
 
-Adapted for the python-future module from the Python 2.7 standard library
-tests. The adaptations are to cope with the unicode_literals syntax.
+Adapted for the python-future module from the Python 2.7 standard
+library tests.
 """
 
 from __future__ import (absolute_import, division,
@@ -25,19 +25,20 @@ HOST = support.HOST
 
 class FakeSocket(object):
     def __init__(self, text, fileclass=io.BytesIO):
-        if isinstance(text, type(u'')):    # i.e. unicode string
-            text = text.encode('ascii')
+        if isinstance(text, str):
+            text = str(text).encode('ascii')
         self.text = text
         self.fileclass = fileclass
         self.data = bytes(b'')
 
     def sendall(self, data):
+        # self.data += bytes(data)
         olddata = self.data
-        assert isinstance(olddata, type(b''))   # i.e. native string type. FIXME!
+        assert isinstance(olddata, bytes)
         if utils.PY3:
             self.data += data
         else:
-            if isinstance(data, type(u'')):  # i.e. unicode
+            if isinstance(data, type(u'')):     # i.e. unicode
                 newdata = data.encode('ascii')
             elif isinstance(data, type(b'')):   # native string type. FIXME!
                 newdata = bytes(data)
@@ -46,7 +47,7 @@ class FakeSocket(object):
             elif isinstance(data, array.array):
                 newdata = data.tostring()
             else:
-                newdata = bytes(b'').join(chr(d) for d in data)
+                newdata = bytes(b'').join(chr(d) for d in bytes(data))
             self.data += newdata
 
     def makefile(self, mode, bufsize=None):
@@ -69,8 +70,8 @@ class EPipeSocket(FakeSocket):
     def close(self):
         pass
 
-class NoEOFStringIO(io.BytesIO):
-    """Like StringIO, but raises AssertionError on EOF.
+class NoEOFBytesIO(io.BytesIO):
+    """Like BytesIO, but raises AssertionError on EOF.
 
     This is used below to test that http.client doesn't try to read
     more from the underlying file than it should.
@@ -205,9 +206,9 @@ class BasicTest(TestCase):
         sock = FakeSocket(body)
         resp = client.HTTPResponse(sock)
         resp.begin()
-        self.assertEqual(bytes(resp.read(2)), b'Te')
+        self.assertEqual(resp.read(2), b'Te')
         self.assertFalse(resp.isclosed())
-        self.assertEqual(bytes(resp.read(2)), b'xt')
+        self.assertEqual(resp.read(2), b'xt')
         self.assertTrue(resp.isclosed())
 
     def test_partial_reads_no_content_length(self):
@@ -278,7 +279,7 @@ class BasicTest(TestCase):
             'HTTP/1.1 200 OK\r\n'
             'Content-Length: 14432\r\n'
             '\r\n',
-            NoEOFStringIO)
+            NoEOFBytesIO)
         resp = client.HTTPResponse(sock, method="HEAD")
         resp.begin()
         if resp.read():

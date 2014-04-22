@@ -86,11 +86,12 @@ f = urllib.request.urlopen('http://www.python.org/')
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from future.builtins import bytes, dict, filter, input, int, map, open, str
-from future.utils import PY3, raise_with_traceback
+from future.utils import PY2, PY3, raise_with_traceback
 
 import base64
 import bisect
 import hashlib
+import array
 
 from future.standard_library import email
 from future.standard_library.http import client as http_client
@@ -1206,8 +1207,19 @@ class AbstractHTTPHandler(BaseHandler):
                     'Content-type',
                     'application/x-www-form-urlencoded')
             if not request.has_header('Content-length'):
+                size = None
                 try:
-                    mv = memoryview(data)
+                    ### For Python-Future:
+                    if PY2 and isinstance(data, array.array):
+                        # memoryviews of arrays aren't supported
+                        # in Py2.7. (e.g. memoryview(array.array('I',
+                        # [1, 2, 3, 4])) raises a TypeError.)
+                        # So we calculate the size manually instead:
+                        size = len(data) * data.itemsize
+                    ###
+                    else:
+                        mv = memoryview(data)
+                        size = len(mv) * mv.itemsize
                 except TypeError:
                     if isinstance(data, collections.Iterable):
                         raise ValueError("Content-Length should be specified "
@@ -1215,7 +1227,7 @@ class AbstractHTTPHandler(BaseHandler):
                                 data))
                 else:
                     request.add_unredirected_header(
-                            'Content-length', '%d' % (len(mv) * mv.itemsize))
+                            'Content-length', '%d' % size)
 
         sel_host = host
         if request.has_proxy():
