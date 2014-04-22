@@ -562,6 +562,23 @@ def as_native_str(encoding='utf-8'):
             return wrapper
         return encoder
 
+# listvalues and listitems definitions from Nick Coghlan's (withdrawn)
+# PEP 496:
+try:
+    dict.iteritems
+except AttributeError:
+    # Python 3
+    def listvalues(d):
+        return list(d.values())
+    def listitems(d):
+        return list(d.items())
+else:
+    # Python 2
+    def listvalues(d):
+        return d.values()
+    def listitems(d):
+        return d.items()
+
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'as_native_str',
@@ -572,6 +589,7 @@ __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'viewitems', 'viewkeys', 'viewvalues',
            'bind_method', 'getexception',
            'reraise', 'implements_iterator', 'get_next', 'encode_filename',
-           'is_new_style', 'native_str', 'old_div', 'as_native_str'
+           'is_new_style', 'native_str', 'old_div', 'as_native_str',
+           'listvalues', 'listitems'
           ]
 
