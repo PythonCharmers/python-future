@@ -60,8 +60,8 @@ for details.
 Passing data to/from Python 2 libraries
 ---------------------------------------
 
-If you are passing any of the backported types (``bytes``, ``str``,
-``int``) into brittle library code that performs type-checks using ``type()``,
+If you are passing any of the backported types (``bytes``, ``int``, ``dict,
+``str``) into brittle library code that performs type-checks using ``type()``,
 rather than ``isinstance()``, or requires that you pass Python 2's native types
 (rather than subclasses) for some other reason, it may be necessary to upcast
 the types from ``future`` to their native superclasses on Py2.

@@ -13,7 +13,7 @@ stick with standard Python 3 code in your Py2/3 compatible codebase::
     
     # Assuming d is a native dict ...
 
-    for item in d:
+    for key in d:
         # code here
 
     for item in d.items():
