@@ -27,10 +27,11 @@ class TestStandardLibraryRenames(CodeHandler):
 
     def test_can_import_several(self):
         """
-        This test fails if e.g. future/standard_library/email/header.py contains:
+        This test failed in v0.12-pre if e.g.
+        future/standard_library/email/header.py contained:
         
             from future import standard_library
-            standard_library.remove_hooks(keep_sys_modules=True)
+            standard_library.remove_hooks()
         """
 
         import future.standard_library.urllib.parse as urllib_parse

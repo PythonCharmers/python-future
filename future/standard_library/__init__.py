@@ -335,18 +335,18 @@ class hooks(object):
     imported modules (like requests).
     """
     def __enter__(self):
-        logging.debug('Entering hooks context manager')
+        # logging.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
         self.scrubbed = scrub_py2_sys_modules()
-        install_hooks(keep_sys_modules=True)
+        install_hooks()
         return self
 
     def __exit__(self, *args):
-        logging.debug('Exiting hooks context manager')
-        sys.modules.update(self.scrubbed)
+        # logging.debug('Exiting hooks context manager')
+        restore_sys_modules(self.scrubbed)
         if not self.hooks_were_installed:
-            remove_hooks(keep_sys_modules=True)
+            remove_hooks()
             scrub_future_sys_modules()
 
 
@@ -389,7 +389,8 @@ def scrub_py2_sys_modules():
     """
     Removes any Python 2 standard library modules from ``sys.modules`` that
     would interfere with Py3-style imports using ``future.standard_library``
-    import hooks.
+    import hooks. Examples are modules with the same names (like urllib
+    or email). (Note that currently import hooks are disabled anyway ...)
     """
     if PY3:
         return {}
@@ -447,8 +448,6 @@ def scrub_future_sys_modules():
                 # This happens for e.g. __future__ imports. Delete it.
                 logging.debug('Deleting empty module {0} from sys.modules'
                               .format(modulename))
-                # Maybe we don't need to keep these ...
-                # scrubbed[modulename] = sys.modules[modulename]
                 del sys.modules[modulename]
                 continue
 
@@ -476,47 +475,61 @@ class suspend_hooks(object):
     """
     def __enter__(self):
         self.hooks_were_installed = detect_hooks()
-        remove_hooks(keep_sys_modules=True)
+        remove_hooks()
         self.scrubbed = scrub_future_sys_modules()
         return self
+
     def __exit__(self, *args):
         if self.hooks_were_installed:
-            scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
-            install_hooks(keep_sys_modules=True)
-            # TODO: add any previously scrubbed modules back to the sys.modules
-            # cache?
-            # sys.modules.update(self.scrubbed)
+            # scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
+            install_hooks()
+        restore_sys_modules(self.scrubbed)
+
+
+def restore_sys_modules(scrubbed):
+    """
+    Add any previously scrubbed modules back to the sys.modules cache,
+    but only if it's safe to do so.
+    """
+    clash = set(sys.modules) & set(scrubbed)
+    if len(clash) != 0:
+        # If several, choose one arbitrarily to raise an exception about
+        first = list(clash)[0]
+        raise ImportError('future module {} clashes with Py2 module'
+                          .format(first))
+    sys.modules.update(scrubbed)
 
 
 def install_aliases():
     """
-    Run this only once.
+    Monkey-patches the standard library in Py2.6/7 to provide
+    aliases for better Py3 compatibility.
     """
     if PY3:
         return
-    if hasattr(install_aliases, 'run_already'):
-        return
+    # if hasattr(install_aliases, 'run_already'):
+    #     return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
-        newmod = __import__(newmodname)
-        oldmod = __import__(oldmodname)
+        __import__(newmodname)
+        # We look up the module in sys.modules because __import__ just returns the
+        # top-level package:
+        newmod = sys.modules[newmodname]
+
+        __import__(oldmodname)
+        oldmod = sys.modules[oldmodname]
+
         obj = getattr(oldmod, oldobjname)
         setattr(newmod, newobjname, obj)
-    install_aliases.run_already = True
+    # install_aliases.run_already = True
 
 
-def install_hooks(keep_sys_modules=True):
+def install_hooks():
     """
     This function installs the future.standard_library import hook into
-    sys.meta_path. By default it also removes any Python 2 standard library
-    modules from the ``sys.modules`` cache that would interfere the Py3-style
-    ``future`` imports using the import hooks.
-
-    To leave ``sys.modules`` cache alone, pass keep_sys_modules=True.
+    sys.meta_path.
     """
     if PY3:
         return
-    if not keep_sys_modules:
-        scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
 
     install_aliases()
 
@@ -538,13 +551,9 @@ def enable_hooks():
     install_hooks()
 
 
-def remove_hooks(keep_sys_modules=True):
+def remove_hooks():
     """
-    This function removes the import hook from sys.meta_path. By default it also removes
-    any submodules of ``future.standard_library`` from the ``sys.modules``
-    cache.
-
-    To leave the ``sys.modules`` cache alone, pass keep_sys_modules=True.
+    This function removes the import hook from sys.meta_path.
     """
     if PY3:
         return
@@ -553,8 +562,8 @@ def remove_hooks(keep_sys_modules=True):
     for i, hook in list(enumerate(sys.meta_path))[::-1]:
         if hasattr(hook, 'RENAMER'):
             del sys.meta_path[i]
-    if not keep_sys_modules:
-        scrub_future_sys_modules()
+    # if scrub_sys_modules:
+    #     scrub_future_sys_modules()
 
 
 def disable_hooks():
