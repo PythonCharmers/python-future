@@ -314,6 +314,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('base64', 'decodebytes','base64', 'decodestring'),
          ('subprocess', 'getoutput', 'commands', 'getoutput'),
          ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
+         ('math', 'ceil', 'future.standard_library.misc', 'ceil'),
         ]
 
 
