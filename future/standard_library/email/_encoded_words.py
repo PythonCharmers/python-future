@@ -122,7 +122,7 @@ def decode_b(encoded):
         # try various padding lengths until something works.
         for i in 0, 1, 2, 3:
             try:
-                return base64.b64decode(encoded+b'='*i, validate=False), defects
+                return base64.b64decode(encoded+b'='*i), defects
             except binascii.Error:
                 if i==0:
                     defects.append(errors.InvalidBase64PaddingDefect())
@@ -165,7 +165,7 @@ def decode(ew):
     which is rarely if ever encountered, is the empty string.
 
     """
-    _, charset, cte, cte_string, _ = ew.split('?')
+    _, charset, cte, cte_string, _ = str(ew).split('?')
     charset, _, lang = charset.partition('*')
     cte = cte.lower()
     # Recover the original bytes and do CTE decoding.
@@ -213,6 +213,7 @@ def encode(string, charset='utf-8', encoding=None, lang=''):
     RFC 2243 language string to specify in the encoded word.
 
     """
+    string = str(string)
     if charset == 'unknown-8bit':
         bstring = string.encode('ascii', 'surrogateescape')
     else:
