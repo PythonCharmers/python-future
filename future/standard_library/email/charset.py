@@ -157,6 +157,7 @@ def add_codec(charset, codecname):
 # Convenience function for encoding strings, taking into account
 # that they might be unknown-8bit (ie: have surrogate-escaped bytes)
 def _encode(string, codec):
+    string = str(string)
     if codec == UNKNOWN8BIT:
         return string.encode('ascii', 'surrogateescape')
     else:
