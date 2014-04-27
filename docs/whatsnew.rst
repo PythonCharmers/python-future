@@ -36,8 +36,9 @@ or with the functional interface::
 This allows finer-grained control over whether import hooks are enabled for
 other imported modules, such as ``requests``, which provide their own Python
 2/3 compatibility code. This also improves compatibility of ``future`` with
-tools like ``py2exe`` (see `issue #31
-<https://github.com/PythonCharmers/python-future/issues/31>`).
+tools like ``py2exe``.
+
+.. (see `issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`).
 
 
 .. Versioned standard library imports
@@ -79,8 +80,8 @@ tools like ``py2exe`` (see `issue #31
 .. functionality in the Python 2.x standard library.
 
 
-New ``urllib``, ``email``, and ``xmlrpc`` modules
--------------------------------------------------
+New ``http.server``, ``urllib``, ``email``, and ``xmlrpc`` modules
+------------------------------------------------------------------
 
 Backports of the ``urllib``, ``email``, and ``xmlrpc`` modules from Python
 3.3's standard library are now provided. 
@@ -142,11 +143,26 @@ Python bug #). This includes custom ``execfile()`` and ``cmp()`` functions.
 ``futurize`` now invokes imports of these functions from ``past.builtins``.
 
 
+``surrogateescape`` error handler
+---------------------------------
+
+The ``newstr`` type (``future.builtins.str``) now supports a backport of the
+Py3.x ``'surrogateescape'`` error handler for preserving high-bit
+characters when encoding and decoding strings with unknown encodings.
+
+
 ``newlist`` type
 -------------
 
 There is a new ``list`` type in ``future.builtins`` that offers ``.copy()`` and
 ``.clear()`` methods like the ``list`` type in Python 3.
+
+
+Tests
+-----
+
+The number of unit tests has increased from 600 to over 2000. Most of the new
+tests come from Python 3.3's test suite.
 
 
 Bug fixes
@@ -170,7 +186,8 @@ Many small improvements and fixes have been made across the project. Some highli
 - The ``fix_next`` and ``fix_reduce`` fixers have been moved to stage 1 of
   ``futurize``.
 
-- ``futurize``: Shebang lines such as ``#!/usr/bin/env python`` are no longer occasionally
+- ``futurize``: Shebang lines such as ``#!/usr/bin/env python`` and source code
+  file encoding declarations like ``# -*- coding=utf-8 -*-`` are no longer occasionally
   displaced by ``from __future__ import ...`` statements.
 
 
