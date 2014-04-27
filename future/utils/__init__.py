@@ -312,7 +312,7 @@ def bind_method(cls, name, func):
     -------
     None
     """
-    # only python 2 has bound/unbound method issue
+    # only python 2 has an issue with bound/unbound methods
     if not PY3:
         setattr(cls, name, types.MethodType(func, None, cls))
     else:
