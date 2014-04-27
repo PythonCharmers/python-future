@@ -181,6 +181,27 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         from future.builtins.types.newbytes import newbytes
         # Py2 unicode.encode() takes encoding and errors as optional parameter,
         # not keyword arguments as in Python 3 str.
+
+        # For surrogateescape error handling mechanism, the
+        # codecs.register_error() function seems to be inadequate for an
+        # implementation of it. For example, in the case of
+        #     u'\udcc3'.encode('ascii', 'surrogateescape_handler')
+        # after registering the ``surrogateescape_handler`` function in
+        # future.utils.surrogateescape, both Python 2.x and 3.x raise an
+        # exception anyway after the function is called because the unicode
+        # string it has to return isn't encodable strictly as ASCII.
+
+        if errors == 'surrogateescape':
+            # Encode char by char
+            mybytes = []
+            for c in self:
+                code = ord(c)
+                if 0xD800 <= code <= 0xDCFF:
+                    b = code - 0xDC00
+                else:
+                    b = ord(c.encode(encoding=encoding))
+                mybytes.append(b)
+            return newbytes(mybytes)
         return newbytes(super(newstr, self).encode(encoding, errors))
 
     @no('newbytes', 1)
