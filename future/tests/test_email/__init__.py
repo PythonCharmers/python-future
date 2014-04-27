@@ -6,6 +6,7 @@ from future.builtins import open
 from future.builtins import range
 from future.builtins import super
 from future.builtins import str
+from future.builtins import bytes
 from future import utils
 import os
 import sys
@@ -70,7 +71,7 @@ class TestEmailBase(unittest.TestCase):
         return email.message_from_string(string, message, policy=policy)
 
     def _bytes_repr(self, b):
-        return [repr(x) for x in b.splitlines(keepends=True)]
+        return [repr(x) for x in bytes(b).splitlines(keepends=True)]
 
     def assertBytesEqual(self, first, second, msg):
         """Our byte strings are really encoded strings; improve diff output"""
