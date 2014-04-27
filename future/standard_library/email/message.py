@@ -233,6 +233,7 @@ class Message(object):
         cte = str(self.get('content-transfer-encoding', '')).lower()
         # payload may be bytes here.
         if isinstance(payload, str):
+            payload = str(payload)    # for Python-Future, so surrogateescape works
             if utils._has_surrogates(payload):
                 bpayload = payload.encode('ascii', 'surrogateescape')
                 if not decode:
