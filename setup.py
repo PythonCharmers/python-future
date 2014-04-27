@@ -17,7 +17,7 @@ if sys.argv[-1] == 'publish':
 NAME = "future"
 PACKAGES = ["future",
             "future.builtins",
-            "future.builtins.types",
+            "future.types",
             "future.standard_library",
             "future.standard_library",
             "future.standard_library.email",

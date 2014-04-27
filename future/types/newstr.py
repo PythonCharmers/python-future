@@ -44,7 +44,7 @@ from collections import Iterable
 
 from numbers import Number
 from future.utils import PY3, istext, with_metaclass, isnewbytes
-from future.builtins.types import no, issubset
+from future.types import no, issubset
 
 
 if PY3:
@@ -178,7 +178,7 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         'xmlcharrefreplace' as well as any other name registered with
         codecs.register_error that can handle UnicodeEncodeErrors.
         """
-        from future.builtins.types.newbytes import newbytes
+        from future.types.newbytes import newbytes
         # Py2 unicode.encode() takes encoding and errors as optional parameter,
         # not keyword arguments as in Python 3 str.
 

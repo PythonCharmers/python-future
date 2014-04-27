@@ -9,7 +9,7 @@ from collections import Iterable
 from numbers import Integral
 
 from future.utils import istext, isbytes, PY3, with_metaclass
-from future.builtins.types import no, issubset
+from future.types import no, issubset
 
 
 _builtin_bytes = bytes
@@ -189,7 +189,7 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         as well as any other name registered with codecs.register_error that is
         able to handle UnicodeDecodeErrors.
         """
-        from future.builtins.types.newstr import newstr
+        from future.types.newstr import newstr
         return newstr(super(newbytes, self).decode(encoding, errors))
         
     @no(unicode)

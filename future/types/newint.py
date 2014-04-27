@@ -11,7 +11,7 @@ from __future__ import division
 
 from numbers import Integral
 
-from future.builtins.types.newbytes import newbytes
+from future.types.newbytes import newbytes
 from future.utils import PY3, isint, istext, isbytes, with_metaclass
 
 

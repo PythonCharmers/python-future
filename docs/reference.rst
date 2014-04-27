@@ -41,11 +41,11 @@ Backported types
 
 bytes
 -----
-.. automodule:: future.builtins.types.newbytes
+.. automodule:: future.types.newbytes
 
 dict
 -----
-.. automodule:: future.builtins.types.newdict
+.. automodule:: future.types.newdict
 
 int
 ---
@@ -53,9 +53,9 @@ int
 
 range
 -----
-.. automodule:: future.builtins.types.newrange
+.. automodule:: future.types.newrange
 
 str
 ---
-.. automodule:: future.builtins.types.newstr
+.. automodule:: future.types.newstr
 

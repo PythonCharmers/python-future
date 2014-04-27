@@ -11,7 +11,7 @@ in the transition from Python 2 to Python 3.
 It is used as follows::
 
     from __future__ import division, absolute_import, print_function
-    from future.builtins.types import bytes, dict, int, range, str
+    from future.builtins import bytes, dict, int, range, str
 
 to bring in the new semantics for these functions from Python 3. And
 then, for example::
@@ -55,12 +55,12 @@ and::
 For more information:
 ---------------------
 
-- future.builtins.types.newbytes
-- future.builtins.types.newdict
-- future.builtins.types.newint
-- future.builtins.types.newobject
-- future.builtins.types.newrange
-- future.builtins.types.newstr
+- future.types.newbytes
+- future.types.newdict
+- future.types.newint
+- future.types.newobject
+- future.types.newrange
+- future.types.newstr
 
 
 Notes
@@ -224,12 +224,12 @@ if utils.PY3:
     str = builtins.str
     __all__ = []
 else:
-    from .newbytes import newbytes as bytes
-    from .newdict import newdict as dict
-    from .newint import newint as int
-    from .newlist import newlist as list
-    from .newrange import newrange as range
-    from .newobject import newobject as object
-    from .newstr import newstr as str
-    __all__ = ['bytes', 'dict', 'int', 'list', 'range', 'str']
+    from .newbytes import newbytes
+    from .newdict import newdict
+    from .newint import newint
+    from .newlist import newlist
+    from .newrange import newrange
+    from .newobject import newobject
+    from .newstr import newstr
+    __all__ = ['newbytes', 'newdict', 'newint', 'newlist', 'newrange', 'newstr']
 

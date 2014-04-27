@@ -80,7 +80,7 @@ equivalent to typing ``bytes = bytes; int = int`` etc. for each builtin.
 
 The internal API is currently as follows::
 
-    from future.builtins.types import bytes, dict, int, range, str
+    from future.types import bytes, dict, int, range, str
     from future.builtins.misc import ascii, chr, hex, input, next, oct, open, round, super
     from future.builtins.iterators import filter, map, zip
 

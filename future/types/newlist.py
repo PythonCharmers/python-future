@@ -16,7 +16,7 @@ import sys
 import copy
 
 from future.utils import with_metaclass
-from future.builtins.types.newobject import newobject
+from future.types.newobject import newobject
 
 
 _builtin_list = list
