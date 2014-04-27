@@ -259,6 +259,19 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
             raise ValueError('substring not found')
         return pos
 
+    def splitlines(self, keepends=False):
+        """
+        S.splitlines(keepends=False) -> list of strings
+
+        Return a list of the lines in S, breaking at line boundaries.
+        Line breaks are not included in the resulting list unless keepends
+        is given and true.
+        """
+        # Py2 unicode.splitlines() takes keepends as an optional parameter,
+        # not as a keyword argument as in Python 3 str.
+        parts = super(newstr, self).splitlines(keepends)
+        return [newstr(part) for part in parts]
+
     def __eq__(self, other):
         if (isinstance(other, unicode) or
             isinstance(other, bytes) and not isnewbytes(other)):
