@@ -1007,7 +1007,7 @@ class DomainLiteral(TokenList):
 
     @property
     def domain(self):
-        return ''.join(super().value.split())
+        return ''.join(super(DomainLiteral, self).value.split())
 
     @property
     def ip(self):
@@ -1223,13 +1223,13 @@ class Header(TokenList):
 class Terminal(str):
 
     def __new__(cls, value, token_type):
-        self = super().__new__(cls, value)
+        self = super(Terminal, cls).__new__(cls, value)
         self.token_type = token_type
         self.defects = []
         return self
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, super().__repr__())
+        return "{}({})".format(self.__class__.__name__, super(Terminal, self).__repr__())
 
     @property
     def all_defects(self):
@@ -1240,7 +1240,7 @@ class Terminal(str):
             indent,
             self.__class__.__name__,
             self.token_type,
-            super().__repr__(),
+            super(Terminal, self).__repr__(),
             '' if not self.defects else ' {}'.format(self.defects),
             )]
 
