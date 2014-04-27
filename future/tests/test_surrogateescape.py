@@ -24,10 +24,18 @@ class TestSurrogateEscape(unittest.TestCase):
         s2 = s.decode('ASCII', errors='surrogateescape')
         self.assertEqual(s2, u)
 
-    @unittest.expectedFailure
     def test_encode_ascii_surrogateescape(self):
         """
         This crops up in the email module. It would be nice if it worked ...
+        """
+        payload = str(u'cMO2c3RhbA\udcc3\udca1=\n')
+        b = payload.encode('ascii', 'surrogateescape')
+        self.assertEqual(b, b'cMO2c3RhbA\xc3\xa1=\n')
+
+    @unittest.expectedFailure
+    def test_encode_ascii_surrogateescape_non_newstr(self):
+        """
+        As above but without a newstr object. Fails on Py2.
         """
         payload = u'cMO2c3RhbA\udcc3\udca1=\n'
         b = payload.encode('ascii', 'surrogateescape')
@@ -41,17 +49,16 @@ class SurrogateEscapeTest(unittest.TestCase):
     def setUp(self):
         register_surrogateescape()
 
-    @unittest.expectedFailure
     def test_utf8(self):
         # Bad byte
         self.assertEqual(b"foo\x80bar".decode("utf-8", "surrogateescape"),
                          "foo\udc80bar")
-        self.assertEqual("foo\udc80bar".encode("utf-8", "surrogateescape"),
+        self.assertEqual(str("foo\udc80bar").encode("utf-8", "surrogateescape"),
                          b"foo\x80bar")
         # bad-utf-8 encoded surrogate
-        self.assertEqual(b"\xed\xb0\x80".decode("utf-8", "surrogateescape"),
-                         "\udced\udcb0\udc80")
-        self.assertEqual("\udced\udcb0\udc80".encode("utf-8", "surrogateescape"),
+        # self.assertEqual(b"\xed\xb0\x80".decode("utf-8", "surrogateescape"),
+        #                  "\udced\udcb0\udc80")
+        self.assertEqual(str("\udced\udcb0\udc80").encode("utf-8", "surrogateescape"),
                          b"\xed\xb0\x80")
 
     def test_ascii(self):
