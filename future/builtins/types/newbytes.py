@@ -207,6 +207,19 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         parts = super(newbytes, self).split(sep, maxsplit)
         return [newbytes(part) for part in parts]
 
+    def splitlines(self, keepends=False):
+        """
+        B.splitlines([keepends]) -> list of lines
+
+        Return a list of the lines in B, breaking at line boundaries.
+        Line breaks are not included in the resulting list unless keepends
+        is given and true.
+        """
+        # Py2 str.splitlines() takes keepends as an optional parameter,
+        # not as a keyword argument as in Python 3 bytes.
+        parts = super(newbytes, self).splitlines(keepends)
+        return [newbytes(part) for part in parts]
+
     @no(unicode)
     def rsplit(self, sep=None, maxsplit=-1):
         # Py2 str.rsplit() takes maxsplit as an optional parameter, not as a
