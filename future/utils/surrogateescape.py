@@ -48,6 +48,7 @@ def surrogateescape_handler(exc):
 
     try:
         if isinstance(exc, UnicodeDecodeError):
+            # mystring is a byte-string in this case
             decoded = replace_surrogate_decode(mystring)
         elif isinstance(exc, UnicodeEncodeError):
             # In the case of u'\udcc3'.encode('ascii',
@@ -68,6 +69,10 @@ class NotASurrogateError(Exception):
 
 
 def replace_surrogate_encode(mystring):
+    """
+    Returns a (unicode) string, not the more logical bytes, because the codecs
+    register_error functionality expects this.
+    """
     decoded = []
     for ch in mystring:
         # if utils.PY3:
@@ -92,10 +97,18 @@ def replace_surrogate_encode(mystring):
     return str().join(decoded)
 
 
-def replace_surrogate_decode(mystring):
+def replace_surrogate_decode(mybytes):
+    """
+    Returns a (unicode) string
+    """
     decoded = []
-    for ch in mystring:
-        code = ord(ch)
+    for ch in mybytes:
+        # We may be parsing newbytes (in which case ch is an int) or a native
+        # str on Py2
+        if isinstance(ch, int):
+            code = ch
+        else:
+            code = ord(ch)
         if 0x80 <= code <= 0xFF:
             decoded.append(_unichr(0xDC00 + code))
         elif code <= 0x7F:

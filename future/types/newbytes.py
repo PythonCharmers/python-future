@@ -189,9 +189,39 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         as well as any other name registered with codecs.register_error that is
         able to handle UnicodeDecodeErrors.
         """
+        # Py2 str.encode() takes encoding and errors as optional parameter,
+        # not keyword arguments as in Python 3 str.
+
         from future.types.newstr import newstr
         return newstr(super(newbytes, self).decode(encoding, errors))
-        
+
+        # This is currently broken:
+        # # We implement surrogateescape error handling here in addition rather
+        # # than relying on the custom error handler from
+        # # future.utils.surrogateescape to be registered globally, even though
+        # # that is fine in the case of decoding. (But not encoding: see the
+        # # comments in newstr.encode()``.)
+        #
+        # if errors == 'surrogateescape':
+        #     # Decode char by char
+        #     mybytes = []
+        #     for code in self:
+        #         # Code is an int
+        #         if 0x80 <= code <= 0xFF:
+        #             b = 0xDC00 + code
+        #         elif code <= 0x7F:
+        #             b = _unichr(c).decode(encoding=encoding)
+        #         else:
+        #             # # It may be a bad byte
+        #             # FIXME: What to do in this case? See the Py3 docs / tests.
+        #             # # Try swallowing it.
+        #             # continue
+        #             # print("RAISE!")
+        #             raise NotASurrogateError
+        #         mybytes.append(b)
+        #     return newbytes(mybytes)
+        # return newbytes(super(newstr, self).decode(encoding, errors))
+
     @no(unicode)
     def startswith(self, prefix, *args):
         return super(newbytes, self).startswith(prefix, *args)
