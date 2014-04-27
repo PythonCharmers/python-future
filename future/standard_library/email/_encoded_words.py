@@ -113,7 +113,10 @@ def decode_b(encoded):
     else:
         padded_encoded = encoded
     try:
-        return base64.b64decode(padded_encoded, validate=True), defects
+        # The validate kwarg to b64decode is not supported in Py2.x
+        if not re.match(b'^[A-Za-z0-9+/]*={0,2}$', padded_encoded):
+            raise binascii.Error('Non-base64 digit found')
+        return base64.b64decode(padded_encoded), defects
     except binascii.Error:
         # Since we had correct padding, this must an invalid char error.
         defects = [errors.InvalidBase64CharactersDefect()]
@@ -123,7 +126,7 @@ def decode_b(encoded):
         for i in 0, 1, 2, 3:
             try:
                 return base64.b64decode(encoded+b'='*i), defects
-            except binascii.Error:
+            except (binascii.Error, TypeError):    # Py2 raises a TypeError
                 if i==0:
                     defects.append(errors.InvalidBase64PaddingDefect())
         else:
