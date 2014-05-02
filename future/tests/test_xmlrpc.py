@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, unicode_literals
 from future.builtins import int, str, super
 from future import standard_library
+from future.utils import PY3
 import base64
 import datetime
 import sys
@@ -982,7 +983,9 @@ class FailingServerTestCase(unittest.TestCase):
             # ignore failures due to non-blocking socket 'unavailable' errors
             if not is_unavailable_exception(e) and hasattr(e, "headers"):
                 # We should get error info in the response
-                expected_err = "invalid literal for int() with base 10: 'I am broken'"
+                int_type_str = 'int' if PY3 else 'long'
+                expected_err = ("invalid literal for %s() with base 10: 'I am broken'" % 
+                                int_type_str)
                 self.assertEqual(e.headers.get("X-exception"), expected_err)
                 self.assertTrue(e.headers.get("X-traceback") is not None)
         else:

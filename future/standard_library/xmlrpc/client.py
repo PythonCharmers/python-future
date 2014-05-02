@@ -243,8 +243,8 @@ class Fault(Error):
     """Indicates an XML-RPC fault package."""
     def __init__(self, faultCode, faultString, **extra):
         Error.__init__(self)
-        self.faultCode = faultCode
-        self.faultString = faultString
+        self.faultCode = str(faultCode)
+        self.faultString = str(faultString)
     def __repr__(self):
         return "<Fault %s: %r>" % (self.faultCode, self.faultString)
 
@@ -309,7 +309,7 @@ class DateTime(object):
 
     def __init__(self, value=0):
         if isinstance(value, str):
-            self.value = value
+            self.value = str(value)
         else:
             self.value = _strftime(value)
 
