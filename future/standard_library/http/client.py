@@ -556,6 +556,10 @@ class HTTPResponse(io.RawIOBase):
             ### Python-Future:
             # TODO: debug and fix me!
             data = self.fp.read(len(b))
+            if data[:2] == b"b'":
+                # Something has gone wrong
+                import pdb
+                pdb.set_trace()
             #if len(b) != len(data):
             #    import pdb
             #    pdb.set_trace()
