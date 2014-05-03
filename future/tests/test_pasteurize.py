@@ -82,6 +82,7 @@ class TestPasteurize(CodeHandler):
         self.convert_check(before, after, from3=True)
 
     # TODO: fix and test this test
+    @unittest.expectedFailure
     def test_urllib_request(self):
         """
         Example Python 3 code using the new urllib.request module.
