@@ -54,6 +54,7 @@ class TestPasteurize(CodeHandler):
         '''
         self.unchanged(code, from3=True)
 
+    # TODO: write / fix the raise_ fixer so that it uses the raise_ function
     @unittest.expectedFailure
     def test_exception_indentation(self):
         """

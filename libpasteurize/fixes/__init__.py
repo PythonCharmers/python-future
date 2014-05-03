@@ -40,7 +40,8 @@ fix_names = set([
                  # 'libpasteurize.fixes.fix_open',   # huh?
                  # 'libpasteurize.fixes.fix_print',  # no way
                  'libpasteurize.fixes.fix_printfunction',  # adds __future__ import print_function
-                 'libpasteurize.fixes.fix_raise',   # yes, if 'raise E, V, T' is supported on Py3
+                 # 'libpasteurize.fixes.fix_raise_',   # TODO: get this working!
+
                  # 'libpasteurize.fixes.fix_range',  # nope
                  # 'libpasteurize.fixes.fix_reduce',
                  # 'libpasteurize.fixes.fix_setliteral',
