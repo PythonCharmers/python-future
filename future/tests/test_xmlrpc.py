@@ -1,7 +1,6 @@
 from __future__ import absolute_import, division, unicode_literals
 from future.builtins import int, str, super
 from future import standard_library
-from future.utils import PY3
 import base64
 import datetime
 import sys
@@ -18,6 +17,7 @@ import os
 import re
 import io
 import contextlib
+from future.utils import PY3
 
 try:
     import threading

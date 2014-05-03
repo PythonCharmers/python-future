@@ -579,6 +579,36 @@ else:
     def listitems(d):
         return d.items()
 
+if PY3:
+    def ensure_new_type(obj):
+        return obj
+else:
+    def ensure_new_type(obj):
+        from future.types.newbytes import newbytes
+        from future.types.newstr import newstr
+        from future.types.newint import newint
+        from future.types.newdict import newdict
+
+        native_type = type(native(obj))
+
+        # Upcast only if the type is already a native (non-future) type
+        if issubclass(native_type, type(obj)):
+            # Upcast
+            if native_type == str:  # i.e. Py2 8-bit str
+                return newbytes(obj)
+            elif native_type == unicode:
+                return newstr(obj)
+            elif native_type == int:
+                return newint(obj)
+            elif native_type == dict:
+                return newdict(obj)
+            else:
+                return NotImplementedError('type %s not supported' % type(obj))
+        else:
+            # Already a new type
+            assert type(obj) in [newbytes, newstr]
+            return obj
+
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'as_native_str',

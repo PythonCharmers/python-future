@@ -222,8 +222,20 @@ if utils.PY3:
     object = builtins.object
     range = builtins.range
     str = builtins.str
-    __all__ = []
+
+    # The identity mapping
+    newtypes = {bytes: bytes,
+                dict: dict,
+                int: int,
+                list: list,
+                object: object,
+                range: range,
+                str: str}
+
+    __all__ = ['newtypes']
+
 else:
+
     from .newbytes import newbytes
     from .newdict import newdict
     from .newint import newint
@@ -231,5 +243,16 @@ else:
     from .newrange import newrange
     from .newobject import newobject
     from .newstr import newstr
-    __all__ = ['newbytes', 'newdict', 'newint', 'newlist', 'newrange', 'newstr']
+
+    newtypes = {bytes: newbytes,
+                dict: newdict,
+                int: newint,
+                long: newint,
+                list: newlist,
+                object: newobject,
+                range: newrange,
+                str: newbytes,
+                unicode: newstr}
+
+    __all__ = ['newbytes', 'newdict', 'newint', 'newlist', 'newrange', 'newstr', 'newtypes']
 
