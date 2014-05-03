@@ -162,6 +162,7 @@ class TestNewObject(unittest.TestCase):
         self.assertFalse(isinstance(b, C))
         self.assertTrue(isinstance(c, C))
 
+    @unittest.expectedFailure
     def test_types_isinstance_newobject(self):
         a = list()
         b = dict()
