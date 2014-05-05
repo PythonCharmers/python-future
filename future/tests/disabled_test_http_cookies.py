@@ -1,5 +1,10 @@
 # Simple test suite for http/cookies.py
+
+# Python 2.7's Cookie module only accepts byte-strings, whereas Python 3.3's
+# http.cookies module expects unicode strings. Include this import with the
+# backported (Py3.3) module only:
 from __future__ import unicode_literals
+
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import

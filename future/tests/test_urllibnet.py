@@ -7,10 +7,15 @@ import sys
 import os
 import time
 
-from future.standard_library.email.message import Message
-import future.standard_library.email.message as email_message
+from future import utils
 from future.standard_library.test import support
-import future.standard_library.urllib.request as urllib_request
+
+import future.moves.urllib.request as urllib_request
+# import future.standard_library.email.message as email_message
+# from future.standard_library.email.message import Message
+import email.message as email_message
+from email.message import Message
+
 from future.tests.base import unittest
 from future.builtins import int, open
 
@@ -74,6 +79,7 @@ class urlopenNetworkTests(unittest.TestCase):
             self.assertIsInstance(open_url.readlines(), list,
                                   "readlines did not return a list")
 
+    @unittest.skipIf(utils.PY2, 'test not applicable on Py2')
     def test_info(self):
         # Test 'info'.
         with self.urlopen("http://www.python.org/") as open_url:
@@ -83,6 +89,7 @@ class urlopenNetworkTests(unittest.TestCase):
                                   "instance of email_message.Message")
             self.assertEqual(info_obj.get_content_subtype(), "html")
 
+    @unittest.skipIf(utils.PY2, 'Py2 changes the url to https://www.python.org...')
     def test_geturl(self):
         # Make sure same URL as opened is returned by geturl.
         URL = "http://www.python.org/"
@@ -169,6 +176,7 @@ class urlretrieveNetworkTests(unittest.TestCase):
             with open(file_location, 'rb') as f:
                 self.assertTrue(f.read(), "reading from temporary file failed")
 
+    @unittest.skipIf(utils.PY2, 'test not applicable on Py2')
     def test_header(self):
         # Make sure header returned as 2nd value from urlretrieve is good.
         with self.urlretrieve("http://www.python.org/") as (file_location, info):
