@@ -239,6 +239,10 @@ Many small improvements and fixes have been made across the project. Some highli
 
 - Improved compatibility with py2exe (`issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`_).
 
+- The ``future.utils.bytes_to_native_str`` function now returns a ``newbytes``
+  object on Py2. (`Issue #47
+  <https://github.com/PythonCharmers/python-future/issues/47>`_).
+
 
 .. whats-new-0.11.5:
 
