@@ -1,14 +1,12 @@
 from future import standard_library
+from future.utils import PY3
 
-with standard_library.suspend_hooks():
-    from urllib import (addbase,
-                        addclosehook,
-                        addinfo,
-                        addinfourl)
-
-# we use this method to get at the original py2 urllib before any renaming
-# addbase = sys.py2_modules['urllib'].addbase
-# addclosehook = sys.py2_modules['urllib'].addclosehook
-# addinfo = sys.py2_modules['urllib'].addinfo
-# addinfourl = sys.py2_modules['urllib'].addinfourl
+if PY3:
+    from urllib.response import *
+else:
+    with standard_library.suspend_hooks():
+        from urllib import (addbase,
+                            addclosehook,
+                            addinfo,
+                            addinfourl)
 
