@@ -220,7 +220,7 @@ class urlretrieveNetworkTests(unittest.TestCase):
 
 
 def test_main():
-    support.requires('network')
+    # support.requires('network')
     support.run_unittest(URLTimeoutTest,
                          urlopenNetworkTests,
                          urlretrieveNetworkTests)

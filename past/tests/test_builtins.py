@@ -8,6 +8,9 @@ from past.builtins import reduce, reload, unichr, unicode, xrange
 
 from future import standard_library
 from future.standard_library.test.support import TESTFN     #, run_unittest
+import tempfile
+import os
+TESTFN = tempfile.mkdtemp() + os.path.sep + TESTFN
 
 import platform
 import warnings
