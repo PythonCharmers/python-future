@@ -22,6 +22,7 @@ these standard locations on both Py2.6+ and Py3:
 
 """
 
+from future.utils import PY3
 from past.builtins.noniterators import (filter, map, range, reduce, zip)
 # from past.builtins.misc import (ascii, hex, input, oct, open)
 if PY3:
