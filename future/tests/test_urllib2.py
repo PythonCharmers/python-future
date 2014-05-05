@@ -1523,8 +1523,8 @@ class RequestTests(unittest.TestCase):
 
 def test_main(verbose=None):
     from test import test_urllib2
-    support.run_doctest(test_urllib2, verbose)
-    support.run_doctest(urllib_request, verbose)
+    # support.run_doctest(test_urllib2, verbose)
+    # support.run_doctest(urllib_request, verbose)
     tests = (TrivialTests,
              OpenerDirectorTests,
              HandlerTests,
