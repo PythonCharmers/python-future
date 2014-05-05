@@ -125,11 +125,18 @@ The second interface is via an explicit call to ``install_hooks``::
 
     standard_library.remove_hooks()
 
-It is a good idea to disable the import hooks again after use by calling
+It is recommended to disable the import hooks again after use by calling
 ``remove_hooks()``, in order to prevent the futurized modules from being invoked
 inadvertently by other modules. (Python does not automatically disable import
 hooks at the end of a module, but keeps them active indefinitely.)
-    
+
+**Requests**: Note that the `requests <http://docs.python-requests.org>`_ library in
+particular is currently incompatible with the import hooks in
+``future.standard_library``. If your code uses the import hooks feature, you
+must currently remove the import hooks before you (or users of your library)
+import ``requests``.
+
+
 The third interface avoids import hooks entirely. It may therefore be more
 robust, at the cost of less idiomatic code. Use it as follows::
 
@@ -142,15 +149,21 @@ If you wish to achieve the effect of a two-level import such as this::
 
     import http.client 
 
-portably on both Python 2 and Python 3, you can use this idiom::
+portably on both Python 2 and Python 3, note that 
+
+Python currently does not support syntax like this::
+
+    from future.standard_library import http.client
+
+One workaround is to replace the dot with an underscore::
+
+    import future.standard_library.http.client as http_client
+
+If you wish to avoid changing every reference to ``http.client`` to ``http_client`` in your code, an alternative idiom is this::
 
     from future.standard_library import http
     from future.standard_library.http import client as _client
     http.client = client
-
-This is ugly, Python currently does not support syntax like this::
-
-    from future.standard_library import http.client
 
 .. but it has the advantage that it can be used by automatic translation scripts such as ``futurize`` and ``pasteurize``.
 
