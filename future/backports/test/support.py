@@ -883,8 +883,8 @@ def check_syntax_error(testcase, statement):
                           '<test string>', 'exec')
 
 def open_urlresource(url, *args, **kw):
-    from future.standard_library.urllib import (request as urllib_request,
-                                                parse as urllib_parse)
+    from future.backports.urllib import (request as urllib_request,
+                                         parse as urllib_parse)
 
     check = kw.pop('check', None)
 

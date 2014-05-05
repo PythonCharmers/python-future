@@ -91,10 +91,10 @@ __version__ = "0.6"
 
 __all__ = ["HTTPServer", "BaseHTTPRequestHandler"]
 
-from future.standard_library import html
-from future.standard_library.http import client as http_client
-from future.standard_library.urllib import parse as urllib_parse
-from future.standard_library import socketserver
+from future.backports import html
+from future.backports.http import client as http_client
+from future.backports.urllib import parse as urllib_parse
+from future.backports import socketserver
 
 import io
 import mimetypes

@@ -13,8 +13,8 @@ from future.builtins import str
 """
 
 # Was: import urllib.parse, urllib.request
-from future.standard_library import urllib
-from future.standard_library.urllib import parse as _parse, request as _request
+from future.backports import urllib
+from future.backports.urllib import parse as _parse, request as _request
 urllib.parse = _parse
 urllib.request = _request
 

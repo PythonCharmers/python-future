@@ -6,10 +6,10 @@ import sys
 import ssl
 import pprint
 import socket
-from future.standard_library.urllib import parse as urllib_parse
-from future.standard_library.http.server import (HTTPServer as _HTTPServer,
+from future.backports.urllib import parse as urllib_parse
+from future.backports.http.server import (HTTPServer as _HTTPServer,
     SimpleHTTPRequestHandler, BaseHTTPRequestHandler)
-from future.standard_library.test import support
+from future.backports.test import support
 threading = support.import_module("threading")
 
 here = os.path.dirname(__file__)

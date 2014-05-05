@@ -110,10 +110,10 @@ from future.builtins import int, str
 # Written by Brian Quinlan (brian@sweetapp.com).
 # Based on code written by Fredrik Lundh.
 
-from future.standard_library.xmlrpc.client import Fault, dumps, loads, gzip_encode, gzip_decode
-from future.standard_library.http.server import BaseHTTPRequestHandler
-import future.standard_library.http.server as http_server
-from future.standard_library import socketserver
+from future.backports.xmlrpc.client import Fault, dumps, loads, gzip_encode, gzip_decode
+from future.backports.http.server import BaseHTTPRequestHandler
+import future.backports.http.server as http_server
+from future.backports import socketserver
 import sys
 import os
 import re

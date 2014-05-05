@@ -36,22 +36,22 @@ import time
 import base64
 import random
 import socket
-from future.standard_library import datetime
-from future.standard_library.urllib.parse import quote as url_quote, unquote as url_unquote
+from future.backports import datetime
+from future.backports.urllib.parse import quote as url_quote, unquote as url_unquote
 import warnings
 from io import StringIO
 
-from future.standard_library.email._parseaddr import quote
-from future.standard_library.email._parseaddr import AddressList as _AddressList
-from future.standard_library.email._parseaddr import mktime_tz
+from future.backports.email._parseaddr import quote
+from future.backports.email._parseaddr import AddressList as _AddressList
+from future.backports.email._parseaddr import mktime_tz
 
-from future.standard_library.email._parseaddr import parsedate, parsedate_tz, _parsedate_tz
+from future.backports.email._parseaddr import parsedate, parsedate_tz, _parsedate_tz
 
 from quopri import decodestring as _qdecode
 
 # Intrapackage imports
-from future.standard_library.email.encoders import _bencode, _qencode
-from future.standard_library.email.charset import Charset
+from future.backports.email.encoders import _bencode, _qencode
+from future.backports.email.charset import Charset
 
 COMMASPACE = ', '
 EMPTYSTRING = ''

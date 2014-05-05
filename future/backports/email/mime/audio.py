@@ -12,8 +12,8 @@ __all__ = ['MIMEAudio']
 import sndhdr
 
 from io import BytesIO
-from future.standard_library.email import encoders
-from future.standard_library.email.mime.nonmultipart import MIMENonMultipart
+from future.backports.email import encoders
+from future.backports.email.mime.nonmultipart import MIMENonMultipart
 
 
 _sndhdr_MIMEmap = {'au'  : 'basic',

@@ -6,12 +6,12 @@ import array
 import sys
 
 from future.standard_library import import_, install_aliases
-from future.standard_library.test import support
-import future.standard_library.urllib.request as urllib_request
+from future.backports.test import support
+import future.backports.urllib.request as urllib_request
 # The proxy bypass method imported below has logic specific to the OSX
 # proxy config data structure but is testable on all platforms.
-from future.standard_library.urllib.request import Request, OpenerDirector, _proxy_bypass_macosx_sysconf
-import future.standard_library.urllib.error as urllib_error
+from future.backports.urllib.request import Request, OpenerDirector, _proxy_bypass_macosx_sysconf
+import future.backports.urllib.error as urllib_error
 from future.tests.base import unittest
 from future.builtins import bytes, dict, int, open, str, zip
 from future.utils import text_to_native_str
@@ -30,15 +30,15 @@ class TrivialTests(unittest.TestCase):
         # Verify which names are exposed
         for module in 'request', 'response', 'parse', 'error', 'robotparser':
             context = {}
-            exec('from future.standard_library.urllib.%s import *' % module, context)
+            exec('from future.backports.urllib.%s import *' % module, context)
             del context['__builtins__']
             if module == 'request' and os.name == 'nt':
                 u, p = context.pop('url2pathname'), context.pop('pathname2url')
                 self.assertEqual(u.__module__, 'nturl2path')
                 self.assertEqual(p.__module__, 'nturl2path')
             for k, v in context.items():
-                self.assertEqual(v.__module__, 'future.standard_library.urllib.%s' % module,
-                    "%r is exposed in 'future.standard_library.urllib.%s' but defined in %r" %
+                self.assertEqual(v.__module__, 'future.backports.urllib.%s' % module,
+                    "%r is exposed in 'future.backports.urllib.%s' but defined in %r" %
                     (k, module, v.__module__))
 
     def test_trivial(self):
@@ -418,7 +418,7 @@ class MockHTTPHandler(urllib_request.BaseHandler):
         self._count = 0
         self.requests = []
     def http_open(self, req):
-        import future.standard_library.email as email
+        import future.backports.email as email
         from future import standard_library
         http = import_('http.client', backport=True)
         import copy
@@ -474,7 +474,7 @@ class OpenerDirectorTests(unittest.TestCase):
         # TypeError in real code; here, returning self from these mock
         # methods would either cause no exception, or AttributeError.
 
-        from future.standard_library.urllib.error import URLError
+        from future.backports.urllib.error import URLError
 
         o = OpenerDirector()
         meth_spec = [
@@ -699,7 +699,7 @@ class HandlerTests(unittest.TestCase):
             self.assertEqual(int(headers["Content-length"]), len(data))
 
     def test_file(self):
-        import future.standard_library.email.utils as email_utils
+        import future.backports.email.utils as email_utils
         import socket
         h = urllib_request.FileHandler()
         o = h.parent = MockOpener()
@@ -1086,7 +1086,7 @@ class HandlerTests(unittest.TestCase):
             self.assertEqual(o.req.get_full_url(), valid_url)
 
     def test_relative_redirect(self):
-        from future.standard_library.urllib import parse as urllib_parse
+        from future.backports.urllib import parse as urllib_parse
         from_url = "http://example.com/a.html"
         relative_url = "/b.html"
         h = urllib_request.HTTPRedirectHandler()
@@ -1101,7 +1101,7 @@ class HandlerTests(unittest.TestCase):
 
     def test_cookie_redirect(self):
         # cookies shouldn't leak into redirected requests
-        from future.standard_library.http.cookiejar import CookieJar
+        from future.backports.http.cookiejar import CookieJar
         from future.tests.test_http_cookiejar import interact_netscape
 
         cj = CookieJar()

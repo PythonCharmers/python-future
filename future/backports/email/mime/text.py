@@ -9,8 +9,8 @@ from __future__ import absolute_import
 
 __all__ = ['MIMEText']
 
-from future.standard_library.email.encoders import encode_7or8bit
-from future.standard_library.email.mime.nonmultipart import MIMENonMultipart
+from future.backports.email.encoders import encode_7or8bit
+from future.backports.email.mime.nonmultipart import MIMENonMultipart
 
 
 class MIMEText(MIMENonMultipart):

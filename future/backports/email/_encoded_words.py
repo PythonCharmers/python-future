@@ -51,7 +51,7 @@ import base64
 import binascii
 import functools
 from string import ascii_letters, digits
-from future.standard_library.email import errors
+from future.backports.email import errors
 
 __all__ = ['decode_q',
            'encode_q',

@@ -11,9 +11,9 @@ from future.builtins import str
 from future.utils import with_metaclass
 
 import abc
-from future.standard_library.email import header
-from future.standard_library.email import charset as _charset
-from future.standard_library.email.utils import _has_surrogates
+from future.backports.email import header
+from future.backports.email import charset as _charset
+from future.backports.email.utils import _has_surrogates
 
 __all__ = [
     'Policy',

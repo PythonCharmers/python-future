@@ -93,8 +93,8 @@ import bisect
 import hashlib
 import array
 
-from future.standard_library import email
-from future.standard_library.http import client as http_client
+from future.backports import email
+from future.backports.http import client as http_client
 from .error import URLError, HTTPError, ContentTooShortError
 from .parse import (
     urlparse, urlsplit, urljoin, unwrap, quote, unquote,
@@ -1331,7 +1331,7 @@ if hasattr(http_client, 'HTTPSConnection'):
 
 class HTTPCookieProcessor(BaseHandler):
     def __init__(self, cookiejar=None):
-        import future.standard_library.http.cookiejar as http_cookiejar
+        import future.backports.http.cookiejar as http_cookiejar
         if cookiejar is None:
             cookiejar = http_cookiejar.CookieJar()
         self.cookiejar = cookiejar
@@ -1430,7 +1430,7 @@ class FileHandler(BaseHandler):
 
     # not entirely sure what the rules are here
     def open_local_file(self, req):
-        import future.standard_library.email.utils as email_utils
+        import future.backports.email.utils as email_utils
         import mimetypes
         host = req.host
         filename = req.selector
@@ -1917,7 +1917,7 @@ class URLopener(object):
 
     def open_local_file(self, url):
         """Use local file."""
-        import future.standard_library.email.utils as email_utils
+        import future.backports.email.utils as email_utils
         import mimetypes
         host, file = splithost(url)
         localname = url2pathname(file)

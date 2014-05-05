@@ -4,7 +4,7 @@
 
 """Base class for MIME specializations."""
 from __future__ import absolute_import, division, unicode_literals
-from future.standard_library.email import message
+from future.backports.email import message
 
 __all__ = ['MIMEBase']
 

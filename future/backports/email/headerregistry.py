@@ -14,9 +14,9 @@ from __future__ import absolute_import
 from future.builtins import super
 from future.builtins import str
 from future.utils import text_to_native_str
-from future.standard_library.email import utils
-from future.standard_library.email import errors
-from future.standard_library.email import _header_value_parser as parser
+from future.backports.email import utils
+from future.backports.email import errors
+from future.backports.email import _header_value_parser as parser
 
 class Address(object):
 

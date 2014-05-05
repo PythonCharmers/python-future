@@ -10,12 +10,12 @@ from base64 import b64encode
 import collections
 
 from future.builtins import bytes, chr, hex, open, range, str, int
-from future.standard_library.urllib import parse as urllib_parse
-from future.standard_library.urllib import request as urllib_request
-from future.standard_library.urllib import error as urllib_error
-from future.standard_library.http import client as http_client
-from future.standard_library.test import support
-from future.standard_library.email import message as email_message
+from future.backports.urllib import parse as urllib_parse
+from future.backports.urllib import request as urllib_request
+from future.backports.urllib import error as urllib_error
+from future.backports.http import client as http_client
+from future.backports.test import support
+from future.backports.email import message as email_message
 from future.tests.base import unittest
 
 

@@ -9,8 +9,8 @@ from __future__ import absolute_import
 
 __all__ = ['MIMENonMultipart']
 
-from future.standard_library.email import errors
-from future.standard_library.email.mime.base import MIMEBase
+from future.backports.email import errors
+from future.backports.email.mime.base import MIMEBase
 
 
 class MIMENonMultipart(MIMEBase):

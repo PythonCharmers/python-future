@@ -17,11 +17,11 @@ from io import BytesIO, StringIO
 
 # Intrapackage imports
 from future.utils import as_native_str
-from future.standard_library.email import utils
-from future.standard_library.email import errors
-from future.standard_library.email._policybase import compat32
-from future.standard_library.email import charset as _charset
-from future.standard_library.email._encoded_words import decode_b
+from future.backports.email import utils
+from future.backports.email import errors
+from future.backports.email._policybase import compat32
+from future.backports.email import charset as _charset
+from future.backports.email._encoded_words import decode_b
 Charset = _charset.Charset
 
 SEMISPACE = '; '
@@ -149,7 +149,7 @@ class Message(object):
         as you intend.  For more flexibility, use the flatten() method of a
         Generator instance.
         """
-        from future.standard_library.email.generator import Generator
+        from future.backports.email.generator import Generator
         fp = StringIO()
         g = Generator(fp, mangle_from_=False, maxheaderlen=maxheaderlen)
         g.flatten(self, unixfrom=unixfrom)
@@ -879,4 +879,4 @@ class Message(object):
         return [part.get_content_charset(failobj) for part in self.walk()]
 
     # I.e. def walk(self): ...
-    from future.standard_library.email.iterators import walk
+    from future.backports.email.iterators import walk

@@ -19,10 +19,10 @@ import random
 import warnings
 
 from io import StringIO, BytesIO
-from future.standard_library.email._policybase import compat32
-from future.standard_library.email.header import Header
-from future.standard_library.email.utils import _has_surrogates
-import future.standard_library.email.charset as _charset
+from future.backports.email._policybase import compat32
+from future.backports.email.header import Header
+from future.backports.email.utils import _has_surrogates
+import future.backports.email.charset as _charset
 
 UNDERSCORE = '_'
 NL = '\n'  # XXX: no longer used by the code below.

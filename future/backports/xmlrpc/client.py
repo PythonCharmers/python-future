@@ -140,8 +140,8 @@ base64.decodebytes = base64.decodestring
 import sys
 import time
 from datetime import datetime
-from future.standard_library.http import client as http_client
-from future.standard_library.urllib import parse as urllib_parse
+from future.backports.http import client as http_client
+from future.backports.urllib import parse as urllib_parse
 from future.utils import ensure_new_type
 from xml.parsers import expat
 import socket

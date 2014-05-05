@@ -9,7 +9,7 @@ from __future__ import absolute_import
 
 __all__ = ['MIMEMultipart']
 
-from future.standard_library.email.mime.base import MIMEBase
+from future.backports.email.mime.base import MIMEBase
 
 
 class MIMEMultipart(MIMEBase):

@@ -17,9 +17,9 @@ __all__ = [
 
 from functools import partial
 
-from future.standard_library import email
-from future.standard_library.email import errors
-from future.standard_library.email.encoders import encode_7or8bit
+from future.backports import email
+from future.backports.email import errors
+from future.backports.email.encoders import encode_7or8bit
 
 
 # Flags for types of header encodings

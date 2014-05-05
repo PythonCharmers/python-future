@@ -7,8 +7,8 @@ from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
 
-from future.standard_library.email import encoders
-from future.standard_library.email.mime.nonmultipart import MIMENonMultipart
+from future.backports.email import encoders
+from future.backports.email.mime.nonmultipart import MIMENonMultipart
 
 __all__ = ["MIMEApplication"]
 

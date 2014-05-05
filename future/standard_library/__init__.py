@@ -21,6 +21,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import html, html.parser, html.entites
     import http, http.client, http.server
     import http.cookies, http.cookiejar
+    import urllib.parse, urllib.request, urllib.response, urllib.error
     import xmlrpc.client, xmlrpc.server
 
     import _thread
@@ -37,10 +38,6 @@ To turn off the import hooks, use::
 
     standard_library.remove_hooks()
 
-and to turn it on again, use::
-
-    standard_library.install_hooks()
-
 This is a cleaner alternative to this idiom (see
 http://docs.pythonsprints.com/python3_porting/py-porting.html)::
 
@@ -48,15 +45,6 @@ http://docs.pythonsprints.com/python3_porting/py-porting.html)::
         import queue
     except ImportError:
         import Queue as queue
-
-
-The ``urllib``, ``email``, ``test``, ``dbm``, and ``pickle`` modules have a
-different organization on Python 2 than on Python 3. To avoid ambiguity, these
-must be imported explicitly:
-
-    from future.standard_library.urllib import (request, parse,
-                                                error, robotparser)
-    from future.standard_library.test import support
 
 
 Limitations
@@ -171,7 +159,7 @@ RENAMES = {
            # 'dbm': 'dbm.ndbm',
            # 'gdbm': 'dbm.gnu',
            'future.moves.xmlrpc': 'xmlrpc',
-           # 'future.standard_library.email': 'email',    # for use by urllib
+           # 'future.backports.email': 'email',    # for use by urllib
            # 'DocXMLRPCServer': 'xmlrpc.server',
            # 'SimpleXMLRPCServer': 'xmlrpc.server',
            # 'httplib': 'http.client',
@@ -182,7 +170,7 @@ RENAMES = {
            # 'BaseHTTPServer': 'http.server',
            # 'SimpleHTTPServer': 'http.server',
            # 'CGIHTTPServer': 'http.server',
-           # 'future.standard_library.test': 'test',  # primarily for renaming test_support to support
+           # 'future.backports.test': 'test',  # primarily for renaming test_support to support
            # 'commands': 'subprocess',
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
@@ -191,7 +179,7 @@ RENAMES = {
            # 'future.utils.six.moves.http': 'http',
            'future.moves.html': 'html',
            'future.moves.http': 'http',
-           # 'future.standard_library.urllib': 'urllib',
+           # 'future.backports.urllib': 'urllib',
            # 'future.utils.six.moves.urllib': 'urllib',
            'future.moves._markupbase': '_markupbase',
           }
@@ -220,7 +208,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('base64', 'decodebytes','base64', 'decodestring'),
          ('subprocess', 'getoutput', 'commands', 'getoutput'),
          ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
-         ('math', 'ceil', 'future.standard_library.misc', 'ceil'),
+         ('math', 'ceil', 'future.backports.misc', 'ceil'),
 # This is no use, since "import urllib.request" etc. still fails:
 #          ('urllib', 'error', 'future.moves.urllib', 'error'),
 #          ('urllib', 'parse', 'future.moves.urllib', 'parse'),
@@ -715,13 +703,13 @@ def import_(module_name, backport=False):
 
     or to this if backport=True:
 
-        >>> from future.standard_library import module_name
+        >>> from future.backports import module_name
 
     except that it also handles dotted module names such as ``http.client``
     The effect then is like this:
 
-        >>> from future.standard_library import module
-        >>> from future.standard_library.module import submodule
+        >>> from future.backports import module
+        >>> from future.backports.module import submodule
         >>> module.submodule = submodule
 
     Note that this would be a SyntaxError in Python:
@@ -768,7 +756,9 @@ def from_import(module_name, *symbol_names, **kwargs):
 
     and this on Py2:
 
-        >>> from future.standard_library.module_name import symbol_names[0], ...
+        >>> from future.moves.module_name import symbol_names[0], ...
+    or:
+        >>> from future.backports.module_name import symbol_names[0], ...
 
     except that it also handles dotted module names such as ``http.client``.
     """

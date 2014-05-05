@@ -12,9 +12,9 @@ __all__ = ['Parser', 'HeaderParser', 'BytesParser', 'BytesHeaderParser']
 import warnings
 from io import StringIO, TextIOWrapper
 
-from future.standard_library.email.feedparser import FeedParser, BytesFeedParser
-from future.standard_library.email.message import Message
-from future.standard_library.email._policybase import compat32
+from future.backports.email.feedparser import FeedParser, BytesFeedParser
+from future.backports.email.message import Message
+from future.backports.email._policybase import compat32
 
 
 class Parser(object):

@@ -73,13 +73,13 @@ from __future__ import (absolute_import, division,
 from future.builtins import bytes, int, str, super
 from future.utils import PY2
 
-from future.standard_library.email import parser as email_parser
-from future.standard_library.email import message as email_message
+from future.backports.email import parser as email_parser
+from future.backports.email import message as email_message
 import io
 import os
 import socket
 import collections
-from future.standard_library.urllib.parse import urlsplit
+from future.backports.urllib.parse import urlsplit
 import warnings
 from array import array
 

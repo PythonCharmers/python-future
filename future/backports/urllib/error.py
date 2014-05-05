@@ -13,7 +13,7 @@ response.
 from __future__ import absolute_import, division, unicode_literals
 from future import standard_library
 
-from future.standard_library.urllib import response as urllib_response
+from future.backports.urllib import response as urllib_response
 
 
 __all__ = ['URLError', 'HTTPError', 'ContentTooShortError']

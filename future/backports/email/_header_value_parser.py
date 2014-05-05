@@ -75,10 +75,10 @@ from future.builtins import int, range, str, super, list
 import re
 from collections import namedtuple, OrderedDict
 
-from future.standard_library.urllib.parse import (unquote, unquote_to_bytes)
-from future.standard_library.email import _encoded_words as _ew
-from future.standard_library.email import errors
-from future.standard_library.email import utils
+from future.backports.urllib.parse import (unquote, unquote_to_bytes)
+from future.backports.email import _encoded_words as _ew
+from future.backports.email import errors
+from future.backports.email import utils
 
 #
 # Useful constants and functions

@@ -9,8 +9,8 @@ from __future__ import absolute_import
 
 __all__ = ['MIMEMessage']
 
-from future.standard_library.email import message
-from future.standard_library.email.mime.nonmultipart import MIMENonMultipart
+from future.backports.email import message
+from future.backports.email.mime.nonmultipart import MIMENonMultipart
 
 
 class MIMEMessage(MIMENonMultipart):

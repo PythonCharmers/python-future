@@ -10,10 +10,10 @@ import os
 import re
 import time
 from future.tests.base import unittest
-import future.standard_library.test.support as test_support
-import future.standard_library.urllib.request as urllib_request
+import future.backports.test.support as test_support
+import future.backports.urllib.request as urllib_request
 
-from future.standard_library.http.cookiejar import (time2isoz, http2time,
+from future.backports.http.cookiejar import (time2isoz, http2time,
      iso2time, time2netscape,
      parse_ns_headers, join_header_words, split_header_words, Cookie,
      CookieJar, DefaultCookiePolicy, LWPCookieJar, MozillaCookieJar,

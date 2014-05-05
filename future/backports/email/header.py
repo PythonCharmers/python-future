@@ -17,13 +17,13 @@ __all__ = [
 import re
 import binascii
 
-from future.standard_library import email
-from future.standard_library.email import base64mime
-from future.standard_library.email.errors import HeaderParseError
-import future.standard_library.email.charset as _charset
+from future.backports import email
+from future.backports.email import base64mime
+from future.backports.email.errors import HeaderParseError
+import future.backports.email.charset as _charset
 
 # Helpers
-from future.standard_library.email.quoprimime import _max_append, header_decode
+from future.backports.email.quoprimime import _max_append, header_decode
 
 Charset = _charset.Charset
 

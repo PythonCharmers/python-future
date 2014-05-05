@@ -43,8 +43,8 @@ import datetime
 import re
 re.ASCII = 0
 import time
-from future.standard_library.urllib.parse import urlparse, urlsplit, quote
-from future.standard_library.http.client import HTTP_PORT
+from future.backports.urllib.parse import urlparse, urlsplit, quote
+from future.backports.http.client import HTTP_PORT
 try:
     import threading as _threading
 except ImportError:

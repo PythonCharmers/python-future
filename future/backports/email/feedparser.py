@@ -28,9 +28,9 @@ __all__ = ['FeedParser', 'BytesFeedParser']
 
 import re
 
-from future.standard_library.email import errors
-from future.standard_library.email import message
-from future.standard_library.email._policybase import compat32
+from future.backports.email import errors
+from future.backports.email import message
+from future.backports.email._policybase import compat32
 
 NLCRE = re.compile('\r\n|\r|\n')
 NLCRE_bol = re.compile('(\r\n|\r|\n)')

@@ -11,8 +11,8 @@ __all__ = ['MIMEImage']
 
 import imghdr
 
-from future.standard_library.email import encoders
-from future.standard_library.email.mime.nonmultipart import MIMENonMultipart
+from future.backports.email import encoders
+from future.backports.email.mime.nonmultipart import MIMENonMultipart
 
 
 class MIMEImage(MIMENonMultipart):
