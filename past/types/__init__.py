@@ -10,10 +10,10 @@ if utils.PY2:
     __all__ = []
 else:
     from .basestring import basestring
-    from .olddict import olddict as dict
-    from .oldstr import oldstr as str
+    from .olddict import olddict
+    from .oldstr import oldstr
     long = int
     unicode = str
     # from .unicode import unicode
-    __all__ = ['basestring', 'dict', 'str', 'long', 'unicode']
+    __all__ = ['basestring', 'olddict', 'oldstr', 'long', 'unicode']
 
