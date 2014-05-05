@@ -21,7 +21,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import html, html.parser, html.entites
     import http, http.client, http.server
     import http.cookies, http.cookiejar
-    import urllib.parse, urllib.request, urllib.response, urllib.error
+    import urllib.parse, urllib.request, urllib.response, urllib.error, urllib.robotparser
     import xmlrpc.client, xmlrpc.server
 
     import _thread
@@ -547,14 +547,17 @@ def install_aliases():
     from future.moves.urllib import response
     from future.moves.urllib import parse
     from future.moves.urllib import error
+    from future.moves.urllib import robotparser
     urllib.request = request
     urllib.response = response
     urllib.parse = parse
     urllib.error = error
+    urllib.robotparser = robotparser
     sys.modules['urllib.request'] = request
     sys.modules['urllib.response'] = response
     sys.modules['urllib.parse'] = parse
     sys.modules['urllib.error'] = error
+    sys.modules['urllib.robotparser'] = robotparser
 
     from future.moves import http
     sys.modules['http'] = http
