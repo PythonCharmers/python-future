@@ -175,7 +175,9 @@ tests come from Python 3.3's test suite.
 Refactoring of ``future.standard_library.*`` -> ``future.backports``
 --------------------------------------------------------------------
 
-The backported modules have been moved to ``future.backports`` to make the distinction clearer between these and the new ``future.moves`` package.
+The backported standard library modules have been moved to ``future.backports``
+to make the distinction clearer between these and the new ``future.moves``
+package.
 
 
 Backported ``http.server`` and ``urllib`` modules
