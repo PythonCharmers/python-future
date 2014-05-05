@@ -572,7 +572,7 @@ def enable_hooks():
     install_hooks()
 
 
-def remove_hooks():
+def remove_hooks(scrub_sys_modules=True):
     """
     This function removes the import hook from sys.meta_path.
     """
@@ -583,9 +583,13 @@ def remove_hooks():
     for i, hook in list(enumerate(sys.meta_path))[::-1]:
         if hasattr(hook, 'RENAMER'):
             del sys.meta_path[i]
-    # Explicit is better than implicit. This now requires its own separate function call:
-    # if scrub_sys_modules:
-    #     scrub_future_sys_modules()
+
+    # Explicit is better than implicit. In the future the interface should
+    # probably change so that scrubbing the import hooks requires a separate
+    # function call. Left as is for now for backward compatibility with
+    # v0.11.x.
+    if scrub_sys_modules:
+        scrub_future_sys_modules()
 
 
 def disable_hooks():
