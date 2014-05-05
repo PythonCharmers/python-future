@@ -25,7 +25,8 @@ explicitly, as follows::
         ...
 
 This now causes these modules to be imported from ``future.moves``, a new
-package that imports symbols from the native standard library modules.
+package that provides wrappers over the native Python 2 standard library with
+the new Python 3 organization.
 
 The functional interface is now deprecated but still supported for backwards
 compatibility::
@@ -171,16 +172,22 @@ The number of unit tests has increased from 600 to over 800. Most of the new
 tests come from Python 3.3's test suite.
 
 
+Refactoring of ``future.standard_library.*`` -> ``future.backports``
+--------------------------------------------------------------------
+
+The backported modules have been moved to ``future.backports`` to make the distinction clearer between these and the new ``future.moves`` package.
+
+
 Backported ``http.server`` and ``urllib`` modules
 -------------------------------------------------
 
 Alpha versions of backports of the ``http.server`` and ``urllib`` module from
-Python 3.3's standard library are now provided in ``future.standard_library``.
+Python 3.3's standard library are now provided in ``future.backports``.
 
 Use them like this::
 
-    from future.standard_library.urllib.request import Request    # etc.
-    from future.standard_library.http import server as http_server
+    from future.backports.urllib.request import Request    # etc.
+    from future.backports.http import server as http_server
 
 or with this new interface::
 
@@ -220,15 +227,14 @@ Many small improvements and fixes have been made across the project. Some highli
 - Fixes and updates from Python 3.3.5 have been included in the backported
   standard library modules.
 
-- ``http.client`` module and related modules use the new backported modules
-  such as ``email``. As a result they are more compliant with the Python 3.3
-  equivalents.
-
 - Scrubbing of the ``sys.modules`` cache performed by ``remove_hooks()`` (also
   called by the ``suspend_hooks`` and ``hooks`` context managers) is now more
-  conservative. It now removes only modules with Py3 names (such as
-  ``urllib.parse``) and not the corresponding ``future.standard_library.*``
-  modules (such as ``future.standard_library.urllib.parse``.
+  conservative.
+  
+..  Is this still true?
+..  It now removes only modules with Py3 names (such as
+..  ``urllib.parse``) and not the corresponding ``future.standard_library.*``
+..  modules (such as ``future.standard_library.urllib.parse``.
 
 - The ``fix_next`` and ``fix_reduce`` fixers have been moved to stage 1 of
   ``futurize``.
@@ -242,6 +248,10 @@ Many small improvements and fixes have been made across the project. Some highli
 - The ``future.utils.bytes_to_native_str`` function now returns a ``newbytes``
   object on Py2. (`Issue #47
   <https://github.com/PythonCharmers/python-future/issues/47>`_).
+
+- The backported ``http.client`` module and related modules use other new
+  backported modules such as ``email``. As a result they are more compliant
+  with the Python 3.3 equivalents.
 
 
 .. whats-new-0.11.5:
