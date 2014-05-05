@@ -7,8 +7,9 @@ What's new
 What's new in version 0.12
 ==========================
 
-The major new feature in this version is improvements in the standard library module
-and its compatibility with 3rd-party modules.
+The major new feature in this version is improvements in the support for the
+reorganized standard library (PEP 3108) and compatibility of the import
+mechanism with 3rd-party modules.
 
 Standard-library import hooks now require explicit installation
 ---------------------------------------------------------------
@@ -23,7 +24,11 @@ explicitly, as follows::
         import http.client
         ...
 
-or with the functional interface::
+This now causes these modules to be imported from ``future.moves``, a new
+package that imports symbols from the native standard library modules.
+
+The functional interface is now deprecated but still supported for backwards
+compatibility::
 
     from future import standard_library
     standard_library.install_hooks():
@@ -76,21 +81,6 @@ tools like ``py2exe``.
 .. the Python 3.3
 .. modules but remappings to the corresponding
 .. functionality in the Python 2.x standard library.
-
-
-New ``http.server`` and ``urllib`` modules
-------------------------------------------
-
-Backports of the ``http.server`` and ``urllib`` module from Python
-3.3's standard library are now provided in ``future.standard_library``.
-
-Use them like this::
-
-    from future.standard_library.urllib.request import Request    # etc.
-    from future.standard_library.http import server as http_server
-
-..    from future.standard_library.email import message_from_bytes  # etc.
-..    from future.standard_library.xmlrpc import client, server
 
 
 ``newobject`` base object defines fallback Py2-compatible special methods
@@ -179,6 +169,28 @@ Tests
 
 The number of unit tests has increased from 600 to over 900. Most of the new
 tests come from Python 3.3's test suite.
+
+
+Backported ``http.server`` and ``urllib`` modules
+-------------------------------------------------
+
+Alpha versions of backports of the ``http.server`` and ``urllib`` module from
+Python 3.3's standard library are now provided in ``future.standard_library``.
+
+Use them like this::
+
+    from future.standard_library.urllib.request import Request    # etc.
+    from future.standard_library.http import server as http_server
+
+or with this new interface::
+
+    from future.standard_library import import_, import_from
+
+    Request = import_from('urllib.request', 'Request', backport=True)
+    http = import_('http.server', backport=True)
+
+..    from future.standard_library.email import message_from_bytes  # etc.
+..    from future.standard_library.xmlrpc import client, server
 
 
 Internal refactoring
