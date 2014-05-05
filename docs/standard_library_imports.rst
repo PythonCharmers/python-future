@@ -25,6 +25,7 @@ The first interface is via a context-manager called ``hooks``::
         from collections import UserList
         from itertools import filterfalse, zip_longest
         from http.client import HttpConnection
+        import urllib.request
         # and other moved modules and definitions
 
 Direct interface

@@ -6,6 +6,7 @@ from future.utils import PY3
 if PY3:
     from urllib.request import *
 else:
+    __future_module__ = True
     with suspend_hooks():
         from urllib import *
         from urllib2 import *

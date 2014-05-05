@@ -290,6 +290,7 @@ class RenameImport(object):
             # New name. Look up the corresponding old (Py2) name:
             oldname = self.new_to_old[name]
             module = self._find_and_load_module(oldname)
+            module.__future_module__ = True
         else:
             module = self._find_and_load_module(name)
         # In any case, make it available under the requested (Py3) name
@@ -464,7 +465,8 @@ def scrub_future_sys_modules():
         # We look for builtins, configparser, urllib, email, http, etc., and
         # their submodules
         if (modulename in RENAMES.values() or
-            any(modulename.startswith(m + '.') for m in RENAMES.values())):
+            any(modulename.startswith(m + '.') for m in RENAMES.values()) or
+            'urllib' in modulename):
 
             if module is None:
                 # This happens for e.g. __future__ imports. Delete it.
@@ -473,11 +475,19 @@ def scrub_future_sys_modules():
                 del sys.modules[modulename]
                 continue
 
-            logging.debug('Deleting (future) {0} from sys.modules'
-                          .format(modulename))
-
-            scrubbed[modulename] = sys.modules[modulename]
-            del sys.modules[modulename]
+            # Not all modules come from future.moves. Example:
+            # sys.modules['builtins'] == <module '__builtin__' (built-in)>
+            p = os.path.join('future', 'moves', modulename.replace('.', os.sep))
+            # six.moves doesn't have a __file__ attribute:
+            if (hasattr(module, '__file__') and p in module.__file__ or
+                hasattr(module, '__future_module__')):
+                logging.debug('Deleting (future) {0} {1} from sys.modules'
+                              .format(modulename, module))
+                scrubbed[modulename] = sys.modules[modulename]
+                del sys.modules[modulename]
+            else:
+                logging.debug('Not deleting {0} {1} from sys.modules'
+                              .format(modulename, module))
     return scrubbed
 
 
@@ -536,12 +546,38 @@ def install_aliases():
         # We look up the module in sys.modules because __import__ just returns the
         # top-level package:
         newmod = sys.modules[newmodname]
+        newmod.__future_module__ = True
 
         __import__(oldmodname)
         oldmod = sys.modules[oldmodname]
 
         obj = getattr(oldmod, oldobjname)
         setattr(newmod, newobjname, obj)
+
+    # Hack for urllib so it appears to have the same structure on Py2 as on Py3
+    import urllib
+    from future.moves.urllib import request
+    from future.moves.urllib import response
+    from future.moves.urllib import parse
+    from future.moves.urllib import error
+    urllib.request = request
+    urllib.response = response
+    urllib.parse = parse
+    urllib.error = error
+    sys.modules['urllib.request'] = request
+    sys.modules['urllib.response'] = response
+    sys.modules['urllib.parse'] = parse
+    sys.modules['urllib.error'] = error
+
+    from future.moves import http
+    sys.modules['http'] = http
+
+    from future.moves import xmlrpc
+    sys.modules['xmlrpc'] = xmlrpc
+
+    from future.moves import html
+    sys.modules['html'] = html
+
     # install_aliases.run_already = True
 
 

@@ -882,7 +882,7 @@ class TestFuturizeStage1(CodeHandler):
     def test_issue_45(self):
         """
         Tests whether running futurize -f libfuturize.fixes.fix_future_standard_library_urllib
-        on the code below causes a ValuError (issue #45).
+        on the code below causes a ValueError (issue #45).
         """
         code = r"""
             from __future__ import print_function
