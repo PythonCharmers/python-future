@@ -183,6 +183,30 @@ class TestStr(unittest.TestCase):
         with self.assertRaises(TypeError):
             s.join(byte_strings2)
 
+    def test_str_join_staticmethod(self):
+        """
+        Issue #33
+        """
+        c = str.join('-', ['a', 'b'])
+        self.assertEqual(c, 'a-b')
+        self.assertEqual(type(c), str)
+
+    def test_str_join_staticmethod_workaround_1(self):
+        """
+        Issue #33
+        """
+        c = str('-').join(['a', 'b'])
+        self.assertEqual(c, 'a-b')
+        self.assertEqual(type(c), str)
+
+    def test_str_join_staticmethod_workaround_2(self):
+        """
+        Issue #33
+        """
+        c = str.join(str('-'), ['a', 'b'])
+        self.assertEqual(c, 'a-b')
+        self.assertEqual(type(c), str)
+
     def test_str_replace(self):
         s = str('ABCD')
         c = s.replace('A', 'F')
