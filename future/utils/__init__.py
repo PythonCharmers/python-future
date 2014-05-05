@@ -160,38 +160,45 @@ if PY3:
 else:
     # Python 2
     def tobytes(s):
-        '''
-        Encodes to latin-1 (where the first 256 chars are the same as
-        ASCII.)
-        '''
         if isinstance(s, unicode):
             return s.encode('latin-1')
         else:
             return ''.join(s)
 
+tobytes.__doc__ = """
+    Encodes to latin-1 (where the first 256 chars are the same as
+    ASCII.)
+    """
+
 if PY3:
-    def native_str_to_bytes(s, encoding='ascii'):
+    def native_str_to_bytes(s, encoding='utf-8'):
         return s.encode(encoding)
 
-    def bytes_to_native_str(b, encoding='ascii'):
+    def bytes_to_native_str(b, encoding='utf-8'):
         return b.decode(encoding)
 
-    def text_to_native_str(b, encoding='ascii'):
-        return b
+    def text_to_native_str(t, encoding=None):
+        return t
 else:
     # Python 2
-    def native_str_to_bytes(s, encoding='ascii'):
-        return s
+    def native_str_to_bytes(s, encoding=None):
+        from future.types import newbytes    # to avoid a circular import
+        return newbytes(s)
 
-    def bytes_to_native_str(b, encoding='ascii'):
-        return b
+    def bytes_to_native_str(b, encoding=None):
+        return native(b)
 
-    def text_to_native_str(b, encoding='ascii'):
+    def text_to_native_str(t, encoding='ascii'):
         """
         Use this to create a Py2 native string when "from __future__ import
         unicode_literals" is in effect.
         """
-        return b.encode(encoding)
+        return unicode(t).encode(encoding)
+
+native_str_to_bytes.__doc__ = """
+    On Py3, returns an encoded string.
+    On Py2, returns a newbytes type, ignoring the ``encoding`` argument.
+    """
 
 if PY3:
     # list-producing versions of the major Python iterating functions
