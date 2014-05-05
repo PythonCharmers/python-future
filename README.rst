@@ -29,7 +29,7 @@ Features
     standard library
 
 -   ``future.moves`` package provides support for reorganized standard library
-    modules (renames, not backports)
+    modules (renames from native packages)
 
 -   ``past.builtins`` package provides forward-ports of Python 2 types and
     resurrects some Python 2 builtins (to aid with per-module code migrations)
@@ -138,7 +138,7 @@ hooks. The context-manager form works like this::
         import queue
 
 
-Automatic conversion to Py3/2-compatible code
+Automatic conversion to Py2/3-compatible code
 =============================================
 
 ``future`` comes with two scripts called ``futurize`` and
