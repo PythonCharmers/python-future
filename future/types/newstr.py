@@ -150,7 +150,11 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
             # isinstance(b'abc', newbytes) is True on Py2.
             if isnewbytes(item):
                 raise TypeError(errmsg.format(i))
-        return newstr(super(newstr, self).join(iterable))
+        # Support use as a staticmethod: str.join('-', ['a', 'b'])
+        if type(self) == newstr:
+            return newstr(super(newstr, self).join(iterable))
+        else:
+            return newstr(super(newstr, newstr(self)).join(iterable))
 
     @no('newbytes')
     def find(self, sub, *args):
