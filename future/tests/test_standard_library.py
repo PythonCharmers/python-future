@@ -36,11 +36,10 @@ class TestStandardLibraryRenames(CodeHandler):
 
         import future.moves.urllib.parse as urllib_parse
         import future.moves.urllib.request as urllib_request
-        from future.moves.test import support
 
         with standard_library.hooks():
             import http.server
-        for m in [urllib_parse, urllib_request, http.server, support]:
+        for m in [urllib_parse, urllib_request, http.server]:
             self.assertTrue(m is not None)
 
     def test_is_py2_stdlib_module(self):

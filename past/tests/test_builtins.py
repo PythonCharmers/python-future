@@ -7,7 +7,7 @@ from past.builtins import apply, cmp, execfile, intern, raw_input
 from past.builtins import reduce, reload, unichr, unicode, xrange
 
 from future import standard_library
-from future.moves.test.support import TESTFN     #, run_unittest
+from future.backports.test.support import TESTFN     #, run_unittest
 import tempfile
 import os
 TESTFN = tempfile.mkdtemp() + os.path.sep + TESTFN
