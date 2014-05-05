@@ -89,10 +89,9 @@ class urlopenNetworkTests(unittest.TestCase):
                                   "instance of email_message.Message")
             self.assertEqual(info_obj.get_content_subtype(), "html")
 
-    @unittest.skipIf(utils.PY2, 'Py2 changes the url to https://www.python.org...')
     def test_geturl(self):
         # Make sure same URL as opened is returned by geturl.
-        URL = "http://www.python.org/"
+        URL = "https://www.python.org/"    # EJS: changed recently from http:// ?!
         with self.urlopen(URL) as open_url:
             gotten_url = open_url.geturl()
             self.assertEqual(gotten_url, URL)
