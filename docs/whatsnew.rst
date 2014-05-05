@@ -7,14 +7,14 @@ What's new
 What's new in version 0.12
 ==========================
 
-The major new feature in version is improvements in the standard library module
+The major new feature in this version is improvements in the standard library module
 and its compatibility with 3rd-party modules.
 
 Standard-library import hooks now require explicit installation
 ---------------------------------------------------------------
 
 *Note: backwards-incompatible change:* As previously announced (see
-:ref:`deprecated-auto-import-hooks`), the import hooks must now be installed
+:ref:`deprecated-auto-import-hooks`), the import hooks must now be enabled
 explicitly, as follows::
 
     from future import standard_library
@@ -37,8 +37,6 @@ This allows finer-grained control over whether import hooks are enabled for
 other imported modules, such as ``requests``, which provide their own Python
 2/3 compatibility code. This also improves compatibility of ``future`` with
 tools like ``py2exe``.
-
-.. (see `issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`).
 
 
 .. Versioned standard library imports
@@ -158,10 +156,22 @@ There is a new ``list`` type in ``future.builtins`` that offers ``.copy()`` and
 ``.clear()`` methods like the ``list`` type in Python 3.
 
 
+``listvalues`` and ``listitems``
+--------------------------------
+
+``future.utils`` now contains helper functions ``listvalues`` and
+``listitems``, which provide Python 2-style list snapshotting semantics for
+dictionaries in both Python 2 and Python 3.
+
+These came out of the discussion around Nick Coghlan's now-withdrawn PEP 469.
+
+There is no corresponding ``listkeys(d)`` function. Use ``list(d)`` for this case.
+
+
 Tests
 -----
 
-The number of unit tests has increased from 600 to over 2000. Most of the new
+The number of unit tests has increased from 600 to over 900. Most of the new
 tests come from Python 3.3's test suite.
 
 
@@ -208,6 +218,8 @@ Many small improvements and fixes have been made across the project. Some highli
 - ``futurize``: Shebang lines such as ``#!/usr/bin/env python`` and source code
   file encoding declarations like ``# -*- coding=utf-8 -*-`` are no longer occasionally
   displaced by ``from __future__ import ...`` statements.
+
+- Improved compatibility with py2exe (`issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`).
 
 
 .. whats-new-0.11.5:
