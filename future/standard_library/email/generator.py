@@ -397,7 +397,7 @@ class BytesGenerator(Generator):
     _encoded_EMPTY = b''
 
     def write(self, s):
-        self._fp.write(s.encode('ascii', 'surrogateescape'))
+        self._fp.write(str(s).encode('ascii', 'surrogateescape'))
 
     def _new_buffer(self):
         return BytesIO()

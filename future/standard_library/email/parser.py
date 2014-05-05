@@ -17,7 +17,6 @@ from future.standard_library.email.message import Message
 from future.standard_library.email._policybase import compat32
 
 
-
 class Parser(object):
     def __init__(self, _class=Message, **_3to2kwargs):
         """Parser of RFC 2822 and MIME email messages.

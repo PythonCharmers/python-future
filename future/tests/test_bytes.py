@@ -168,6 +168,18 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(b4, b'ZYXWABCD')
         self.assertTrue(isinstance(b4, bytes))
 
+    def test_find_not_found(self):
+        self.assertEqual(-1, bytes(b'ABCDE').find(b':'))
+
+    def test_find_found(self):
+        self.assertEqual(2, bytes(b'AB:CD:E').find(b':'))
+
+    def test_rfind_not_found(self):
+        self.assertEqual(-1, bytes(b'ABCDE').rfind(b':'))
+
+    def test_rfind_found(self):
+        self.assertEqual(5, bytes(b'AB:CD:E').rfind(b':'))
+
     def test_bytes_join_bytes(self):
         b = bytes(b' * ')
         strings = [b'AB', b'EFGH', b'IJKL']
@@ -463,6 +475,37 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(b1, b'\xfe\xff')
         with self.assertRaises(ValueError):
             b2 = bytes([254, 255, 256])
+
+    def test_bytes_hasattr_encode(self):
+        """
+        This test tests whether hasattr(b, 'encode') is False, like it is on Py3.
+        """
+        b = bytes(b'abcd')
+        self.assertFalse(hasattr(b, 'encode'))
+        self.assertTrue(hasattr(b, 'decode'))
+
+    def test_quote_from_bytes(self):
+        """
+        This test was failing in the backported urllib.parse module in quote_from_bytes
+        """
+        empty = bytes([])
+        self.assertEqual(empty, b'')
+        self.assertTrue(type(empty), bytes)
+
+        empty2 = bytes(())
+        self.assertEqual(empty2, b'')
+        self.assertTrue(type(empty2), bytes)
+
+        safe = bytes(u'Philosopher guy: 孔子. More text here.'.encode('utf-8'))
+        safe = bytes([c for c in safe if c < 128])
+        self.assertEqual(safe, b'Philosopher guy: . More text here.')
+        self.assertTrue(type(safe), bytes)
+
+    def test_rstrip(self):
+        b = bytes(b'abcd')
+        c = b.rstrip(b'd')
+        self.assertEqual(c, b'abc')
+        self.assertEqual(type(c), type(b))
 
 
 if __name__ == '__main__':

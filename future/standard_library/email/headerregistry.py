@@ -13,6 +13,7 @@ from __future__ import absolute_import
 
 from future.builtins import super
 from future.builtins import str
+from future.utils import text_to_native_str
 from future.standard_library.email import utils
 from future.standard_library.email import errors
 from future.standard_library.email import _header_value_parser as parser
@@ -200,7 +201,7 @@ class BaseHeader(str):
         if utils._has_surrogates(kwds['decoded']):
             kwds['decoded'] = utils._sanitize(kwds['decoded'])
         self = str.__new__(cls, kwds['decoded'])
-        del kwds['decoded']
+        # del kwds['decoded']
         self.init(name, **kwds)
         return self
 
@@ -261,7 +262,7 @@ class BaseHeader(str):
 
 
 def _reconstruct_header(cls_name, bases, value):
-    return type(cls_name, bases, {})._reconstruct(value)
+    return type(text_to_native_str(cls_name), bases, {})._reconstruct(value)
 
 
 class UnstructuredHeader(object):
@@ -452,9 +453,9 @@ class ParameterizedMIMEHeader(object):
             kwds['params'] = {}
         else:
             # The MIME RFCs specify that parameter ordering is arbitrary.
-            kwds['params'] = {utils._sanitize(name).lower():
-                                    utils._sanitize(value)
-                               for name, value in parse_tree.params}
+            kwds['params'] = dict((utils._sanitize(name).lower(),
+                                   utils._sanitize(value))
+                                  for name, value in parse_tree.params)
 
     def init(self, *args, **kw):
         self._params = kw.pop('params')
@@ -576,7 +577,7 @@ class HeaderRegistry(object):
 
     def __getitem__(self, name):
         cls = self.registry.get(name.lower(), self.default_class)
-        return type('_'+cls.__name__, (cls, self.base_class), {})
+        return type(text_to_native_str('_'+cls.__name__), (cls, self.base_class), {})
 
     def __call__(self, name, value):
         """Create a header instance for header 'name' from 'value'.

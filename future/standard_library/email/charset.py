@@ -17,9 +17,7 @@ __all__ = [
 
 from functools import partial
 
-import future.standard_library.email.base64mime
-import future.standard_library.email.quoprimime
-
+from future.standard_library import email
 from future.standard_library.email import errors
 from future.standard_library.email.encoders import encode_7or8bit
 
@@ -159,6 +157,7 @@ def add_codec(charset, codecname):
 # Convenience function for encoding strings, taking into account
 # that they might be unknown-8bit (ie: have surrogate-escaped bytes)
 def _encode(string, codec):
+    string = str(string)
     if codec == UNKNOWN8BIT:
         return string.encode('ascii', 'surrogateescape')
     else:

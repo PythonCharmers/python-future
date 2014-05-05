@@ -85,46 +85,43 @@ be accessed under their Python 3 names and locations in Python 2::
         import socketserver
         import queue
         import configparser
-        import test.support
-        import html.parser
         from collections import UserList
         from itertools import filterfalse, zip_longest
-        from http.client import HttpConnection
-        # and other moved modules and definitions
 
-:mod:`future` also includes backports for these stdlib modules from Py3
-that were heavily refactored versus Py2::
-    
-    import html
-    import html.entities
-    import html.parser
+        import html
+        import html.entities
+        import html.parser
 
-    import http
-    import http.client
-    import http.server
-    import http.cookies
-    import http.cookiejar
+        import http
+        import http.client
+        import http.server
+        import http.cookies
+        import http.cookiejar
 
-    import urllib
-    import urllib.parse
-    import urllib.request
-    import urllib.error
+        import xmlrpc.client
+        import xmlrpc.server
 
-    import xmlrpc.client
-    import xmlrpc.server
+``urllib`` currently requires an explicit import because the name clashes with
+that on Python 2 and because Python's syntax does not allow imports of this
+form with a dotted module name after ``as``::
 
+    import future.moves.urllib.parse as urllib.parse
 
-The following modules are currently not supported, but we aim to support them in
-the future::
-    
-If you need one of these, please open an issue `here
-<https://github.com/PythonCharmers/python-future>`_.
+For submodules of ``urllib`` and other packages (like ``http``), this
+alternative form is available::
 
-For other forms of imports from the standard library, see
-:ref:`standard-library-imports`.
+    from future.standard_library import import_
 
-For more information on interfaces that have changed in the standard library
-between Python 2 and Python 3, see :ref:`stdlib-incompatibilities`.
+    urllib = import_('urllib')
+    import_('urllib.parse')
+    import_('urllib.request')
+    import_('urllib.error')
+
+    response = urllib.request.urlopen('http://mywebsite.com')
+    # etc.
+
+For an explanation of these and other forms of imports from the standard
+library, see :ref:`standard-library-imports`.
 
 
 .. _py2-dependencies:
@@ -155,6 +152,7 @@ how well this works or doesn't work for you. Please file an issue `here
 mailing list.
 
 For more information on the automatic translation feature, see :ref:`translation`.
+
 
 Next steps
 ----------

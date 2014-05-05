@@ -96,17 +96,6 @@ from future.standard_library.http import client as http_client
 from future.standard_library.urllib import parse as urllib_parse
 from future.standard_library import socketserver
 
-# with standard_library.hooks():
-#     import html
-#     import email.message
-#     import email.parser
-#     import http.client
-#     # (Old message? Is this resolved now?)
-#     #     Something bizarre sometimes happens to cause the client submodule to
-#     #     disappear from http after a successful import when run under the Py2.7 unittest runner.
-#     #     TODO: investigate this!
-#     import socketserver
-#     import urllib.parse
 import io
 import mimetypes
 import os

@@ -22,8 +22,6 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import http, http.client, http.server
     import http.cookies, http.cookiejar
     import xmlrpc.client, xmlrpc.server
-    import urllib.request, urllib.parse
-    import urllib.error, urllib.robotparser
 
     import _thread
     import _dummythread
@@ -31,7 +29,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
 
     from itertools import filterfalse, zip_longest
     from sys import intern
-    
+
 (The renamed modules and functions are still available under their old
 names on Python 2.)
 
@@ -52,6 +50,15 @@ http://docs.pythonsprints.com/python3_porting/py-porting.html)::
         import Queue as queue
 
 
+The ``urllib``, ``email``, ``test``, ``dbm``, and ``pickle`` modules have a
+different organization on Python 2 than on Python 3. To avoid ambiguity, these
+must be imported explicitly:
+
+    from future.standard_library.urllib import (request, parse,
+                                                error, robotparser)
+    from future.standard_library.test import support
+
+
 Limitations
 -----------
 We don't currently support these modules, but would like to::
@@ -70,7 +77,7 @@ This module only supports Python 2.6, Python 2.7, and Python 3.1+.
 
 The following renames are already supported on Python 2.7 without any
 additional work from us::
-    
+
     reload() -> imp.reload()
     reduce() -> functools.reduce()
     StringIO.StringIO -> io.StringIO
@@ -97,8 +104,9 @@ import contextlib
 import types
 import copy
 import os
+import importlib
 
-from future import utils
+from future.utils import PY2, PY3
 
 # The modules that are defined under the same names on Py3 but with
 # different contents in a significant way (e.g. submodules) are:
@@ -108,7 +116,7 @@ from future import utils
 #   test
 #   email
 
-REPLACED_MODULES = set(['test', 'urllib', 'pickle', 'email'])  # add dbm when we support it
+REPLACED_MODULES = set(['test', 'urllib', 'pickle'])  # add email and dbm when we support it
 
 # The following module names are not present in Python 2.x, so they cause no
 # potential clashes:
@@ -134,7 +142,7 @@ RENAMES = {
            '__builtin__': 'builtins',
            'copy_reg': 'copyreg',
            'Queue': 'queue',
-           'future.standard_library.socketserver': 'socketserver',
+           'future.moves.socketserver': 'socketserver',
            'ConfigParser': 'configparser',
            'repr': 'reprlib',
            # 'FileDialog': 'tkinter.filedialog',
@@ -155,15 +163,15 @@ RENAMES = {
            '_winreg': 'winreg',
            'thread': '_thread',
            'dummy_thread': '_dummy_thread',
-           # 'anydbm': 'dbm',   # causes infinite import loop 
-           # 'whichdb': 'dbm',  # causes infinite import loop 
+           # 'anydbm': 'dbm',   # causes infinite import loop
+           # 'whichdb': 'dbm',  # causes infinite import loop
            # anydbm and whichdb are handled by fix_imports2
            # 'dbhash': 'dbm.bsd',
            # 'dumbdbm': 'dbm.dumb',
            # 'dbm': 'dbm.ndbm',
            # 'gdbm': 'dbm.gnu',
-           'future.standard_library.xmlrpc': 'xmlrpc',
-           'future.standard_library.email': 'email',    # for use by urllib
+           'future.moves.xmlrpc': 'xmlrpc',
+           # 'future.standard_library.email': 'email',    # for use by urllib
            # 'DocXMLRPCServer': 'xmlrpc.server',
            # 'SimpleXMLRPCServer': 'xmlrpc.server',
            # 'httplib': 'http.client',
@@ -174,38 +182,73 @@ RENAMES = {
            # 'BaseHTTPServer': 'http.server',
            # 'SimpleHTTPServer': 'http.server',
            # 'CGIHTTPServer': 'http.server',
-           'future.standard_library.test': 'test',  # primarily for renaming test_support to support
+           # 'future.standard_library.test': 'test',  # primarily for renaming test_support to support
            # 'commands': 'subprocess',
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
            # 'abc': 'collections.abc',   # for Py33
-           'future.standard_library.html': 'html',
-           'future.standard_library.http': 'http',
-           # 'future.standard_library.moves.urllib': 'urllib',
-           'future.standard_library.urllib': 'urllib',
-           'future.standard_library._markupbase': '_markupbase',
+           # 'future.utils.six.moves.html': 'html',
+           # 'future.utils.six.moves.http': 'http',
+           'future.moves.html': 'html',
+           'future.moves.http': 'http',
+           # 'future.standard_library.urllib': 'urllib',
+           # 'future.utils.six.moves.urllib': 'urllib',
+           'future.moves._markupbase': '_markupbase',
           }
 
 
-class WarnOnImport(object):
-    def __init__(self, *args):
-        self.module_names = args
- 
-    def find_module(self, fullname, path=None):
-        if fullname in self.module_names:
-            self.path = path
-            return self
-        return None
- 
-    def load_module(self, name):
-        if name in sys.modules:
-            return sys.modules[name]
-        module_info = imp.find_module(name, self.path)
-        module = imp.load_module(name, *module_info)
-        sys.modules[name] = module
- 
-        logging.warning("Imported deprecated module %s", name)
-        return module
+# It is complicated and apparently brittle to mess around with the
+# ``sys.modules`` cache in order to support "import urllib" meaning two
+# different things (Py2.7 urllib and backported Py3.3-like urllib) in different
+# contexts. So we require explicit imports for these modules.
+assert len(set(RENAMES.values()) & set(REPLACED_MODULES)) == 0
+
+
+# Harmless renames that we can insert.
+# (New module name, new object name, old module name, old object name)
+MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
+         ('collections', 'UserDict', 'UserDict', 'UserDict'),
+         ('collections', 'UserString','UserString', 'UserString'),
+         ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
+         ('itertools', 'zip_longest','itertools', 'izip_longest'),
+         ('sys', 'intern','__builtin__', 'intern'),
+         # The re module has no ASCII flag in Py2, but this is the default.
+         # Set re.ASCII to a zero constant. stat.ST_MODE just happens to be one
+         # (and it exists on Py2.6+).
+         ('re', 'ASCII','stat', 'ST_MODE'),
+         ('base64', 'encodebytes','base64', 'encodestring'),
+         ('base64', 'decodebytes','base64', 'decodestring'),
+         ('subprocess', 'getoutput', 'commands', 'getoutput'),
+         ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
+         ('math', 'ceil', 'future.standard_library.misc', 'ceil'),
+# This is no use, since "import urllib.request" etc. still fails:
+#          ('urllib', 'error', 'future.moves.urllib', 'error'),
+#          ('urllib', 'parse', 'future.moves.urllib', 'parse'),
+#          ('urllib', 'request', 'future.moves.urllib', 'request'),
+#          ('urllib', 'response', 'future.moves.urllib', 'response'),
+#          ('urllib', 'robotparser', 'future.moves.urllib', 'robotparser'),
+        ]
+
+
+# A minimal example of an import hook:
+# class WarnOnImport(object):
+#     def __init__(self, *args):
+#         self.module_names = args
+#
+#     def find_module(self, fullname, path=None):
+#         if fullname in self.module_names:
+#             self.path = path
+#             return self
+#         return None
+#
+#     def load_module(self, name):
+#         if name in sys.modules:
+#             return sys.modules[name]
+#         module_info = imp.find_module(name, self.path)
+#         module = imp.load_module(name, *module_info)
+#         sys.modules[name] = module
+#         logging.warning("Imported deprecated module %s", name)
+#         return module
 
 
 class RenameImport(object):
@@ -230,7 +273,7 @@ class RenameImport(object):
                 len(set(old_to_new.values())) == len(old_to_new.values())), \
                'Ambiguity in renaming (handler not implemented)'
         self.new_to_old = dict((new, old) for (old, new) in old_to_new.items())
- 
+
     def find_module(self, fullname, path=None):
         # Handles hierarchical importing: package.module.module2
         new_base_names = set([s.split('.')[0] for s in self.new_to_old])
@@ -238,7 +281,7 @@ class RenameImport(object):
         if fullname in new_base_names:
             return self
         return None
- 
+
     def load_module(self, name):
         path = None
         if name in sys.modules:
@@ -252,7 +295,7 @@ class RenameImport(object):
         # In any case, make it available under the requested (Py3) name
         sys.modules[name] = module
         return module
- 
+
     def _find_and_load_module(self, name, path=None):
         """
         Finds and loads it. But if there's a . in the name, handles it
@@ -266,99 +309,29 @@ class RenameImport(object):
             try:
                 path = package.__path__
             except AttributeError:
-                logging.debug('Debug me: no __path__. '
-                              'Should anything special be done here?')
-                pass
-            # if packagename == 'future':
-            #     path = FIXME
+                # This could be e.g. moves.
+                logging.debug('Package {0} has no __path__.'.format(package))
+                if name in sys.modules:
+                    return sys.modules[name]
+                logging.debug('What to do here?')
+
         name = bits[0]
-        if name == 'moves':
-            # imp.find_module doesn't find this fake module
-            return moves
-        else:
-            module_info = imp.find_module(name, path)
-            return imp.load_module(name, *module_info)
-
-
-# (New module name, new object name, old module name, old object name)
-MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
-         ('collections', 'UserDict', 'UserDict', 'UserDict'),
-         ('collections', 'UserString','UserString', 'UserString'),
-         ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
-         ('itertools', 'zip_longest','itertools', 'izip_longest'),
-         ('sys', 'intern','__builtin__', 'intern'),
-         # The email module has no ASCII flag in Py2, but this is the default.
-         # Set re.ASCII to a zero constant. io.SEEK_SET just happens to be one.
-         ('re', 'ASCII','io', 'SEEK_SET'),
-         ('base64', 'encodebytes','base64', 'encodestring'),
-         ('base64', 'decodebytes','base64', 'decodestring'),
-         # urllib._urlopener	urllib.request
-         # urllib.ContentTooShortError	urllib.error
-         # urllib.FancyURLOpener	urllib.request
-         # urllib.pathname2url	urllib.request
-         # urllib.quote	urllib.parse
-         # urllib.quote_plus	urllib.parse
-         # urllib.splitattr	urllib.parse
-         # urllib.splithost	urllib.parse
-         # urllib.splitnport	urllib.parse
-         # urllib.splitpasswd	urllib.parse
-         # urllib.splitport	urllib.parse
-         # urllib.splitquery	urllib.parse
-         # urllib.splittag	urllib.parse
-         # urllib.splittype	urllib.parse
-         # urllib.splituser	urllib.parse
-         # urllib.splitvalue	urllib.parse
-         # urllib.unquote	urllib.parse
-         # urllib.unquote_plus	urllib.parse
-         # urllib.urlcleanup	urllib.request
-         # urllib.urlencode	urllib.parse
-         # urllib.urlopen	urllib.request
-         # urllib.URLOpener	urllib.request
-         # urllib.urlretrieve	urllib.request
-         # urllib2.AbstractBasicAuthHandler	urllib.request
-         # urllib2.AbstractDigestAuthHandler	urllib.request
-         # urllib2.BaseHandler	urllib.request
-         # urllib2.build_opener	urllib.request
-         # urllib2.CacheFTPHandler	urllib.request
-         # urllib2.FileHandler	urllib.request
-         # urllib2.FTPHandler	urllib.request
-         # urllib2.HTTPBasicAuthHandler	urllib.request
-         # urllib2.HTTPCookieProcessor	urllib.request
-         # urllib2.HTTPDefaultErrorHandler	urllib.request
-         # urllib2.HTTPDigestAuthHandler	urllib.request
-         # urllib2.HTTPError	urllib.request
-         # urllib2.HTTPHandler	urllib.request
-         # urllib2.HTTPPasswordMgr	urllib.request
-         # urllib2.HTTPPasswordMgrWithDefaultRealm	urllib.request
-         # urllib2.HTTPRedirectHandler	urllib.request
-         # urllib2.HTTPSHandler	urllib.request
-         # urllib2.install_opener	urllib.request
-         # urllib2.OpenerDirector	urllib.request
-         # urllib2.ProxyBasicAuthHandler	urllib.request
-         # urllib2.ProxyDigestAuthHandler	urllib.request
-         # urllib2.ProxyHandler	urllib.request
-         # urllib2.Request	urllib.request
-         # urllib2.UnknownHandler	urllib.request
-         # urllib2.URLError	urllib.request
-         # urllib2.urlopen	urllib.request
-         # urlparse.parse_qs	urllib.parse
-         # urlparse.parse_qsl	urllib.parse
-         # urlparse.urldefrag	urllib.parse
-         # urlparse.urljoin	urllib.parse
-         # urlparse.urlparse	urllib.parse
-         # urlparse.urlsplit	urllib.parse
-         # urlparse.urlunparse	urllib.parse
-         # urlparse.urlunsplit	urllib.parse
-        ]
+        # We no longer use the fake module six.moves:
+        # if name == 'moves':
+        #     # imp.find_module doesn't find this fake module
+        #     from future.utils.six import moves
+        #     return moves
+        module_info = imp.find_module(name, path)
+        return imp.load_module(name, *module_info)
 
 
 class hooks(object):
     """
     Acts as a context manager. Saves the state of sys.modules and restores it
-    after the 'with' block. 
-    
+    after the 'with' block.
+
     Use like this:
-    
+
     >>> from future import standard_library
     >>> with standard_library.hooks():
     ...     import http.client
@@ -370,39 +343,42 @@ class hooks(object):
     imported modules (like requests).
     """
     def __enter__(self):
-        logging.debug('Entering hooks context manager')
+        # logging.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
-        scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
-        install_hooks(keep_sys_modules=True)
+        self.scrubbed = scrub_py2_sys_modules()
+        install_hooks()
         return self
 
     def __exit__(self, *args):
-        logging.debug('Exiting hooks context manager')
+        # logging.debug('Exiting hooks context manager')
+        restore_sys_modules(self.scrubbed)
         if not self.hooks_were_installed:
-            remove_hooks(keep_sys_modules=True)
-            scrub_future_sys_modules()
-
+            remove_hooks()
+        scrub_future_sys_modules()
 
 # Sanity check for is_py2_stdlib_module(): We aren't replacing any
 # builtin modules names:
-if utils.PY2:
+if PY2:
     assert len(set(RENAMES.values()) & set(sys.builtin_module_names)) == 0
+
 
 def is_py2_stdlib_module(m):
     """
     Tries to infer whether the module m is from the Python 2 standard library.
     This may not be reliable on all systems.
     """
-    if utils.PY3:
+    if PY3:
         return False
     if not 'stdlib_path' in is_py2_stdlib_module.__dict__:
         stdlib_files = [contextlib.__file__, os.__file__, copy.__file__]
         stdlib_paths = [os.path.split(f)[0] for f in stdlib_files]
         if not len(set(stdlib_paths)) == 1:
-            raise RuntimeError('Could not determine the location of the Python '
-                               'standard library')
-        # They are identical, so choose one and add / so we don't match urllib2
+            # This seems to happen on travis-ci.org. Very strange. We'll try to
+            # ignore it.
+            logging.warn('Multiple locations found for the Python standard '
+                         'library: %s' % stdlib_paths)
+        # Choose the first one arbitrarily
         is_py2_stdlib_module.stdlib_path = stdlib_paths[0]
 
     if m.__name__ in sys.builtin_module_names:
@@ -413,7 +389,7 @@ def is_py2_stdlib_module(m):
         if (modpath[0].startswith(is_py2_stdlib_module.stdlib_path) and
             'site-packages' not in modpath[0]):
             return True
-        
+
     return False
 
 
@@ -421,11 +397,16 @@ def scrub_py2_sys_modules():
     """
     Removes any Python 2 standard library modules from ``sys.modules`` that
     would interfere with Py3-style imports using ``future.standard_library``
-    import hooks.
+    import hooks. Examples are modules with the same names (like urllib
+    or email).
+
+    (Note that currently import hooks are disabled for modules like these
+    with ambiguous names anyway ...)
     """
-    if utils.PY3:
-        return
-    for modulename in REPLACED_MODULES:
+    if PY3:
+        return {}
+    scrubbed = {}
+    for modulename in REPLACED_MODULES & set(RENAMES.keys()):
         if not modulename in sys.modules:
             continue
 
@@ -433,54 +414,77 @@ def scrub_py2_sys_modules():
 
         if is_py2_stdlib_module(module):
             logging.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
+            scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]
+    return scrubbed
 
 
 def scrub_future_sys_modules():
     """
-    Removes any submodules of ``future.standard_library`` and Python 3 names of
-    any PEP 3108 renamed modules from the ``sys.modules`` cache.
+    On Py2 only: Removes any modules such as ``http`` and ``html.parser`` from
+    the ``sys.modules`` cache. Such modules would confuse code such as this:
+
+        # PyChecker does something like this:
+        try:
+            import builtins
+        except:
+            PY3 = False
+        finally:
+            PY3 = True
+
+    or this:
+
+        import urllib       # We want this to pull in only the Py2 module
+                            # after scrub_future_sys_modules() has been called
+
+    or this:
+
+        # Requests does this in requests/packages/urllib3/connection.py:
+        try: # Python 3
+            from http.client import HTTPConnection, HTTPException
+        except ImportError:
+            from httplib import HTTPConnection, HTTPException
+
+    This function removes items matching this spec from sys.modules:
+        key: new_py3_module_name
+        value: either future.standard_library module or py2 module with
+               another name
     """
-    if utils.PY3:
-        return
-    future_stdlib = os.path.join('future', 'standard_library')
+    scrubbed = {}
+    if PY3:
+        return {}
     for modulename, module in sys.modules.items():
         if modulename.startswith('future'):
-            logging.debug('Not removing', modulename)
+            logging.debug('Not removing %s' % modulename)
             continue
+        # We don't want to remove Python 2.x urllib if this is cached.
+        # But we do want to remove modules under their new names, e.g.
+        # 'builtins'.
+
         # We look for builtins, configparser, urllib, email, http, etc., and
         # their submodules
-        if (modulename in RENAMES.values() or 
-            any(modulename.startswith(m + '.') for m in RENAMES.values())):   
+        if (modulename in RENAMES.values() or
+            any(modulename.startswith(m + '.') for m in RENAMES.values())):
 
             if module is None:
-                # This shouldn't have happened. Delete it.
-                logging.debug('Deleting EMPTY module {} from sys.modules'.format(modulename))
+                # This happens for e.g. __future__ imports. Delete it.
+                logging.debug('Deleting empty module {0} from sys.modules'
+                              .format(modulename))
                 del sys.modules[modulename]
                 continue
 
-            # We don't want to remove Python 2.x urllib if this is cached
-            if is_py2_stdlib_module(module):
-                continue
+            logging.debug('Deleting (future) {0} from sys.modules'
+                          .format(modulename))
 
-            logging.debug('Deleting (future) {} from sys.modules'.format(modulename))
-
-            # builtins has no __file__:
-            if hasattr(module, '__file__'):
-                if not os.path.join('future', 'standard_library') in module.__file__:
-                    # Why would this occur?
-                    s = ('Please report this unknown condition as an issue on '
-                         'https://github.com/PythonCharmers/python-future: {}, {}'
-                        ).format(modulename, module.__file__)
-                    logging.warn(s)
-                    continue
+            scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]
+    return scrubbed
 
 
 class suspend_hooks(object):
     """
     Acts as a context manager. Use like this:
-    
+
     >>> from future import standard_library
     >>> standard_library.install_hooks()
     >>> import http.client
@@ -493,44 +497,72 @@ class suspend_hooks(object):
     """
     def __enter__(self):
         self.hooks_were_installed = detect_hooks()
-        remove_hooks(keep_sys_modules=True)
-        scrub_future_sys_modules()
+        remove_hooks()
+        self.scrubbed = scrub_future_sys_modules()
         return self
+
     def __exit__(self, *args):
         if self.hooks_were_installed:
-            scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
-            install_hooks(keep_sys_modules=True)
-            # TODO: add any previously scrubbed modules back to the sys.modules
-            # cache?
+            # scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
+            install_hooks()
+        restore_sys_modules(self.scrubbed)
 
 
-def install_hooks(keep_sys_modules=False):
+def restore_sys_modules(scrubbed):
     """
-    This function installs the future.standard_library import hook into
-    sys.meta_path. By default it also removes any Python 2 standard library
-    modules from the ``sys.modules`` cache that would interfere the Py3-style
-    ``future`` imports using the import hooks.
-
-    To leave ``sys.modules`` cache alone, pass keep_sys_modules=True.
+    Add any previously scrubbed modules back to the sys.modules cache,
+    but only if it's safe to do so.
     """
-    if utils.PY3:
+    clash = set(sys.modules) & set(scrubbed)
+    if len(clash) != 0:
+        # If several, choose one arbitrarily to raise an exception about
+        first = list(clash)[0]
+        raise ImportError('future module {} clashes with Py2 module'
+                          .format(first))
+    sys.modules.update(scrubbed)
+
+
+def install_aliases():
+    """
+    Monkey-patches the standard library in Py2.6/7 to provide
+    aliases for better Py3 compatibility.
+    """
+    if PY3:
         return
-    if not keep_sys_modules:
-        scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
-    logging.debug('sys.meta_path was: {}'.format(sys.meta_path))
-    logging.debug('Installing hooks ...')
-
+    # if hasattr(install_aliases, 'run_already'):
+    #     return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
-        newmod = __import__(newmodname)
-        oldmod = __import__(oldmodname)
+        __import__(newmodname)
+        # We look up the module in sys.modules because __import__ just returns the
+        # top-level package:
+        newmod = sys.modules[newmodname]
+
+        __import__(oldmodname)
+        oldmod = sys.modules[oldmodname]
+
         obj = getattr(oldmod, oldobjname)
         setattr(newmod, newobjname, obj)
+    # install_aliases.run_already = True
+
+
+def install_hooks():
+    """
+    This function installs the future.standard_library import hook into
+    sys.meta_path.
+    """
+    if PY3:
+        return
+
+    install_aliases()
+
+    logging.debug('sys.meta_path was: {0}'.format(sys.meta_path))
+    logging.debug('Installing hooks ...')
 
     # Add it unless it's there already
     newhook = RenameImport(RENAMES)
     if not detect_hooks():
         sys.meta_path.append(newhook)
-    logging.debug('sys.meta_path is now: {}'.format(sys.meta_path))
+    logging.debug('sys.meta_path is now: {0}'.format(sys.meta_path))
 
 
 def enable_hooks():
@@ -541,22 +573,23 @@ def enable_hooks():
     install_hooks()
 
 
-def remove_hooks(keep_sys_modules=False):
+def remove_hooks(scrub_sys_modules=True):
     """
-    This function removes the import hook from sys.meta_path. By default it also removes
-    any submodules of ``future.standard_library`` from the ``sys.modules``
-    cache.
-
-    To leave the ``sys.modules`` cache alone, pass keep_sys_modules=True.
+    This function removes the import hook from sys.meta_path.
     """
-    if utils.PY3:
+    if PY3:
         return
     logging.debug('Uninstalling hooks ...')
     # Loop backwards, so deleting items keeps the ordering:
     for i, hook in list(enumerate(sys.meta_path))[::-1]:
         if hasattr(hook, 'RENAMER'):
             del sys.meta_path[i]
-    if not keep_sys_modules:
+
+    # Explicit is better than implicit. In the future the interface should
+    # probably change so that scrubbing the import hooks requires a separate
+    # function call. Left as is for now for backward compatibility with
+    # v0.11.x.
+    if scrub_sys_modules:
         scrub_future_sys_modules()
 
 
@@ -581,351 +614,141 @@ def detect_hooks():
     return present
 
 
-# Now import the modules:
-# with hooks():
-#     for (oldname, newname) in RENAMES.items():
-#         if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
-#             continue
-#         if newname in REPLACED_MODULES:
-#             # Skip this check for e.g. the stdlib's ``test`` module,
-#             # which we have replaced completely.
-#             continue
-#         newmod = __import__(newname)
-#         globals()[newname] = newmod
-
-
-### Pasted from six.py v1.5.2 by Benjamin Peterson ###
-# def _add_doc(func, doc):
-#     """Add documentation to a function."""
-#     func.__doc__ = doc
-# 
-# 
-# def _import_module(name):
-#     """Import module, returning the module after the last dot."""
-#     __import__(name)
-#     return sys.modules[name]
-# 
-# 
-# class _LazyDescr(object):
-# 
-#     def __init__(self, name):
-#         self.name = name
-# 
-#     def __get__(self, obj, tp):
-#         result = self._resolve()
-#         setattr(obj, self.name, result) # Invokes __set__.
-#         # This is a bit ugly, but it avoids running this again.
-#         delattr(obj.__class__, self.name)
-#         return result
-# 
-# 
-# class MovedModule(_LazyDescr):
-# 
-#     def __init__(self, name, old, new=None):
-#         super(MovedModule, self).__init__(name)
-#         if utils.PY3:
-#             if new is None:
-#                 new = name
-#             self.mod = new
-#         else:
-#             self.mod = old
-# 
-#     def _resolve(self):
-#         return _import_module(self.mod)
-# 
-#     def __getattr__(self, attr):
-#         # Hack around the Django autoreloader. The reloader tries to get
-#         # __file__ or __name__ of every module in sys.modules. This doesn't work
-#         # well if this MovedModule is for an module that is unavailable on this
-#         # machine (like winreg on Unix systems). Thus, we pretend __file__ and
-#         # __name__ don't exist if the module hasn't been loaded yet. See issues
-#         # #51 and #53.
-#         if attr in ("__file__", "__name__") and self.mod not in sys.modules:
-#             raise AttributeError
-#         _module = self._resolve()
-#         value = getattr(_module, attr)
-#         setattr(self, attr, value)
-#         return value
-# 
-# 
-# class _LazyModule(types.ModuleType):
-# 
-#     def __init__(self, name):
-#         super(_LazyModule, self).__init__(name)
-#         self.__doc__ = self.__class__.__doc__
-# 
-#     def __dir__(self):
-#         attrs = ["__doc__", "__name__"]
-#         attrs += [attr.name for attr in self._moved_attributes]
-#         return attrs
-# 
-#     # Subclasses should override this
-#     _moved_attributes = []
-# 
-# 
-# class MovedAttribute(_LazyDescr):
-# 
-#     def __init__(self, name, old_mod, new_mod, old_attr=None, new_attr=None):
-#         super(MovedAttribute, self).__init__(name)
-#         if utils.PY3:
-#             if new_mod is None:
-#                 new_mod = name
-#             self.mod = new_mod
-#             if new_attr is None:
-#                 if old_attr is None:
-#                     new_attr = name
-#                 else:
-#                     new_attr = old_attr
-#             self.attr = new_attr
-#         else:
-#             self.mod = old_mod
-#             if old_attr is None:
-#                 old_attr = name
-#             self.attr = old_attr
-# 
-#     def _resolve(self):
-#         module = _import_module(self.mod)
-#         return getattr(module, self.attr)
-# 
-# 
-# 
-# class _MovedItems(_LazyModule):
-#     """Lazy loading of moved objects"""
-# 
-# 
-# _moved_attributes = [
-#     MovedAttribute("cStringIO", "cStringIO", "io", "StringIO"),
-#     MovedAttribute("filter", "itertools", "builtins", "ifilter", "filter"),
-#     MovedAttribute("filterfalse", "itertools", "itertools", "ifilterfalse", "filterfalse"),
-#     MovedAttribute("input", "__builtin__", "builtins", "raw_input", "input"),
-#     MovedAttribute("map", "itertools", "builtins", "imap", "map"),
-#     MovedAttribute("range", "__builtin__", "builtins", "xrange", "range"),
-#     MovedAttribute("reload_module", "__builtin__", "imp", "reload"),
-#     MovedAttribute("reduce", "__builtin__", "functools"),
-#     MovedAttribute("StringIO", "StringIO", "io"),
-#     MovedAttribute("UserString", "UserString", "collections"),
-#     MovedAttribute("xrange", "__builtin__", "builtins", "xrange", "range"),
-#     MovedAttribute("zip", "itertools", "builtins", "izip", "zip"),
-#     MovedAttribute("zip_longest", "itertools", "itertools", "izip_longest", "zip_longest"),
-# 
-#     MovedModule("builtins", "__builtin__"),
-#     MovedModule("configparser", "ConfigParser"),
-#     MovedModule("copyreg", "copy_reg"),
-#     MovedModule("dbm_gnu", "gdbm", "dbm.gnu"),
-#     MovedModule("http_cookiejar", "cookielib", "http.cookiejar"),
-#     MovedModule("http_cookies", "Cookie", "http.cookies"),
-#     MovedModule("html_entities", "htmlentitydefs", "html.entities"),
-#     MovedModule("html_parser", "HTMLParser", "html.parser"),
-#     MovedModule("http_client", "httplib", "http.client"),
-#     MovedModule("email_mime_multipart", "email.MIMEMultipart", "email.mime.multipart"),
-#     MovedModule("email_mime_text", "email.MIMEText", "email.mime.text"),
-#     MovedModule("email_mime_base", "email.MIMEBase", "email.mime.base"),
-#     MovedModule("BaseHTTPServer", "BaseHTTPServer", "http.server"),
-#     MovedModule("CGIHTTPServer", "CGIHTTPServer", "http.server"),
-#     MovedModule("SimpleHTTPServer", "SimpleHTTPServer", "http.server"),
-#     MovedModule("cPickle", "cPickle", "pickle"),
-#     MovedModule("queue", "Queue"),
-#     MovedModule("reprlib", "repr"),
-#     MovedModule("socketserver", "SocketServer"),
-#     MovedModule("_thread", "thread", "_thread"),
-#     MovedModule("tkinter", "Tkinter"),
-#     MovedModule("tkinter_dialog", "Dialog", "tkinter.dialog"),
-#     MovedModule("tkinter_filedialog", "FileDialog", "tkinter.filedialog"),
-#     MovedModule("tkinter_scrolledtext", "ScrolledText", "tkinter.scrolledtext"),
-#     MovedModule("tkinter_simpledialog", "SimpleDialog", "tkinter.simpledialog"),
-#     MovedModule("tkinter_tix", "Tix", "tkinter.tix"),
-#     MovedModule("tkinter_ttk", "ttk", "tkinter.ttk"),
-#     MovedModule("tkinter_constants", "Tkconstants", "tkinter.constants"),
-#     MovedModule("tkinter_dnd", "Tkdnd", "tkinter.dnd"),
-#     MovedModule("tkinter_colorchooser", "tkColorChooser",
-#                 "tkinter.colorchooser"),
-#     MovedModule("tkinter_commondialog", "tkCommonDialog",
-#                 "tkinter.commondialog"),
-#     MovedModule("tkinter_tkfiledialog", "tkFileDialog", "tkinter.filedialog"),
-#     MovedModule("tkinter_font", "tkFont", "tkinter.font"),
-#     MovedModule("tkinter_messagebox", "tkMessageBox", "tkinter.messagebox"),
-#     MovedModule("tkinter_tksimpledialog", "tkSimpleDialog",
-#                 "tkinter.simpledialog"),
-#     MovedModule("urllib_parse", __name__ + ".moves.urllib_parse", "urllib.parse"),
-#     MovedModule("urllib_error", __name__ + ".moves.urllib_error", "urllib.error"),
-#     MovedModule("urllib", __name__ + ".moves.urllib", __name__ + ".moves.urllib"),
-#     MovedModule("urllib_robotparser", "robotparser", "urllib.robotparser"),
-#     MovedModule("xmlrpc_client", "xmlrpclib", "xmlrpc.client"),
-#     MovedModule("winreg", "_winreg"),
-# ]
-# for attr in _moved_attributes:
-#     setattr(_MovedItems, attr.name, attr)
-#     if isinstance(attr, MovedModule):
-#         sys.modules[__name__ + ".moves." + attr.name] = attr
-# del attr
-# 
-# _MovedItems._moved_attributes = _moved_attributes
-# 
-# moves = sys.modules[__name__ + ".moves"] = _MovedItems(__name__ + ".moves")
-# 
-# 
-# class Module_six_moves_urllib_parse(_LazyModule):
-#     """Lazy loading of moved objects in future.standard_library.moves.urllib_parse"""
-# 
-# 
-# _urllib_parse_moved_attributes = [
-#     MovedAttribute("ParseResult", "urlparse", "urllib.parse"),
-#     MovedAttribute("parse_qs", "urlparse", "urllib.parse"),
-#     MovedAttribute("parse_qsl", "urlparse", "urllib.parse"),
-#     MovedAttribute("urldefrag", "urlparse", "urllib.parse"),
-#     MovedAttribute("urljoin", "urlparse", "urllib.parse"),
-#     MovedAttribute("urlparse", "urlparse", "urllib.parse"),
-#     MovedAttribute("urlsplit", "urlparse", "urllib.parse"),
-#     MovedAttribute("urlunparse", "urlparse", "urllib.parse"),
-#     MovedAttribute("urlunsplit", "urlparse", "urllib.parse"),
-#     MovedAttribute("quote", "urllib", "urllib.parse"),
-#     MovedAttribute("quote_plus", "urllib", "urllib.parse"),
-#     MovedAttribute("unquote", "urllib", "urllib.parse"),
-#     MovedAttribute("unquote_plus", "urllib", "urllib.parse"),
-#     MovedAttribute("urlencode", "urllib", "urllib.parse"),
-# ]
-# for attr in _urllib_parse_moved_attributes:
-#     setattr(Module_six_moves_urllib_parse, attr.name, attr)
-# del attr
-# 
-# Module_six_moves_urllib_parse._moved_attributes = _urllib_parse_moved_attributes
-# 
-# sys.modules[__name__ + ".moves.urllib_parse"] = sys.modules[__name__ + ".moves.urllib.parse"] = Module_six_moves_urllib_parse(__name__ + ".moves.urllib_parse")
-# 
-# 
-# class Module_six_moves_urllib_error(_LazyModule):
-#     """Lazy loading of moved objects in future.standard_library.moves.urllib_error"""
-# 
-# 
-# _urllib_error_moved_attributes = [
-#     MovedAttribute("URLError", "urllib2", "urllib.error"),
-#     MovedAttribute("HTTPError", "urllib2", "urllib.error"),
-#     MovedAttribute("ContentTooShortError", "urllib", "urllib.error"),
-# ]
-# for attr in _urllib_error_moved_attributes:
-#     setattr(Module_six_moves_urllib_error, attr.name, attr)
-# del attr
-# 
-# Module_six_moves_urllib_error._moved_attributes = _urllib_error_moved_attributes
-# 
-# sys.modules[__name__ + ".moves.urllib_error"] = sys.modules[__name__ + ".moves.urllib.error"] = Module_six_moves_urllib_error(__name__ + ".moves.urllib.error")
-# 
-# 
-# class Module_six_moves_urllib_request(_LazyModule):
-#     """Lazy loading of moved objects in future.standard_library.moves.urllib_request"""
-# 
-# 
-# _urllib_request_moved_attributes = [
-#     MovedAttribute("urlopen", "urllib2", "urllib.request"),
-#     MovedAttribute("install_opener", "urllib2", "urllib.request"),
-#     MovedAttribute("build_opener", "urllib2", "urllib.request"),
-#     MovedAttribute("pathname2url", "urllib", "urllib.request"),
-#     MovedAttribute("url2pathname", "urllib", "urllib.request"),
-#     MovedAttribute("getproxies", "urllib", "urllib.request"),
-#     MovedAttribute("Request", "urllib2", "urllib.request"),
-#     MovedAttribute("OpenerDirector", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPDefaultErrorHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPRedirectHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPCookieProcessor", "urllib2", "urllib.request"),
-#     MovedAttribute("ProxyHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("BaseHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPPasswordMgr", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPPasswordMgrWithDefaultRealm", "urllib2", "urllib.request"),
-#     MovedAttribute("AbstractBasicAuthHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPBasicAuthHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("ProxyBasicAuthHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("AbstractDigestAuthHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPDigestAuthHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("ProxyDigestAuthHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPSHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("FileHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("FTPHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("CacheFTPHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("UnknownHandler", "urllib2", "urllib.request"),
-#     MovedAttribute("HTTPErrorProcessor", "urllib2", "urllib.request"),
-#     MovedAttribute("urlretrieve", "urllib", "urllib.request"),
-#     MovedAttribute("urlcleanup", "urllib", "urllib.request"),
-#     MovedAttribute("URLopener", "urllib", "urllib.request"),
-#     MovedAttribute("FancyURLopener", "urllib", "urllib.request"),
-#     MovedAttribute("proxy_bypass", "urllib", "urllib.request"),
-# ]
-# for attr in _urllib_request_moved_attributes:
-#     setattr(Module_six_moves_urllib_request, attr.name, attr)
-# del attr
-# 
-# Module_six_moves_urllib_request._moved_attributes = _urllib_request_moved_attributes
-# 
-# sys.modules[__name__ + ".moves.urllib_request"] = sys.modules[__name__ + ".moves.urllib.request"] = Module_six_moves_urllib_request(__name__ + ".moves.urllib.request")
-# 
-# 
-# class Module_six_moves_urllib_response(_LazyModule):
-#     """Lazy loading of moved objects in future.standard_library.moves.urllib_response"""
-# 
-# 
-# _urllib_response_moved_attributes = [
-#     MovedAttribute("addbase", "urllib", "urllib.response"),
-#     MovedAttribute("addclosehook", "urllib", "urllib.response"),
-#     MovedAttribute("addinfo", "urllib", "urllib.response"),
-#     MovedAttribute("addinfourl", "urllib", "urllib.response"),
-# ]
-# for attr in _urllib_response_moved_attributes:
-#     setattr(Module_six_moves_urllib_response, attr.name, attr)
-# del attr
-# 
-# Module_six_moves_urllib_response._moved_attributes = _urllib_response_moved_attributes
-# 
-# sys.modules[__name__ + ".moves.urllib_response"] = sys.modules[__name__ + ".moves.urllib.response"] = Module_six_moves_urllib_response(__name__ + ".moves.urllib.response")
-# 
-# 
-# class Module_six_moves_urllib_robotparser(_LazyModule):
-#     """Lazy loading of moved objects in future.standard_library.moves.urllib_robotparser"""
-# 
-# 
-# _urllib_robotparser_moved_attributes = [
-#     MovedAttribute("RobotFileParser", "robotparser", "urllib.robotparser"),
-# ]
-# for attr in _urllib_robotparser_moved_attributes:
-#     setattr(Module_six_moves_urllib_robotparser, attr.name, attr)
-# del attr
-# 
-# Module_six_moves_urllib_robotparser._moved_attributes = _urllib_robotparser_moved_attributes
-# 
-# sys.modules[__name__ + ".moves.urllib_robotparser"] = sys.modules[__name__ + ".moves.urllib.robotparser"] = Module_six_moves_urllib_robotparser(__name__ + ".moves.urllib.robotparser")
-# 
-# 
-# class Module_six_moves_urllib(types.ModuleType):
-#     """Create a future.standard_library.moves.urllib namespace that resembles the Python 3 namespace"""
-#     parse = sys.modules[__name__ + ".moves.urllib_parse"]
-#     error = sys.modules[__name__ + ".moves.urllib_error"]
-#     request = sys.modules[__name__ + ".moves.urllib_request"]
-#     response = sys.modules[__name__ + ".moves.urllib_response"]
-#     robotparser = sys.modules[__name__ + ".moves.urllib_robotparser"]
-# 
-#     def __dir__(self):
-#         return ['parse', 'error', 'request', 'response', 'robotparser']
-# 
-# 
-# sys.modules[__name__ + ".moves.urllib"] = Module_six_moves_urllib(__name__ + ".moves.urllib")
-# 
-# 
-# def add_move(move):
-#     """Add an item to future.standard_library.moves."""
-#     setattr(_MovedItems, move.name, move)
-# 
-# 
-# def remove_move(name):
-#     """Remove item from future.standard_library.moves."""
-#     try:
-#         delattr(_MovedItems, name)
-#     except AttributeError:
-#         try:
-#             del moves.__dict__[name]
-#         except KeyError:
-#             raise AttributeError("no such move, %r" % (name,))
-### End of code pasted from six.py v1.5.2 by Benjamin Peterson ###
-
-
 # As of v0.12, this no longer happens implicitly:
-# if not utils.PY3:
+# if not PY3:
 #     install_hooks()
+
+
+if not hasattr(sys, 'py2_modules'):
+    sys.py2_modules = {}
+
+def cache_py2_modules():
+    """
+    Currently this function is unneeded, as we are not attempting to provide import hooks
+    for modules with ambiguous names: email, urllib, pickle.
+    """
+    if len(sys.py2_modules) != 0:
+        return
+    assert not detect_hooks()
+    import urllib
+    sys.py2_modules['urllib'] = urllib
+
+    import email
+    sys.py2_modules['email'] = email
+
+    import pickle
+    sys.py2_modules['pickle'] = pickle
+
+    # Not all Python installations have test module. (Anaconda doesn't, for example.)
+    # try:
+    #     import test
+    # except ImportError:
+    #     sys.py2_modules['test'] = None
+    # sys.py2_modules['test'] = test
+
+    # import dbm
+    # sys.py2_modules['dbm'] = dbm
+
+
+def import_(module_name, backport=False):
+    """
+    Pass a (potentially dotted) module name of a Python 3 standard library
+    module. This function imports the module compatibly on Py2 and Py3 and
+    returns the top-level module.
+
+    Example use:
+        >>> http = import_('http.client')
+        >>> http = import_('http.server')
+        >>> urllib = import_('urllib.request')
+
+    Then:
+        >>> conn = http.client.HTTPConnection(...)
+        >>> response = urllib.request.urlopen('http://mywebsite.com')
+        >>> # etc.
+
+    Use as follows:
+        >>> package_name = import_(module_name)
+
+    On Py3, equivalent to this:
+
+        >>> import module_name
+
+    On Py2, equivalent to this if backport=False:
+
+        >>> from future.moves import module_name
+
+    or to this if backport=True:
+
+        >>> from future.standard_library import module_name
+
+    except that it also handles dotted module names such as ``http.client``
+    The effect then is like this:
+
+        >>> from future.standard_library import module
+        >>> from future.standard_library.module import submodule
+        >>> module.submodule = submodule
+
+    Note that this would be a SyntaxError in Python:
+
+        >>> from future.standard_library import http.client
+
+    """
+
+    if PY3:
+        return __import__(module_name)
+    else:
+        # client.blah = blah
+        # Then http.client = client
+        # etc.
+        if backport:
+            prefix = 'future.standard_library'
+        else:
+            prefix = 'future.moves'
+        parts = prefix.split('.') + module_name.split('.')
+
+        modules = []
+        for i, part in enumerate(parts):
+            sofar = '.'.join(parts[:i+1])
+            modules.append(importlib.import_module(sofar))
+        for i, part in reversed(list(enumerate(parts))):
+            if i == 0:
+                break
+            setattr(modules[i-1], part, modules[i])
+
+        # Return the next-most top-level module after future.standard_library:
+        return modules[2]
+
+
+def from_import(module_name, *symbol_names, **kwargs):
+    """
+    Example use:
+        >>> HTTPConnection = from_import('http.client', 'HTTPConnection')
+        >>> HTTPServer = from_import('http.server', 'HTTPServer')
+        >>> urlopen, urlparse = from_import('urllib.request', 'urlopen', 'urlparse')
+
+    Equivalent to this on Py3:
+
+        >>> from module_name import symbol_names[0], symbol_names[1], ...
+
+    and this on Py2:
+
+        >>> from future.standard_library.module_name import symbol_names[0], ...
+
+    except that it also handles dotted module names such as ``http.client``.
+    """
+
+    if PY3:
+        return __import__(module_name)
+    else:
+        if 'backport' in kwargs and bool(kwargs['backport']):
+            prefix = 'future.standard_library'
+        else:
+            prefix = 'future.moves'
+        parts = prefix.split('.') + module_name.split('.')
+        module = importlib.import_module(prefix + '.' + module_name)
+        output = [getattr(module, name) for name in symbol_names]
+        if len(output) == 1:
+            return output[0]
+        else:
+            return output
+

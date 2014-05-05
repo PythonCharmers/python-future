@@ -86,11 +86,12 @@ f = urllib.request.urlopen('http://www.python.org/')
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from future.builtins import bytes, dict, filter, input, int, map, open, str
-from future.utils import PY3, raise_with_traceback
+from future.utils import PY2, PY3, raise_with_traceback
 
 import base64
 import bisect
 import hashlib
+import array
 
 from future.standard_library import email
 from future.standard_library.http import client as http_client
@@ -116,6 +117,8 @@ import warnings
 # check for SSL
 try:
     import ssl
+    # Not available in the SSL module in Py2:
+    from ssl import SSLContext
 except ImportError:
     _have_ssl = False
 else:
@@ -1204,8 +1207,19 @@ class AbstractHTTPHandler(BaseHandler):
                     'Content-type',
                     'application/x-www-form-urlencoded')
             if not request.has_header('Content-length'):
+                size = None
                 try:
-                    mv = memoryview(data)
+                    ### For Python-Future:
+                    if PY2 and isinstance(data, array.array):
+                        # memoryviews of arrays aren't supported
+                        # in Py2.7. (e.g. memoryview(array.array('I',
+                        # [1, 2, 3, 4])) raises a TypeError.)
+                        # So we calculate the size manually instead:
+                        size = len(data) * data.itemsize
+                    ###
+                    else:
+                        mv = memoryview(data)
+                        size = len(mv) * mv.itemsize
                 except TypeError:
                     if isinstance(data, collections.Iterable):
                         raise ValueError("Content-Length should be specified "
@@ -1213,7 +1227,7 @@ class AbstractHTTPHandler(BaseHandler):
                                 data))
                 else:
                     request.add_unredirected_header(
-                            'Content-length', '%d' % (len(mv) * mv.itemsize))
+                            'Content-length', '%d' % size)
 
         sel_host = host
         if request.has_proxy():
@@ -1317,9 +1331,9 @@ if hasattr(http_client, 'HTTPSConnection'):
 
 class HTTPCookieProcessor(BaseHandler):
     def __init__(self, cookiejar=None):
-        import http.cookiejar
+        import future.standard_library.http.cookiejar as http_cookiejar
         if cookiejar is None:
-            cookiejar = http.cookiejar.CookieJar()
+            cookiejar = http_cookiejar.CookieJar()
         self.cookiejar = cookiejar
 
     def http_request(self, request):
@@ -1416,7 +1430,7 @@ class FileHandler(BaseHandler):
 
     # not entirely sure what the rules are here
     def open_local_file(self, req):
-        from future.standard_library.email.utils import formatdate
+        import future.standard_library.email.utils as email_utils
         import mimetypes
         host = req.host
         filename = req.selector
@@ -1424,7 +1438,7 @@ class FileHandler(BaseHandler):
         try:
             stats = os.stat(localfile)
             size = stats.st_size
-            modified = formatdate(stats.st_mtime, usegmt=True)
+            modified = email_utils.formatdate(stats.st_mtime, usegmt=True)
             mtype = mimetypes.guess_type(filename)[0]
             headers = email.message_from_string(
                 'Content-type: %s\nContent-length: %d\nLast-modified: %s\n' %
@@ -1686,7 +1700,7 @@ class URLopener(object):
         except HTTPError:
             raise
         except socket.error as msg:
-            raise_with_traceback(IOError('socket error'), msg)
+            raise_with_traceback(IOError('socket error', msg))
 
     def open_unknown(self, fullurl, data=None):
         """Overridable interface to open unknown URL type."""
@@ -1903,7 +1917,7 @@ class URLopener(object):
 
     def open_local_file(self, url):
         """Use local file."""
-        # Not needed: from future.standard_library.email import utils as email_utils
+        import future.standard_library.email.utils as email_utils
         import mimetypes
         host, file = splithost(url)
         localname = url2pathname(file)
@@ -1912,7 +1926,7 @@ class URLopener(object):
         except OSError as e:
             raise URLError(e.strerror, e.filename)
         size = stats.st_size
-        modified = formatdate(stats.st_mtime, usegmt=True)
+        modified = email_utils.formatdate(stats.st_mtime, usegmt=True)
         mtype = mimetypes.guess_type(url)[0]
         headers = email.message_from_string(
             'Content-Type: %s\nContent-Length: %d\nLast-modified: %s\n' %

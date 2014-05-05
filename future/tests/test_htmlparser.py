@@ -10,23 +10,22 @@ from __future__ import (absolute_import, print_function, unicode_literals)
 from future import standard_library, utils
 from future.builtins import *
 
-with standard_library.hooks():
-    from test import support
-    import html.parser
+from future.standard_library.test import support
+import future.standard_library.html.parser as html_parser
 
 import pprint
-import unittest
+from future.tests.base import unittest
 import sys
 
-# print(html.parser.__doc__, file=sys.stderr)
+# print(html_parser.__doc__, file=sys.stderr)
 
 
-class EventCollector(html.parser.HTMLParser):
+class EventCollector(html_parser.HTMLParser):
 
     def __init__(self, *args, **kw):
         self.events = []
         self.append = self.events.append
-        html.parser.HTMLParser.__init__(self, *args, **kw)
+        html_parser.HTMLParser.__init__(self, *args, **kw)
 
     def get_events(self):
         # Normalize the list of events so that buffer artefacts don't
@@ -111,7 +110,7 @@ class TestCaseBase(unittest.TestCase):
             parser = self.get_collector()
             parser.feed(source)
             parser.close()
-        self.assertRaises(html.parser.HTMLParseError, parse)
+        self.assertRaises(html_parser.HTMLParseError, parse)
 
 
 class HTMLParserStrictTestCase(TestCaseBase):

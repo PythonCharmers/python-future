@@ -71,15 +71,17 @@ Req-sent-unread-response       _CS_REQ_SENT       <response_class>
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import bytes, int, str, super
-from future.standard_library.urllib.parse import urlsplit
-from future.standard_library.email import message as email_message
-from future.standard_library.email import parser as email_parser
+from future.utils import PY2
 
+from future.standard_library.email import parser as email_parser
+from future.standard_library.email import message as email_message
 import io
 import os
 import socket
 import collections
+from future.standard_library.urllib.parse import urlsplit
 import warnings
+from array import array
 
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",
@@ -550,13 +552,23 @@ class HTTPResponse(io.RawIOBase):
         # connection, and the user is reading more bytes than will be provided
         # (for example, reading in 1k chunks)
 
-        ### Python-Future:
-        data = self.fp.read(len(b))
-        b[:] = data
-        n = len(data)
-        ###
-        # Was:
-        # n = self.fp.readinto(b)
+        if PY2:
+            ### Python-Future:
+            # TODO: debug and fix me!
+            data = self.fp.read(len(b))
+            if data[:2] == b"b'":
+                # Something has gone wrong
+                import pdb
+                pdb.set_trace()
+            #if len(b) != len(data):
+            #    import pdb
+            #    pdb.set_trace()
+            n = len(data)
+            b[:n] = data
+            ###
+        else:
+            n = self.fp.readinto(b)
+
         if not n and b:
             # Ideally, we would raise IncompleteRead if the content-length
             # wasn't satisfied, but it might break compatibility.
@@ -1174,36 +1186,95 @@ class HTTPConnection(object):
 
 try:
     import ssl
+    from ssl import SSLContext
 except ImportError:
     pass
 else:
-    ######################################
-    # We use the old HTTPSConnection class from Py2.7, because ssl.SSLContext
-    # doesn't exist in the Py2.7 stdlib
     class HTTPSConnection(HTTPConnection):
         "This class allows communication via SSL."
 
         default_port = HTTPS_PORT
 
+        # XXX Should key_file and cert_file be deprecated in favour of context?
+
         def __init__(self, host, port=None, key_file=None, cert_file=None,
-                     strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-                     source_address=None):
-            HTTPConnection.__init__(self, host, port, strict, timeout,
-                                    source_address)
+                     strict=_strict_sentinel, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                     source_address=None, **_3to2kwargs):
+            if 'check_hostname' in _3to2kwargs: check_hostname = _3to2kwargs['check_hostname']; del _3to2kwargs['check_hostname']
+            else: check_hostname = None
+            if 'context' in _3to2kwargs: context = _3to2kwargs['context']; del _3to2kwargs['context']
+            else: context = None
+            super(HTTPSConnection, self).__init__(host, port, strict, timeout,
+                                                  source_address)
             self.key_file = key_file
             self.cert_file = cert_file
+            if context is None:
+                # Some reasonable defaults
+                context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+                context.options |= ssl.OP_NO_SSLv2
+            will_verify = context.verify_mode != ssl.CERT_NONE
+            if check_hostname is None:
+                check_hostname = will_verify
+            elif check_hostname and not will_verify:
+                raise ValueError("check_hostname needs a SSL context with "
+                                 "either CERT_OPTIONAL or CERT_REQUIRED")
+            if key_file or cert_file:
+                context.load_cert_chain(cert_file, key_file)
+            self._context = context
+            self._check_hostname = check_hostname
 
         def connect(self):
             "Connect to a host on a given (SSL) port."
 
             sock = socket.create_connection((self.host, self.port),
                                             self.timeout, self.source_address)
+
             if self._tunnel_host:
                 self.sock = sock
                 self._tunnel()
-            self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file)
+
+            server_hostname = self.host if ssl.HAS_SNI else None
+            self.sock = self._context.wrap_socket(sock,
+                                                  server_hostname=server_hostname)
+            try:
+                if self._check_hostname:
+                    ssl.match_hostname(self.sock.getpeercert(), self.host)
+            except Exception:
+                self.sock.shutdown(socket.SHUT_RDWR)
+                self.sock.close()
+                raise
 
     __all__.append("HTTPSConnection")
+
+
+    # ######################################
+    # # We use the old HTTPSConnection class from Py2.7, because ssl.SSLContext
+    # # doesn't exist in the Py2.7 stdlib
+    # class HTTPSConnection(HTTPConnection):
+    #     "This class allows communication via SSL."
+
+    #     default_port = HTTPS_PORT
+
+    #     def __init__(self, host, port=None, key_file=None, cert_file=None,
+    #                  strict=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+    #                  source_address=None):
+    #         HTTPConnection.__init__(self, host, port, strict, timeout,
+    #                                 source_address)
+    #         self.key_file = key_file
+    #         self.cert_file = cert_file
+
+    #     def connect(self):
+    #         "Connect to a host on a given (SSL) port."
+
+    #         sock = socket.create_connection((self.host, self.port),
+    #                                         self.timeout, self.source_address)
+    #         if self._tunnel_host:
+    #             self.sock = sock
+    #             self._tunnel()
+    #         self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file)
+
+    # __all__.append("HTTPSConnection")
+    # ######################################
 
 
 class HTTPException(Exception):

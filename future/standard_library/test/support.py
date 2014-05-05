@@ -7,7 +7,7 @@ Backported for python-future from Python 3.3 test/support.py.
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future import utils
-from future.builtins import *
+from future.builtins import str, range, open, int, map, list
 
 
 # if __name__ != 'test.support':
@@ -34,7 +34,11 @@ import re
 import subprocess
 import imp
 import time
-import sysconfig
+try:
+    import sysconfig
+except ImportError:
+    # sysconfig is not available on Python 2.6. Try using distutils.sysconfig instead:
+    from distutils import sysconfig
 import fnmatch
 import logging.handlers
 import struct
@@ -879,11 +883,12 @@ def check_syntax_error(testcase, statement):
                           '<test string>', 'exec')
 
 def open_urlresource(url, *args, **kw):
-    import urllib.request, urllib.parse
+    from future.standard_library.urllib import (request as urllib_request,
+                                                parse as urllib_parse)
 
     check = kw.pop('check', None)
 
-    filename = urllib.parse.urlparse(url)[2].split('/')[-1] # '/': it's URL!
+    filename = urllib_parse.urlparse(url)[2].split('/')[-1] # '/': it's URL!
 
     fn = os.path.join(os.path.dirname(__file__), "data", filename)
 
@@ -906,7 +911,7 @@ def open_urlresource(url, *args, **kw):
     requires('urlfetch')
 
     print('\tfetching %s ...' % url, file=get_original_stdout())
-    f = urllib.request.urlopen(url, timeout=15)
+    f = urllib_request.urlopen(url, timeout=15)
     try:
         with open(fn, "wb") as out:
             s = f.read()
@@ -955,7 +960,10 @@ def _filterwarnings(filters, quiet=False):
     frame = sys._getframe(2)
     registry = frame.f_globals.get('__warningregistry__')
     if registry:
-        registry.clear()
+        # Was: registry.clear()
+        # Py2-compatible:
+        for i in range(len(registry)):
+            registry.pop()
     with warnings.catch_warnings(record=True) as w:
         # Set filter "always" to record all warnings.  Because
         # test_warnings swap the module, we need to look up in
@@ -1709,7 +1717,12 @@ def modules_cleanup(oldmodules):
     # globals will be set to None which will trip up the cached functions.
     encodings = [(k, v) for k, v in sys.modules.items()
                  if k.startswith('encodings.')]
-    sys.modules.clear()
+    # Was:
+    # sys.modules.clear()
+    # Py2-compatible:
+    for i in range(len(sys.modules)):
+        sys.modules.pop()
+
     sys.modules.update(encodings)
     # XXX: This kind of problem can affect more than just encodings. In particular
     # extension modules (such as _ssl) don't cope with reloading properly.

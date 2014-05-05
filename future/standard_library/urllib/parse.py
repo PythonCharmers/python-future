@@ -478,8 +478,8 @@ def urldefrag(url):
     return _coerce_result(DefragResult(defrag, frag))
 
 _hexdig = '0123456789ABCDEFabcdef'
-_hextobyte = {(a + b).encode(): bytes([int(a + b, 16)])
-              for a in _hexdig for b in _hexdig}
+_hextobyte = dict(((a + b).encode(), bytes([int(a + b, 16)]))
+                  for a in _hexdig for b in _hexdig)
 
 def unquote_to_bytes(string):
     """unquote_to_bytes('abc%20def') -> b'abc def'."""
@@ -488,9 +488,14 @@ def unquote_to_bytes(string):
     if not string:
         # Is it a string-like object?
         string.split
-        return b''
+        return bytes(b'')
     if isinstance(string, str):
         string = string.encode('utf-8')
+    ### For Python-Future:
+    # It is already a byte-string object, but force it to be newbytes here on
+    # Py2:
+    string = bytes(string)
+    ###
     bits = string.split(b'%')
     if len(bits) == 1:
         return string
@@ -638,7 +643,7 @@ class Quoter(collections.defaultdict):
     # of cached keys don't call Python code at all).
     def __init__(self, safe):
         """safe: bytes object."""
-        self.safe = _ALWAYS_SAFE.union(safe)
+        self.safe = _ALWAYS_SAFE.union(bytes(safe))
 
     def __repr__(self):
         # Without this, will just display as a defaultdict
@@ -646,7 +651,7 @@ class Quoter(collections.defaultdict):
 
     def __missing__(self, b):
         # Handle a cache miss. Store quoted string in cache and return.
-        res = chr(b) if b in self.safe else '%{:02X}'.format(b)
+        res = chr(b) if b in self.safe else '%{0:02X}'.format(b)
         self[b] = res
         return res
 
@@ -705,9 +710,9 @@ def quote_plus(string, safe='', encoding=None, errors=None):
         (isinstance(string, bytes) and b' ' not in string)):
         return quote(string, safe, encoding, errors)
     if isinstance(safe, str):
-        space = ' '
+        space = str(' ')
     else:
-        space = b' '
+        space = bytes(b' ')
     string = quote(string, safe + space, encoding, errors)
     return string.replace(' ', '+')
 
@@ -719,14 +724,17 @@ def quote_from_bytes(bs, safe='/'):
     if not isinstance(bs, (bytes, bytearray)):
         raise TypeError("quote_from_bytes() expected bytes")
     if not bs:
-        return ''
+        return str('')
     ### For Python-Future:
     bs = bytes(bs)
     ### 
     if isinstance(safe, str):
         # Normalize 'safe' by converting to bytes and removing non-ASCII chars
-        safe = safe.encode('ascii', 'ignore')
+        safe = str(safe).encode('ascii', 'ignore')
     else:
+        ### For Python-Future:
+        safe = bytes(safe)
+        ### 
         safe = bytes([c for c in safe if c < 128])
     if not bs.rstrip(_ALWAYS_SAFE_BYTES + safe):
         return bs.decode()
@@ -734,7 +742,7 @@ def quote_from_bytes(bs, safe='/'):
         quoter = _safe_quoters[safe]
     except KeyError:
         _safe_quoters[safe] = quoter = Quoter(safe).__getitem__
-    return ''.join([quoter(char) for char in bs])
+    return str('').join([quoter(char) for char in bs])
 
 def urlencode(query, doseq=False, safe='', encoding=None, errors=None):
     """Encode a sequence of two-element tuples or dictionary into a URL query string.
@@ -812,7 +820,7 @@ def urlencode(query, doseq=False, safe='', encoding=None, errors=None):
                         else:
                             elt = quote_plus(str(elt), safe, encoding, errors)
                         l.append(k + '=' + elt)
-    return '&'.join(l)
+    return str('&').join(l)
 
 # Utilities to parse URLs (most of these return None for missing parts):
 # unwrap('<URL:type://host/path>') --> 'type://host/path'

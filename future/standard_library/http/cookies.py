@@ -344,7 +344,7 @@ class Morsel(dict):
         "version"  : "Version",
     }
 
-    _flags = {'secure', 'httponly'}
+    _flags = set(['secure', 'httponly'])
 
     def __init__(self):
         # Set defaults

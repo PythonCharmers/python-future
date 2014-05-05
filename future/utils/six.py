@@ -25,7 +25,7 @@ import sys
 import types
 
 __author__ = "Benjamin Peterson <benjamin@python.org>"
-__version__ = "1.5.2"
+__version__ = "1.6.1"
 
 
 # Useful for very coarse version differentiation.
@@ -83,7 +83,11 @@ class _LazyDescr(object):
         self.name = name
 
     def __get__(self, obj, tp):
-        result = self._resolve()
+        try:
+            result = self._resolve()
+        except ImportError:
+            # See the nice big comment in MovedModule.__getattr__.
+            raise AttributeError("%s could not be imported " % self.name)
         setattr(obj, self.name, result) # Invokes __set__.
         # This is a bit ugly, but it avoids running this again.
         delattr(obj.__class__, self.name)
@@ -105,15 +109,22 @@ class MovedModule(_LazyDescr):
         return _import_module(self.mod)
 
     def __getattr__(self, attr):
-        # Hack around the Django autoreloader. The reloader tries to get
-        # __file__ or __name__ of every module in sys.modules. This doesn't work
-        # well if this MovedModule is for an module that is unavailable on this
-        # machine (like winreg on Unix systems). Thus, we pretend __file__ and
-        # __name__ don't exist if the module hasn't been loaded yet. See issues
-        # #51 and #53.
-        if attr in ("__file__", "__name__") and self.mod not in sys.modules:
-            raise AttributeError
-        _module = self._resolve()
+        # It turns out many Python frameworks like to traverse sys.modules and
+        # try to load various attributes. This causes problems if this is a
+        # platform-specific module on the wrong platform, like _winreg on
+        # Unixes. Therefore, we silently pretend unimportable modules do not
+        # have any attributes. See issues #51, #53, #56, and #63 for the full
+        # tales of woe.
+        #
+        # First, if possible, avoid loading the module just to look at __file__,
+        # __name__, or __path__.
+        if (attr in ("__file__", "__name__", "__path__") and
+            self.mod not in sys.modules):
+            raise AttributeError(attr)
+        try:
+            _module = self._resolve()
+        except ImportError:
+            raise AttributeError(attr)
         value = getattr(_module, attr)
         setattr(self, attr, value)
         return value
@@ -242,6 +253,7 @@ class Module_six_moves_urllib_parse(_LazyModule):
 
 _urllib_parse_moved_attributes = [
     MovedAttribute("ParseResult", "urlparse", "urllib.parse"),
+    MovedAttribute("SplitResult", "urlparse", "urllib.parse"),
     MovedAttribute("parse_qs", "urlparse", "urllib.parse"),
     MovedAttribute("parse_qsl", "urlparse", "urllib.parse"),
     MovedAttribute("urldefrag", "urlparse", "urllib.parse"),
@@ -255,6 +267,7 @@ _urllib_parse_moved_attributes = [
     MovedAttribute("unquote", "urllib", "urllib.parse"),
     MovedAttribute("unquote_plus", "urllib", "urllib.parse"),
     MovedAttribute("urlencode", "urllib", "urllib.parse"),
+    MovedAttribute("splitquery", "urllib", "urllib.parse"),
 ]
 for attr in _urllib_parse_moved_attributes:
     setattr(Module_six_moves_urllib_parse, attr.name, attr)
@@ -405,11 +418,6 @@ if PY3:
     _func_code = "__code__"
     _func_defaults = "__defaults__"
     _func_globals = "__globals__"
-
-    _iterkeys = "keys"
-    _itervalues = "values"
-    _iteritems = "items"
-    _iterlists = "lists"
 else:
     _meth_func = "im_func"
     _meth_self = "im_self"
@@ -418,11 +426,6 @@ else:
     _func_code = "func_code"
     _func_defaults = "func_defaults"
     _func_globals = "func_globals"
-
-    _iterkeys = "iterkeys"
-    _itervalues = "itervalues"
-    _iteritems = "iteritems"
-    _iterlists = "iterlists"
 
 
 try:
@@ -472,21 +475,37 @@ get_function_defaults = operator.attrgetter(_func_defaults)
 get_function_globals = operator.attrgetter(_func_globals)
 
 
-def iterkeys(d, **kw):
-    """Return an iterator over the keys of a dictionary."""
-    return iter(getattr(d, _iterkeys)(**kw))
+if PY3:
+    def iterkeys(d, **kw):
+        return iter(d.keys(**kw))
 
-def itervalues(d, **kw):
-    """Return an iterator over the values of a dictionary."""
-    return iter(getattr(d, _itervalues)(**kw))
+    def itervalues(d, **kw):
+        return iter(d.values(**kw))
 
-def iteritems(d, **kw):
-    """Return an iterator over the (key, value) pairs of a dictionary."""
-    return iter(getattr(d, _iteritems)(**kw))
+    def iteritems(d, **kw):
+        return iter(d.items(**kw))
 
-def iterlists(d, **kw):
-    """Return an iterator over the (key, [values]) pairs of a dictionary."""
-    return iter(getattr(d, _iterlists)(**kw))
+    def iterlists(d, **kw):
+        return iter(d.lists(**kw))
+else:
+    def iterkeys(d, **kw):
+        return iter(d.iterkeys(**kw))
+
+    def itervalues(d, **kw):
+        return iter(d.itervalues(**kw))
+
+    def iteritems(d, **kw):
+        return iter(d.iteritems(**kw))
+
+    def iterlists(d, **kw):
+        return iter(d.iterlists(**kw))
+
+_add_doc(iterkeys, "Return an iterator over the keys of a dictionary.")
+_add_doc(itervalues, "Return an iterator over the values of a dictionary.")
+_add_doc(iteritems,
+         "Return an iterator over the (key, value) pairs of a dictionary.")
+_add_doc(iterlists,
+         "Return an iterator over the (key, [values]) pairs of a dictionary.")
 
 
 if PY3:

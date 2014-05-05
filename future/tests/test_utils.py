@@ -7,8 +7,8 @@ from __future__ import absolute_import, unicode_literals, print_function
 import sys
 from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
-                         native_str, raise_, as_native_str)
-
+                         native_str, raise_, as_native_str, ensure_new_type,
+                         bytes_to_native_str)
 
 from numbers import Integral
 from future.tests.base import unittest, skip26
@@ -87,13 +87,10 @@ class TestUtils(unittest.TestCase):
         else:
             self.assertEqual(type(t), str)
 
-        d = dict({1: 2, 2: 4})
-        e = native(d)
-        self.assertEqual(d, e)
-        if PY2:
-            self.assertEqual(type(e), type({}))
-        else:
-            self.assertEqual(type(d), dict)
+        d1 = dict({'a': 1, 'b': 2})
+        d2 = native(d1)
+        self.assertEqual(d1, d2)
+        self.assertEqual(type(d2), type({}))
 
     def test_istext(self):
         self.assertTrue(istext(self.s))
@@ -161,6 +158,32 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(repr(obj), b'abc')
         else:
             self.assertEqual(repr(obj), u'abc')
+
+    def test_ensure_new_type(self):
+        s = u'abcd'
+        s2 = str(s)
+        self.assertEqual(ensure_new_type(s), s2)
+        self.assertEqual(type(ensure_new_type(s)), str)
+
+        b = b'xyz'
+        b2 = bytes(b)
+        self.assertEqual(ensure_new_type(b), b2)
+        self.assertEqual(type(ensure_new_type(b)), bytes)
+
+        i = 10000000000000
+        i2 = int(i)
+        self.assertEqual(ensure_new_type(i), i2)
+        self.assertEqual(type(ensure_new_type(i)), int)
+
+    def test_bytes_to_native_str(self):
+        """
+        Test for issue #47
+        """
+        b = bytes(b'abc')
+        s = bytes_to_native_str(b)
+        self.assertEqual(b, s)
+        self.assertTrue(isinstance(s, native_str))
+        self.assertEqual(type(s), native_str)
 
 
 if __name__ == '__main__':

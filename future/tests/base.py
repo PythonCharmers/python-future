@@ -2,10 +2,12 @@ import os
 import tempfile
 import unittest
 import sys
+import subprocess
+import re
+import warnings
 if not hasattr(unittest, 'skip'):
     import unittest2 as unittest
 from textwrap import dedent
-import subprocess
 
 from future.utils import bind_method
 
@@ -26,6 +28,68 @@ if "check_output" not in dir(subprocess): # duck punch it in!
         return output
     subprocess.check_output = f
 
+
+def reformat_code(code):
+    """
+    Removes any leading \n and dedents.
+    """
+    if code.startswith('\n'):
+        code = code[1:]
+    return dedent(code)
+
+
+def order_future_lines(code):
+    """
+    Returns the code block with any ``__future__`` import lines sorted, and
+    then any ``future`` import lines sorted.
+
+    This only sorts the lines within the expected blocks:
+    __future__ first, then future imports, then regular code.
+
+    See test_order_future_lines() for an example.
+    """
+
+    # We need .splitlines(keepends=True), which doesn't exist on Py2,
+    # so we use this instead:
+    lines = code.split('\n')
+
+    uufuture_line_numbers = [i for i, line in enumerate(lines)
+                               if line.startswith('from __future__ import ')]
+
+    future_line_numbers = [i for i, line in enumerate(lines)
+                             if line.startswith('from future')]
+
+    assert code.lstrip() == code, ('internal usage error: '
+            'dedent the code before calling order_future_lines()')
+
+    def mymax(numbers):
+        return max(numbers) if len(numbers) > 0 else 0
+
+    def mymin(numbers):
+        return min(numbers) if len(numbers) > 0 else 0
+
+    assert mymax(uufuture_line_numbers) <= mymin(future_line_numbers), \
+            'the __future__ and future imports are out of order'
+
+    uul = sorted([lines[i] for i in uufuture_line_numbers])
+    sorted_uufuture_lines = dict(zip(uufuture_line_numbers, uul))
+
+    fl = sorted([lines[i] for i in future_line_numbers])
+    sorted_future_lines = dict(zip(future_line_numbers, fl))
+
+    # Replace the old unsorted "from __future__ import ..." lines with the
+    # new sorted ones:
+    new_lines = []
+    for i in range(len(lines)):
+        if i in uufuture_line_numbers:
+            new_lines.append(sorted_uufuture_lines[i])
+        elif i in future_line_numbers:
+            new_lines.append(sorted_future_lines[i])
+        else:
+            new_lines.append(lines[i])
+    return '\n'.join(new_lines)
+
+
 class CodeHandler(unittest.TestCase):
     """
     Handy mixin for test classes for writing / reading / futurizing /
@@ -42,7 +106,7 @@ class CodeHandler(unittest.TestCase):
         # self.headers1 = """
         # from __future__ import absolute_import, division, print_function
         # """
-        self.headers1 = self.reformat("""
+        self.headers1 = reformat_code("""
         from __future__ import absolute_import
         from __future__ import division
         from __future__ import print_function
@@ -57,7 +121,7 @@ class CodeHandler(unittest.TestCase):
         # from future import standard_library
         # from future.builtins import *
         # """
-        self.headers2 = self.reformat("""
+        self.headers2 = reformat_code("""
         from __future__ import absolute_import
         from __future__ import division
         from __future__ import print_function
@@ -84,14 +148,13 @@ class CodeHandler(unittest.TestCase):
         both 2 and 3. If from3 is True, runs ``pasteurize`` to convert
         from Python 3 to both 2 and 3.
 
-        Optionally reformats the code block first using the reformat()
-        method.
+        Optionally reformats the code block first using the reformat() function.
 
         If run is True, runs the resulting code under all Python
         interpreters in self.interpreters.
         """
         if reformat:
-            code = self.reformat(code)
+            code = reformat_code(code)
         self._write_test_script(code)
         self._futurize_test_script(stages=stages, all_imports=all_imports,
                                    from3=from3)
@@ -100,14 +163,6 @@ class CodeHandler(unittest.TestCase):
             for interpreter in self.interpreters:
                 _ = self._run_test_script(interpreter=interpreter)
         return output
-
-    def reformat(self, code):
-        """
-        Removes any leading \n and dedents.
-        """
-        if code.startswith('\n'):
-            code = code[1:]
-        return dedent(code)
 
     def compare(self, output, expected, ignore_imports=True):
         """
@@ -118,12 +173,10 @@ class CodeHandler(unittest.TestCase):
         If ignore_imports is True, passes the code blocks into the
         strip_future_imports method.
         """
-        # self.assertEqual(expected.rstrip(),
-        #                  self.order_future_lines(output).rstrip())
         if ignore_imports:
             output = self.strip_future_imports(output)
             expected = self.strip_future_imports(expected)
-        self.assertEqual(self.order_future_lines(output.rstrip()),
+        self.assertEqual(order_future_lines(output.rstrip()),
                          expected.rstrip())
 
     def strip_future_imports(self, code):
@@ -144,7 +197,9 @@ class CodeHandler(unittest.TestCase):
                                     unicode_literals)
         """
         output = []
-        for line in code.splitlines():
+        # We need .splitlines(keepends=True), which doesn't exist on Py2,
+        # so we use this instead:
+        for line in code.split('\n'):
             if not (line.startswith('from __future__ import ')
                     or line.startswith('from future ')
                     or 'install_hooks()' in line
@@ -158,8 +213,8 @@ class CodeHandler(unittest.TestCase):
         """
         Convenience method that calls convert() and compare().
 
-        Reformats the code blocks automatically using the reformat()
-        method.
+        Reformats the code blocks automatically using the reformat_code()
+        function.
 
         If all_imports is passed, we add the appropriate import headers
         for the stage(s) selected to the ``expected`` code-block, so they
@@ -180,36 +235,8 @@ class CodeHandler(unittest.TestCase):
         else:
             headers = ''
 
-        self.compare(output, self.reformat(headers + expected),
+        self.compare(output, reformat_code(headers + expected),
                     ignore_imports=ignore_imports)
-
-    def order_future_lines(self, code):
-        """
-        TODO: simplify this hideous code ...
-
-        Returns the code block with any ``__future__`` import lines sorted, and
-        then any ``future`` import lines sorted.
-        """
-        codelines = code.splitlines()
-        # Under under future lines:
-        uufuture_line_numbers = [i for i in range(len(codelines)) if codelines[i].startswith('from __future__ import ')]
-        sorted_uufuture_lines = sorted([codelines[i] for i in uufuture_line_numbers])
-
-        # future import lines:
-        future_line_numbers = [i for i in range(len(codelines)) if codelines[i].startswith('from future')]
-        sorted_future_lines = sorted([codelines[i] for i in future_line_numbers])
-
-        # Replace the old unsorted "from __future__ import ..." lines with the
-        # new sorted ones:
-        codelines2 = []
-        for i in range(len(codelines)):
-            if i in uufuture_line_numbers:
-                codelines2.append(sorted_uufuture_lines[i])
-            elif i in future_line_numbers:
-                codelines2.append(sorted_future_lines[i - len(uufuture_line_numbers)])
-            else:
-                codelines2.append(codelines[i])
-        return '\n'.join(codelines2)
 
     def unchanged(self, code, **kwargs):
         """
@@ -267,3 +294,134 @@ skip26 = unittest.skipIf(sys.version_info[:2] == (2, 6), "this test is known to 
 
 # Renamed in Py3.3:
 unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+
+# From Py3.3:
+def assertRegex(self, text, expected_regex, msg=None):
+    """Fail the test unless the text matches the regular expression."""
+    if isinstance(expected_regex, (str, unicode)):
+        assert expected_regex, "expected_regex must not be empty."
+        expected_regex = re.compile(expected_regex)
+    if not expected_regex.search(text):
+        msg = msg or "Regex didn't match"
+        msg = '%s: %r not found in %r' % (msg, expected_regex.pattern, text)
+        raise self.failureException(msg)
+
+if not hasattr(unittest.TestCase, 'assertRegex'):
+    bind_method(unittest.TestCase, 'assertRegex', assertRegex)
+
+class _AssertRaisesBaseContext(object):
+
+    def __init__(self, expected, test_case, callable_obj=None,
+                 expected_regex=None):
+        self.expected = expected
+        self.test_case = test_case
+        if callable_obj is not None:
+            try:
+                self.obj_name = callable_obj.__name__
+            except AttributeError:
+                self.obj_name = str(callable_obj)
+        else:
+            self.obj_name = None
+        if isinstance(expected_regex, (bytes, str)):
+            expected_regex = re.compile(expected_regex)
+        self.expected_regex = expected_regex
+        self.msg = None
+
+    def _raiseFailure(self, standardMsg):
+        msg = self.test_case._formatMessage(self.msg, standardMsg)
+        raise self.test_case.failureException(msg)
+
+    def handle(self, name, callable_obj, args, kwargs):
+        """
+        If callable_obj is None, assertRaises/Warns is being used as a
+        context manager, so check for a 'msg' kwarg and return self.
+        If callable_obj is not None, call it passing args and kwargs.
+        """
+        if callable_obj is None:
+            self.msg = kwargs.pop('msg', None)
+            return self
+        with self:
+            callable_obj(*args, **kwargs)
+
+class _AssertWarnsContext(_AssertRaisesBaseContext):
+    """A context manager used to implement TestCase.assertWarns* methods."""
+
+    def __enter__(self):
+        # The __warningregistry__'s need to be in a pristine state for tests
+        # to work properly.
+        for v in sys.modules.values():
+            if getattr(v, '__warningregistry__', None):
+                v.__warningregistry__ = {}
+        self.warnings_manager = warnings.catch_warnings(record=True)
+        self.warnings = self.warnings_manager.__enter__()
+        warnings.simplefilter("always", self.expected)
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        self.warnings_manager.__exit__(exc_type, exc_value, tb)
+        if exc_type is not None:
+            # let unexpected exceptions pass through
+            return
+        try:
+            exc_name = self.expected.__name__
+        except AttributeError:
+            exc_name = str(self.expected)
+        first_matching = None
+        for m in self.warnings:
+            w = m.message
+            if not isinstance(w, self.expected):
+                continue
+            if first_matching is None:
+                first_matching = w
+            if (self.expected_regex is not None and
+                not self.expected_regex.search(str(w))):
+                continue
+            # store warning for later retrieval
+            self.warning = w
+            self.filename = m.filename
+            self.lineno = m.lineno
+            return
+        # Now we simply try to choose a helpful failure message
+        if first_matching is not None:
+            self._raiseFailure('"{}" does not match "{}"'.format(
+                     self.expected_regex.pattern, str(first_matching)))
+        if self.obj_name:
+            self._raiseFailure("{} not triggered by {}".format(exc_name,
+                                                               self.obj_name))
+        else:
+            self._raiseFailure("{} not triggered".format(exc_name))
+
+
+def assertWarns(self, expected_warning, callable_obj=None, *args, **kwargs):
+    """Fail unless a warning of class warnClass is triggered
+       by callable_obj when invoked with arguments args and keyword
+       arguments kwargs.  If a different type of warning is
+       triggered, it will not be handled: depending on the other
+       warning filtering rules in effect, it might be silenced, printed
+       out, or raised as an exception.
+
+       If called with callable_obj omitted or None, will return a
+       context object used like this::
+
+            with self.assertWarns(SomeWarning):
+                do_something()
+
+       An optional keyword argument 'msg' can be provided when assertWarns
+       is used as a context object.
+
+       The context manager keeps a reference to the first matching
+       warning as the 'warning' attribute; similarly, the 'filename'
+       and 'lineno' attributes give you information about the line
+       of Python code from which the warning was triggered.
+       This allows you to inspect the warning after the assertion::
+
+           with self.assertWarns(SomeWarning) as cm:
+               do_something()
+           the_warning = cm.warning
+           self.assertEqual(the_warning.some_attribute, 147)
+    """
+    context = _AssertWarnsContext(expected_warning, self, callable_obj)
+    return context.handle('assertWarns', callable_obj, args, kwargs)
+
+if not hasattr(unittest.TestCase, 'assertWarns'):
+    bind_method(unittest.TestCase, 'assertWarns', assertWarns)

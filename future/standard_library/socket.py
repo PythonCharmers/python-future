@@ -164,7 +164,7 @@ class socket(_socket.socket):
         if 'encoding' in _3to2kwargs: encoding = _3to2kwargs['encoding']; del _3to2kwargs['encoding']
         else: encoding = None
         for c in mode:
-            if c not in {"r", "w", "b"}:
+            if c not in ("r", "w", "b"):
                 raise ValueError("invalid mode %r (only r, w, b allowed)")
         writing = "w" in mode
         reading = "r" in mode or not writing
@@ -263,7 +263,7 @@ if hasattr(_socket, "socketpair"):
         return a, b
 
 
-_blocking_errnos = { EAGAIN, EWOULDBLOCK }
+_blocking_errnos = set([EAGAIN, EWOULDBLOCK])
 
 class SocketIO(io.RawIOBase):
 
