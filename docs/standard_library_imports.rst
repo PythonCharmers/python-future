@@ -25,6 +25,7 @@ The first interface is via a context-manager called ``hooks``::
         from collections import UserList
         from itertools import filterfalse, zip_longest
         from http.client import HttpConnection
+        import urllib.request
         # and other moved modules and definitions
 
 Direct interface
@@ -33,9 +34,9 @@ Direct interface
 The second interface avoids import hooks. It may therefore be more
 robust, at the cost of less idiomatic code. Use it as follows::
 
-    from future.standard_library import queue
-    from future.standard_library import socketserver
-    from future.standard_library.http.client import HTTPConnection
+    from future.moves import queue
+    from future.moves import socketserver
+    from future.moves.http.client import HTTPConnection
     # etc.
 
 If you wish to achieve the effect of a two-level import such as this::
@@ -45,12 +46,12 @@ If you wish to achieve the effect of a two-level import such as this::
 portably on both Python 2 and Python 3, note that Python currently does not
 support syntax like this::
 
-    from future.standard_library import http.client
+    from future.moves import http.client
 
 One workaround (which ``six.moves`` also requires) is to replace the dot with
 an underscore::
 
-    import future.standard_library.http.client as http_client
+    import future.moves.http.client as http_client
 
 ``import_`` and from_import functions
 -----------------------------------------

@@ -34,9 +34,9 @@ class TestStandardLibraryRenames(CodeHandler):
             standard_library.remove_hooks()
         """
 
-        import future.standard_library.urllib.parse as urllib_parse
-        import future.standard_library.urllib.request as urllib_request
-        from future.standard_library.test import support
+        import future.moves.urllib.parse as urllib_parse
+        import future.moves.urllib.request as urllib_request
+        from future.moves.test import support
 
         with standard_library.hooks():
             import http.server
@@ -310,13 +310,13 @@ class TestStandardLibraryRenames(CodeHandler):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    @unittest.skip("ssl support has been stripped out for now ...")
+    # @unittest.skip("ssl support has been stripped out for now ...")
     def test_urllib_request_ssl_redirect(self):
         """
         This site redirects to https://...
         It therefore requires ssl support.
         """
-        import future.standard_library.urllib.request as urllib_request
+        import future.moves.urllib.request as urllib_request
         from pprint import pprint
         URL = 'http://pypi.python.org/pypi/{0}/json'
         package = 'future'
@@ -328,7 +328,7 @@ class TestStandardLibraryRenames(CodeHandler):
         """
         This site (amazon.com) uses plain http (as of 2014-04-12).
         """
-        import future.standard_library.urllib.request as urllib_request
+        import future.moves.urllib.request as urllib_request
         from pprint import pprint
         URL = 'http://amazon.com'
         r = urllib_request.urlopen(URL)
@@ -352,13 +352,23 @@ class TestStandardLibraryRenames(CodeHandler):
         import http.cookiejar
         self.assertTrue(True)
 
-    def test_urllib_imports(self):
-        import future.standard_library.urllib
-        import future.standard_library.urllib.parse
-        import future.standard_library.urllib.request
-        import future.standard_library.urllib.robotparser
-        import future.standard_library.urllib.error
-        import future.standard_library.urllib.response
+    def test_urllib_imports_direct(self):
+        import future.moves.urllib
+        import future.moves.urllib.parse
+        import future.moves.urllib.request
+        import future.moves.urllib.robotparser
+        import future.moves.urllib.error
+        import future.moves.urllib.response
+        self.assertTrue(True)
+
+    def test_urllib_imports_cm(self):
+        with standard_library.hooks():
+            import urllib
+            import urllib.parse
+            import urllib.request
+            import urllib.robotparser
+            import urllib.error
+            import urllib.response
         self.assertTrue(True)
 
     def test_underscore_prefixed_modules(self):

@@ -2,9 +2,9 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-from future.standard_library import urllib
-import future.standard_library.urllib.response as urllib_response
-from future.standard_library.test import support as test_support
+from future.backports import urllib
+import future.backports.urllib.response as urllib_response
+from future.backports.test import support as test_support
 from future.tests.base import unittest
 
 

@@ -136,6 +136,7 @@ hooks. The context-manager form works like this::
         from itertools import filterfalse
         import html.parser
         import queue
+        from urllib.request import urlopen
 
 
 Automatic conversion to Py2/3-compatible code

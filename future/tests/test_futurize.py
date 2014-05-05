@@ -557,11 +557,13 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         data = r.read()
         """
         after = """
-        from future.standard_library.urllib import request as urllib_request
+        from future import standard_library
+        standard_library.install_hooks()
+        import urllib.request
         
         URL = 'http://pypi.python.org/pypi/future/json'
         package = 'future'
-        r = urllib_request.urlopen(URL.format(package))
+        r = urllib.request.urlopen(URL.format(package))
         data = r.read()
         """
         self.convert_check(before, after)
@@ -882,7 +884,7 @@ class TestFuturizeStage1(CodeHandler):
     def test_issue_45(self):
         """
         Tests whether running futurize -f libfuturize.fixes.fix_future_standard_library_urllib
-        on the code below causes a ValuError (issue #45).
+        on the code below causes a ValueError (issue #45).
         """
         code = r"""
             from __future__ import print_function

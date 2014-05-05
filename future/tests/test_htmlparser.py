@@ -10,8 +10,8 @@ from __future__ import (absolute_import, print_function, unicode_literals)
 from future import standard_library, utils
 from future.builtins import *
 
-from future.standard_library.test import support
-import future.standard_library.html.parser as html_parser
+from future.backports.test import support
+import future.backports.html.parser as html_parser
 
 import pprint
 from future.tests.base import unittest

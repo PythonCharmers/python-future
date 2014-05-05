@@ -8,11 +8,11 @@ import os
 import time
 
 from future import utils
-from future.standard_library.test import support
+from future.backports.test import support
 
 import future.moves.urllib.request as urllib_request
-# import future.standard_library.email.message as email_message
-# from future.standard_library.email.message import Message
+# import future.backports.email.message as email_message
+# from future.backports.email.message import Message
 import email.message as email_message
 from email.message import Message
 

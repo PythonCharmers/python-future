@@ -181,7 +181,10 @@ class TestUtils(unittest.TestCase):
         """
         b = bytes(b'abc')
         s = bytes_to_native_str(b)
-        self.assertEqual(b, s)
+        if PY2:
+            self.assertEqual(s, b)
+        else:
+            self.assertEqual(s, 'abc')
         self.assertTrue(isinstance(s, native_str))
         self.assertEqual(type(s), native_str)
 

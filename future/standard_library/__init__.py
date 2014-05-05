@@ -21,6 +21,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import html, html.parser, html.entites
     import http, http.client, http.server
     import http.cookies, http.cookiejar
+    import urllib.parse, urllib.request, urllib.response, urllib.error, urllib.robotparser
     import xmlrpc.client, xmlrpc.server
 
     import _thread
@@ -37,10 +38,6 @@ To turn off the import hooks, use::
 
     standard_library.remove_hooks()
 
-and to turn it on again, use::
-
-    standard_library.install_hooks()
-
 This is a cleaner alternative to this idiom (see
 http://docs.pythonsprints.com/python3_porting/py-porting.html)::
 
@@ -48,15 +45,6 @@ http://docs.pythonsprints.com/python3_porting/py-porting.html)::
         import queue
     except ImportError:
         import Queue as queue
-
-
-The ``urllib``, ``email``, ``test``, ``dbm``, and ``pickle`` modules have a
-different organization on Python 2 than on Python 3. To avoid ambiguity, these
-must be imported explicitly:
-
-    from future.standard_library.urllib import (request, parse,
-                                                error, robotparser)
-    from future.standard_library.test import support
 
 
 Limitations
@@ -171,7 +159,7 @@ RENAMES = {
            # 'dbm': 'dbm.ndbm',
            # 'gdbm': 'dbm.gnu',
            'future.moves.xmlrpc': 'xmlrpc',
-           # 'future.standard_library.email': 'email',    # for use by urllib
+           # 'future.backports.email': 'email',    # for use by urllib
            # 'DocXMLRPCServer': 'xmlrpc.server',
            # 'SimpleXMLRPCServer': 'xmlrpc.server',
            # 'httplib': 'http.client',
@@ -182,7 +170,7 @@ RENAMES = {
            # 'BaseHTTPServer': 'http.server',
            # 'SimpleHTTPServer': 'http.server',
            # 'CGIHTTPServer': 'http.server',
-           # 'future.standard_library.test': 'test',  # primarily for renaming test_support to support
+           # 'future.backports.test': 'test',  # primarily for renaming test_support to support
            # 'commands': 'subprocess',
            # 'urlparse' : 'urllib.parse',
            # 'robotparser' : 'urllib.robotparser',
@@ -191,7 +179,7 @@ RENAMES = {
            # 'future.utils.six.moves.http': 'http',
            'future.moves.html': 'html',
            'future.moves.http': 'http',
-           # 'future.standard_library.urllib': 'urllib',
+           # 'future.backports.urllib': 'urllib',
            # 'future.utils.six.moves.urllib': 'urllib',
            'future.moves._markupbase': '_markupbase',
           }
@@ -220,7 +208,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('base64', 'decodebytes','base64', 'decodestring'),
          ('subprocess', 'getoutput', 'commands', 'getoutput'),
          ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
-         ('math', 'ceil', 'future.standard_library.misc', 'ceil'),
+         ('math', 'ceil', 'future.backports.misc', 'ceil'),
 # This is no use, since "import urllib.request" etc. still fails:
 #          ('urllib', 'error', 'future.moves.urllib', 'error'),
 #          ('urllib', 'parse', 'future.moves.urllib', 'parse'),
@@ -290,6 +278,7 @@ class RenameImport(object):
             # New name. Look up the corresponding old (Py2) name:
             oldname = self.new_to_old[name]
             module = self._find_and_load_module(oldname)
+            module.__future_module__ = True
         else:
             module = self._find_and_load_module(name)
         # In any case, make it available under the requested (Py3) name
@@ -396,9 +385,8 @@ def is_py2_stdlib_module(m):
 def scrub_py2_sys_modules():
     """
     Removes any Python 2 standard library modules from ``sys.modules`` that
-    would interfere with Py3-style imports using ``future.standard_library``
-    import hooks. Examples are modules with the same names (like urllib
-    or email).
+    would interfere with Py3-style imports using import hooks. Examples are
+    modules with the same names (like urllib or email).
 
     (Note that currently import hooks are disabled for modules like these
     with ambiguous names anyway ...)
@@ -447,7 +435,7 @@ def scrub_future_sys_modules():
 
     This function removes items matching this spec from sys.modules:
         key: new_py3_module_name
-        value: either future.standard_library module or py2 module with
+        value: either future.backports module or py2 module with
                another name
     """
     scrubbed = {}
@@ -464,7 +452,8 @@ def scrub_future_sys_modules():
         # We look for builtins, configparser, urllib, email, http, etc., and
         # their submodules
         if (modulename in RENAMES.values() or
-            any(modulename.startswith(m + '.') for m in RENAMES.values())):
+            any(modulename.startswith(m + '.') for m in RENAMES.values()) or
+            'urllib' in modulename):
 
             if module is None:
                 # This happens for e.g. __future__ imports. Delete it.
@@ -473,11 +462,19 @@ def scrub_future_sys_modules():
                 del sys.modules[modulename]
                 continue
 
-            logging.debug('Deleting (future) {0} from sys.modules'
-                          .format(modulename))
-
-            scrubbed[modulename] = sys.modules[modulename]
-            del sys.modules[modulename]
+            # Not all modules come from future.moves. Example:
+            # sys.modules['builtins'] == <module '__builtin__' (built-in)>
+            p = os.path.join('future', 'moves', modulename.replace('.', os.sep))
+            # six.moves doesn't have a __file__ attribute:
+            if (hasattr(module, '__file__') and p in module.__file__ or
+                hasattr(module, '__future_module__')):
+                logging.debug('Deleting (future) {0} {1} from sys.modules'
+                              .format(modulename, module))
+                scrubbed[modulename] = sys.modules[modulename]
+                del sys.modules[modulename]
+            else:
+                logging.debug('Not deleting {0} {1} from sys.modules'
+                              .format(modulename, module))
     return scrubbed
 
 
@@ -536,12 +533,41 @@ def install_aliases():
         # We look up the module in sys.modules because __import__ just returns the
         # top-level package:
         newmod = sys.modules[newmodname]
+        newmod.__future_module__ = True
 
         __import__(oldmodname)
         oldmod = sys.modules[oldmodname]
 
         obj = getattr(oldmod, oldobjname)
         setattr(newmod, newobjname, obj)
+
+    # Hack for urllib so it appears to have the same structure on Py2 as on Py3
+    import urllib
+    from future.moves.urllib import request
+    from future.moves.urllib import response
+    from future.moves.urllib import parse
+    from future.moves.urllib import error
+    from future.moves.urllib import robotparser
+    urllib.request = request
+    urllib.response = response
+    urllib.parse = parse
+    urllib.error = error
+    urllib.robotparser = robotparser
+    sys.modules['urllib.request'] = request
+    sys.modules['urllib.response'] = response
+    sys.modules['urllib.parse'] = parse
+    sys.modules['urllib.error'] = error
+    sys.modules['urllib.robotparser'] = robotparser
+
+    from future.moves import http
+    sys.modules['http'] = http
+
+    from future.moves import xmlrpc
+    sys.modules['xmlrpc'] = xmlrpc
+
+    from future.moves import html
+    sys.modules['html'] = html
+
     # install_aliases.run_already = True
 
 
@@ -679,18 +705,18 @@ def import_(module_name, backport=False):
 
     or to this if backport=True:
 
-        >>> from future.standard_library import module_name
+        >>> from future.backports import module_name
 
     except that it also handles dotted module names such as ``http.client``
     The effect then is like this:
 
-        >>> from future.standard_library import module
-        >>> from future.standard_library.module import submodule
+        >>> from future.backports import module
+        >>> from future.backports.module import submodule
         >>> module.submodule = submodule
 
     Note that this would be a SyntaxError in Python:
 
-        >>> from future.standard_library import http.client
+        >>> from future.backports import http.client
 
     """
 
@@ -701,7 +727,7 @@ def import_(module_name, backport=False):
         # Then http.client = client
         # etc.
         if backport:
-            prefix = 'future.standard_library'
+            prefix = 'future.backports'
         else:
             prefix = 'future.moves'
         parts = prefix.split('.') + module_name.split('.')
@@ -715,7 +741,7 @@ def import_(module_name, backport=False):
                 break
             setattr(modules[i-1], part, modules[i])
 
-        # Return the next-most top-level module after future.standard_library:
+        # Return the next-most top-level module after future.backports / future.moves:
         return modules[2]
 
 
@@ -732,7 +758,9 @@ def from_import(module_name, *symbol_names, **kwargs):
 
     and this on Py2:
 
-        >>> from future.standard_library.module_name import symbol_names[0], ...
+        >>> from future.moves.module_name import symbol_names[0], ...
+    or:
+        >>> from future.backports.module_name import symbol_names[0], ...
 
     except that it also handles dotted module names such as ``http.client``.
     """
@@ -741,7 +769,7 @@ def from_import(module_name, *symbol_names, **kwargs):
         return __import__(module_name)
     else:
         if 'backport' in kwargs and bool(kwargs['backport']):
-            prefix = 'future.standard_library'
+            prefix = 'future.backports'
         else:
             prefix = 'future.moves'
         parts = prefix.split('.') + module_name.split('.')

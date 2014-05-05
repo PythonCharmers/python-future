@@ -185,7 +185,7 @@ class TestBuiltins(unittest.TestCase):
 # Below here are the tests from Py3.3'2 test_builtin.py module
 ##############################################################
 
-from future.standard_library.test.support import TESTFN, unlink,  run_unittest, check_warnings
+from future.backports.test.support import TESTFN, unlink,  run_unittest, check_warnings
 import ast
 import collections
 

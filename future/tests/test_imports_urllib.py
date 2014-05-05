@@ -5,11 +5,17 @@ from future.tests.base import unittest
 
 class ImportUrllibTest(unittest.TestCase):
     def test_urllib(self):
+        """
+        Tests that urllib isn't changed from under our feet. (This might not
+        even be a problem?)
+        """
+        from future import standard_library
         import urllib
         orig_file = urllib.__file__
-        from future.standard_library.urllib import response as urllib_response
+        with standard_library.hooks():
+            import urllib.response
         self.assertEqual(orig_file, urllib.__file__)
-        print(urllib_response.__file__)
+
 
 if __name__ == '__main__':
     unittest.main()
