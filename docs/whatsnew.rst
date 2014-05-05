@@ -78,31 +78,33 @@ tools like ``py2exe``.
 .. functionality in the Python 2.x standard library.
 
 
-New ``http.server``, ``urllib``, ``email``, and ``xmlrpc`` modules
-------------------------------------------------------------------
+New ``http.server`` and ``urllib`` modules
+------------------------------------------
 
-Backports of the ``urllib``, ``email``, and ``xmlrpc`` modules from Python
-3.3's standard library are now provided. 
+Backports of the ``http.server`` and ``urllib`` module from Python
+3.3's standard library are now provided in ``future.standard_library``.
 
 Use them like this::
 
     from future.standard_library.urllib.request import Request    # etc.
-    from future.standard_library.email import message_from_bytes  # etc.
-    from future.standard_library.xmlrpc import client, server
+    from future.standard_library.http import server as http_server
+
+..    from future.standard_library.email import message_from_bytes  # etc.
+..    from future.standard_library.xmlrpc import client, server
 
 
 ``newobject`` base object defines fallback Py2-compatible special methods
 -------------------------------------------------------------------------
 
-There is a new ``future.bytes.object`` base class that can streamline Py3/2
+There is a new ``future.builtins.object`` base class that can streamline Py3/2
 compatible code by providing fallback Py2-compatible special methods for its
-subclasses. It provides ``next()`` and ``__nonzero__()`` as fallback methods on
-Py2 when its subclasses define the corresponding Py3-style ``__next__()`` and
-``__bool__()`` methods.
+subclasses. It currently provides ``next()`` and ``__nonzero__()`` as fallback
+methods on Py2 when its subclasses define the corresponding Py3-style
+``__next__()`` and ``__bool__()`` methods.
 
 This obviates the need to add certain compatibility hacks or decorators to the
-code such as the ``@implements_iterator`` for classes that define a Py3-style
-``__next__`` method.
+code such as the ``@implements_iterator`` decorator for classes that define a
+Py3-style ``__next__`` method.
 
 In this example, the code defines a Py3-style iterator with a ``__next__``
 method. The ``object`` class defines a ``next`` method for Python 2 that maps
@@ -123,7 +125,11 @@ to ``__next__``::
 ``future.builtins.object`` defines other Py2-compatible special methods similarly:
 currently these include ``__nonzero__`` (mapped to ``__bool__``) and
 ``__long__`` (mapped to ``__int__``).
-    
+
+Inheriting from ``newobject`` on Python 2 is safe even if your class defines
+its own Python 2-style ``__nonzero__`` and ``next`` and ``__long__`` methods.
+Your custom methods will simply override those on the base class.
+
 On Python 3, as usual, ``object`` simply refers to ``builtins.object``.
 
 
@@ -137,7 +143,7 @@ functions like ``map()`` and ``filter()`` now behave as they do on Py2 with with
 
 The ``past.builtins`` module has also been extended to add Py3 support for
 additional Py2 constructs that are not adequately handled by ``lib2to3`` (see
-Python bug #). This includes custom ``execfile()`` and ``cmp()`` functions.
+issue #37). This includes custom ``execfile()`` and ``cmp()`` functions.
 ``futurize`` now invokes imports of these functions from ``past.builtins``.
 
 
@@ -150,7 +156,7 @@ characters when encoding and decoding strings with unknown encodings.
 
 
 ``newlist`` type
--------------
+----------------
 
 There is a new ``list`` type in ``future.builtins`` that offers ``.copy()`` and
 ``.clear()`` methods like the ``list`` type in Python 3.
