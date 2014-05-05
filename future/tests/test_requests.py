@@ -30,7 +30,7 @@ class write_module(object):
         self.tempdir = tempdir
 
     def __enter__(self):
-        print('Creating {0}/test_imports_future_stdlib ...'.format(self.tempdir))
+        print('Creating {0}test_imports_future_stdlib.py ...'.format(self.tempdir))
         with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
             f.write(textwrap.dedent(self.code))
         sys.path.insert(0, self.tempdir)
@@ -44,6 +44,10 @@ class write_module(object):
         if exc_type is None:
             # No exception occurred
             os.remove(self.tempdir + 'test_imports_future_stdlib.py')
+            try:
+                os.remove(self.tempdir + 'test_imports_future_stdlib.pyc')
+            except OSError:
+                pass
 
 
 class TestRequests(CodeHandler):
