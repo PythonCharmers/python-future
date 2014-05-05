@@ -5,7 +5,7 @@ import socket
 import array
 import sys
 
-from future.standard_library import import_
+from future.standard_library import import_, install_aliases
 from future.standard_library.test import support
 import future.standard_library.urllib.request as urllib_request
 # The proxy bypass method imported below has logic specific to the OSX
@@ -15,6 +15,8 @@ import future.standard_library.urllib.error as urllib_error
 from future.tests.base import unittest
 from future.builtins import bytes, dict, int, open, str, zip
 from future.utils import text_to_native_str
+
+install_aliases()   # for base64.encodebytes on Py2
 
 
 # XXX
