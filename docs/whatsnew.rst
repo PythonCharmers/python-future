@@ -184,9 +184,9 @@ Use them like this::
 
 or with this new interface::
 
-    from future.standard_library import import_, import_from
+    from future.standard_library import import_, from_import
 
-    Request = import_from('urllib.request', 'Request', backport=True)
+    Request = from_import('urllib.request', 'Request', backport=True)
     http = import_('http.server', backport=True)
 
 ..    from future.standard_library.email import message_from_bytes  # etc.

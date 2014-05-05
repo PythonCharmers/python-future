@@ -5,11 +5,15 @@ Standard library imports
 
 :mod:`future` supports the standard library reorganization (PEP 3108). Under
 the standard Python 3 names and locations, it provides access to either the
-corresponding native standard library modules (``future.moves``) or backported
-modules from Python 3.3 on Python 2 (``future.standard_library``).
+corresponding native standard library modules (``future.moves``) or to backported
+modules from Python 3.3 (``future.standard_library``).
 
-There are four interfaces to the reorganized standard library. The
-first is via a context-manager called ``hooks``::
+There are currently four interfaces to the reorganized standard library.
+
+
+Context-manager interface
+-------------------------
+The first interface is via a context-manager called ``hooks``::
 
     from future import standard_library
     with standard_library.hooks():
@@ -22,6 +26,9 @@ first is via a context-manager called ``hooks``::
         from itertools import filterfalse, zip_longest
         from http.client import HttpConnection
         # and other moved modules and definitions
+
+Direct interface
+----------------
 
 The second interface avoids import hooks. It may therefore be more
 robust, at the cost of less idiomatic code. Use it as follows::
@@ -45,7 +52,11 @@ an underscore::
 
     import future.standard_library.http.client as http_client
 
-The other workaround is to use the ``import_`` and ``from_import`` functions as
+``import_`` and ``from_import`` functions
+-----------------------------------------
+
+A third option, which also works with two-level imports, is to use the
+``import_`` and ``from_import`` functions from ``future.standard_library`` as
 follows::
 
     from future.standard_library import import_, from_import
@@ -55,8 +66,10 @@ follows::
 
     urlopen, urlsplit = from_import('urllib.request', 'urlopen', 'urlsplit')
 
+``install_hooks()`` call
+------------------------
 
-The third (deprecated) interface to the reorganized standard library is via an
+The fourth (deprecated) interface to the reorganized standard library is via an
 explicit call to ``install_hooks``::
 
     from future import standard_library
@@ -108,7 +121,7 @@ manager or one of the other import mechanisms (see above).
 List of standard library modules
 ________________________________
 
-The modules available are::
+The modules available via ``future.moves`` are::
 
     import socketserver
     import queue
@@ -125,11 +138,6 @@ The modules available are::
     import http.server
     import http.cookies
     import http.cookiejar
-
-..  Disabled: import test.support
-
-Backports of the following modules are currently not supported, but we aim to support them in
-the future::
     
     import urllib
     import urllib.parse
@@ -139,5 +147,19 @@ the future::
     import xmlrpc.client
     import xmlrpc.server
 
-If you need one of these, please open an issue `here <https://github.com/PythonCharmers/python-future>`_.
+..  Disabled: import test.support
+
+Backports
+~~~~~~~~~
+
+Backports of the following modules from Python 3.3's standard library to Python 2.x are also
+currently available in ``future.standard_library`` but of alpha quality::
+
+    http.server
+    urllib
+    xmlrpc.client
+    xmlrpc.server
+
+If you need the full backport of one of these, please open an issue `here
+<https://github.com/PythonCharmers/python-future>`_.
 
