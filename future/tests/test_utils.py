@@ -7,8 +7,8 @@ from __future__ import absolute_import, unicode_literals, print_function
 import sys
 from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
-                         native_str, raise_, as_native_str, ensure_new_type)
-
+                         native_str, raise_, as_native_str, ensure_new_type,
+                         bytes_to_native_str)
 
 from numbers import Integral
 from future.tests.base import unittest, skip26
@@ -174,6 +174,16 @@ class TestUtils(unittest.TestCase):
         i2 = int(i)
         self.assertEqual(ensure_new_type(i), i2)
         self.assertEqual(type(ensure_new_type(i)), int)
+
+    def test_bytes_to_native_str(self):
+        """
+        Test for issue #47
+        """
+        b = bytes(b'abc')
+        s = bytes_to_native_str(b)
+        self.assertEqual(b, s)
+        self.assertTrue(isinstance(s, native_str))
+        self.assertEqual(type(s), native_str)
 
 
 if __name__ == '__main__':
