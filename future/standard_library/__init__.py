@@ -455,7 +455,7 @@ def scrub_future_sys_modules():
         return {}
     for modulename, module in sys.modules.items():
         if modulename.startswith('future'):
-            logging.debug('Not removing', modulename)
+            logging.debug('Not removing %s' % modulename)
             continue
         # We don't want to remove Python 2.x urllib if this is cached.
         # But we do want to remove modules under their new names, e.g.
