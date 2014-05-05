@@ -52,7 +52,7 @@ an underscore::
 
     import future.standard_library.http.client as http_client
 
-``import_`` and ``from_import`` functions
+``import_`` and from_import functions
 -----------------------------------------
 
 A third option, which also works with two-level imports, is to use the
@@ -66,7 +66,7 @@ follows::
 
     urlopen, urlsplit = from_import('urllib.request', 'urlopen', 'urlsplit')
 
-``install_hooks()`` call
+install_hooks() call
 ------------------------
 
 The fourth (deprecated) interface to the reorganized standard library is via an
@@ -119,7 +119,7 @@ manager or one of the other import mechanisms (see above).
 
 
 List of standard library modules
-________________________________
+--------------------------------
 
 The modules available via ``future.moves`` are::
 
@@ -150,16 +150,17 @@ The modules available via ``future.moves`` are::
 ..  Disabled: import test.support
 
 Backports
-~~~~~~~~~
+---------
 
 Backports of the following modules from Python 3.3's standard library to Python 2.x are also
-currently available in ``future.standard_library`` but of alpha quality::
+available in ``future.standard_library``::
 
     http.server
     urllib
     xmlrpc.client
     xmlrpc.server
-
-If you need the full backport of one of these, please open an issue `here
+ 
+These are currently of alpha quality. If you need the full backport of one of
+these, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.
 

@@ -237,7 +237,7 @@ Many small improvements and fixes have been made across the project. Some highli
   file encoding declarations like ``# -*- coding=utf-8 -*-`` are no longer occasionally
   displaced by ``from __future__ import ...`` statements.
 
-- Improved compatibility with py2exe (`issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`).
+- Improved compatibility with py2exe (`issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`_).
 
 
 .. whats-new-0.11.5:
