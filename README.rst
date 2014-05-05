@@ -25,8 +25,11 @@ Features
 -   ``future.builtins`` package provides backports and remappings for 19
     builtins with different semantics on Py3 versus Py2
 
--   ``future.standard_library`` package provides backports and remappings from
-    the Py3 standard library
+-   ``future.standard_library`` package provides backports from the Py3.3
+    standard library
+
+-   ``future.moves`` package provides support for reorganized standard library
+    modules (renames from native packages)
 
 -   ``past.builtins`` package provides forward-ports of Python 2 types and
     resurrects some Python 2 builtins (to aid with per-module code migrations)
@@ -34,7 +37,7 @@ Features
 -   ``past.translation`` package supports transparent translation of Python 2
     modules to Python 3 upon import. [This feature is currently in alpha.] 
 
--   640+ unit tests, including many from the Py3.3 source tree.
+-   800+ unit tests, including many from the Py3.3 source tree.
 
 -   ``futurize`` and ``pasteurize`` scripts based on ``2to3`` and parts of
     ``3to2`` and ``python-modernize``, for automatic conversion from either Py2
@@ -135,7 +138,7 @@ hooks. The context-manager form works like this::
         import queue
 
 
-Automatic conversion to Py3/2-compatible code
+Automatic conversion to Py2/3-compatible code
 =============================================
 
 ``future`` comes with two scripts called ``futurize`` and

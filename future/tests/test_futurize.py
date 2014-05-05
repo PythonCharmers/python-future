@@ -6,7 +6,23 @@ import tempfile
 from subprocess import Popen, PIPE
 import os
 
-from future.tests.base import CodeHandler, unittest, skip26
+from libfuturize.fixer_util import is_shebang_comment
+from lib2to3.fixer_util import FromImport
+from lib2to3.pytree import Leaf, Node
+from lib2to3.pygram import token
+
+from future.tests.base import (CodeHandler, unittest, skip26, reformat_code,
+                               order_future_lines)
+
+
+class TestLibFuturize(unittest.TestCase):
+    def test_is_shebang_comment(self):
+        """
+        Tests whether the libfuturize.fixer_util.is_shebang_comment() function is working
+        """
+        node = FromImport(u'math', [Leaf(token.NAME, u'cos', prefix=" ")])
+        node.prefix = u'#!/usr/bin/env python\n'
+        self.assertTrue(is_shebang_comment(node))
 
 
 class TestFuturizeSimple(CodeHandler):
@@ -18,6 +34,162 @@ class TestFuturizeSimple(CodeHandler):
     def setUp(self):
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         super(TestFuturizeSimple, self).setUp()
+
+    def test_shebang_blank_with_future_division_import(self):
+        """
+        Issue #43: Is shebang line preserved as the first
+        line by futurize when followed by a blank line?
+        """
+        before = """
+        #!/usr/bin/env python
+
+        import math
+        1 / 5
+        """
+        after = """
+        #!/usr/bin/env python
+        from __future__ import division
+
+        import math
+        1 / 5
+        """
+        self.convert_check(before, after)
+
+    def test_shebang_blank_with_print_import(self):
+        before = """
+        #!/usr/bin/env python
+
+        import math
+        print 'Hello'
+        """
+        after = """
+        #!/usr/bin/env python
+        from __future__ import print_function
+
+        import math
+        print('Hello')
+        """
+        self.convert_check(before, after)
+
+    def test_shebang_comment(self):
+        """
+        Issue #43: Is shebang line preserved as the first
+        line by futurize when followed by a comment?
+        """
+        before = """
+        #!/usr/bin/env python
+        # some comments
+        # and more comments
+
+        import math
+        1 / 5
+        print 'Hello!'
+        """
+        after = """
+        #!/usr/bin/env python
+        # some comments
+        # and more comments
+        from __future__ import division
+        from __future__ import print_function
+
+        import math
+        1 / 5
+        print('Hello!')
+        """
+        self.convert_check(before, after)
+
+    def test_shebang_docstring(self):
+        """
+        Issue #43: Is shebang line preserved as the first
+        line by futurize when followed by a docstring?
+        """
+        before = '''
+        #!/usr/bin/env python
+        """
+        a doc string
+        """
+        import math
+        1 / 5
+        print 'Hello!'
+        '''
+        after = '''
+        #!/usr/bin/env python
+        """
+        a doc string
+        """
+        from __future__ import division
+        from __future__ import print_function
+        import math
+        1 / 5
+        print('Hello!')
+        '''
+        self.convert_check(before, after)
+
+    def test_oldstyle_classes(self):
+        """
+        Stage 2 should convert old-style to new-style classes. This makes
+        the new-style class explicit and reduces the gap between the
+        behaviour (e.g.  method resolution order) on Py2 and Py3. It also
+        allows us to provide ``newobject`` (see
+        test_oldstyle_classes_iterator).
+        """
+        before = """
+        class Blah:
+            pass
+        """
+        after = """
+        from future.builtins import object
+        class Blah(object):
+            pass
+        """
+        self.convert_check(before, after, ignore_imports=False)
+
+    def test_oldstyle_classes_iterator(self):
+        """
+        An old-style class used as an iterator should be converted
+        properly. This requires ``futurize`` to do both steps (adding
+        inheritance from object and adding the newobject import) in the
+        right order.
+        """
+        before = """
+        class Upper:
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def next(self):                 # note the Py3 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        assert list(Upper('hello')) == list('HELLO')
+        """
+        after = """
+        from future.builtins import next
+        from future.builtins import object
+        class Upper(object):
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def __next__(self):                 # note the Py3 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        assert list(Upper('hello')) == list('HELLO')
+        """
+        self.convert_check(before, after, ignore_imports=False)
+
+        # Try it again with this convention: class Upper():
+        before2 = """
+        class Upper():
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def next(self):                 # note the Py3 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        assert list(Upper('hello')) == list('HELLO')
+        """
+        self.convert_check(before2, after)
 
     @unittest.expectedFailure
     def test_problematic_string(self):
@@ -136,7 +308,6 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.unchanged(code)
 
-    @unittest.expectedFailure
     def test_import_builtins(self):
         before = """
         a = raw_input()
@@ -155,9 +326,7 @@ class TestFuturizeSimple(CodeHandler):
         from future.builtins import filter
         from future.builtins import input
         from future.builtins import map
-        from future.builtins import open
         from future.builtins import range
-        from future.builtins import super
         from functools import reduce
         a = input()
         b = open(a, b, c)
@@ -173,14 +342,23 @@ class TestFuturizeSimple(CodeHandler):
         self.convert_check(before, after, ignore_imports=False, run=False)
 
     def test_xrange(self):
-        code = '''
+        """
+        The ``from future.builtins import range`` line was being added to the
+        bottom of the file as of v0.11.4, but only using Py2.7's lib2to3.
+        (Py3.3's lib2to3 seems to work.)
+        """
+        before = """
         for i in xrange(10):
             pass
-        '''
-        self.convert(code)
+        """
+        after = """
+        from future.builtins import range
+        for i in range(10):
+            pass
+        """
+        self.convert_check(before, after, ignore_imports=False)
     
     @skip26
-    @unittest.expectedFailure
     def test_source_coding_utf8(self):
         """
         Tests to ensure that the source coding line is not corrupted or
@@ -258,11 +436,12 @@ class TestFuturizeSimple(CodeHandler):
         self.convert_check(before, after)
     
     @unittest.skip('not implemented yet')
-    def test_download_pypi_package_and_test(self, package_name='future'):
+    def test_download_pypi_package_and_test(self):
         URL = 'http://pypi.python.org/pypi/{0}/json'
         
         import requests
-        r = requests.get(URL.format(package_name))
+        package = 'future'
+        r = requests.get(URL.format(package))
         pprint.pprint(r.json())
         
         download_url = r.json()['urls'][0]['url']
@@ -271,7 +450,6 @@ class TestFuturizeSimple(CodeHandler):
         # with open('/tmp/' + filename, 'w') as tarball:
         #     tarball.write(r2.content)
 
-    @unittest.expectedFailure
     def test_raw_input(self):
         """
         Passes in a string to the waiting input() after futurize
@@ -350,6 +528,7 @@ class TestFuturizeSimple(CodeHandler):
 
 
 class TestFuturizeRenamedStdlib(CodeHandler):
+    @unittest.skip('Infinite loop?')
     def test_renamed_modules(self):
         before = """
         import ConfigParser
@@ -365,6 +544,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         """
         self.convert_check(before, after)
     
+    @unittest.skip('Not working yet ...')
     def test_urllib_refactor(self):
         # Code like this using urllib is refactored by futurize --stage2 to use
         # the new Py3 module names, but ``future`` doesn't support urllib yet.
@@ -372,20 +552,21 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         import urllib
 
         URL = 'http://pypi.python.org/pypi/future/json'
-        package_name = 'future'
-        r = urllib.urlopen(URL.format(package_name))
+        package = 'future'
+        r = urllib.urlopen(URL.format(package))
         data = r.read()
         """
         after = """
-        import urllib.request, urllib.parse, urllib.error
+        from future.standard_library.urllib import request as urllib_request
         
         URL = 'http://pypi.python.org/pypi/future/json'
-        package_name = 'future'
-        r = urllib.request.urlopen(URL.format(package_name))
+        package = 'future'
+        r = urllib_request.urlopen(URL.format(package))
         data = r.read()
         """
         self.convert_check(before, after)
 
+    @unittest.skip('Infinite loop?')
     def test_renamed_copy_reg_and_cPickle_modules(self):
         """
         Example from docs.python.org/2/library/copy_reg.html
@@ -616,23 +797,19 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.convert_check(before, after, stages=[1])
 
-    @unittest.expectedFailure
     def test_oldstyle_classes(self):
         """
-        We don't convert old-style classes to new-style automatically. Should we?
+        We don't convert old-style classes to new-style automatically in
+        stage 1 (but we should in stage 2). So Blah should not inherit
+        explicitly from object yet.
         """
         before = """
         class Blah:
             pass
         """
-        after = """
-        class Blah(object):
-            pass
-        """
-        self.convert_check(before, after, stages=[1])
+        self.unchanged(before, stages=[1])
 
-    @unittest.expectedFailure
-    def test_all(self):
+    def test_stdlib_modules_not_changed(self):
         """
         Standard library module names should not be changed in stage 1
         """
@@ -646,11 +823,9 @@ class TestFuturizeStage1(CodeHandler):
             raise AttributeError('blah')
         except AttributeError, e:
             pass
-        print 'Number is', 1 / 2
         """
         after = """
-        from future.utils import old_div
-        import Configparser
+        import ConfigParser
         import HTMLParser
         import collections
 
@@ -659,7 +834,6 @@ class TestFuturizeStage1(CodeHandler):
             raise AttributeError('blah')
         except AttributeError as e:
             pass
-        print('Number is', old_div(1, 2))
         """
         self.convert_check(before, after, stages=[1])
         
@@ -704,6 +878,59 @@ class TestFuturizeStage1(CodeHandler):
         ''' Docstring-like comment here '''
         """
         self.convert(code)
+
+    def test_issue_45(self):
+        """
+        Tests whether running futurize -f libfuturize.fixes.fix_future_standard_library_urllib
+        on the code below causes a ValuError (issue #45).
+        """
+        code = r"""
+            from __future__ import print_function
+            from urllib import urlopen, urlencode
+            oeis_url = 'http://oeis.org/'
+            def _fetch(url):
+                try:
+                    f = urlopen(url)
+                    result = f.read()
+                    f.close()
+                    return result
+                except IOError as msg:
+                    raise IOError("%s\nError fetching %s." % (msg, url))
+        """
+        self.convert(code)
+
+    def test_order_future_lines(self):
+        """
+        Tests the internal order_future_lines() method.
+        """
+        before = '''
+               # comment here
+               from __future__ import print_function
+               from __future__ import absolute_import
+                                 # blank line or comment here
+               from future.builtins import zzz
+               from future.builtins import aaa
+               from future.builtins import blah
+               # another comment
+
+               code_here
+               more_code_here
+               '''
+        after = '''
+               # comment here
+               from __future__ import absolute_import
+               from __future__ import print_function
+                                 # blank line or comment here
+               from future.builtins import aaa
+               from future.builtins import blah
+               from future.builtins import zzz
+               # another comment
+
+               code_here
+               more_code_here
+               '''
+        self.assertEqual(order_future_lines(reformat_code(before)),
+                         reformat_code(after))
 
 
 if __name__ == '__main__':

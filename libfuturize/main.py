@@ -63,6 +63,7 @@ further.)
 
 from __future__ import (absolute_import, print_function, unicode_literals)
 from future.builtins import *
+from future import utils
 
 import sys
 import logging
@@ -125,13 +126,14 @@ def main(args=None):
                       help="Don't write backups for modified files.")
     parser.add_option("-o", "--output-dir", action="store", type="str",
                       default="", help="Put output files in this directory "
-                      "instead of overwriting the input files.  Requires -n.")
+                      "instead of overwriting the input files.  Requires -n. "
+                      "For Python >= 2.7 only.")
     parser.add_option("-W", "--write-unchanged-files", action="store_true",
                       help="Also write files even if no changes were required"
                       " (useful with --output-dir); implies -w.")
     parser.add_option("--add-suffix", action="store", type="str", default="",
                       help="Append this string to all output filenames."
-                      " Requires -n if non-empty.  "
+                      " Requires -n if non-empty. For Python >= 2.7 only."
                       "ex: --add-suffix='3' will generate .py3 files.")
 
     avail_fixes = set()
@@ -259,12 +261,18 @@ def main(args=None):
                     options.output_dir, input_base_dir)
 
     # Initialize the refactoring tool
+    if utils.PY26:
+        extra_kwargs = {}
+    else:
+        extra_kwargs = {
+                        'append_suffix': options.add_suffix,
+                        'output_dir': options.output_dir,
+                        'input_base_dir': input_base_dir,
+                       }
     rt = StdoutRefactoringTool(
             sorted(fixer_names), flags, sorted(explicit),
             options.nobackups, not options.no_diffs,
-            input_base_dir=input_base_dir,
-            output_dir=options.output_dir,
-            append_suffix=options.add_suffix)
+            **extra_kwargs)
 
     # Refactor all files and directories passed as arguments
     if not rt.errors:

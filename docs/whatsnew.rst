@@ -7,22 +7,28 @@ What's new
 What's new in version 0.12
 ==========================
 
-The major new feature in version is improvements in the standard library module
-and its compatibility with 3rd-party modules.
+The major new feature in this version is improvements in the support for the
+reorganized standard library (PEP 3108) and compatibility of the import
+mechanism with 3rd-party modules.
 
 Standard-library import hooks now require explicit installation
 ---------------------------------------------------------------
 
 *Note: backwards-incompatible change:* As previously announced (see
-:ref:`deprecated-auto-import-hooks`), the import hooks must now be installed
+:ref:`deprecated-auto-import-hooks`), the import hooks must now be enabled
 explicitly, as follows::
 
     from future import standard_library
     with standard_library.hooks():
         import html.parser
         import http.client
+        ...
 
-or with the functional interface::
+This now causes these modules to be imported from ``future.moves``, a new
+package that imports symbols from the native standard library modules.
+
+The functional interface is now deprecated but still supported for backwards
+compatibility::
 
     from future import standard_library
     standard_library.install_hooks():
@@ -35,8 +41,7 @@ or with the functional interface::
 This allows finer-grained control over whether import hooks are enabled for
 other imported modules, such as ``requests``, which provide their own Python
 2/3 compatibility code. This also improves compatibility of ``future`` with
-tools like ``py2exe`` (see `issue #31
-<https://github.com/PythonCharmers/python-future/issues/31>`).
+tools like ``py2exe``.
 
 
 .. Versioned standard library imports
@@ -78,36 +83,18 @@ tools like ``py2exe`` (see `issue #31
 .. functionality in the Python 2.x standard library.
 
 
-New ``urllib``, ``email``, and ``xmlrpc`` modules
--------------------------------------------------
+``newobject`` base object defines fallback Py2-compatible special methods
+-------------------------------------------------------------------------
 
-Backports of the ``urllib``, ``email``, and ``xmlrpc`` modules from Python
-3.3's standard library are now provided. 
+There is a new ``future.builtins.object`` base class that can streamline Py3/2
+compatible code by providing fallback Py2-compatible special methods for its
+subclasses. It currently provides ``next()`` and ``__nonzero__()`` as fallback
+methods on Py2 when its subclasses define the corresponding Py3-style
+``__next__()`` and ``__bool__()`` methods.
 
-Use them like this::
-
-    with standard_library.hooks():
-        from urllib.request import Request      # etc.
-        from email import message_from_bytes    # etc.
-
-
-``past.builtins`` module improved
----------------------------------
-
-The ``past.builtins`` module is much more compatible with the
-corresponding builtins on Python 2; many more of the Py2 unit tests pass
-on Py3. For example, functions like ``map()`` and ``filter()``
-now behave as they do on Py2 with with ``None`` as the first argument.
-
-
-``newobject`` base object defines Py2-compatible special methods
------------------------------------------------------------------
-
-There is a new ``future.bytes.object`` class that can streamline Py3/2
-compatible code by providing fallback special methods for its subclasses for
-Py2 compatibility.  This obviates the need to add compatibility hacks or
-decorators to the code such as the ``@implements_iterator`` for classes that
-define a Py3-style ``__next__`` method.
+This obviates the need to add certain compatibility hacks or decorators to the
+code such as the ``@implements_iterator`` decorator for classes that define a
+Py3-style ``__next__`` method.
 
 In this example, the code defines a Py3-style iterator with a ``__next__``
 method. The ``object`` class defines a ``next`` method for Python 2 that maps
@@ -128,22 +115,101 @@ to ``__next__``::
 ``future.builtins.object`` defines other Py2-compatible special methods similarly:
 currently these include ``__nonzero__`` (mapped to ``__bool__``) and
 ``__long__`` (mapped to ``__int__``).
-    
-On Python 3, as usual, ``object`` simply points to ``builtins.object``.
+
+Inheriting from ``newobject`` on Python 2 is safe even if your class defines
+its own Python 2-style ``__nonzero__`` and ``next`` and ``__long__`` methods.
+Your custom methods will simply override those on the base class.
+
+On Python 3, as usual, ``object`` simply refers to ``builtins.object``.
 
 
-past.builtins
--------------
-The ``past.builtins`` package has been extended to add Py3 support for
+``past.builtins`` module improved
+---------------------------------
+
+The ``past.builtins`` module is much more compatible with the corresponding
+builtins on Python 2; many more of the Py2 unit tests pass on Py3. For example,
+functions like ``map()`` and ``filter()`` now behave as they do on Py2 with with
+``None`` as the first argument.
+
+The ``past.builtins`` module has also been extended to add Py3 support for
 additional Py2 constructs that are not adequately handled by ``lib2to3`` (see
-upstream bug #). This includes custom ``execfile()`` and ``cmp()`` functions.
+issue #37). This includes custom ``execfile()`` and ``cmp()`` functions.
 ``futurize`` now invokes imports of these functions from ``past.builtins``.
 
 
-Relative imports from Cython modules
-------------------------------------
+``surrogateescape`` error handler
+---------------------------------
 
-...
+The ``newstr`` type (``future.builtins.str``) now supports a backport of the
+Py3.x ``'surrogateescape'`` error handler for preserving high-bit
+characters when encoding and decoding strings with unknown encodings.
+
+
+``newlist`` type
+----------------
+
+There is a new ``list`` type in ``future.builtins`` that offers ``.copy()`` and
+``.clear()`` methods like the ``list`` type in Python 3.
+
+
+``listvalues`` and ``listitems``
+--------------------------------
+
+``future.utils`` now contains helper functions ``listvalues`` and
+``listitems``, which provide Python 2-style list snapshotting semantics for
+dictionaries in both Python 2 and Python 3.
+
+These came out of the discussion around Nick Coghlan's now-withdrawn PEP 469.
+
+There is no corresponding ``listkeys(d)`` function. Use ``list(d)`` for this case.
+
+
+Tests
+-----
+
+The number of unit tests has increased from 600 to over 800. Most of the new
+tests come from Python 3.3's test suite.
+
+
+Backported ``http.server`` and ``urllib`` modules
+-------------------------------------------------
+
+Alpha versions of backports of the ``http.server`` and ``urllib`` module from
+Python 3.3's standard library are now provided in ``future.standard_library``.
+
+Use them like this::
+
+    from future.standard_library.urllib.request import Request    # etc.
+    from future.standard_library.http import server as http_server
+
+or with this new interface::
+
+    from future.standard_library import import_, from_import
+
+    Request = from_import('urllib.request', 'Request', backport=True)
+    http = import_('http.server', backport=True)
+
+..    from future.standard_library.email import message_from_bytes  # etc.
+..    from future.standard_library.xmlrpc import client, server
+
+
+Internal refactoring
+--------------------
+
+The ``future.builtins.types`` module has been moved to ``future.types``.
+Likewise, ``past.builtins.types`` has been moved to ``past.types``. The only
+user-visible effect of this is to change ``repr(type(obj))`` for instances
+of these types. For example::
+
+    >>> from future.builtins import bytes
+    >>> bytes(b'abc')
+    >>> type(b)
+    future.types.newbytes.newbytes
+
+instead of::
+
+    >>> type(b)           # prior to v0.12
+    future.builtins.types.newbytes.newbytes
 
 
 Bug fixes
@@ -164,16 +230,54 @@ Many small improvements and fixes have been made across the project. Some highli
   ``urllib.parse``) and not the corresponding ``future.standard_library.*``
   modules (such as ``future.standard_library.urllib.parse``.
 
-- The zero-argument ``super()`` function now works from within
-  ``staticmethod``s such as those called ``__new__``.
+- The ``fix_next`` and ``fix_reduce`` fixers have been moved to stage 1 of
+  ``futurize``.
+
+- ``futurize``: Shebang lines such as ``#!/usr/bin/env python`` and source code
+  file encoding declarations like ``# -*- coding=utf-8 -*-`` are no longer occasionally
+  displaced by ``from __future__ import ...`` statements.
+
+- Improved compatibility with py2exe (`issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`_).
+
+- The ``future.utils.bytes_to_native_str`` function now returns a ``newbytes``
+  object on Py2. (`Issue #47
+  <https://github.com/PythonCharmers/python-future/issues/47>`_).
+
+
+.. whats-new-0.11.5:
+
+.. What's new in version 0.11.5
+.. ============================
+.. 
+.. This is a minor bugfix release contains small improvements to way the standard
+.. library hook interact with the ``sys.modules`` cache.
+
+
+.. whats-new-0.11.4:
+
+What's new in version 0.11.4
+============================
+
+This release contains various small improvements and fixes:
+
+- This release restores Python 2.6 compatibility. (Issue #42).
+
+- The ``fix_absolute_import`` fixer now supports Cython ``.pyx`` modules. (Issue
+  #35).
+
+- Right-division with ``newint`` objects is fixed. (Issue #38).
+
+- The ``fix_dict`` fixer has been moved to stage2 of ``futurize``.
 
 - Calls to ``bytes(string, encoding[, errors])`` now work with ``encoding`` and
   ``errors`` passed as positional arguments. Previously this only worked if
-  ``encoding`` and ``errors`` were specified as keyword arguments.
+  ``encoding`` and ``errors`` were passed as keyword arguments.
+
+
+- The 0-argument ``super()`` function now works from inside static methods such
+  as ``__new__``. (Issue #36).
 
 - ``future.utils.native(d)`` calls now work for ``future.builtins.dict`` objects.
-
-- Right-division with ``newint`` objects is fixed. (Issue #38).
 
 
 .. whats-new-0.11.3:
@@ -194,6 +298,7 @@ The ``__exit__`` function of the ``hooks`` context manager and the
 is now possible on Python 2 and 3::
 
        from future import standard_library
+       standard_library.install_hooks()
        import http.client
        standard_library.remove_hooks()
        import requests
@@ -449,7 +554,7 @@ this::
         from http.client import HTTPConnection
         # etc.
 
-If not using this decorator, it is now encouraged to add an explicit call to
+If not using this context manager, it is now encouraged to add an explicit call to
 ``standard_library.install_hooks()`` as follows::
 
     from future import standard_library
@@ -604,6 +709,9 @@ Summary of all changes
 
 What's new in version 0.11.x
 ============================
+
+v0.11.4:
+  * Restore Py2.6 compatibility
 
 v0.11.3:
   * The ``futurize`` and ``pasteurize`` scripts add an explicit call to

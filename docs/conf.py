@@ -115,7 +115,7 @@ html_theme_options = {
     # Note the "1" or "True" value above as the third argument to indicate
     # an arbitrary url.
     'navbar_links': [
-        ("Overview", "overview.html"),
+        ("Overview", "overview"),
         ("FAQ", "faq.html", True),
         # ("Link", "http://example.com", True),
     ],

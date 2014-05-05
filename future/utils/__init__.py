@@ -160,38 +160,45 @@ if PY3:
 else:
     # Python 2
     def tobytes(s):
-        '''
-        Encodes to latin-1 (where the first 256 chars are the same as
-        ASCII.)
-        '''
         if isinstance(s, unicode):
             return s.encode('latin-1')
         else:
             return ''.join(s)
 
+tobytes.__doc__ = """
+    Encodes to latin-1 (where the first 256 chars are the same as
+    ASCII.)
+    """
+
 if PY3:
-    def native_str_to_bytes(s, encoding='ascii'):
+    def native_str_to_bytes(s, encoding='utf-8'):
         return s.encode(encoding)
 
-    def bytes_to_native_str(b, encoding='ascii'):
+    def bytes_to_native_str(b, encoding='utf-8'):
         return b.decode(encoding)
 
-    def text_to_native_str(b, encoding='ascii'):
-        return b
+    def text_to_native_str(t, encoding=None):
+        return t
 else:
     # Python 2
-    def native_str_to_bytes(s, encoding='ascii'):
-        return s
+    def native_str_to_bytes(s, encoding=None):
+        from future.types import newbytes    # to avoid a circular import
+        return newbytes(s)
 
-    def bytes_to_native_str(b, encoding='ascii'):
-        return b
+    def bytes_to_native_str(b, encoding=None):
+        return native(b)
 
-    def text_to_native_str(b, encoding='ascii'):
+    def text_to_native_str(t, encoding='ascii'):
         """
         Use this to create a Py2 native string when "from __future__ import
         unicode_literals" is in effect.
         """
-        return b.encode(encoding)
+        return unicode(t).encode(encoding)
+
+native_str_to_bytes.__doc__ = """
+    On Py3, returns an encoded string.
+    On Py2, returns a newbytes type, ignoring the ``encoding`` argument.
+    """
 
 if PY3:
     # list-producing versions of the major Python iterating functions
@@ -312,7 +319,7 @@ def bind_method(cls, name, func):
     -------
     None
     """
-    # only python 2 has bound/unbound method issue
+    # only python 2 has an issue with bound/unbound methods
     if not PY3:
         setattr(cls, name, types.MethodType(func, None, cls))
     else:
@@ -449,7 +456,7 @@ def isnewbytes(obj):
     """
     # TODO: generalize this so that it works with subclasses of newbytes
     # Import is here to avoid circular imports:
-    from future.builtins.types.newbytes import newbytes
+    from future.types.newbytes import newbytes
     return type(obj) == newbytes
 
 
@@ -562,6 +569,53 @@ def as_native_str(encoding='utf-8'):
             return wrapper
         return encoder
 
+# listvalues and listitems definitions from Nick Coghlan's (withdrawn)
+# PEP 496:
+try:
+    dict.iteritems
+except AttributeError:
+    # Python 3
+    def listvalues(d):
+        return list(d.values())
+    def listitems(d):
+        return list(d.items())
+else:
+    # Python 2
+    def listvalues(d):
+        return d.values()
+    def listitems(d):
+        return d.items()
+
+if PY3:
+    def ensure_new_type(obj):
+        return obj
+else:
+    def ensure_new_type(obj):
+        from future.types.newbytes import newbytes
+        from future.types.newstr import newstr
+        from future.types.newint import newint
+        from future.types.newdict import newdict
+
+        native_type = type(native(obj))
+
+        # Upcast only if the type is already a native (non-future) type
+        if issubclass(native_type, type(obj)):
+            # Upcast
+            if native_type == str:  # i.e. Py2 8-bit str
+                return newbytes(obj)
+            elif native_type == unicode:
+                return newstr(obj)
+            elif native_type == int:
+                return newint(obj)
+            elif native_type == dict:
+                return newdict(obj)
+            else:
+                return NotImplementedError('type %s not supported' % type(obj))
+        else:
+            # Already a new type
+            assert type(obj) in [newbytes, newstr]
+            return obj
+
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'as_native_str',
@@ -572,6 +626,7 @@ __all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
            'viewitems', 'viewkeys', 'viewvalues',
            'bind_method', 'getexception',
            'reraise', 'implements_iterator', 'get_next', 'encode_filename',
-           'is_new_style', 'native_str', 'old_div', 'as_native_str'
+           'is_new_style', 'native_str', 'old_div', 'as_native_str',
+           'listvalues', 'listitems'
           ]
 

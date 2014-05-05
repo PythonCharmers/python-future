@@ -27,18 +27,20 @@ class TestStandardLibraryRenames(CodeHandler):
 
     def test_can_import_several(self):
         """
-        This test fails if e.g. future/standard_library/email/header.py contains:
+        This test failed in v0.12-pre if e.g.
+        future/standard_library/email/header.py contained:
         
             from future import standard_library
-            standard_library.remove_hooks(keep_sys_modules=True)
+            standard_library.remove_hooks()
         """
 
+        import future.standard_library.urllib.parse as urllib_parse
+        import future.standard_library.urllib.request as urllib_request
+        from future.standard_library.test import support
+
         with standard_library.hooks():
-            import urllib.parse
-            import urllib.request
             import http.server
-            from test import support
-        for m in [urllib.parse, urllib.request, http.server, support]:
+        for m in [urllib_parse, urllib_request, http.server, support]:
             self.assertTrue(m is not None)
 
     def test_is_py2_stdlib_module(self):
@@ -46,12 +48,18 @@ class TestStandardLibraryRenames(CodeHandler):
         Tests whether the internal is_py2_stdlib_module function (called by the
         sys.modules scrubbing functions) is reliable.
         """
-        py2modules = [sys, tempfile, os, copy, textwrap]
         externalmodules = [standard_library, utils]
-        self.assertTrue(all([standard_library.is_py2_stdlib_module(module)
-                             for module in py2modules]))
         self.assertTrue(not any([standard_library.is_py2_stdlib_module(module)
                              for module in externalmodules]))
+
+        py2modules = [sys, tempfile, os, copy, textwrap]
+        if utils.PY2:
+            self.assertTrue(all([standard_library.is_py2_stdlib_module(module)
+                                 for module in py2modules]))
+        else:
+            self.assertTrue(
+                    not any ([standard_library.is_py2_stdlib_module(module)
+                              for module in py2modules]))
 
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_all(self):
@@ -101,6 +109,7 @@ class TestStandardLibraryRenames(CodeHandler):
         old_meta_path = copy.copy(sys.meta_path)
 
         standard_library.disable_hooks()
+        standard_library.scrub_future_sys_modules()
         if utils.PY2:
             self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
         else:
@@ -135,6 +144,7 @@ class TestStandardLibraryRenames(CodeHandler):
         old_meta_path = copy.copy(sys.meta_path)
 
         standard_library.remove_hooks()
+        standard_library.scrub_future_sys_modules()
         if utils.PY2:
             self.assertTrue(len(old_meta_path) == len(sys.meta_path) + 1)
         else:
@@ -285,58 +295,71 @@ class TestStandardLibraryRenames(CodeHandler):
 
     def test_reprlib(self):
         import reprlib
+        self.assertTrue(True)
 
     def test_socketserver(self):
         import socketserver
+        self.assertTrue(True)
 
     @unittest.skip("Not testing tkinter import (it may be installed separately from Python)")
     def test_tkinter(self):
         import tkinter
+        self.assertTrue(True)
 
     def test_builtins(self):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    @unittest.skip("skipping in case there's no net connection")
-    def test_urllib_request(self):
-        import urllib.request
+    @unittest.skip("ssl support has been stripped out for now ...")
+    def test_urllib_request_ssl_redirect(self):
+        """
+        This site redirects to https://...
+        It therefore requires ssl support.
+        """
+        import future.standard_library.urllib.request as urllib_request
         from pprint import pprint
         URL = 'http://pypi.python.org/pypi/{0}/json'
         package = 'future'
-        r = urllib.request.urlopen(URL.format(package))
+        r = urllib_request.urlopen(URL.format(package))
         # pprint(r.read().decode('utf-8'))
+        self.assertTrue(True)
+
+    def test_urllib_request_http(self):
+        """
+        This site (amazon.com) uses plain http (as of 2014-04-12).
+        """
+        import future.standard_library.urllib.request as urllib_request
+        from pprint import pprint
+        URL = 'http://amazon.com'
+        r = urllib_request.urlopen(URL)
+        data = r.read()
+        self.assertTrue(b'<html>' in data)
 
     def test_html_import(self):
         import html
         import html.entities
         import html.parser
+        self.assertTrue(True)
 
     def test_http_client_import(self):
         import http.client
         self.assertTrue(True)
 
-    @unittest.expectedFailure
-    def test_http_imports(self):
+    def test_other_http_imports(self):
         import http
         import http.server
         import http.cookies
         import http.cookiejar
-
-    @unittest.expectedFailure
-    def test_urllib_imports(self):
-        import urllib
-        import urllib.parse
-        import urllib.request
-        import urllib.robotparser
-        import urllib.error
-        import urllib.response
         self.assertTrue(True)
 
-    @unittest.expectedFailure
-    def test_urllib_parse(self):
-        import urllib.parse
-        URL = 'http://pypi.python.org/test_url/spaces oh no/'
-        self.assertEqual(urllib.parse.quote(URL.format(package)), 'http%3A//pypi.python.org/test_url/spaces%20oh%20no/')
+    def test_urllib_imports(self):
+        import future.standard_library.urllib
+        import future.standard_library.urllib.parse
+        import future.standard_library.urllib.request
+        import future.standard_library.urllib.robotparser
+        import future.standard_library.urllib.error
+        import future.standard_library.urllib.response
+        self.assertTrue(True)
 
     def test_underscore_prefixed_modules(self):
         import _thread
@@ -359,6 +382,7 @@ class TestStandardLibraryRenames(CodeHandler):
         from collections import UserDict
         from collections import UserList
         from collections import UserString
+        self.assertTrue(True)
 
     def test_reload(self):
         """
@@ -367,99 +391,6 @@ class TestStandardLibraryRenames(CodeHandler):
         import imp
         imp.reload(imp)
         self.assertTrue(True)
-
-
-with standard_library.suspend_hooks():
-    try:
-        import requests
-    except ImportError:
-        requests = None
-
-
-#########################################################################
-# From here below is about testing whether the standard library hooks in
-# ``future`` are compatible with the ``requests`` package.
-#########################################################################
-
-class write_module(object):
-    """
-    A context manager to streamline the tests. Creates a temp file for a
-    module designed to be imported by the ``with`` block, then removes it
-    afterwards.
-    """
-    def __init__(self, code, tempdir):
-        self.code = code
-        self.tempdir = tempdir
-
-    def __enter__(self):
-        print('Creating {}/test_imports_future_stdlib ...'.format(self.tempdir))
-        with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
-            f.write(textwrap.dedent(self.code))
-        sys.path.insert(0, self.tempdir)
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        If an exception occurred, we leave the file for inspection.
-        """
-        sys.path.remove(self.tempdir)
-        if exc_type is None:
-            # No exception occurred
-            os.remove(self.tempdir + 'test_imports_future_stdlib.py')
-
-
-class TestRequests(CodeHandler):
-    """
-    This class tests whether the requests module conflicts with the
-    standard library import hooks, as in issue #19.
-    """
-    @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
-                     + ' to test ``requests`` + future compatibility (issue #19)')
-    def test_requests(self):
-        code = """
-            from future import standard_library
-            standard_library.install_hooks()
-
-            import urllib.response
-            import html.parser
-            """
-        with write_module(code, self.tempdir):
-            import test_imports_future_stdlib
-            standard_library.remove_hooks()
-            import requests
-            r = requests.get('http://google.com')
-            self.assertTrue(True)
-
-        # Was:
-        # try:
-        #    (code)
-        # except Exception as e:
-        #     raise e
-        # else:
-        #     print('Succeeded!')
-        # finally:
-        #     sys.path.remove(self.tempdir)
-
-
-    @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
-                     + ' to test ``requests`` + future compatibility (issue #19)')
-    def test_requests_cm(self):
-        """
-        Tests whether requests can be used importing standard_library modules
-        previously with the hooks context manager
-        """
-        code = """
-            from future import standard_library
-            with standard_library.hooks():
-                 import builtins
-                 import html.parser
-                 import http.client
-            """
-        with write_module(code, self.tempdir):
-            import test_imports_future_stdlib
-            import requests
-            r = requests.get('http://google.com')
-            self.assertTrue(True)
 
 
 if __name__ == '__main__':

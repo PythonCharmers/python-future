@@ -142,6 +142,7 @@ import time
 from datetime import datetime
 from future.standard_library.http import client as http_client
 from future.standard_library.urllib import parse as urllib_parse
+from future.utils import ensure_new_type
 from xml.parsers import expat
 import socket
 import errno
@@ -246,7 +247,8 @@ class Fault(Error):
         self.faultCode = faultCode
         self.faultString = faultString
     def __repr__(self):
-        return "<Fault %s: %r>" % (self.faultCode, self.faultString)
+        return "<Fault %s: %r>" % (ensure_new_type(self.faultCode),
+                                   ensure_new_type(self.faultString))
 
 # --------------------------------------------------------------------
 # Special values
@@ -370,7 +372,7 @@ class DateTime(object):
         return self.value
 
     def __repr__(self):
-        return "<DateTime %r at %x>" % (self.value, id(self))
+        return "<DateTime %r at %x>" % (ensure_new_type(self.value), id(self))
 
     def decode(self, data):
         self.value = str(data).strip()
@@ -520,19 +522,11 @@ class Marshaller(object):
                 write("</param>\n")
             write("</params>\n")
         result = "".join(out)
-        return result
+        return str(result)
 
     def __dump(self, value, write):
-        future_types = [dict, int, str, bytes]
-        key = None
-        for t in future_types:
-            if isinstance(value, t):
-                key = t       # if it's e.g. Py2 dict, make it a newdict for dispatching
-                break
-        if key is None:
-            key = type(value)
         try:
-            f = self.dispatch[key]
+            f = self.dispatch[type(ensure_new_type(value))]
         except KeyError:
             # check if this object can be marshalled as a structure
             if not hasattr(value, '__dict__'):
@@ -573,7 +567,7 @@ class Marshaller(object):
 
     def dump_double(self, value, write):
         write("<value><double>")
-        write(repr(value))
+        write(repr(ensure_new_type(value)))
         write("</double></value>\n")
     dispatch[float] = dump_double
 
@@ -1171,10 +1165,9 @@ class Transport(object):
 
         except Fault:
             raise
-        except Exception as e:
+        except Exception:
             #All unexpected errors leave connection in
             # a strange state, so we clear it.
-            print(e)
             self.close()
             raise
 

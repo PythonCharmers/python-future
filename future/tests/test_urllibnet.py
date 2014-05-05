@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 from __future__ import absolute_import, division, unicode_literals
-from future.builtins import int, open
-from future import standard_library
-
-import unittest
-from future.standard_library.email.message import Message
-with standard_library.hooks():
-    from test import support
-    import urllib.request
-    import email.message
 
 import contextlib
 import socket
 import sys
 import os
 import time
+
+from future import utils
+from future.standard_library.test import support
+
+import future.moves.urllib.request as urllib_request
+# import future.standard_library.email.message as email_message
+# from future.standard_library.email.message import Message
+import email.message as email_message
+from email.message import Message
+
+from future.tests.base import unittest
+from future.builtins import int, open
 
 
 class URLTimeoutTest(unittest.TestCase):
@@ -30,7 +33,7 @@ class URLTimeoutTest(unittest.TestCase):
 
     def testURLread(self):
         with support.transient_internet("www.python.org"):
-            f = urllib.request.urlopen("http://www.python.org/")
+            f = urllib_request.urlopen("http://www.python.org/")
             x = f.read()
 
 
@@ -53,7 +56,7 @@ class urlopenNetworkTests(unittest.TestCase):
     def urlopen(self, *args, **kwargs):
         resource = args[0]
         with support.transient_internet(resource):
-            r = urllib.request.urlopen(*args, **kwargs)
+            r = urllib_request.urlopen(*args, **kwargs)
             try:
                 yield r
             finally:
@@ -76,18 +79,19 @@ class urlopenNetworkTests(unittest.TestCase):
             self.assertIsInstance(open_url.readlines(), list,
                                   "readlines did not return a list")
 
+    @unittest.skipIf(utils.PY2, 'test not applicable on Py2')
     def test_info(self):
         # Test 'info'.
         with self.urlopen("http://www.python.org/") as open_url:
             info_obj = open_url.info()
-            self.assertIsInstance(info_obj, email.message.Message,
+            self.assertIsInstance(info_obj, email_message.Message,
                                   "object returned by 'info' is not an "
-                                  "instance of email.message.Message")
+                                  "instance of email_message.Message")
             self.assertEqual(info_obj.get_content_subtype(), "html")
 
     def test_geturl(self):
         # Make sure same URL as opened is returned by geturl.
-        URL = "http://www.python.org/"
+        URL = "https://www.python.org/"    # EJS: changed recently from http:// ?!
         with self.urlopen(URL) as open_url:
             gotten_url = open_url.geturl()
             self.assertEqual(gotten_url, URL)
@@ -96,7 +100,7 @@ class urlopenNetworkTests(unittest.TestCase):
         # test getcode() with the fancy opener to get 404 error codes
         URL = "http://www.python.org/XXXinvalidXXX"
         with support.transient_internet(URL):
-            open_url = urllib.request.FancyURLopener().open(URL)
+            open_url = urllib_request.FancyURLopener().open(URL)
             try:
                 code = open_url.getcode()
             finally:
@@ -136,18 +140,18 @@ class urlopenNetworkTests(unittest.TestCase):
                           # domain will be spared to serve its defined
                           # purpose.
                           # urllib.urlopen, "http://www.sadflkjsasadf.com/")
-                          urllib.request.urlopen,
+                          urllib_request.urlopen,
                           "http://sadflkjsasf.i.nvali.d/")
 
 
 class urlretrieveNetworkTests(unittest.TestCase):
-    """Tests urllib.request.urlretrieve using the network."""
+    """Tests urllib_request.urlretrieve using the network."""
 
     @contextlib.contextmanager
     def urlretrieve(self, *args, **kwargs):
         resource = args[0]
         with support.transient_internet(resource):
-            file_location, info = urllib.request.urlretrieve(*args, **kwargs)
+            file_location, info = urllib_request.urlretrieve(*args, **kwargs)
             try:
                 yield file_location, info
             finally:
@@ -171,11 +175,12 @@ class urlretrieveNetworkTests(unittest.TestCase):
             with open(file_location, 'rb') as f:
                 self.assertTrue(f.read(), "reading from temporary file failed")
 
+    @unittest.skipIf(utils.PY2, 'test not applicable on Py2')
     def test_header(self):
         # Make sure header returned as 2nd value from urlretrieve is good.
         with self.urlretrieve("http://www.python.org/") as (file_location, info):
-            self.assertIsInstance(info, email.message.Message,
-                                  "info is not an instance of email.message.Message")
+            self.assertIsInstance(info, email_message.Message,
+                                  "info is not an instance of email_message.Message")
 
     logo = "http://www.python.org/static/community_logos/python-logo-master-v3-TM.png"
 
@@ -206,8 +211,8 @@ class urlretrieveNetworkTests(unittest.TestCase):
         self.assertEqual(records[0][2], expected_size)
         self.assertEqual(records[-1][2], expected_size)
 
-        block_sizes = {block_size for _, block_size, _ in records}
-        self.assertEqual({records[0][1]}, block_sizes,
+        block_sizes = set(block_size for _, block_size, _ in records)
+        self.assertEqual(set([records[0][1]]), block_sizes,
                          msg="block sizes in %s must be equal" % records_repr)
         self.assertGreaterEqual(records[-1][0]*records[0][1], expected_size,
                                 msg="number of blocks * block size must be"
@@ -215,7 +220,7 @@ class urlretrieveNetworkTests(unittest.TestCase):
 
 
 def test_main():
-    support.requires('network')
+    # support.requires('network')
     support.run_unittest(URLTimeoutTest,
                          urlopenNetworkTests,
                          urlretrieveNetworkTests)

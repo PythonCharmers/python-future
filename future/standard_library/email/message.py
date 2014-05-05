@@ -4,12 +4,8 @@
 # Contact: email-sig@python.org
 
 """Basic message object for the email package object model."""
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
-from future.builtins import zip
-from future.builtins import range
-from future.builtins import str
+from __future__ import absolute_import, division, unicode_literals
+from future.builtins import list, range, str, zip
 
 __all__ = ['Message']
 
@@ -20,6 +16,7 @@ import binascii
 from io import BytesIO, StringIO
 
 # Intrapackage imports
+from future.utils import as_native_str
 from future.standard_library.email import utils
 from future.standard_library.email import errors
 from future.standard_library.email._policybase import compat32
@@ -126,7 +123,7 @@ class Message(object):
     """
     def __init__(self, policy=compat32):
         self.policy = policy
-        self._headers = []
+        self._headers = list()
         self._unixfrom = None
         self._payload = None
         self._charset = None
@@ -136,6 +133,7 @@ class Message(object):
         # Default content type
         self._default_type = 'text/plain'
 
+    @as_native_str(encoding='utf-8')
     def __str__(self):
         """Return the entire formatted message as a string.
         This includes the headers, body, and envelope header.
@@ -143,7 +141,7 @@ class Message(object):
         return self.as_string()
 
     def as_string(self, unixfrom=False, maxheaderlen=0):
-        """Return the entire formatted message as a string.
+        """Return the entire formatted message as a (unicode) string.
         Optional `unixfrom' when True, means include the Unix From_ envelope
         header.
 
@@ -151,7 +149,7 @@ class Message(object):
         as you intend.  For more flexibility, use the flatten() method of a
         Generator instance.
         """
-        from email.generator import Generator
+        from future.standard_library.email.generator import Generator
         fp = StringIO()
         g = Generator(fp, mangle_from_=False, maxheaderlen=maxheaderlen)
         g.flatten(self, unixfrom=unixfrom)
@@ -235,6 +233,7 @@ class Message(object):
         cte = str(self.get('content-transfer-encoding', '')).lower()
         # payload may be bytes here.
         if isinstance(payload, str):
+            payload = str(payload)    # for Python-Future, so surrogateescape works
             if utils._has_surrogates(payload):
                 bpayload = payload.encode('ascii', 'surrogateescape')
                 if not decode:
@@ -370,7 +369,7 @@ class Message(object):
         Does not raise an exception if the header is missing.
         """
         name = name.lower()
-        newheaders = []
+        newheaders = list()
         for k, v in self._headers:
             if k.lower() != name:
                 newheaders.append((k, v))
@@ -880,4 +879,4 @@ class Message(object):
         return [part.get_content_charset(failobj) for part in self.walk()]
 
     # I.e. def walk(self): ...
-    from email.iterators import walk
+    from future.standard_library.email.iterators import walk

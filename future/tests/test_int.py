@@ -4,7 +4,6 @@ int tests from Py3.3
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
-from future import standard_library
 from future.builtins import *
 from future.tests.base import unittest
 from future.utils import PY26
@@ -12,16 +11,19 @@ from future.utils import PY26
 import sys
 import random
 
-standard_library.install_hooks()
 try:
-    from test import support
+    import numpy as np
+except ImportError:
+    np = None
+
+try:
+    from future.standard_library.test import support
 except ImportError:
     def cpython_only(f):
         return f
 else:
     cpython_only = support.cpython_only
 
-standard_library.remove_hooks()
 
 L = [
         ('0', 0),
@@ -255,6 +257,13 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(int('100', base=2), 4)
         self.assertEqual(int(x='100', base=2), 4)
 
+    def test_newint_plus_float(self):
+        minutes = int(100)
+        second = 0.0
+        seconds = minutes*60 + second
+        self.assertEqual(seconds, 6000)
+        self.assertTrue(isinstance(seconds, float))
+
     @unittest.expectedFailure
     def test_keyword_args_2(self):
         # newint causes these to fail:
@@ -428,6 +437,88 @@ class IntTestCases(unittest.TestCase):
             assert divmod(int(x), int(-y)) == divmod(x, -y)
             assert divmod(int(-x), int(-y)) == divmod(-x, -y)
 
+    def test_div(self):
+        """
+        Issue #38
+        """
+        a = int(3)
+        self.assertEqual(a / 5., 0.6)
+        self.assertEqual(a / 5, 0.6)    # the __future__.division import is in
+                                        # effect
+
+    def test_truediv(self):
+        """
+        Test int.__truediv__ and friends (rtruediv, itruediv)
+        """
+        a = int(3)
+        self.assertEqual(a / 2, 1.5)  # since "from __future__ import division"
+                                      # is in effect
+        self.assertEqual(type(a / 2), float)
+
+        b = int(2)
+        self.assertEqual(a / b, 1.5)  # since "from __future__ import division"
+                                      # is in effect
+        self.assertEqual(type(a / b), float)
+
+        c = int(3) / b
+        self.assertEqual(c, 1.5)
+        self.assertTrue(isinstance(c, float))
+
+        d = int(5)
+        d /= 5
+        self.assertEqual(d, 1.0)
+        self.assertTrue(isinstance(d, float))
+
+        e = int(10)
+        f = int(20)
+        e /= f
+        self.assertEqual(e, 0.5)
+        self.assertTrue(isinstance(e, float))
+
+
+    def test_idiv(self):
+        a = int(3)
+        a /= 2
+        self.assertEqual(a, 1.5)
+        self.assertTrue(isinstance(a, float))
+        b = int(10)
+        b /= 2
+        self.assertEqual(b, 5.0)
+        self.assertTrue(isinstance(b, float))
+        c = int(-3)
+        c /= 2.0
+        self.assertEqual(c, -1.5)
+        self.assertTrue(isinstance(c, float))
+
+    def test_floordiv(self):
+        a = int(3)
+        self.assertEqual(a // 2, 1)
+        self.assertEqual(type(a // 2), int)    # i.e. another newint
+        self.assertTrue(isinstance(a // 2, int))
+
+        b = int(2)
+        self.assertEqual(a // b, 1)
+        self.assertEqual(type(a // b), int)    # i.e. another newint
+        self.assertTrue(isinstance(a // b, int))
+
+        c = 3 // b
+        self.assertEqual(c, 1)
+        self.assertEqual(type(c), int)         # i.e. another newint
+        self.assertTrue(isinstance(c, int))
+
+        d = int(5)
+        d //= 5
+        self.assertEqual(d, 1)
+        self.assertEqual(type(d), int)         # i.e. another newint
+        self.assertTrue(isinstance(d, int))
+
+        e = int(10)
+        f = int(20)
+        e //= f
+        self.assertEqual(e, 0)
+        self.assertEqual(type(e), int)         # i.e. another newint
+        self.assertTrue(isinstance(e, int))
+
 
     def test_div(self):
         """
@@ -511,6 +602,21 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(e, 0)
         self.assertEqual(type(e), int)         # i.e. another newint
         self.assertTrue(isinstance(e, int))
+
+    @unittest.skipIf(np is None, "test requires NumPy")
+    @unittest.expectedFailure
+    def test_numpy_cast_as_long_and_newint(self):
+        """
+        NumPy currently doesn't like subclasses of ``long``. This should be fixed.
+        """
+        class longsubclass(long):
+            pass
+
+        a = np.arange(10**3, dtype=np.float64).reshape(10, 100)
+        b = a.astype(longsubclass)
+        c = a.astype(int)
+        print(b.dtype)
+        assert b.dtype == np.int64 == c.dtype
 
 
 if __name__ == "__main__":

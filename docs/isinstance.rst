@@ -60,8 +60,8 @@ for details.
 Passing data to/from Python 2 libraries
 ---------------------------------------
 
-If you are passing any of the backported types (``bytes``, ``str``,
-``int``) into brittle library code that performs type-checks using ``type()``,
+If you are passing any of the backported types (``bytes``, ``int``, ``dict,
+``str``) into brittle library code that performs type-checks using ``type()``,
 rather than ``isinstance()``, or requires that you pass Python 2's native types
 (rather than subclasses) for some other reason, it may be necessary to upcast
 the types from ``future`` to their native superclasses on Py2.
@@ -76,7 +76,7 @@ to use it. (The output showing is from Py2)::
     >>> a
     100000000000000000000
     >>> type(a)
-    future.builtins.types.newint.newint
+    future.types.newint.newint
     >>> native(a)
     100000000000000000000L
     >>> type(native(a))
@@ -84,7 +84,7 @@ to use it. (The output showing is from Py2)::
     
     >>> b = bytes(b'ABC')
     >>> type(b)
-    future.builtins.types.newbytes.newbytes
+    future.types.newbytes.newbytes
     >>> native(b)
     'ABC'
     >>> type(native(b))
@@ -92,7 +92,7 @@ to use it. (The output showing is from Py2)::
     
     >>> s = str(u'ABC')
     >>> type(s)
-    future.builtins.types.newstr.newstr
+    future.types.newstr.newstr
     >>> native(s)
     u'ABC'
     >>> type(native(s))

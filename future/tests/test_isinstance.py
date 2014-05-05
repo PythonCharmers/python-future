@@ -9,8 +9,8 @@ from future.builtins import *
 # tests use new style classes and properties, they actually do whitebox
 # testing of error conditions uncovered when using extension types.
 
-import unittest
 import sys
+from future.tests.base import unittest
 
 
 class TestIsInstanceExceptions(unittest.TestCase):

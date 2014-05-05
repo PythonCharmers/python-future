@@ -54,6 +54,7 @@ class TestPasteurize(CodeHandler):
         '''
         self.unchanged(code, from3=True)
 
+    # TODO: write / fix the raise_ fixer so that it uses the raise_ function
     @unittest.expectedFailure
     def test_exception_indentation(self):
         """
@@ -96,26 +97,39 @@ class TestPasteurize(CodeHandler):
             URL = 'http://pypi.python.org/pypi/{}/json'
             package = 'future'
             
-            r = urllib.request.urlopen(URL.format(package_name))
+            r = urllib.request.urlopen(URL.format(package))
             pprint.pprint(r.read())
         """
         after = """
-            from future import standard_library
-            standard_library.install_hooks()
-
             import pprint
-            import urllib.request
+            import future.standard_library.urllib.request as urllib_request
 
             URL = 'http://pypi.python.org/pypi/{}/json'
             package = 'future'
             
-            r = urllib.request.urlopen(URL.format(package_name))
+            r = urllib_request.urlopen(URL.format(package))
             pprint.pprint(r.read())
         """
 
         self.convert_check(before, after, from3=True)
 
-        
+    def test_urllib_refactor2(self):
+        before = """
+        import urllib.request, urllib.parse
+
+        f = urllib.request.urlopen(url, timeout=15)
+        filename = urllib.parse.urlparse(url)[2].split('/')[-1]
+        """
+
+        after = """
+        from future.standard_library.urllib import request as urllib_request
+        from future.standard_library.urllib import parse as urllib_parse
+
+        f = urllib_request.urlopen(url, timeout=15)
+        filename = urllib_parse.urlparse(url)[2].split('/')[-1]
+        """
+
+ 
 class TestFuturizeAnnotations(CodeHandler):
     @unittest.expectedFailure
     def test_return_annotations_alone(self):
@@ -160,7 +174,6 @@ class TestFuturizeAnnotations(CodeHandler):
         """
         self.convert_check(b, a, from3=True)
 
-    @unittest.expectedFailure
     def test_multiple_param_annotations(self):
         b = "def foo(bar:'spam'=False, baz:'eggs'=True, ham:False='spaghetti'): pass"
         a = "def foo(bar=False, baz=True, ham='spaghetti'): pass"
@@ -178,7 +191,6 @@ class TestFuturizeAnnotations(CodeHandler):
         """
         self.convert_check(b, a, from3=True)
 
-    @unittest.expectedFailure
     def test_mixed_annotations(self):
         b = "def foo(bar=False, baz:'eggs'=True, ham:False='spaghetti') -> 'zombies': pass"
         a = "def foo(bar=False, baz=True, ham='spaghetti'): pass"

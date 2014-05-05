@@ -10,7 +10,7 @@ from future import standard_library
 with standard_library.hooks():
     import html
 
-import unittest
+from future.tests.base import unittest
 
 
 class HtmlTests(unittest.TestCase):

@@ -12,8 +12,8 @@ from lib2to3.fixer_util import (FromImport, Newline, is_import,
                                 find_root, does_tree_import, Comma)
 from lib2to3.pytree import Leaf, Node
 from lib2to3.pygram import python_symbols as syms, python_grammar
-# from lib2to3.pgen2 import token
 from lib2to3.pygram import token
+import re
 
 
 ## These functions are from 3to2 by Joe Amenta:
@@ -195,7 +195,13 @@ def future_import(feature, node):
     if does_tree_import(u"__future__", feature, node):
         return
 
+    # Look for a shebang line
+    shebang_idx = None
+
     for idx, node in enumerate(root.children):
+        # If it's a shebang line, attach the prefix to
+        if is_shebang_comment(node):
+            shebang_idx = idx
         if node.type == syms.simple_stmt and \
            len(node.children) > 0 and node.children[0].type == token.STRING:
             # skip over docstring
@@ -209,6 +215,12 @@ def future_import(feature, node):
             return
 
     import_ = FromImport(u'__future__', [Leaf(token.NAME, feature, prefix=" ")])
+    if shebang_idx == 0 and idx == 0:
+        # If this __future__ import would go on the first line,
+        # detach the shebang prefix from the current first line
+        # and attach it to our new __future__ import node.
+        import_.prefix = root.children[0].prefix
+        root.children[0].prefix = u''
     children = [import_, Newline()]
     root.insert_child(idx, Node(syms.simple_stmt, children))
 
@@ -280,14 +292,14 @@ def touch_import_top(package, name_to_import, node):
     """Works like `does_tree_import` but adds an import statement at the
     top if it was not imported (but below any __future__ imports).
 
-    Calling this multiple times adds them in reverse order.
+    Based on lib2to3.fixer_util.touch_import()
+
+    Calling this multiple times adds the imports in reverse order.
         
     Also adds "standard_library.install_hooks()" after "from future import
-    standard_library". This should probably be factored into another function
-    somehow.
-
-    Based on lib2to3.fixer_util.touch_import()
+    standard_library". This should probably be factored into another function.
     """
+
     root = find_root(node)
 
     if does_tree_import(package, name_to_import, root):
@@ -320,9 +332,14 @@ def touch_import_top(package, name_to_import, node):
         assert end is not None
         insert_pos = end
     else:
-        # No __future__ imports
+        # No __future__ imports.
+        # We look for a docstring and insert the new node below that. If no docstring
+        # exists, just insert the node at the top.
         for idx, node in enumerate(root.children):
-            if node.type == syms.simple_stmt: # and node.children and node.children[0].type == token.STRING):
+            if node.type != syms.simple_stmt:
+                break
+            if not (node.children and node.children[0].type == token.STRING):
+                # This is the usual case.
                 break
         insert_pos = idx
 
@@ -400,5 +417,15 @@ def check_future_import(node):
         # TODO: handle brackets like this:
         #     from __future__ import (absolute_import, division)
         assert False, "strange import: %s" % savenode
+
+
+SHEBANG_REGEX = r'^#!\s*.*python'
+
+def is_shebang_comment(node):
+    """
+    Comments are prefixes for Leaf nodes. Returns whether the given node has a
+    prefix that looks like a shebang line.
+    """
+    return bool(re.match(SHEBANG_REGEX, node.prefix))
 
 

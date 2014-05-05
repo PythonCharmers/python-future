@@ -1,14 +1,12 @@
 """Unit tests for code in urllib.response."""
 
 from __future__ import absolute_import, division, unicode_literals
-from future import standard_library
 
-with standard_library.hooks():
-    import urllib
-    import urllib.response
-    import test.support
+from future.standard_library import urllib
+import future.standard_library.urllib.response as urllib_response
+from future.standard_library.test import support as test_support
+from future.tests.base import unittest
 
-import unittest
 
 class TestFile(object):
 
@@ -30,7 +28,7 @@ class Testaddbase(unittest.TestCase):
 
     def setUp(self):
         self.fp = TestFile()
-        self.addbase = urllib.response.addbase(self.fp)
+        self.addbase = urllib_response.addbase(self.fp)
 
     def test_with(self):
         def f():
@@ -42,7 +40,7 @@ class Testaddbase(unittest.TestCase):
         self.assertRaises(ValueError, f)
 
 def test_main():
-    test.support.run_unittest(Testaddbase)
+    test_support.run_unittest(Testaddbase)
 
 if __name__ == '__main__':
     test_main()

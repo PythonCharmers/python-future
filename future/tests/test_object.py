@@ -135,6 +135,67 @@ class TestNewObject(unittest.TestCase):
         obj = MyClass()
         self.assertTrue(bool(obj))
 
+    def test_isinstance_object_subclass(self):
+        """
+        This was failing before 
+        """
+        class A(object):
+            pass
+        a = A()
+
+        class B(object):
+            pass
+        b = B()
+
+        self.assertFalse(isinstance(a, B))
+        self.assertFalse(isinstance(b, A))
+        self.assertTrue(isinstance(a, A))
+        self.assertTrue(isinstance(b, B))
+
+        class C(A):
+            pass
+        c = C()
+
+        self.assertTrue(isinstance(c, A))
+        self.assertFalse(isinstance(c, B))
+        self.assertFalse(isinstance(a, C))
+        self.assertFalse(isinstance(b, C))
+        self.assertTrue(isinstance(c, C))
+
+    @unittest.expectedFailure
+    def test_types_isinstance_newobject(self):
+        a = list()
+        b = dict()
+        c = set()
+        self.assertTrue(isinstance(a, object))
+        self.assertTrue(isinstance(b, object))
+        self.assertTrue(isinstance(c, object))
+
+        # Old-style class instances on Py2 should still report as an instance
+        # of object as usual on Py2:
+        class D:
+            pass
+        d = D()
+        self.assertTrue(isinstance(d, object))
+
+        e = object()
+        self.assertTrue(isinstance(e, object))
+
+        class F(object):
+            pass
+        f = F()
+        self.assertTrue(isinstance(f, object))
+
+        class G(F):
+            pass
+        g = G()
+        self.assertTrue(isinstance(g, object))
+
+        def h():
+            return
+        h = H()
+        self.assertTrue(isinstance(h, object))
+
 
 if __name__ == '__main__':
     unittest.main()

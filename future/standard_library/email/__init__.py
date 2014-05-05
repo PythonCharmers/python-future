@@ -2,10 +2,21 @@
 # Author: Barry Warsaw
 # Contact: email-sig@python.org
 
-"""A package for parsing, handling, and generating email messages."""
+"""
+Backport of the Python 3.3 email package for Python-Future.
+
+A package for parsing, handling, and generating email messages.
+"""
 from __future__ import unicode_literals
 from __future__ import division
 from __future__ import absolute_import
+
+# Install the surrogate escape handler here because this is used by many
+# modules in the email package.
+from future.utils import surrogateescape
+surrogateescape.register_surrogateescape()
+# (Should this be done globally by ``future``?)
+
 
 __version__ = '5.1.0'
 

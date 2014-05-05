@@ -36,7 +36,7 @@ import time
 import base64
 import random
 import socket
-import datetime
+from future.standard_library import datetime
 from future.standard_library.urllib.parse import quote as url_quote, unquote as url_unquote
 import warnings
 from io import StringIO

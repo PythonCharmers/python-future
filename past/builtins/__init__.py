@@ -22,10 +22,19 @@ these standard locations on both Py2.6+ and Py3:
 
 """
 
+from future.utils import PY3
 from past.builtins.noniterators import (filter, map, range, reduce, zip)
-from past.builtins.types import basestring, dict, str, long, unicode
-# from past.builtins.misc import (ascii, chr, hex, input, oct, open, raw_input, unichr)
-from past.builtins.misc import (apply, cmp, execfile, intern, raw_input,
+# from past.builtins.misc import (ascii, hex, input, oct, open)
+if PY3:
+    from past.types import (basestring,
+                            olddict as dict,
+                            oldstr as str,
+                            long,
+                            unicode)
+else:
+    from __builtin__ import (basestring, dict, str, long, unicode)
+
+from past.builtins.misc import (apply, chr, cmp, execfile, intern, raw_input,
                                 reload, unichr, unicode, xrange)
 from past import utils
 
@@ -35,9 +44,9 @@ if utils.PY3:
     # pollution on Py3.
     
     # Only shadow builtins on Py3; no new names
-    __all__ = ['filter', 'map', 'range', 'zip', 
-               'basestring', 'dict', 'str',
-               'cmp', 'execfile', 'raw_input', 'reduce', 'reload',
+    __all__ = ['filter', 'map', 'range', 'reduce', 'zip', 
+               'basestring', 'dict', 'str', 'long', 'unicode',
+               'apply', 'chr', 'cmp', 'execfile', 'intern', 'raw_input', 'reload',
                'unichr', 'unicode', 'xrange'
     #            'ascii', 'chr', 'hex', 'input', 'oct', 'open', 'unichr',
     #            'bytes', 'dict', 'int', 'range', 'round', 'str', 'super',

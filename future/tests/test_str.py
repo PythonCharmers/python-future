@@ -78,6 +78,19 @@ class TestStr(unittest.TestCase):
     def test_str_fromhex(self):
         self.assertFalse(hasattr(str, 'fromhex'))
 
+    def test_str_hasattr_decode(self):
+        """
+        This test tests whether hasattr(s, 'decode') is False, like it is on Py3.
+
+        Sometimes code (such as http.client in Py3.3) checks hasattr(mystring,
+        'decode') to determine if a string-like thing needs encoding. It would
+        be nice to have this return False so the string can be treated on Py2
+        like a Py3 string.
+        """
+        s = str(u'abcd')
+        self.assertFalse(hasattr(s, 'decode'))
+        self.assertTrue(hasattr(s, 'encode'))
+
     def test_isinstance_str(self):
         self.assertTrue(isinstance(str('blah'), str))
 
@@ -169,6 +182,30 @@ class TestStr(unittest.TestCase):
         byte_strings2 = [bytes(b'EFGH'), u'IJKL']
         with self.assertRaises(TypeError):
             s.join(byte_strings2)
+
+    def test_str_join_staticmethod(self):
+        """
+        Issue #33
+        """
+        c = str.join('-', ['a', 'b'])
+        self.assertEqual(c, 'a-b')
+        self.assertEqual(type(c), str)
+
+    def test_str_join_staticmethod_workaround_1(self):
+        """
+        Issue #33
+        """
+        c = str('-').join(['a', 'b'])
+        self.assertEqual(c, 'a-b')
+        self.assertEqual(type(c), str)
+
+    def test_str_join_staticmethod_workaround_2(self):
+        """
+        Issue #33
+        """
+        c = str.join(str('-'), ['a', 'b'])
+        self.assertEqual(c, 'a-b')
+        self.assertEqual(type(c), str)
 
     def test_str_replace(self):
         s = str('ABCD')
@@ -377,6 +414,98 @@ class TestStr(unittest.TestCase):
             3.3 * s
         with self.assertRaises(TypeError):
             (3.3 + 3j) * s
+
+    @unittest.skip('Fails on Python <= 2.7.6 due to string subclass slicing bug')
+    def test_slice(self):
+        """
+        Do slices return newstr objects?
+        """
+        s = str(u'abcd')
+        self.assertEqual(s[:2], u'ab')
+        self.assertEqual(type(s[:2]), str)
+        self.assertEqual(s[-2:], u'cd')
+        self.assertEqual(type(s[-2:]), str)
+
+    @unittest.skip('Fails on Python <= 2.7.6 due to string subclass slicing bug')
+    def test_subclassing(self):
+        """
+        Can newstr be subclassed and do str methods then return instances of
+        the same class? (This is the Py3 behaviour).
+        """
+        class SubClass(str):
+            pass
+        s = SubClass(u'abcd')
+        self.assertEqual(type(s), SubClass)
+        self.assertEqual(type(s + s), str)
+        self.assertEqual(type(s[0]), str)
+        self.assertEqual(type(s[:2]), str)
+        self.assertEqual(type(s.join([u'_', u'_', u'_'])), str)
+
+    def test_subclassing_2(self):
+        """
+        Tests __new__ method in subclasses. Fails in versions <= 0.11.4
+        """
+        class SubClass(str):
+            def __new__(cls, *args, **kwargs):
+                self = str.__new__(cls, *args, **kwargs)
+                assert type(self) == SubClass
+                return self
+        s = SubClass(u'abcd')
+        self.assertTrue(True)
+
+    # From Python 3.3: test_unicode.py
+    def checkequalnofix(self, result, object, methodname, *args):
+        method = getattr(object, methodname)
+        realresult = method(*args)
+        self.assertEqual(realresult, result)
+        self.assertTrue(type(realresult) is type(result))
+
+        # if the original is returned make sure that
+        # this doesn't happen with subclasses
+        if realresult is object:
+            class usub(str):
+                def __repr__(self):
+                    return 'usub(%r)' % str.__repr__(self)
+            object = usub(object)
+            method = getattr(object, methodname)
+            realresult = method(*args)
+            self.assertEqual(realresult, result)
+            self.assertTrue(object is not realresult)
+
+    type2test = str
+
+    def test_maketrans_translate(self):
+        # these work with plain translate()
+        self.checkequalnofix('bbbc', 'abababc', 'translate',
+                             {ord('a'): None})
+        self.checkequalnofix('iiic', 'abababc', 'translate',
+                             {ord('a'): None, ord('b'): ord('i')})
+        self.checkequalnofix('iiix', 'abababc', 'translate',
+                             {ord('a'): None, ord('b'): ord('i'), ord('c'): 'x'})
+        self.checkequalnofix('c', 'abababc', 'translate',
+                             {ord('a'): None, ord('b'): ''})
+        self.checkequalnofix('xyyx', 'xzx', 'translate',
+                             {ord('z'): 'yy'})
+        # this needs maketrans()
+        self.checkequalnofix('abababc', 'abababc', 'translate',
+                             {'b': '<i>'})
+        tbl = self.type2test.maketrans({'a': None, 'b': '<i>'})
+        self.checkequalnofix('<i><i><i>c', 'abababc', 'translate', tbl)
+        # test alternative way of calling maketrans()
+        tbl = self.type2test.maketrans('abc', 'xyz', 'd')
+        self.checkequalnofix('xyzzy', 'abdcdcbdddd', 'translate', tbl)
+
+        self.assertRaises(TypeError, self.type2test.maketrans)
+        self.assertRaises(ValueError, self.type2test.maketrans, 'abc', 'defg')
+        self.assertRaises(TypeError, self.type2test.maketrans, 2, 'def')
+        self.assertRaises(TypeError, self.type2test.maketrans, 'abc', 2)
+        self.assertRaises(TypeError, self.type2test.maketrans, 'abc', 'def', 2)
+        self.assertRaises(ValueError, self.type2test.maketrans, {'xy': 2})
+        self.assertRaises(TypeError, self.type2test.maketrans, {(1,): 2})
+
+        self.assertRaises(TypeError, 'hello'.translate)
+        self.assertRaises(TypeError, 'abababc'.translate, 'abc', 'xyz')
+
 
 if __name__ == '__main__':
     unittest.main()
