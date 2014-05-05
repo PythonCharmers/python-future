@@ -11,8 +11,8 @@ from future.builtins import *
 from future import utils
 from future.tests.base import unittest, skip26
 
-from future.standard_library.http import client
-from future.standard_library.test import support
+from future.backports.http import client
+from future.backports.test import support
 import array
 import io
 import socket

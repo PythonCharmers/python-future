@@ -385,9 +385,8 @@ def is_py2_stdlib_module(m):
 def scrub_py2_sys_modules():
     """
     Removes any Python 2 standard library modules from ``sys.modules`` that
-    would interfere with Py3-style imports using ``future.standard_library``
-    import hooks. Examples are modules with the same names (like urllib
-    or email).
+    would interfere with Py3-style imports using import hooks. Examples are
+    modules with the same names (like urllib or email).
 
     (Note that currently import hooks are disabled for modules like these
     with ambiguous names anyway ...)
@@ -436,7 +435,7 @@ def scrub_future_sys_modules():
 
     This function removes items matching this spec from sys.modules:
         key: new_py3_module_name
-        value: either future.standard_library module or py2 module with
+        value: either future.backports module or py2 module with
                another name
     """
     scrubbed = {}
@@ -714,7 +713,7 @@ def import_(module_name, backport=False):
 
     Note that this would be a SyntaxError in Python:
 
-        >>> from future.standard_library import http.client
+        >>> from future.backports import http.client
 
     """
 
@@ -725,7 +724,7 @@ def import_(module_name, backport=False):
         # Then http.client = client
         # etc.
         if backport:
-            prefix = 'future.standard_library'
+            prefix = 'future.backports'
         else:
             prefix = 'future.moves'
         parts = prefix.split('.') + module_name.split('.')
@@ -739,7 +738,7 @@ def import_(module_name, backport=False):
                 break
             setattr(modules[i-1], part, modules[i])
 
-        # Return the next-most top-level module after future.standard_library:
+        # Return the next-most top-level module after future.backports / future.moves:
         return modules[2]
 
 
@@ -767,7 +766,7 @@ def from_import(module_name, *symbol_names, **kwargs):
         return __import__(module_name)
     else:
         if 'backport' in kwargs and bool(kwargs['backport']):
-            prefix = 'future.standard_library'
+            prefix = 'future.backports'
         else:
             prefix = 'future.moves'
         parts = prefix.split('.') + module_name.split('.')

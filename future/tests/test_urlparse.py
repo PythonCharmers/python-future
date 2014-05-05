@@ -9,7 +9,7 @@ from __future__ import division
 from __future__ import absolute_import
 from future import standard_library
 
-import future.standard_library.urllib.parse as urllib_parse
+import future.backports.urllib.parse as urllib_parse
 from future.tests.base import unittest
 
 RFC1808_BASE = "http://a/b/c/d;p?q#f"
