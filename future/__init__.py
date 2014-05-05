@@ -6,16 +6,18 @@ future: Easy, safe support for Python 3/2 compatibility
 2. It allows you to use a single, clean Python 3.x-compatible codebase to
 support both Python 3 and Python 2 with minimal overhead.
 
-Notable projects that use ``future`` for Python 2/3 compatibility are `Mezzanine <http://mezzanine.jupo.org/>`_ and `xlwt-future <https://pypi.python.org/pypi/xlwt-future>`_.
+Notable projects that use ``future`` for Python 2/3 compatibility are
+`Mezzanine <http://mezzanine.jupo.org/>`_ and `ObsPy <http://obspy.org>`_.
 
 It is designed to be used as follows::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
-    from future.builtins import (bytes, dict, int, range, str,
-                                 ascii, chr, hex, input, next,
-                                 oct, open, pow, round, super,
-                                 filter, map, zip)
+    from future.builtins import (
+                    bytes, dict, int, list, object, range, str,
+                    ascii, chr, hex, input, next, oct, open,
+                    pow, round, super,
+                    filter, map, zip)
 
 followed by predominantly standard, idiomatic Python 3 code that then runs
 similarly on Python 2.6/2.7 and Python 3.3+.
@@ -47,12 +49,6 @@ Documentation
 -------------
 
 See: http://python-future.org
-
-Also see the docstrings for each of these modules for more info::
-
-- future.standard_library
-- future.builtins
-- future.utils
 
 
 Credits

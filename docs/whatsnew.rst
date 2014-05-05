@@ -243,7 +243,7 @@ Many small improvements and fixes have been made across the project. Some highli
 
 - ``futurize``: Shebang lines such as ``#!/usr/bin/env python`` and source code
   file encoding declarations like ``# -*- coding=utf-8 -*-`` are no longer occasionally
-  displaced by ``from __future__ import ...`` statements.
+  displaced by ``from __future__ import ...`` statements. (Issue #10.)
 
 - Improved compatibility with py2exe (`issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`_).
 

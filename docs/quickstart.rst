@@ -98,30 +98,36 @@ be accessed under their Python 3 names and locations in Python 2::
         import http.cookies
         import http.cookiejar
 
+        import urllib.request
+        import urllib.parse
+        import urllib.response
+        import urllib.error
+        import urllib.robotparser
+
         import xmlrpc.client
         import xmlrpc.server
 
-``urllib`` currently requires an explicit import because the name clashes with
-that on Python 2 and because Python's syntax does not allow imports of this
-form with a dotted module name after ``as``::
-
-    import future.moves.urllib.parse as urllib.parse
-
-For submodules of ``urllib`` and other packages (like ``http``), this
-alternative form is available::
-
-    from future.standard_library import import_
-
-    urllib = import_('urllib')
-    import_('urllib.parse')
-    import_('urllib.request')
-    import_('urllib.error')
-
-    response = urllib.request.urlopen('http://mywebsite.com')
-    # etc.
-
-For an explanation of these and other forms of imports from the standard
-library, see :ref:`standard-library-imports`.
+.. ``urllib`` currently requires an explicit import because the name clashes with
+.. that on Python 2 and because Python's syntax does not allow imports of this
+.. form with a dotted module name after ``as``::
+..
+..     import future.moves.urllib.parse as urllib.parse
+..
+.. For submodules of ``urllib`` and other packages (like ``http``), this
+.. alternative form is available::
+..
+..     from future.standard_library import import_
+..
+..     urllib = import_('urllib')
+..     import_('urllib.parse')
+..     import_('urllib.request')
+..     import_('urllib.error')
+..
+..     response = urllib.request.urlopen('http://mywebsite.com')
+..     # etc.
+..
+.. For an explanation of these and other forms of imports from the standard
+.. library, see :ref:`standard-library-imports`.
 
 
 .. _py2-dependencies:
