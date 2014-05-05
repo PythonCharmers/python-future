@@ -167,7 +167,7 @@ There is no corresponding ``listkeys(d)`` function. Use ``list(d)`` for this cas
 Tests
 -----
 
-The number of unit tests has increased from 600 to over 900. Most of the new
+The number of unit tests has increased from 600 to over 800. Most of the new
 tests come from Python 3.3's test suite.
 
 
