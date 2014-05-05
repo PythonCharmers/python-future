@@ -316,13 +316,13 @@ class RenameImport(object):
                 logging.debug('What to do here?')
 
         name = bits[0]
-        if name == 'moves':
-            # imp.find_module doesn't find this fake module
-            from future.utils.six import moves
-            return moves
-        else:
-            module_info = imp.find_module(name, path)
-            return imp.load_module(name, *module_info)
+        # We no longer use the fake module six.moves:
+        # if name == 'moves':
+        #     # imp.find_module doesn't find this fake module
+        #     from future.utils.six import moves
+        #     return moves
+        module_info = imp.find_module(name, path)
+        return imp.load_module(name, *module_info)
 
 
 class hooks(object):
@@ -361,6 +361,7 @@ class hooks(object):
 # builtin modules names:
 if PY2:
     assert len(set(RENAMES.values()) & set(sys.builtin_module_names)) == 0
+
 
 def is_py2_stdlib_module(m):
     """
