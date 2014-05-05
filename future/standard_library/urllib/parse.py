@@ -651,7 +651,7 @@ class Quoter(collections.defaultdict):
 
     def __missing__(self, b):
         # Handle a cache miss. Store quoted string in cache and return.
-        res = chr(b) if b in self.safe else '%{:02X}'.format(b)
+        res = chr(b) if b in self.safe else '%{0:02X}'.format(b)
         self[b] = res
         return res
 
