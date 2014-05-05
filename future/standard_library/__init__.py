@@ -29,7 +29,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
 
     from itertools import filterfalse, zip_longest
     from sys import intern
-    
+
 (The renamed modules and functions are still available under their old
 names on Python 2.)
 
@@ -77,7 +77,7 @@ This module only supports Python 2.6, Python 2.7, and Python 3.1+.
 
 The following renames are already supported on Python 2.7 without any
 additional work from us::
-    
+
     reload() -> imp.reload()
     reduce() -> functools.reduce()
     StringIO.StringIO -> io.StringIO
@@ -104,6 +104,7 @@ import contextlib
 import types
 import copy
 import os
+import importlib
 
 from future.utils import PY2, PY3
 
@@ -141,7 +142,7 @@ RENAMES = {
            '__builtin__': 'builtins',
            'copy_reg': 'copyreg',
            'Queue': 'queue',
-           'future.standard_library.socketserver': 'socketserver',
+           'future.moves.socketserver': 'socketserver',
            'ConfigParser': 'configparser',
            'repr': 'reprlib',
            # 'FileDialog': 'tkinter.filedialog',
@@ -162,14 +163,14 @@ RENAMES = {
            '_winreg': 'winreg',
            'thread': '_thread',
            'dummy_thread': '_dummy_thread',
-           # 'anydbm': 'dbm',   # causes infinite import loop 
-           # 'whichdb': 'dbm',  # causes infinite import loop 
+           # 'anydbm': 'dbm',   # causes infinite import loop
+           # 'whichdb': 'dbm',  # causes infinite import loop
            # anydbm and whichdb are handled by fix_imports2
            # 'dbhash': 'dbm.bsd',
            # 'dumbdbm': 'dbm.dumb',
            # 'dbm': 'dbm.ndbm',
            # 'gdbm': 'dbm.gnu',
-           'future.standard_library.xmlrpc': 'xmlrpc',
+           'future.moves.xmlrpc': 'xmlrpc',
            # 'future.standard_library.email': 'email',    # for use by urllib
            # 'DocXMLRPCServer': 'xmlrpc.server',
            # 'SimpleXMLRPCServer': 'xmlrpc.server',
@@ -188,11 +189,11 @@ RENAMES = {
            # 'abc': 'collections.abc',   # for Py33
            # 'future.utils.six.moves.html': 'html',
            # 'future.utils.six.moves.http': 'http',
-           'future.standard_library.html': 'html',
-           'future.standard_library.http': 'http',
+           'future.moves.html': 'html',
+           'future.moves.http': 'http',
            # 'future.standard_library.urllib': 'urllib',
            # 'future.utils.six.moves.urllib': 'urllib',
-           'future.standard_library._markupbase': '_markupbase',
+           'future.moves._markupbase': '_markupbase',
           }
 
 
@@ -203,25 +204,51 @@ RENAMES = {
 assert len(set(RENAMES.values()) & set(REPLACED_MODULES)) == 0
 
 
-class WarnOnImport(object):
-    def __init__(self, *args):
-        self.module_names = args
- 
-    def find_module(self, fullname, path=None):
-        if fullname in self.module_names:
-            self.path = path
-            return self
-        return None
- 
-    def load_module(self, name):
-        if name in sys.modules:
-            return sys.modules[name]
-        module_info = imp.find_module(name, self.path)
-        module = imp.load_module(name, *module_info)
-        sys.modules[name] = module
- 
-        logging.warning("Imported deprecated module %s", name)
-        return module
+# Harmless renames that we can insert.
+# (New module name, new object name, old module name, old object name)
+MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
+         ('collections', 'UserDict', 'UserDict', 'UserDict'),
+         ('collections', 'UserString','UserString', 'UserString'),
+         ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
+         ('itertools', 'zip_longest','itertools', 'izip_longest'),
+         ('sys', 'intern','__builtin__', 'intern'),
+         # The re module has no ASCII flag in Py2, but this is the default.
+         # Set re.ASCII to a zero constant. stat.ST_MODE just happens to be one
+         # (and it exists on Py2.6+).
+         ('re', 'ASCII','stat', 'ST_MODE'),
+         ('base64', 'encodebytes','base64', 'encodestring'),
+         ('base64', 'decodebytes','base64', 'decodestring'),
+         ('subprocess', 'getoutput', 'commands', 'getoutput'),
+         ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
+         ('math', 'ceil', 'future.standard_library.misc', 'ceil'),
+# This is no use, since "import urllib.request" etc. still fails:
+#          ('urllib', 'error', 'future.moves.urllib', 'error'),
+#          ('urllib', 'parse', 'future.moves.urllib', 'parse'),
+#          ('urllib', 'request', 'future.moves.urllib', 'request'),
+#          ('urllib', 'response', 'future.moves.urllib', 'response'),
+#          ('urllib', 'robotparser', 'future.moves.urllib', 'robotparser'),
+        ]
+
+
+# A minimal example of an import hook:
+# class WarnOnImport(object):
+#     def __init__(self, *args):
+#         self.module_names = args
+#
+#     def find_module(self, fullname, path=None):
+#         if fullname in self.module_names:
+#             self.path = path
+#             return self
+#         return None
+#
+#     def load_module(self, name):
+#         if name in sys.modules:
+#             return sys.modules[name]
+#         module_info = imp.find_module(name, self.path)
+#         module = imp.load_module(name, *module_info)
+#         sys.modules[name] = module
+#         logging.warning("Imported deprecated module %s", name)
+#         return module
 
 
 class RenameImport(object):
@@ -246,7 +273,7 @@ class RenameImport(object):
                 len(set(old_to_new.values())) == len(old_to_new.values())), \
                'Ambiguity in renaming (handler not implemented)'
         self.new_to_old = dict((new, old) for (old, new) in old_to_new.items())
- 
+
     def find_module(self, fullname, path=None):
         # Handles hierarchical importing: package.module.module2
         new_base_names = set([s.split('.')[0] for s in self.new_to_old])
@@ -254,7 +281,7 @@ class RenameImport(object):
         if fullname in new_base_names:
             return self
         return None
- 
+
     def load_module(self, name):
         path = None
         if name in sys.modules:
@@ -268,7 +295,7 @@ class RenameImport(object):
         # In any case, make it available under the requested (Py3) name
         sys.modules[name] = module
         return module
- 
+
     def _find_and_load_module(self, name, path=None):
         """
         Finds and loads it. But if there's a . in the name, handles it
@@ -287,7 +314,7 @@ class RenameImport(object):
                 if name in sys.modules:
                     return sys.modules[name]
                 logging.debug('What to do here?')
-                
+
         name = bits[0]
         if name == 'moves':
             # imp.find_module doesn't find this fake module
@@ -298,33 +325,13 @@ class RenameImport(object):
             return imp.load_module(name, *module_info)
 
 
-# Harmless renames that we can insert.
-# (New module name, new object name, old module name, old object name)
-MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
-         ('collections', 'UserDict', 'UserDict', 'UserDict'),
-         ('collections', 'UserString','UserString', 'UserString'),
-         ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
-         ('itertools', 'zip_longest','itertools', 'izip_longest'),
-         ('sys', 'intern','__builtin__', 'intern'),
-         # The re module has no ASCII flag in Py2, but this is the default.
-         # Set re.ASCII to a zero constant. stat.ST_MODE just happens to be one
-         # (and it exists on Py2.6+).
-         ('re', 'ASCII','stat', 'ST_MODE'),
-         ('base64', 'encodebytes','base64', 'encodestring'),
-         ('base64', 'decodebytes','base64', 'decodestring'),
-         ('subprocess', 'getoutput', 'commands', 'getoutput'),
-         ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
-         ('math', 'ceil', 'future.standard_library.misc', 'ceil'),
-        ]
-
-
 class hooks(object):
     """
     Acts as a context manager. Saves the state of sys.modules and restores it
-    after the 'with' block. 
-    
+    after the 'with' block.
+
     Use like this:
-    
+
     >>> from future import standard_library
     >>> with standard_library.hooks():
     ...     import http.client
@@ -348,8 +355,7 @@ class hooks(object):
         restore_sys_modules(self.scrubbed)
         if not self.hooks_were_installed:
             remove_hooks()
-            scrub_future_sys_modules()
-
+        scrub_future_sys_modules()
 
 # Sanity check for is_py2_stdlib_module(): We aren't replacing any
 # builtin modules names:
@@ -382,7 +388,7 @@ def is_py2_stdlib_module(m):
         if (modpath[0].startswith(is_py2_stdlib_module.stdlib_path) and
             'site-packages' not in modpath[0]):
             return True
-        
+
     return False
 
 
@@ -391,7 +397,10 @@ def scrub_py2_sys_modules():
     Removes any Python 2 standard library modules from ``sys.modules`` that
     would interfere with Py3-style imports using ``future.standard_library``
     import hooks. Examples are modules with the same names (like urllib
-    or email). (Note that currently import hooks are disabled anyway ...)
+    or email).
+
+    (Note that currently import hooks are disabled for modules like these
+    with ambiguous names anyway ...)
     """
     if PY3:
         return {}
@@ -411,20 +420,31 @@ def scrub_py2_sys_modules():
 
 def scrub_future_sys_modules():
     """
-    Removes modules from the ``sys.modules`` cache that would confuse code such
-    as this:
+    On Py2 only: Removes any modules such as ``http`` and ``html.parser`` from
+    the ``sys.modules`` cache. Such modules would confuse code such as this:
 
+        # PyChecker does something like this:
         try:
             import builtins
         except:
-            import __builtin__ as builtins
+            PY3 = False
+        finally:
+            PY3 = True
 
     or this:
 
         import urllib       # We want this to pull in only the Py2 module
                             # after scrub_future_sys_modules() has been called
 
-    This includes items like this:
+    or this:
+
+        # Requests does this in requests/packages/urllib3/connection.py:
+        try: # Python 3
+            from http.client import HTTPConnection, HTTPException
+        except ImportError:
+            from httplib import HTTPConnection, HTTPException
+
+    This function removes items matching this spec from sys.modules:
         key: new_py3_module_name
         value: either future.standard_library module or py2 module with
                another name
@@ -442,8 +462,8 @@ def scrub_future_sys_modules():
 
         # We look for builtins, configparser, urllib, email, http, etc., and
         # their submodules
-        if (modulename in RENAMES.values() or 
-            any(modulename.startswith(m + '.') for m in RENAMES.values())):   
+        if (modulename in RENAMES.values() or
+            any(modulename.startswith(m + '.') for m in RENAMES.values())):
 
             if module is None:
                 # This happens for e.g. __future__ imports. Delete it.
@@ -463,7 +483,7 @@ def scrub_future_sys_modules():
 class suspend_hooks(object):
     """
     Acts as a context manager. Use like this:
-    
+
     >>> from future import standard_library
     >>> standard_library.install_hooks()
     >>> import http.client
@@ -563,6 +583,7 @@ def remove_hooks():
     for i, hook in list(enumerate(sys.meta_path))[::-1]:
         if hasattr(hook, 'RENAMER'):
             del sys.meta_path[i]
+    # Explicit is better than implicit. This now requires its own separate function call:
     # if scrub_sys_modules:
     #     scrub_future_sys_modules()
 
@@ -597,6 +618,10 @@ if not hasattr(sys, 'py2_modules'):
     sys.py2_modules = {}
 
 def cache_py2_modules():
+    """
+    Currently this function is unneeded, as we are not attempting to provide import hooks
+    for modules with ambiguous names: email, urllib, pickle.
+    """
     if len(sys.py2_modules) != 0:
         return
     assert not detect_hooks()
@@ -620,4 +645,105 @@ def cache_py2_modules():
     # sys.py2_modules['dbm'] = dbm
 
 
-# cache_py2_modules()
+def import_(module_name, backport=False):
+    """
+    Pass a (potentially dotted) module name of a Python 3 standard library
+    module. This function imports the module compatibly on Py2 and Py3 and
+    returns the top-level module.
+
+    Example use:
+        >>> http = import_('http.client')
+        >>> http = import_('http.server')
+        >>> urllib = import_('urllib.request')
+
+    Then:
+        >>> conn = http.client.HTTPConnection(...)
+        >>> response = urllib.request.urlopen('http://mywebsite.com')
+        >>> # etc.
+
+    Use as follows:
+        >>> package_name = import_(module_name)
+
+    On Py3, equivalent to this:
+
+        >>> import module_name
+
+    On Py2, equivalent to this if backport=False:
+
+        >>> from future.moves import module_name
+
+    or to this if backport=True:
+
+        >>> from future.standard_library import module_name
+
+    except that it also handles dotted module names such as ``http.client``
+    The effect then is like this:
+
+        >>> from future.standard_library import module
+        >>> from future.standard_library.module import submodule
+        >>> module.submodule = submodule
+
+    Note that this would be a SyntaxError in Python:
+
+        >>> from future.standard_library import http.client
+
+    """
+
+    if PY3:
+        return __import__(module_name)
+    else:
+        # client.blah = blah
+        # Then http.client = client
+        # etc.
+        if backport:
+            prefix = 'future.standard_library'
+        else:
+            prefix = 'future.moves'
+        parts = prefix.split('.') + module_name.split('.')
+
+        modules = []
+        for i, part in enumerate(parts):
+            sofar = '.'.join(parts[:i+1])
+            modules.append(importlib.import_module(sofar))
+        for i, part in reversed(list(enumerate(parts))):
+            if i == 0:
+                break
+            setattr(modules[i-1], part, modules[i])
+
+        # Return the next-most top-level module after future.standard_library:
+        return modules[2]
+
+
+def from_import(module_name, *symbol_names, **kwargs):
+    """
+    Example use:
+        >>> HTTPConnection = from_import('http.client', 'HTTPConnection')
+        >>> HTTPServer = from_import('http.server', 'HTTPServer')
+        >>> urlopen, urlparse = from_import('urllib.request', 'urlopen', 'urlparse')
+
+    Equivalent to this on Py3:
+
+        >>> from module_name import symbol_names[0], symbol_names[1], ...
+
+    and this on Py2:
+
+        >>> from future.standard_library.module_name import symbol_names[0], ...
+
+    except that it also handles dotted module names such as ``http.client``.
+    """
+
+    if PY3:
+        return __import__(module_name)
+    else:
+        if 'backport' in kwargs and bool(kwargs['backport']):
+            prefix = 'future.standard_library'
+        else:
+            prefix = 'future.moves'
+        parts = prefix.split('.') + module_name.split('.')
+        module = importlib.import_module(prefix + '.' + module_name)
+        output = [getattr(module, name) for name in symbol_names]
+        if len(output) == 1:
+            return output[0]
+        else:
+            return output
+
