@@ -11,11 +11,12 @@ import sys
 import os
 
 
-with standard_library.suspend_hooks():
-    try:
-        import requests
-    except ImportError:
-        requests = None
+# Don't import requests first. This avoids the problem we want to expose:
+# with standard_library.suspend_hooks():
+#     try:
+#         import requests
+#     except ImportError:
+#         requests = None
 
 
 class write_module(object):
@@ -50,35 +51,26 @@ class TestRequests(CodeHandler):
     This class tests whether the requests module conflicts with the
     standard library import hooks, as in issue #19.
     """
-    @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
-                     + ' to test ``requests`` + future compatibility (issue #19)')
-    def test_requests(self):
+    def test_remove_hooks_then_requests(self):
         code = """
             from future import standard_library
             standard_library.install_hooks()
 
+            import builtins
+            import http.client
             import html.parser
             """
         with write_module(code, self.tempdir):
             import test_imports_future_stdlib
             standard_library.remove_hooks()
-            import requests
+            try:
+                import requests
+            except ImportError:
+                print("Requests doesn't seem to be available. Skipping requests test ...")
             r = requests.get('http://google.com')
             self.assertTrue(r)
 
-        # Was:
-        # try:
-        #    (code)
-        # except Exception as e:
-        #     raise e
-        # else:
-        #     print('Succeeded!')
-        # finally:
-        #     sys.path.remove(self.tempdir)
 
-
-    @unittest.skipIf(requests is None, 'Install ``requests`` if you would like' \
-                     + ' to test ``requests`` + future compatibility (issue #19)')
     def test_requests_cm(self):
         """
         Tests whether requests can be used importing standard_library modules
@@ -87,13 +79,16 @@ class TestRequests(CodeHandler):
         code = """
             from future import standard_library
             with standard_library.hooks():
-                 import builtins
-                 import html.parser
-                 import http.client
+                import builtins
+                import html.parser
+                import http.client
             """
         with write_module(code, self.tempdir):
             import test_imports_future_stdlib
-            import requests
+            try:
+                import requests
+            except ImportError:
+                print("Requests doesn't seem to be available. Skipping requests test ...")
             r = requests.get('http://google.com')
             self.assertTrue(True)
 
