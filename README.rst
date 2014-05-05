@@ -196,14 +196,18 @@ The ``past`` package can now automatically translate some simple Python 2
 modules to Python 3 upon import. The goal is to support the "long tail" of
 real-world Python 2 modules (e.g. on PyPI) that have not been ported yet. For
 example, here is how to use a Python 2-only package called ``plotrique`` on
-Python 3. First install it::
+Python 3. First install it:
+
+.. code-block:: bash
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     
 (or use ``pip`` if this points to your Py3 environment.)
 
 Then pass a whitelist of module name prefixes to the ``autotranslate()`` function.
-Example::
+Example:
+
+.. code-block:: bash
     
     $ python3
 
