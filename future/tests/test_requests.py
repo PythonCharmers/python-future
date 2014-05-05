@@ -71,8 +71,10 @@ class TestRequests(CodeHandler):
                 import requests
             except ImportError:
                 print("Requests doesn't seem to be available. Skipping requests test ...")
-            r = requests.get('http://google.com')
-            self.assertTrue(r)
+            else:
+                r = requests.get('http://google.com')
+                self.assertTrue(r)
+            self.assertTrue(True)
 
 
     def test_requests_cm(self):
@@ -93,7 +95,9 @@ class TestRequests(CodeHandler):
                 import requests
             except ImportError:
                 print("Requests doesn't seem to be available. Skipping requests test ...")
-            r = requests.get('http://google.com')
+            else:
+                r = requests.get('http://google.com')
+                self.assertTrue(r)
             self.assertTrue(True)
 
 
