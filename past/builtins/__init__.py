@@ -23,8 +23,16 @@ these standard locations on both Py2.6+ and Py3:
 """
 
 from past.builtins.noniterators import (filter, map, range, reduce, zip)
-from past.builtins.types import basestring, dict, str, long, unicode
 # from past.builtins.misc import (ascii, hex, input, oct, open)
+if PY3:
+    from past.types import (basestring,
+                            olddict as dict,
+                            oldstr as str,
+                            long,
+                            unicode)
+else:
+    from __builtin__ import (basestring, dict, str, long, unicode)
+
 from past.builtins.misc import (apply, chr, cmp, execfile, intern, raw_input,
                                 reload, unichr, unicode, xrange)
 from past import utils

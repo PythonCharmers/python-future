@@ -8,7 +8,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 from numbers import Integral
 from future.tests.base import unittest
 from past.builtins import str as oldstr
-from past.builtins.types.oldstr import unescape
+from past.types.oldstr import unescape
 
 
 class TestOldStr(unittest.TestCase):

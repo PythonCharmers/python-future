@@ -165,6 +165,25 @@ The number of unit tests has increased from 600 to over 2000. Most of the new
 tests come from Python 3.3's test suite.
 
 
+Internal refactoring
+--------------------
+
+The ``future.builtins.types`` module has been moved to ``future.types``.
+Likewise, ``past.builtins.types`` has been moved to ``past.types``. The only
+user-visible effect of this is to change ``repr(type(obj))`` for instances
+of these types. For example::
+
+    >>> from future.builtins import bytes
+    >>> bytes(b'abc')
+    >>> type(b)
+    future.types.newbytes.newbytes
+
+instead of::
+
+    >>> type(b)           # prior to v0.12
+    future.builtins.types.newbytes.newbytes
+
+
 Bug fixes
 ---------
 

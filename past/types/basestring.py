@@ -5,7 +5,7 @@ Example use:
 
 >>> s = b'abc'
 >>> assert isinstance(s, basestring)
->>> from past.builtins.types import str as oldstr
+>>> from past.types import str as oldstr
 >>> s2 = oldstr(b'abc')
 >>> assert isinstance(s2, basestring)
 
