@@ -57,7 +57,9 @@ Code examples
 Replacements for Py2's built-in functions and types are designed to be imported
 at the top of each Python module together with Python's built-in ``__future__``
 statements. For example, this code behaves identically on Python 2.6/2.7 after
-these imports as it does on Python 3.3+::
+these imports as it does on Python 3.3+:
+
+.. code-block:: python
     
     from __future__ import absolute_import, division, print_function
     from future.builtins import (bytes, str, open, super, range,
@@ -127,7 +129,9 @@ these imports as it does on Python 3.3+::
 
 
 There is also support for renamed standard library modules in the form of import
-hooks. The context-manager form works like this::
+hooks. The context-manager form works like this:
+
+.. code-block:: python
 
     from future import standard_library
 
@@ -164,7 +168,9 @@ mostly unchanged on both Python 2 and Python 3.
 Futurize: 2 to both
 --------------------
 
-For example, running ``futurize -w mymodule.py`` turns this Python 2 code::
+For example, running ``futurize -w mymodule.py`` turns this Python 2 code:
+
+.. code-block:: python
     
     import ConfigParser
 
@@ -172,7 +178,9 @@ For example, running ``futurize -w mymodule.py`` turns this Python 2 code::
         pass
     print 'Hello',
 
-into this code which runs on both Py2 and Py3::
+into this code which runs on both Py2 and Py3:
+
+.. code-block:: python
     
     from __future__ import print_function
     from future import standard_library
@@ -196,14 +204,18 @@ The ``past`` package can now automatically translate some simple Python 2
 modules to Python 3 upon import. The goal is to support the "long tail" of
 real-world Python 2 modules (e.g. on PyPI) that have not been ported yet. For
 example, here is how to use a Python 2-only package called ``plotrique`` on
-Python 3. First install it::
+Python 3. First install it:
+
+.. code-block:: bash
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     
 (or use ``pip`` if this points to your Py3 environment.)
 
 Then pass a whitelist of module name prefixes to the ``autotranslate()`` function.
-Example::
+Example:
+
+.. code-block:: bash
     
     $ python3
 
