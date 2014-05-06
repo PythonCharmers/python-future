@@ -11,7 +11,7 @@ The most elegant solution to this is to derive your custom iterator class from
 ``future.builtins.object`` and define a ``__next__`` method as you normally
 would on Python 3. On Python 2, ``object`` then refers to the
 ``future.types.newobject`` base class, which provides a fallback ``next``
-method 2 that calls ``__next__``. Use it as follows::
+method that calls your ``__next__``. Use it as follows::
 
     from future.builtins import object
     
@@ -66,7 +66,7 @@ will not help; the third assertion below would fail on Python 2::
     assert next(itr2) == 'H'
     assert next(itr2) == 'E'
     assert list(itr2) == list('LLO')      # fails because Py2 implicitly looks
-                                          # for a ``__next__`` method.
+                                          # for a ``next`` method.
 
 Instead, you can use a decorator called ``implements_iterator`` from
 ``future.utils`` to allow Py3-style iterators to work identically on Py2, even
