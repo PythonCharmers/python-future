@@ -1,5 +1,5 @@
-Credits, Copyright, Licensing
-=============================
+Credits and Licensing
+=====================
 
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
