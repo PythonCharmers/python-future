@@ -3,13 +3,15 @@
 Custom iterators
 ----------------
 
-If you define your own iterators, there is an incompatibility in the special method name
-across Py3 and Py2. On Python 3 it is ``__next__``, whereas on Python 2 it is
-``next``.
+If you define your own iterators, there is an incompatibility in the method name
+to retrieve the next item across Py3 and Py2. On Python 3 it is ``__next__``,
+whereas on Python 2 it is ``next``.
 
 The most elegant solution to this is to derive your custom iterator class from
-``future.builtins.object``. This provides a special fallback ``next`` method
-that maps to ``__next__``. Use it as follows::
+``future.builtins.object`` and define a ``__next__`` method as you normally
+would on Python 3. On Python 2, ``object`` then refers to the
+``future.types.newobject`` base class, which provides a fallback ``next``
+method 2 that calls ``__next__``. Use it as follows::
 
     from future.builtins import object
     
@@ -27,11 +29,12 @@ that maps to ``__next__``. Use it as follows::
     assert list(itr) == list('LLO')
 
 
-This works unless you are defining a subclass of a base class defined elsewhere
-that does not derive from ``future.builtins.object``.
+You can use this approach unless you are defining a custom iterator as a
+subclass of a base class defined elsewhere that does not derive from
+``future.builtins.object``.  In that case, you can provide compatibility across
+Python 2 and Python 3 using the ``next`` function from ``future.builtins``::
 
-In this case, you can provide compatibility across Python 2 and Python 3 using the ``next``
-function in ``future.builtins``::
+    from future.builtins import next
 
     from some_module import some_base_class
 
@@ -43,8 +46,6 @@ function in ``future.builtins``::
         def __iter__(self):
             return self
 
-    from future.builtins import next
-
     itr2 = Upper2('hello')
     assert next(itr2) == 'H'
     assert next(itr2) == 'E'
@@ -55,10 +56,10 @@ function in ``future.builtins``::
     assert 'next' in dir(itr3)
     assert next(itr3) == 'one'
 
-This works whenever your code calls the ``next()`` function explicitly. If you
-consume the iterator implicitly in a ``for`` loop or ``list()`` call or by some
-other method, the ``future.builtins.next`` function will not help; the third
-assertion below would fail on Python 2::
+This approach is feasible whenever your code calls the ``next()`` function
+explicitly. If you consume the iterator implicitly in a ``for`` loop or
+``list()`` call or by some other means, the ``future.builtins.next`` function
+will not help; the third assertion below would fail on Python 2::
 
     itr2 = Upper2('hello')
 
