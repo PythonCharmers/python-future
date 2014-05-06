@@ -6,7 +6,7 @@ Standard library imports
 :mod:`future` supports the standard library reorganization (PEP 3108). Under
 the standard Python 3 names and locations, it provides access to either the
 corresponding native standard library modules (``future.moves``) or to backported
-modules from Python 3.3 (``future.standard_library``).
+modules from Python 3.3 (``future.backports``).
 
 There are currently four interfaces to the reorganized standard library.
 
@@ -70,7 +70,7 @@ follows::
 install_hooks() call
 ------------------------
 
-The fourth (deprecated) interface to the reorganized standard library is via an
+The fourth interface to the reorganized standard library is via an
 explicit call to ``install_hooks``::
 
     from future import standard_library
@@ -91,8 +91,8 @@ active indefinitely.)
 The call to ``scrub_future_sys_modules()`` removes any modules from the
 ``sys.modules`` cache (on Py2 only) that have Py3-style names, like ``http.client``.
 This can prevent libraries that have their own Py2/3 compatibility code from
-importing the ``future.standard_library`` modules unintentionally. Code such as
-this will then fall through to using the Py2 standard library
+importing the ``future.moves`` or ``future.backports`` modules unintentionally.
+Code such as this will then fall through to using the Py2 standard library
 modules on Py2::
 
     try:
@@ -101,12 +101,8 @@ modules on Py2::
         from httplib import HTTPConnection
 
 **Requests**: The above snippet is from the `requests
-<http://docs.python-requests.org>`_ library. Note that ``requests``  is
-currently incompatible with the import hooks in ``future.standard_library``. To
-use both of these together, you must call ``remove_hooks()`` and
-``scrub_future_sys_modules()`` as above before you (or users of your library)
-import ``requests``. The easiest way to do this is with the ``hooks`` context
-manager or one of the other import mechanisms (see above).
+<http://docs.python-requests.org>`_ library. As of v0.12, the
+``future.standard_library`` import hooks are compatible with Requests.
 
 
 .. If you wish to avoid changing every reference of ``http.client`` to
@@ -154,9 +150,11 @@ Backports
 ---------
 
 Backports of the following modules from Python 3.3's standard library to Python 2.x are also
-available in ``future.standard_library``::
+available in ``future.backports``::
 
+    http.client
     http.server
+    html.server
     urllib
     xmlrpc.client
     xmlrpc.server

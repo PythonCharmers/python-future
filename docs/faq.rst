@@ -118,22 +118,27 @@ Maturity
 Is it tested?
 -------------
 
-``future`` is used by ``mezzanine`` and ``ObsPy``. It has also been used to
-help with the port of 800,000 lines of Python 2 code in Sage to Python 2/3
-(currently underway).
+``future`` is used by several major projects, including `mezzanine
+<http://mezzanine.jupo.org>`_ and `ObsPy <http://www.obspy.org>`_. It is also
+currently being used to help with porting 800,000 lines of Python 2 code in
+`Sage <http://sagemath.org>`_ to Python 2/3.
 
 Currently ``future`` has 800+ unit tests. Many of these are straight from the
-Python 3.3 test suite. In general, the ``future`` package itself is in good
-shape, whereas the ``futurize`` script for automatic porting is incomplete and
-imperfect.  (Chances are it will require some manual cleanup afterwards.) The
-``past`` package also needs further work.
-    
+Python 3.3 test suite.
+
+In general, the ``future`` package itself is in good shape, whereas the
+``futurize`` script for automatic porting is incomplete and imperfect.
+(Chances are it will require some manual cleanup afterwards.) The ``past``
+package also needs further work.
+
+
 Is the API stable?
 ------------------
 
-Not yet; ``future`` is still in beta. We will try not to break anything which
-was documented and used to work.  After version 1.0 is released, the API will
-not change in backward-incompatible ways until a hypothetical version 2.0.
+Not yet; ``future`` is still in beta. Where possible, we will try not to break
+anything which was documented and used to work.  After version 1.0 is released,
+the API will not change in backward-incompatible ways until a hypothetical
+version 2.0.
 
 ..
     Are there any example of Python 2 packages ported to Python 3 using ``future`` and ``futurize``?

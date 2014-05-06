@@ -14,7 +14,7 @@ mechanism with 3rd-party modules.
 Standard-library import hooks now require explicit installation
 ---------------------------------------------------------------
 
-*Note: backwards-incompatible change:* As previously announced (see
+**Note: backwards-incompatible change:** As previously announced (see
 :ref:`deprecated-auto-import-hooks`), the import hooks must now be enabled
 explicitly, as follows::
 
@@ -26,10 +26,12 @@ explicitly, as follows::
 
 This now causes these modules to be imported from ``future.moves``, a new
 package that provides wrappers over the native Python 2 standard library with
-the new Python 3 organization.
+the new Python 3 organization. As a consequence, the import hooks provided in
+``future.standard_library`` are now fully compatible with the `Requests library
+<http://python-requests.org>`_.
 
-The functional interface is now deprecated but still supported for backwards
-compatibility::
+The functional interface with ``install_hooks()`` is still supported for
+backwards compatibility::
 
     from future import standard_library
     standard_library.install_hooks():
@@ -39,49 +41,10 @@ compatibility::
     ...
     standard_library.remove_hooks()
 
-This allows finer-grained control over whether import hooks are enabled for
-other imported modules, such as ``requests``, which provide their own Python
-2/3 compatibility code. This also improves compatibility of ``future`` with
-tools like ``py2exe``.
-
-
-.. Versioned standard library imports
-.. ----------------------------------
-.. 
-.. ``future`` now offers a choice of either backported versions of the standard library modules from Python 3.3 or renamed Python 2.7 versions. Use it as follows::
-.. 
-..     from future import standard_library
-..     standard_library.install_hooks(version='3.3')
-..     import html.parser
-..     ...
-..     standard_library.remove_hooks()
-.. 
-.. or as follows::
-..     
-..     from future import standard_library
-..     with standard_library.hooks(version='2.7'):
-..         import html.parser
-..         ...
-.. 
-.. If ``version='2.7'`` is selected, on Python 2.7 the import hooks provide an interface to the
-.. Python 2.7 standard library modules remapped to their equivalent Python 3.x names. For example, the above code is equivalent to this on Python 2.7 (more or less)::
-.. 
-..     import htmllib
-..     module = type(htmllib)
-..     html = module('html')
-..     html.parser = module('html.parser')
-..     html.parser.HTMLParser = htmllib.HTMLParser
-..     html.parser.HTMLParseError = htmllib.htmlParseError
-.. 
-.. but the dozen or so other functions in Python 3.3's ``html.parser`` module are not available on Python 2.7.
-.. 
-.. 
-.. If ``version=='3.3'`` is selected, 
-.. 
-.. These are not (yet) full backports of
-.. the Python 3.3
-.. modules but remappings to the corresponding
-.. functionality in the Python 2.x standard library.
+Requiring explicit installation of import hooks allows finer-grained control
+over whether they are enabled for other imported modules that provide their own
+Python 2/3 compatibility layer. This also improves compatibility of ``future``
+with tools like ``py2exe``.
 
 
 ``newobject`` base object defines fallback Py2-compatible special methods
@@ -134,7 +97,7 @@ functions like ``map()`` and ``filter()`` now behave as they do on Py2 with with
 
 The ``past.builtins`` module has also been extended to add Py3 support for
 additional Py2 constructs that are not adequately handled by ``lib2to3`` (see
-issue #37). This includes custom ``execfile()`` and ``cmp()`` functions.
+issue #37). This includes new ``execfile()`` and ``cmp()`` functions.
 ``futurize`` now invokes imports of these functions from ``past.builtins``.
 
 
@@ -454,21 +417,18 @@ Please remember to import ``input`` from ``future.builtins`` if you use
 ``input()`` in a Python 2/3 compatible codebase.
 
 
-.. deprecated-auto-import-hooks
+.. deprecated-auto-import-hooks:
 
 Deprecated feature: auto-installation of standard-library import hooks
 ----------------------------------------------------------------------
 
 Previous versions of ``python-future`` installed import hooks automatically upon
-``from future import standard_library``. This has been deprecated in order to
-improve robustness and compatibility with modules like ``requests`` that already
-perform their own single-source Python 2/3 compatibility.
+importing the ``standard_library`` module from ``future``. This has been
+deprecated in order to improve robustness and compatibility with modules like
+``requests`` that already perform their own single-source Python 2/3
+compatibility.
 
-.. (Previously, the import hooks were
-.. bleeding into surrounding code, causing incompatibilities with modules like
-.. ``requests`` (issue #19). 
-
-In the next version of ``python-future``, importing ``future.standard_library``
+As of v0.12 of ``python-future``, importing ``future.standard_library``
 will no longer install import hooks by default. Instead, please install the
 import hooks explicitly as follows::
     
@@ -479,16 +439,8 @@ and uninstall them after your import statements using::
 
     standard_library.remove_hooks()
 
-..  For more fine-grained use of import hooks, the names can be passed explicitly as
-..  follows::
-.. 
-..      from future import standard_library
-..      standard_library.install_hooks()
-
-
 *Note*: this will be a backward-incompatible change.
 
-.. This feature may be resurrected in a later version if a safe implementation can be found.
 
 
 Internal changes
