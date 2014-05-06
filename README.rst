@@ -25,11 +25,11 @@ Features
 -   ``future.builtins`` package provides backports and remappings for 19
     builtins with different semantics on Py3 versus Py2
 
--   ``future.standard_library`` package provides backports from the Py3.3
-    standard library
+-   ``future.standard_library``, in conjunction with ``future.moves``, provides
+    support for importing standard library modules under their Python 3 names
 
--   ``future.moves`` package provides support for reorganized standard library
-    modules (renames from native packages)
+-   ``future.backports`` package provides backports from the Py3.3
+    standard library
 
 -   ``past.builtins`` package provides forward-ports of Python 2 types and
     resurrects some Python 2 builtins (to aid with per-module code migrations)
@@ -108,16 +108,16 @@ these imports as it does on Python 3.3+:
     name = input('What is your name? ')
     print('Hello ' + name)
 
+    # pow() supports fractional exponents of negative numbers like in Py3:
+    z = pow(-1, 0.5)
+
     # Compatible output from isinstance() across Py2/3:
     assert isinstance(2**64, int)        # long integers
     assert isinstance(u'blah', str)
     assert isinstance('blah', str)       # only if unicode_literals is in effect
 
-    # pow() supports fractional exponents of negative numbers like in Py3:
-    z = pow(-1, 0.5)
-
     # Py3-style iterators written as new-style classes (subclasses of
-    # future.builtins.object) are backward compatibile with Py2:
+    # future.builtins.object) are automatically backward compatible with Py2:
     class Upper(object):
         def __init__(self, iterable):
             self._iter = iter(iterable)
@@ -172,24 +172,38 @@ For example, running ``futurize -w mymodule.py`` turns this Python 2 code:
 
 .. code-block:: python
     
-    import ConfigParser
+    import Queue
+    from urllib2 import urlopen
 
-    class Blah(object):
-        pass
-    print 'Hello',
+
+    def greet(name):
+        print 'Hello',
+        print name
+
+    print 'What's your name?',
+    name = raw_input()
+    greet(name)
 
 into this code which runs on both Py2 and Py3:
 
 .. code-block:: python
     
     from __future__ import print_function
+    from future.builtins import input
     from future import standard_library
+    standard_library.install_hooks()
+    import queue
+    from urllib.request import urlopen
     
-    import configparser
 
-    class Blah(object):
-        pass
-    print('Hello', end=' ')
+    def greet(name):
+        print('Hello', end=' ')
+        print(name)
+
+    print('What's your name?', end=' ')
+    name = input()
+    greet(name)
+
 
 For complex projects, it may be better to divide the porting into two stages.
 ``futurize`` supports a ``--stage1`` flag for safe changes that modernize the

@@ -10,8 +10,8 @@ The major new feature in this version is improvements in the support for the
 reorganized standard library (PEP 3108) and compatibility of the import
 mechanism with 3rd-party modules.
 
-Standard-library import hooks now require explicit installation
----------------------------------------------------------------
+More robust standard-library import hooks
+-----------------------------------------
 
 **Note: backwards-incompatible change:** As previously announced (see
 :ref:`deprecated-auto-import-hooks`), the import hooks must now be enabled
@@ -40,7 +40,7 @@ backwards compatibility::
     ...
     standard_library.remove_hooks()
 
-Requiring explicit installation of import hooks allows finer-grained control
+Explicit installation of import hooks allows finer-grained control
 over whether they are enabled for other imported modules that provide their own
 Python 2/3 compatibility layer. This also improves compatibility of ``future``
 with tools like ``py2exe``.
@@ -49,11 +49,12 @@ with tools like ``py2exe``.
 ``newobject`` base object defines fallback Py2-compatible special methods
 -------------------------------------------------------------------------
 
-There is a new ``future.builtins.object`` base class that can streamline Py3/2
-compatible code by providing fallback Py2-compatible special methods for its
-subclasses. It currently provides ``next()`` and ``__nonzero__()`` as fallback
-methods on Py2 when its subclasses define the corresponding Py3-style
-``__next__()`` and ``__bool__()`` methods.
+There is a new ``future.types.newobject`` base class (available as
+``future.builtins.object``) that can streamline Py3/2 compatible code by
+providing fallback Py2-compatible special methods for its subclasses. It
+currently provides ``next()`` and ``__nonzero__()`` as fallback methods on Py2
+when its subclasses define the corresponding Py3-style ``__next__()`` and
+``__bool__()`` methods.
 
 This obviates the need to add certain compatibility hacks or decorators to the
 code such as the ``@implements_iterator`` decorator for classes that define a
@@ -75,7 +76,7 @@ to ``__next__``::
 
     assert list(Upper('hello')) == list('HELLO')
 
-``future.builtins.object`` defines other Py2-compatible special methods similarly:
+``newobject`` defines other Py2-compatible special methods similarly:
 currently these include ``__nonzero__`` (mapped to ``__bool__``) and
 ``__long__`` (mapped to ``__int__``).
 
@@ -83,7 +84,7 @@ Inheriting from ``newobject`` on Python 2 is safe even if your class defines
 its own Python 2-style ``__nonzero__`` and ``next`` and ``__long__`` methods.
 Your custom methods will simply override those on the base class.
 
-On Python 3, as usual, ``object`` simply refers to ``builtins.object``.
+On Python 3, as usual, ``future.builtins.object`` simply refers to ``builtins.object``.
 
 
 ``past.builtins`` module improved
