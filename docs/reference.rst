@@ -2,10 +2,10 @@
 API Reference
 #############
 
-*NOTE: This page is still a work in progress... We need to go through our
+**NOTE: This page is still a work in progress... We need to go through our
 docstrings and make them sphinx-compliant, and figure out how to improve
 formatting with the sphinx-bootstrap-theme plugin. Pull requests would be
-very welcome.*
+very welcome.**
 
 
 .. contents::
@@ -13,13 +13,20 @@ very welcome.*
     :depth: 2
 
 future.builtins Interface
-============================
+=========================
 
 .. automodule:: future.builtins
     :members:
 
 .. Docs are also in future-builtins.rst. Extract these and put them into the
 .. relevant docstrings.
+
+
+Backported types from Python 3
+==============================
+
+.. automodule:: future.types
+    :members:
 
 
 future.standard_library Interface
@@ -36,26 +43,41 @@ future.utils Interface
     :members:
 
 
-Backported types
-================
+past.builtins Interface
+=========================
 
-bytes
------
-.. automodule:: future.types.newbytes
+.. automodule:: past.builtins
+    :members:
 
-dict
------
-.. automodule:: future.types.newdict
+.. Docs are also in future-builtins.rst. Extract these and put them into the
+.. relevant docstrings.
 
-int
----
-.. automodule:: future.builtins.backports.newint
 
-range
------
-.. automodule:: future.types.newrange
+Forward-ported types from Python 2
+==================================
 
-str
----
-.. automodule:: future.types.newstr
+.. automodule:: past.types
+    :members:
+
+
+
+.. bytes
+.. -----
+.. .. automodule:: future.types.newbytes
+.. 
+.. dict
+.. -----
+.. .. automodule:: future.types.newdict
+.. 
+.. int
+.. ---
+.. .. automodule:: future.builtins.backports.newint
+.. 
+.. range
+.. -----
+.. .. automodule:: future.types.newrange
+.. 
+.. str
+.. ---
+.. .. automodule:: future.types.newstr
 

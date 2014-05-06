@@ -18,6 +18,6 @@ On the remote machine:
 ----------------------
 
 cd /var/www/python-future/
-unzip ~/python-future-html-docs.zip
+unzip -o ~/python-future-html-docs.zip
 chmod a+r * html/* html/_static/*
 

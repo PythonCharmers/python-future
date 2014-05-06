@@ -144,7 +144,7 @@ hooks. The context-manager form works like this:
 
 
 Automatic conversion to Py2/3-compatible code
-=============================================
+---------------------------------------------
 
 ``future`` comes with two scripts called ``futurize`` and
 ``pasteurize`` to aid in making Python 2 code or Python 3 code compatible with
@@ -166,7 +166,7 @@ mostly unchanged on both Python 2 and Python 3.
 .. _forwards-conversion:
 
 Futurize: 2 to both
---------------------
+~~~~~~~~~~~~~~~~~~~
 
 For example, running ``futurize -w mymodule.py`` turns this Python 2 code:
 
@@ -235,13 +235,9 @@ properly to a Python 2/3 compatible codebase using a tool like
 Note: the translation feature is still in alpha and needs more testing and
 development.
 
-Next steps
-----------
-Check out the `Quickstart Guide <http://python-future.org/quickstart.html>`_.
 
-
-Credits and Licensing
----------------------
+Licensing
+---------
 
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
@@ -250,6 +246,16 @@ Credits and Licensing
 
 Copyright 2013-2014 Python Charmers Pty Ltd, Australia.
 
-The software is distributed under an MIT licence. See LICENSE.txt or `Licensing
+The software is distributed under an MIT licence. See ``LICENSE.txt`` or `Licensing
 <http://python-future.org/licensing.html>`_.
+
+
+Next steps
+----------
+
+If you are new to ``python-future``, check out the `Quickstart Guide
+<http://python-future.org/quickstart.html>`_.
+
+For an update on changes in the latest version, see the `What's New
+<http://python-future.org/whatsnew.html>`_ page.
 

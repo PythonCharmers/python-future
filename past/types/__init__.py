@@ -1,3 +1,14 @@
+"""
+Forward-ports of types from Python 2 for use with Python 3:
+
+- ``basestring``: equivalent to ``(str, bytes)`` in ``isinstance`` checks
+- ``dict``: with list-producing .keys() etc. methods
+- ``str``: bytes-like, but iterating over them doesn't product integers
+- ``long``: alias of Py3 int with ``L`` suffix in the ``repr``
+- ``unicode``: alias of Py3 str with ``u`` prefix in the ``repr``
+
+"""
+
 from past import utils
 
 if utils.PY2:

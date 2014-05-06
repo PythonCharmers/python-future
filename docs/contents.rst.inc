@@ -5,6 +5,7 @@ Contents:
    :maxdepth: 2
 
    overview
+   whatsnew
    quickstart
    imports
    standard_library_imports
@@ -13,7 +14,7 @@ Contents:
    porting
    standard_library_incompatibilities
    faq
-   whatsnew
+   changelog
    credits
    reference
 

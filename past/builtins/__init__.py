@@ -1,24 +1,41 @@
 """
-A resurrection of some old functions from Python 2. These should be used
-sparingly, to help with porting efforts, since code using them is no
-longer standard Python 3 code.
+A resurrection of some old functions from Python 2 for use in Python 3. These
+should be used sparingly, to help with porting efforts, since code using them
+is no longer standard Python 3 code.
 
-We provide these builtin functions which have no equivalent on Py3:
+This module provides the following:
 
-- cmp()
-- execfile()
+1. Implementations of these builtin functions which have no equivalent on Py3:
 
-These aliases are also provided:
+- apply
+- chr
+- cmp
+- execfile
 
-- raw_input() <- input()
-- unicode() <- str()
-- unichr() <- chr()
+2. Aliases:
 
-For reference, the following Py2 builtin functions are available from
-these standard locations on both Py2.6+ and Py3:
+- intern <- sys.intern
+- raw_input <- input
+- reduce <- functools.reduce
+- reload <- imp.reload
+- unichr <- chr
+- unicode <- str
+- xrange <- range
 
-- reduce() <- functools.reduce()
-- reload() <- imp.reload()
+3. List-producing versions of the corresponding Python 3 iterator-producing functions:
+
+- filter
+- map
+- range
+- zip
+
+4. Forward-ported Py2 types:
+
+- basestring
+- dict
+- str
+- long
+- unicode
 
 """
 
