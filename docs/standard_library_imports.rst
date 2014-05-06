@@ -13,7 +13,7 @@ There are currently four interfaces to the reorganized standard library.
 
 Context-manager interface
 -------------------------
-The first interface is via a context-manager called ``hooks``::
+The recommended interface is via a context-manager called ``hooks``::
 
     from future import standard_library
     with standard_library.hooks():
@@ -48,13 +48,12 @@ support syntax like this::
 
     from future.moves import http.client
 
-One workaround (which ``six.moves`` also requires) is to replace the dot with
-an underscore::
+One workaround is to replace the dot with an underscore::
 
     import future.moves.http.client as http_client
 
-``import_`` and from_import functions
------------------------------------------
+import_ and from_import functions
+---------------------------------
 
 A third option, which also works with two-level imports, is to use the
 ``import_`` and ``from_import`` functions from ``future.standard_library`` as
@@ -68,7 +67,7 @@ follows::
     urlopen, urlsplit = from_import('urllib.request', 'urlopen', 'urlsplit')
 
 install_hooks() call
-------------------------
+--------------------
 
 The fourth interface to the reorganized standard library is via an
 explicit call to ``install_hooks``::
@@ -145,6 +144,27 @@ The modules available via ``future.moves`` are::
     import xmlrpc.server
 
 ..  Disabled: import test.support
+
+
+Comparing future.moves and six.moves
+------------------------------------
+
+``future.moves`` and ``six.moves`` provide a similar Python 3-style
+interface to the native standard library module definitions.
+
+The major difference is that the ``future.moves`` package is a real Python package
+(``future/moves/__init__.py``) with real modules provided as ``.py`` files, whereas
+``six.moves`` constructs fake ``_LazyModule`` module objects within the Python
+code and injects them into the ``sys.modules`` cache.
+
+The advantage of ``six.moves`` is that the code fits in a single module that can be
+copied into a project that seeks to eliminate external dependencies.
+
+The advantage of ``future.moves`` is that it is likely to be more robust in the
+face of magic like Django's auto-reloader and tools like ``py2exe`` and
+``cx_freeze``. See issues #51, #53, #56, and #63 in the ``six`` project for
+more detail of bugs related to the ``six.moves`` approach.
+
 
 Backports
 ---------

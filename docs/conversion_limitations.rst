@@ -17,18 +17,12 @@ Contributions to the ``lib2to3``-based fixers for ``futurize`` and
 
 .. _futurize-limitations
 
-Known limitations of ``futurize``
----------------------------------
+Known limitations
+-----------------
 
-``futurize`` doesn't currently make any of these changes automatically::
+``futurize`` doesn't currently make this change automatically::
 
-1. A source encoding declaration line like::
-    
-       # -*- coding:utf-8 -*-
-  
-   is not kept at the top of a file. It must be moved manually back to line 1 to take effect.
-
-2. Strings containing ``\U`` produce a ``SyntaxError`` on Python 3. An example is::
+1. Strings containing ``\U`` produce a ``SyntaxError`` on Python 3. An example is::
 
        s = 'C:\Users'.
 
@@ -36,4 +30,5 @@ Known limitations of ``futurize``
    prefix (``r'...'``). This also applies to multi-line strings (including
    multi-line docstrings).
 
-
+Also see the tests in ``future/tests/test_futurize.py`` marked
+``@expectedFailure`` or ``@skip`` for known limitations.

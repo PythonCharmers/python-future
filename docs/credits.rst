@@ -1,5 +1,5 @@
-Credits
-=======
+Credits, Copyright, Licensing
+=============================
 
 :Author:  Ed Schofield
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
@@ -22,12 +22,13 @@ Credits
           - ``past.translation`` is inspired by and borrows some code from
             Sanjay Vinip's ``uprefix`` module.
 
+
 .. _licence:
 
-Licensing
----------
+Licence
+-------
 The software is distributed under an MIT licence. The text is as follows
-(from LICENSE.txt)::
+(from ``LICENSE.txt``)::
 
     Copyright (c) 2013-2014 Python Charmers Pty Ltd, Australia
     

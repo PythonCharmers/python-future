@@ -7,12 +7,8 @@ Who is this for?
 1. People with existing or new Python 3 codebases who wish to provide
 ongoing Python 2.6 / 2.7 support easily and with little maintenance burden.
 
-2. People who wish to simplify migration of their codebases to Python
-3.3+, module by module, without giving up Python 2 compatibility.
-
-.. 3. People who would prefer to write clean, future-proof Python
-.. 3-compatible code, but who are required to write code that still runs
-.. on a Python 2 stack.
+2. People who wish to ease and accelerate migration of their Python 2 codebases
+to Python 3.3+, module by module, without giving up Python 2 compatibility.
 
 
 Why upgrade to Python 3?
@@ -29,9 +25,9 @@ Python 2.7 is the end of the Python 2 line. (See `PEP 404
 libraries are improving only in Python 3.x.
 
 Python 3.x is a better language and better set of standard libraries than
-Python 2.x in almost every way. Python 3.x is cleaner, less warty, and easier to
+Python 2.x in many ways. Python 3.x is cleaner, less warty, and easier to
 learn than Python 2. It has better memory efficiency, easier Unicode handling,
-and powerful new features like function annotations and the `asyncio
+and powerful new features like the `asyncio
 <https://pypi.python.org/pypi/asyncio>`_ module.
 
 .. Unicode handling is also much easier. For example, see `this page
@@ -43,8 +39,8 @@ and powerful new features like function annotations and the `asyncio
 Porting philosophy
 ==================
 
-Why use this approach?
-----------------------
+Why write Python 3-style code?
+------------------------------
 
 Here are some quotes:
 
@@ -72,8 +68,8 @@ Here are some quotes:
 Can't I just roll my own Py2/3 compatibility layer?
 ---------------------------------------------------
 
-Yes, but using ``future`` will probably lead to cleaner code with fewer
-bugs.
+Yes, but using ``python-future`` will probably be easier and lead to cleaner
+code with fewer bugs.
 
 Consider this quote:
 
@@ -88,28 +84,32 @@ Consider this quote:
 
 ``future`` also includes various Py2/3 compatibility tools in
 :mod:`future.utils` picked from large projects (including IPython,
-Django, Jinja2, Pandas), which should hopefully reduce the burden on
-every project to roll its own py3k compatibility wrapper module.
+Django, Jinja2, Pandas), which should reduce the burden on every project to
+roll its own py3k compatibility wrapper module.
 
 
-How did the original need for this arise?
------------------------------------------
+What inspired this project?
+---------------------------
 
-In teaching Python, we at Python Charmers faced a dilemma: teach people
-Python 3, which was future-proof but not as useful to them today because
-of weaker 3rd-party package support, or teach people Python 2, which was
-more useful today but would require them to change their code and unlearn
-various habits soon. We searched for ways to avoid polluting the world
-with more deprecated code, but didn't find a good way.
+In our Python training courses, we at `Python Charmers
+<http://pythoncharmers.com>`_ faced a dilemma: teach people Python 3, which was
+future-proof but not as useful to them today because of weaker 3rd-party
+package support, or teach people Python 2, which was more useful today but
+would require them to change their code and unlearn various habits soon. We
+searched for ways to avoid polluting the world with more deprecated code, but
+didn't find a good way.
 
-Also, in attempting to help with porting packages such as
-``scikit-learn`` to Python 3, I was dissatisfied with how much code cruft
-was necessary to introduce to support Python 2 and 3 from a single
-codebase (the preferred porting option). Since backward-compatibility
-with Python 2 may be necessary for at least the next 5 years, one of the
-promised benefits of Python 3 -- cleaner code with fewer of Python 2's
-warts -- was difficult to realize before in practice in a single codebase
-that supported both platforms.
+Also, in attempting to help with porting packages such as `scikit-learn
+<http://scikit-learn.org>`_ to Python 3, I (Ed) was dissatisfied with how much
+code cruft was necessary to introduce to support Python 2 and 3 from a single
+codebase (the preferred porting option). Since backward-compatibility with
+Python 2 may be necessary for at least the next 5 years, one of the promised
+benefits of Python 3 -- cleaner code with fewer of Python 2's warts -- was
+difficult to realize before in practice in a single codebase that supported
+both platforms.
+
+The goal is to accelerate the uptake of Python 3 and help the strong Python
+community to remain united around a single version of the language.
 
 
 Maturity
@@ -123,8 +123,8 @@ Is it tested?
 currently being used to help with porting 800,000 lines of Python 2 code in
 `Sage <http://sagemath.org>`_ to Python 2/3.
 
-Currently ``future`` has 800+ unit tests. Many of these are straight from the
-Python 3.3 test suite.
+Currently ``python-future`` has 800+ unit tests. Many of these are straight
+from the Python 3.3 test suite.
 
 In general, the ``future`` package itself is in good shape, whereas the
 ``futurize`` script for automatic porting is incomplete and imperfect.
@@ -151,11 +151,11 @@ version 2.0.
     modules under ``future/standard_library/``.
 
 
-Relationship between ``future`` and other compatibility tools
-=============================================================
+Relationship between python-future and other compatibility tools
+================================================================
 
-How does this relate to ``2to3`` and ``lib2to3``?
--------------------------------------------------
+How does this relate to ``2to3``?
+---------------------------------
 
 ``2to3`` is a powerful and flexible tool that can produce different
 styles of Python 3 code. It is, however, primarily designed for one-way
@@ -206,31 +206,33 @@ auto-generated Python 3 code. (See `this talk
 What is the relationship between ``future`` and ``six``?
 --------------------------------------------------------
 
-``future`` is a higher-level compatibility layer than ``six`` that
+``python-future`` is a higher-level compatibility layer than ``six`` that
 includes more backported functionality from Python 3 and supports cleaner
 code but requires more modern Python versions to run.
 
-``future`` and ``six`` share the same goal of making it possible to write
+``python-future`` and ``six`` share the same goal of making it possible to write
 a single-source codebase that works on both Python 2 and Python 3.
-``future`` has the further goal of allowing standard Py3 code to run with
+``python-future`` has the further goal of allowing standard Py3 code to run with
 almost no modification on both Py3 and Py2. ``future`` provides a more
 complete set of support for Python 3's features, including backports of
 Python 3 builtins such as the ``bytes`` object (which is very different
 to Python 2's ``str`` object) and several standard library modules.
 
-``future`` supports only Python 2.6+ and Python 3.3+, whereas ``six``
+``python-future`` supports only Python 2.6+ and Python 3.3+, whereas ``six``
 supports all versions of Python from 2.4 onwards. (See
 :ref:`supported-versions`.) If you must support older Python versions,
 ``six`` will be esssential for you. However, beware that maintaining
 single-source compatibility with older Python versions is ugly and `not
 fun <http://lucumr.pocoo.org/2013/5/21/porting-to-python-3-redux/>`_.
 
-If you can drop support for older Python versions, ``future`` leverages
+If you can drop support for older Python versions, ``python-future`` leverages
 some important features introduced into Python 2.6 and 2.7, such as
-import hooks, to allow you to write more idiomatic, maintainable code.
+import hooks, and a comprehensive and well-tested set of backported
+functionality, to allow you to write more idiomatic, maintainable code with
+fewer compatibility hacks.
 
 
-What is the relationship between this project and ``python-modernize``?
+What is the relationship between ``python-future`` and ``python-modernize``?
 -----------------------------------------------------------------------
 
 ``python-future`` contains, in addition to the ``future`` compatibility
@@ -240,7 +242,7 @@ in intent and design. Both are based heavily on ``2to3``.
 Whereas ``python-modernize`` converts Py2 code into a common subset of
 Python 2 and 3, with ``six`` as a run-time dependency, ``futurize``
 converts either Py2 or Py3 code into (almost) standard Python 3 code,
-with ``future`` as a run-time dependency.    
+with ``future`` as a run-time dependency.
 
 Because ``future`` provides more backported Py3 behaviours from ``six``,
 the code resulting from ``futurize`` is more likely to work
@@ -253,7 +255,7 @@ Platform and version support
 
 .. _supported-versions:
 
-Which versions of Python does ``future`` support?
+Which versions of Python does ``python-future`` support?
 -------------------------------------------------
 
 Python 2.6, 2.7, and 3.3+ only.

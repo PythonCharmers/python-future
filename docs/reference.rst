@@ -1,6 +1,5 @@
-#############
-API Reference
-#############
+API Reference (in progress)
+***************************
 
 **NOTE: This page is still a work in progress... We need to go through our
 docstrings and make them sphinx-compliant, and figure out how to improve

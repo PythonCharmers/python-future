@@ -27,10 +27,10 @@ standard feature of Python, see the following docs:
 These are all available in Python 2.6 and up, and enabled by default in Python 3.x.
 
 
-.. _star-imports:
+future.builtins imports
+-----------------------
 
-future imports
---------------
+.. _star-imports:
 
 Implicit imports
 ~~~~~~~~~~~~~~~~
@@ -85,6 +85,7 @@ To understand the details of the backported builtins on Python 2, see the
 docs for these modules. Please note that this internal API is evolving and may
 not be stable between different versions of ``future``.
 
+For more information on what the backported types provide, see :ref:`what-else`.
 
 .. < Section about past.translation is included here >
 
