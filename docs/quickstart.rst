@@ -16,7 +16,18 @@ To install the latest stable version, type::
 
     pip install future
 
-If you would prefer the latest development version, it is available `here <https://github.com/PythonCharmers/python-future>`_.
+If you would prefer the latest development version, it is available `here
+<https://github.com/PythonCharmers/python-future>`_.
+
+On Python 2.6, three packages containing backports of standard library modules
+in Python 2.7+ are needed for small parts of the code::
+
+    pip install importlib       # for future.standard_library.import_ function only
+    pip install unittest2       # to run the test suite
+    pip install argparse        # for the backported http.server module from Py3.3
+
+Unless these features are used on Python 2.6 (only), ``future`` has no
+dependencies.
 
 
 If you are writing code from scratch

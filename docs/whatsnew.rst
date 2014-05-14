@@ -1,6 +1,19 @@
 What's New
 **********
 
+
+.. whats-new-0.12.1:
+
+What's new in version 0.12.1
+============================
+
+- Python 2.6 support: ``future.standard_library`` now isolates the ``importlib``
+  dependency to one function (``import_``) so the ``importlib`` backport may
+  not be needed.
+
+- Doc updates
+
+
 .. whats-new-0.12:
 
 What's new in version 0.12
