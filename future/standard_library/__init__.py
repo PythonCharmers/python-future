@@ -69,7 +69,6 @@ import contextlib
 import types
 import copy
 import os
-import importlib
 
 from future.utils import PY2, PY3
 
@@ -696,6 +695,10 @@ def import_(module_name, backport=False):
         >>> from future.backports import http.client
 
     """
+    # Python 2.6 doesn't have importlib in the stdlib, so it requires
+    # the backported ``importlib`` package from PyPI as a dependency to use
+    # this function:
+    import importlib
 
     if PY3:
         return __import__(module_name)
