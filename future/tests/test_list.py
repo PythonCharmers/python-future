@@ -33,6 +33,15 @@ class TestList(unittest.TestCase):
         self.assertEqual(list(list()), [])
         self.assertTrue(isinstance(list(list()), list))
 
+    def test_list_list2(self):
+        """
+        Issue #50
+        """
+        l = list([1, 2, 3])
+        l2 = list(l)
+        self.assertEqual(len(l2), 3)
+        self.assertEqual(l2, [1, 2, 3])
+
     def test_list_equal(self):
         l = [1, 3, 5]
         self.assertEqual(list(l), l)
