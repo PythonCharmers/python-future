@@ -60,6 +60,9 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         # this to be True for all unicode string subclasses. Warning:
         # This may render newstr un-subclassable.
         if type(args[0]) == newbytes:
+            # Special-case: for consistency with Py3.3, we return the same object
+            # (with the same id) if a newbytes object is passed into the
+            # newbytes constructor.
             return args[0]
         elif isinstance(args[0], _builtin_bytes):
             value = args[0]

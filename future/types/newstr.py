@@ -82,7 +82,8 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         if len(args) == 0:
             return super(newstr, cls).__new__(cls)
         # Special case: If someone requests str(str(u'abc')), return the same
-        # object (same id) for consistency with Py3.3
+        # object (same id) for consistency with Py3.3. This is not true for
+        # other objects like list or dict.
         elif type(args[0]) == newstr and cls == newstr:
             return args[0]
         elif isinstance(args[0], unicode):

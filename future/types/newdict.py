@@ -91,7 +91,7 @@ class newdict(with_metaclass(BaseNewDict, _builtin_dict)):
         if len(args) == 0:
             return super(newdict, cls).__new__(cls)
         elif type(args[0]) == newdict:
-            return args[0]
+            value = args[0]
         else:
             value = args[0]
         return super(newdict, cls).__new__(cls, value)

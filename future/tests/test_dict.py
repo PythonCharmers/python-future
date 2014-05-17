@@ -22,6 +22,17 @@ class TestDict(unittest.TestCase):
         """
         self.assertEqual(dict(), {})
 
+    def test_dict_dict(self):
+        """
+        Exrapolated from issue #50 -- newlist(newlist([...]))
+        """
+        d = dict({1: 2, 2: 4, 3: 9})
+        d2 = dict(d)
+        self.assertEqual(len(d2), 3)
+        self.assertEqual(d2, d)
+        self.assertTrue(isinstance(d2, dict))
+        self.assertTrue(type(d2) == dict)
+
     def test_dict_eq(self):
         d = self.d1
         self.assertEqual(dict(d), d)
