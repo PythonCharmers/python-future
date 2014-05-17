@@ -51,7 +51,7 @@ class newlist(with_metaclass(BaseNewList, _builtin_list, newobject)):
         if len(args) == 0:
             return super(newlist, cls).__new__(cls)
         elif type(args[0]) == newlist:
-            return args[0]
+            value = args[0]
         else:
             value = args[0]
         return super(newlist, cls).__new__(cls, value)
