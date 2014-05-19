@@ -507,6 +507,71 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(c, b'abc')
         self.assertEqual(type(c), type(b))
 
+    def test_mod(self):
+        """
+        Test for the PEP 461 functionality (resurrection of %s formatting for
+        bytes).
+        """
+        b1 = bytes(b'abc%b')
+        b2 = b1 % b'def'
+        self.assertEqual(b2, b'abcdef')
+        self.assertTrue(isinstance(b2, bytes))
+        self.assertEqual(type(b2), bytes)
+        b3 = b1 % bytes(b'def')
+        self.assertEqual(b3, b'abcdef')
+        self.assertTrue(isinstance(b3, bytes))
+        self.assertEqual(type(b3), bytes)
+
+        # %s is supported for backwards compatibility with Py2's str
+        b4 = bytes(b'abc%s')
+        b5 = b4 % b'def'
+        self.assertEqual(b5, b'abcdef')
+        self.assertTrue(isinstance(b5, bytes))
+        self.assertEqual(type(b5), bytes)
+        b6 = b4 % bytes(b'def')
+        self.assertEqual(b6, b'abcdef')
+        self.assertTrue(isinstance(b6, bytes))
+        self.assertEqual(type(b6), bytes)
+
+        self.assertEqual(bytes(b'%c') % 48, b'0')
+        self.assertEqual(bytes(b'%c') % b'a', b'a')
+
+        # For any numeric code %x, formatting of
+        #     b"%x" % val
+        # is supposed to be equivalent to
+        #     ("%x" % val).encode("ascii")
+        for code in b'xdiouxXeEfFgG':
+            pct_str = u"%" + code.decode('ascii')
+            for val in range(300):
+                self.assertEqual(bytes(b"%" + code) % val,
+                                 (pct_str % val).encode("ascii"))
+
+        with self.assertRaises(TypeError):
+            bytes(b'%b') % 3.14
+            # Traceback (most recent call last):
+            # ...
+            # TypeError: b'%b' does not accept 'float'
+
+        with self.assertRaises(TypeError):
+            bytes(b'%b') % 'hello world!'
+            # Traceback (most recent call last):
+            # ...
+            # TypeError: b'%b' does not accept 'str'
+
+        self.assertEqual(bytes(b'%a') % 3.14, b'3.14')
+
+        self.assertEqual(bytes(b'%a') % b'abc', b"b'abc'")
+        self.assertEqual(bytes(b'%a') % bytes(b'abc'), b"b'abc'")
+
+        self.assertEqual(bytes(b'%a') % 'def', b"'def'")
+
+        # PEP 461 specifes that %r is not supported.
+        with self.assertRaises(TypeError):
+            bytes(b'%r' % b'abc')
+
+        with self.assertRaises(TypeError):
+            bytes(b'%r' % 'abc')
+
 
 if __name__ == '__main__':
     unittest.main()
