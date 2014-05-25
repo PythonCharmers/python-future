@@ -713,11 +713,11 @@ class TestFuturizeStage1(CodeHandler):
         before = """
         import ConfigParser
         import HTMLParser
-        import collections
+        from itertools import ifilterfalse
 
         ConfigParser.ConfigParser
         HTMLParser.HTMLParser
-        d = collections.OrderedDict()
+        assert list(ifilterfalse(lambda x: x % 2, [2, 4])) == [2, 4]
         """
         self.unchanged(before, stages=[1])
 
