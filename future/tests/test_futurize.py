@@ -934,6 +934,21 @@ class TestFuturizeStage1(CodeHandler):
         self.assertEqual(order_future_lines(reformat_code(before)),
                          reformat_code(after))
 
+    @unittest.expectedFailure
+    def test_issue_12(self):
+        """
+        Issue #12: This code shouldn't be upset by additional imports.
+        __future__ imports must appear at the top of modules since about Python
+        2.5.
+        """
+        code = """
+        from __future__ import with_statement
+        f = open('setup.py')
+        for i in xrange(100):
+            pass
+        """
+        self.unchanged(code)
+
 
 if __name__ == '__main__':
     unittest.main()
