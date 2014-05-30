@@ -68,7 +68,7 @@ lib2to3_fix_names_stage2 = set([
 
 libfuturize_fix_names_stage1 = set([
     'libfuturize.fixes.fix_absolute_import',
-    'libfuturize.fixes.fix_division',
+    'libfuturize.fixes.fix_division_safe',
     'libfuturize.fixes.fix_print_with_import',
     'libfuturize.fixes.fix_raise',
     'libfuturize.fixes.fix_order___future__imports',  # TODO: consolidate to a single line to simplify testing
