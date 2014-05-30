@@ -1,4 +1,5 @@
 import sys
+import numbers
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
@@ -64,6 +65,18 @@ def native(obj):
         return obj
 
 
+def old_div(a, b):
+    """
+    Equivalent to ``a / b`` on Python 2 without ``from __future__ import
+    division``.
 
-__all__ = ['PY3', 'PY2', 'PYPY', 'with_metaclass', 'native']
+    TODO: generalize this to other objects (like arrays etc.)
+    """
+    if isinstance(a, numbers.Integral) and isinstance(b, numbers.Integral):
+        return a // b
+    else:
+        return a / b
+
+
+__all__ = ['PY3', 'PY2', 'PYPY', 'with_metaclass', 'native', 'old_div']
 

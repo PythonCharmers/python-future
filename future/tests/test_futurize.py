@@ -49,10 +49,11 @@ class TestFuturizeSimple(CodeHandler):
         """
         after = """
         #!/usr/bin/env python
-        from __future__ import division
 
+        from __future__ import division
+        from past.utils import old_div
         import math
-        1 / 5
+        old_div(1, 5)
         """
         self.convert_check(before, after)
 
@@ -515,7 +516,6 @@ class TestFuturizeSimple(CodeHandler):
         '''
         self.unchanged(code)
 
-    @unittest.expectedFailure
     def test_division(self):
         """
         TODO: implement this!
@@ -524,7 +524,7 @@ class TestFuturizeSimple(CodeHandler):
         x = 1 / 2
         """
         after = """
-        from future.utils import old_div
+        from past.utils import old_div
         x = old_div(1, 2)
         """
         self.convert_check(before, after, stages=[1, 2])
@@ -1038,9 +1038,9 @@ class TestFuturizeStage1(CodeHandler):
         """
         after = """
         from __future__ import division
-        from future.utils import old_div
+        from past.utils import old_div
         x = old_div(3, 2)
-        y = old_div(3. / 2)
+        y = old_div(3., 2)
         assert x == 1 and isinstance(x, int)
         assert y == 1.5 and isinstance(y, float)
         """
@@ -1055,6 +1055,8 @@ class TestFuturizeStage1(CodeHandler):
         before = """
         class Path(str):
             def __div__(self, other):
+                return self.__truediv__(other)
+            def __truediv__(self, other):
                 return Path(str(self) + '/' + str(other))
         path1 = Path('home')
         path2 = Path('user')
@@ -1064,13 +1066,15 @@ class TestFuturizeStage1(CodeHandler):
         """
         after = """
         from __future__ import division
-        from future.utils import old_div
+        from past.utils import old_div
         class Path(str):
+            def __div__(self, other):
+                return self.__truediv__(other)
             def __truediv__(self, other):
                 return Path(str(self) + '/' + str(other))
         path1 = Path('home')
         path2 = Path('user')
-        z = old_div(path1 / path2)
+        z = old_div(path1, path2)
         assert isinstance(z, Path)
         assert str(z) == 'home/user'
         """
