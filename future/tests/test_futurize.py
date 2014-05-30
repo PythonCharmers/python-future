@@ -357,7 +357,7 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         self.convert_check(before, after, ignore_imports=False)
-    
+
     @skip26
     def test_source_coding_utf8(self):
         """
@@ -434,16 +434,16 @@ class TestFuturizeSimple(CodeHandler):
         assert addup(*(10,20)) == 30
         """
         self.convert_check(before, after)
-    
+
     @unittest.skip('not implemented yet')
     def test_download_pypi_package_and_test(self):
         URL = 'http://pypi.python.org/pypi/{0}/json'
-        
+
         import requests
         package = 'future'
         r = requests.get(URL.format(package))
         pprint.pprint(r.json())
-        
+
         download_url = r.json()['urls'][0]['url']
         filename = r.json()['urls'][0]['filename']
         # r2 = requests.get(download_url)
@@ -524,7 +524,7 @@ class TestFuturizeSimple(CodeHandler):
         from future.utils import old_div
         x = old_div(1, 2)
         """
-        self.convert_check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1, 2])
 
 
 class TestFuturizeRenamedStdlib(CodeHandler):
@@ -543,7 +543,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         import io
         """
         self.convert_check(before, after)
-    
+
     @unittest.skip('Not working yet ...')
     def test_urllib_refactor(self):
         # Code like this using urllib is refactored by futurize --stage2 to use
@@ -742,7 +742,7 @@ class TestFuturizeStage1(CodeHandler):
 
     def test_print_already_function(self):
         """
-        Running futurize --stage1 should not add a second set of parentheses 
+        Running futurize --stage1 should not add a second set of parentheses
         """
         before = """
         print('Hello')
@@ -838,7 +838,7 @@ class TestFuturizeStage1(CodeHandler):
             pass
         """
         self.convert_check(before, after, stages=[1])
-        
+
     def test_octal_literals(self):
         before = """
         mode = 0644
@@ -933,6 +933,93 @@ class TestFuturizeStage1(CodeHandler):
                '''
         self.assertEqual(order_future_lines(reformat_code(before)),
                          reformat_code(after))
+
+    @unittest.expectedFailure
+    def test_issue_12(self):
+        """
+        Issue #12: This code shouldn't be upset by additional imports.
+        __future__ imports must appear at the top of modules since about Python
+        2.5.
+        """
+        code = """
+        from __future__ import with_statement
+        f = open('setup.py')
+        for i in xrange(100):
+            pass
+        """
+        self.unchanged(code)
+
+    def test_safe_division(self):
+        """
+        Tests whether Py2 scripts using old-style division still work
+        after futurization.
+        """
+        before = """
+        x = 3 / 2
+        y = 3. / 2
+        assert x == 1 and isinstance(x, int)
+        assert y == 1.5 and isinstance(y, float)
+        """
+        after = """
+        from __future__ import division
+        from future.utils import old_div
+        x = old_div(3, 2)
+        y = old_div(3. / 2)
+        assert x == 1 and isinstance(x, int)
+        assert y == 1.5 and isinstance(y, float)
+        """
+        self.convert_check(before, after)
+
+    def test_safe_division_overloaded(self):
+        """
+        If division is overloaded, futurize may produce spurious old_div
+        calls.  This test is for whether the code still works on Py2
+        despite these calls.
+        """
+        before = """
+        class Path(str):
+            def __div__(self, other):
+                return Path(str(self) + '/' + str(other))
+        path1 = Path('home')
+        path2 = Path('user')
+        z = path1 / path2
+        assert isinstance(z, Path)
+        assert str(z) == 'home/user'
+        """
+        after = """
+        from __future__ import division
+        from future.utils import old_div
+        class Path(str):
+            def __truediv__(self, other):
+                return Path(str(self) + '/' + str(other))
+        path1 = Path('home')
+        path2 = Path('user')
+        z = old_div(path1 / path2)
+        assert isinstance(z, Path)
+        assert str(z) == 'home/user'
+        """
+        self.convert_check(before, after)
+
+    def test_range_necessary_list_calls(self):
+        before = """
+        l = range(10)
+        assert isinstance(l, list)
+        for i in range(3):
+            print i
+        for i in xrange(3):
+            print i
+        """
+        after = """
+        from __future__ import print_function
+        from future.builtins import range
+        l = list(range(10))
+        assert isinstance(l, list)
+        for i in range(3):
+            print(i)
+        for i in range(3):
+            print(i)
+        """
+        self.convert_check(before, after)
 
 
 if __name__ == '__main__':
