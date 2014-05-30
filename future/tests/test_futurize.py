@@ -517,9 +517,6 @@ class TestFuturizeSimple(CodeHandler):
         self.unchanged(code)
 
     def test_division(self):
-        """
-        TODO: implement this!
-        """
         before = """
         x = 1 / 2
         """
@@ -528,6 +525,16 @@ class TestFuturizeSimple(CodeHandler):
         x = old_div(1, 2)
         """
         self.convert_check(before, after, stages=[1, 2])
+
+    def test_already_future_division(self):
+        code = """
+        from __future__ import division
+        x = 1 / 2
+        assert x == 0.5
+        y = 3. / 2.
+        assert y == 1.5
+        """
+        self.unchanged(code)
 
 
 class TestFuturizeRenamedStdlib(CodeHandler):
