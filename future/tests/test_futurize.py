@@ -956,6 +956,81 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.unchanged(code)
 
+    def test_range_necessary_list_calls(self):
+        before = """
+        l = range(10)
+        assert isinstance(l, list)
+        for i in range(3):
+            print i
+        for i in xrange(3):
+            print i
+        """
+        after = """
+        from __future__ import print_function
+        from future.builtins import range
+        l = list(range(10))
+        assert isinstance(l, list)
+        for i in range(3):
+            print(i)
+        for i in range(3):
+            print(i)
+        """
+        self.convert_check(before, after)
+
+
+class TestConservativeFuturize(CodeHandler):
+    def test_basestring(self):
+        """
+        In conservative mode, futurize would not modify "basestring"
+        but merely import it, and the following code would still run on
+        both Py2 and Py3.
+        """
+        before = """
+        assert isinstance('hello', basestring)
+        assert isinstance(u'hello', basestring)
+        assert isinstance(b'hello', basestring)
+        """
+        after = """
+        from past.builtins import basestring
+        assert isinstance('hello', basestring)
+        assert isinstance(u'hello', basestring)
+        assert isinstance(b'hello', basestring)
+        """
+        self.convert_check(before, after, conservative=True)
+
+    def test_open(self):
+        """
+        In conservative mode, futurize would not import io.open because
+        this changes the default return type from bytes to text.
+        """
+        before = """
+        filename = 'temp_file_open.test'
+        contents = 'Temporary file contents. Delete me.'
+        with open(filename, 'w') as f:
+            f.write(contents)
+
+        with open(filename, 'r') as f:
+            data = f.read()
+        assert isinstance(data, str)
+        assert data == contents
+        """
+        after = """
+        from past.builtins import open, str as oldbytes, unicode
+        filename = oldbytes(b'temp_file_open.test')
+        contents = oldbytes(b'Temporary file contents. Delete me.')
+        with open(filename, oldbytes(b'w')) as f:
+            f.write(contents)
+
+        with open(filename, oldbytes(b'r')) as f:
+            data = f.read()
+        assert isinstance(data, oldbytes)
+        assert data == contents
+        assert isinstance(oldbytes(b'hello'), basestring)
+        assert isinstance(unicode(u'hello'), basestring)
+        assert isinstance(oldbytes(b'hello'), basestring)
+        """
+        self.convert_check(before, after, conservative=True)
+
     def test_safe_division(self):
         """
         Tests whether Py2 scripts using old-style division still work
@@ -1008,27 +1083,6 @@ class TestFuturizeStage1(CodeHandler):
         z = old_div(path1, path2)
         assert isinstance(z, Path)
         assert str(z) == 'home/user'
-        """
-        self.convert_check(before, after)
-
-    def test_range_necessary_list_calls(self):
-        before = """
-        l = range(10)
-        assert isinstance(l, list)
-        for i in range(3):
-            print i
-        for i in xrange(3):
-            print i
-        """
-        after = """
-        from __future__ import print_function
-        from future.builtins import range
-        l = list(range(10))
-        assert isinstance(l, list)
-        for i in range(3):
-            print(i)
-        for i in range(3):
-            print(i)
         """
         self.convert_check(before, after)
 
