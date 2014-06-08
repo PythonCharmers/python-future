@@ -13,6 +13,7 @@ from lib2to3.fixer_util import (FromImport, Newline, is_import,
 from lib2to3.pytree import Leaf, Node
 from lib2to3.pygram import python_symbols as syms, python_grammar
 from lib2to3.pygram import token
+from lib2to3.fixer_util import (Node, Call, Name, syms, Comma, Number)
 import re
 
 
@@ -427,5 +428,25 @@ def is_shebang_comment(node):
     prefix that looks like a shebang line.
     """
     return bool(re.match(SHEBANG_REGEX, node.prefix))
+
+
+def wrap_in_fn_call(fn_name, args, prefix=None):
+    """
+    Example:
+    >>> wrap_in_fn_call("oldstr", (arg,))
+    oldstr(arg)
+
+    >>> wrap_in_fn_call("olddiv", (arg1, arg2))
+    olddiv(arg1, arg2)
+    """
+    assert len(args) > 0
+    if len(args) == 1:
+        newargs = args
+    elif len(args) == 2:
+        expr1, expr2 = args
+        newargs = [expr1, Comma(), expr2]
+    else:
+        assert NotImplementedError('write me')
+    return Call(Name(fn_name), newargs, prefix=prefix)
 
 

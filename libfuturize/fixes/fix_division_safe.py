@@ -11,9 +11,9 @@ behaviour on Py3.
 """
 
 from lib2to3 import fixer_base
-from lib2to3.fixer_util import (Node, Call, Name, parenthesize,
-                                syms, LParen, RParen, Comma, Number)
+from lib2to3.fixer_util import syms
 from libfuturize.fixer_util import token, future_import, touch_import_top
+
 
 def match_division(node):
     u"""
@@ -23,10 +23,6 @@ def match_division(node):
     slash = token.SLASH
     return node.type == slash and not node.next_sibling.type == slash and \
                                   not node.prev_sibling.type == slash
-
-
-def parenthesize_two(expr1, expr2):
-    return Node(syms.atom, [LParen(), expr1, Comma(), expr2, RParen()])
 
 
 class FixDivisionSafe(fixer_base.BaseFix):
@@ -48,7 +44,9 @@ class FixDivisionSafe(fixer_base.BaseFix):
                     len(node.children) == 3 and
                     match_division(node.children[1])):
             expr1, expr2 = node.children[0], node.children[2]
-        return expr1, expr2
+            return expr1, expr2
+        else:
+            return False
 
     def transform(self, node, results):
         future_import(u"division", node)
@@ -56,5 +54,5 @@ class FixDivisionSafe(fixer_base.BaseFix):
         expr1, expr2 = results[0].clone(), results[1].clone()
         # Strip any leading space for the first number:
         expr1.prefix = u''
-        return Call(Name("old_div"), [expr1, Comma(), expr2], prefix=node.prefix)
+        return wrap_in_fn_call("old_div", (expr1, expr2), prefix=node.prefix)
 
