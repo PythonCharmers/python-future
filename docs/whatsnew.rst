@@ -1,5 +1,16 @@
-What's New
-**********
+What's New in v0.12.x
+*********************
+
+
+.. whats-new-0.12.2:
+
+What's new in version 0.12.2
+============================
+
+- Add ``bytes.maketrans()`` method (issue #51)
+- Add support for Python versions between 2.7.0 and 2.7.3 (inclusive). (Patch
+  contributed by Nicolas Delaby.) (issue #53)
+- Bug fix for ``newlist(newlist([1, 2, 3]))``: issue #50
 
 
 .. whats-new-0.12.1:
@@ -16,8 +27,8 @@ What's new in version 0.12.1
 
 .. whats-new-0.12:
 
-What's new in version 0.12
-==========================
+What's new in version 0.12.0
+============================
 
 The major new feature in this version is improvements in the support for the
 reorganized standard library (PEP 3108) and compatibility of the import

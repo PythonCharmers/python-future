@@ -7,6 +7,7 @@ different beast to the Python 3 bytes object.
 
 from collections import Iterable
 from numbers import Integral
+import string
 
 from future.utils import istext, isbytes, PY3, with_metaclass
 from future.types import no, issubset
@@ -372,7 +373,6 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         """        
         return newbytes(super(newbytes, self).strip(bytes_to_strip))
 
-    @no(unicode)
     def lower(self):
         """
         b.lower() -> copy of b
@@ -389,6 +389,19 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         Return a copy of b with all ASCII characters converted to uppercase.
         """        
         return newbytes(super(newbytes, self).upper())
+
+    @classmethod
+    @no(unicode)
+    def maketrans(cls, frm, to):
+        """
+        B.maketrans(frm, to) -> translation table
+
+        Return a translation table (a bytes object of length 256) suitable
+        for use in the bytes or bytearray translate method where each byte
+        in frm is mapped to the byte at the same position in to.
+        The bytes objects frm and to must be of the same length.
+        """
+        return newbytes(string.maketrans(frm, to))
 
 
 __all__ = ['newbytes']
