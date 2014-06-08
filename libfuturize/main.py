@@ -63,7 +63,10 @@ further.)
 
 from __future__ import (absolute_import, print_function, unicode_literals)
 from future.builtins import *
-from future import utils
+import future
+import future.utils
+
+__version__ = '0.13.0-dev'
 
 import sys
 import logging
@@ -80,6 +83,11 @@ from libfuturize.fixes import (lib2to3_fix_names_stage1,
 
 fixer_pkg = 'libfuturize.fixes'
 
+if __version__ != future.__version__:
+    warn('The libfuturize and future packages have different versions. '
+         'This may break the futurize script. Please ensure the versions '
+         'are consistent.')
+
 
 def main(args=None):
     """Main program.
@@ -91,11 +99,13 @@ def main(args=None):
 
     Returns a suggested exit status (0, 1, 2).
     """
-
+    
     # Set up option parser
     parser = optparse.OptionParser(usage="futurize [options] file|dir ...")
+    parser.add_option("-V", "--version", action="store_true",
+                      help="Report the version number of futurize")
     parser.add_option("-a", "--all-imports", action="store_true",
-                      help="Adds all __future__ and future imports to each module")
+                      help="Add all __future__ and future imports to each module")
     parser.add_option("-d", "--doctests_only", action="store_true",
                       help="Fix up doctests only")
     parser.add_option("-1", "--stage1", action="store_true",
@@ -136,11 +146,10 @@ def main(args=None):
                       " Requires -n if non-empty. For Python >= 2.7 only."
                       "ex: --add-suffix='3' will generate .py3 files.")
 
-    avail_fixes = set()
-
     # Parse command line arguments
     refactor_stdin = False
     options, args = parser.parse_args(args)
+
     if options.write_unchanged_files:
         flags["write_unchanged_files"] = True
         if not options.write:
@@ -175,6 +184,9 @@ def main(args=None):
         options.both_stages = False
     else:
         options.both_stages = True
+
+    avail_fixes = set()
+
     if options.stage1 or options.both_stages:
         avail_fixes.update(lib2to3_fix_names_stage1)
         avail_fixes.update(libfuturize_fix_names_stage1)
@@ -185,6 +197,9 @@ def main(args=None):
     if options.unicode_literals:
         avail_fixes.add('libfuturize.fixes.fix_unicode_literals_import')
 
+    if options.version:
+        print(__version__)
+        return 0
     if options.list_fixes:
         print("Available transformations for the -f/--fix option:")
         # for fixname in sorted(refactor.get_all_fix_names(fixer_pkg)):
@@ -261,7 +276,7 @@ def main(args=None):
                     options.output_dir, input_base_dir)
 
     # Initialize the refactoring tool
-    if utils.PY26:
+    if future.utils.PY26:
         extra_kwargs = {}
     else:
         extra_kwargs = {
