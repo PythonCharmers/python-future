@@ -130,7 +130,7 @@ class CodeHandler(unittest.TestCase):
         standard_library.install_hooks()
         from future.builtins import *
         """)
-        self.interpreters = ['python']
+        self.interpreters = [sys.executable]
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         self.env = {'PYTHONPATH': os.getcwd()}
 
@@ -276,13 +276,13 @@ class CodeHandler(unittest.TestCase):
                 assert stages == [1, 2]
             # No extra params needed
 
-        output = subprocess.check_output(['python', script] + params +
+        output = subprocess.check_output([sys.executable, script] + params +
                                          ['-w', self.tempdir + filename],
                                          stderr=subprocess.STDOUT)
         return output
 
     def _run_test_script(self, filename='mytestscript.py',
-                         interpreter='python'):
+                         interpreter=sys.executable):
         env = {'PYTHONPATH': os.getcwd()}
         return subprocess.check_output([interpreter, self.tempdir + filename],
                                        env=env)

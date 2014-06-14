@@ -18,7 +18,7 @@ from subprocess import CalledProcessError
 class TestStandardLibraryRenames(CodeHandler):
 
     def setUp(self):
-        self.interpreter = 'python'
+        self.interpreter = sys.executable
         standard_library.install_hooks()
         super(TestStandardLibraryRenames, self).setUp()
 
