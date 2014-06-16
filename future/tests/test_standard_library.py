@@ -240,6 +240,7 @@ class TestStandardLibraryRenames(CodeHandler):
         self.assertEqual(list(zip_longest(a, b)),
                          [(1, 2), (2, 4), (None, 6)])
 
+    @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_import_failure_from_module(self):
         """
         Tests whether e.g. "import socketserver" succeeds in a module
