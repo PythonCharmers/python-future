@@ -13,6 +13,7 @@ from lib2to3.pygram import token
 
 from future.tests.base import (CodeHandler, unittest, skip26, reformat_code,
                                order_future_lines)
+from future.utils import PY2
 
 
 class TestLibFuturize(unittest.TestCase):
@@ -689,7 +690,7 @@ class TestFuturizeStage1(CodeHandler):
         for i in xrange(10):
             pass
         '''
-        self.unchanged(code, stages=[1])
+        self.unchanged(code, stages=[1], run=PY2)
 
     @unittest.expectedFailure
     def test_absolute_import_changes(self):
@@ -726,7 +727,7 @@ class TestFuturizeStage1(CodeHandler):
         HTMLParser.HTMLParser
         assert list(ifilterfalse(lambda x: x % 2, [2, 4])) == [2, 4]
         """
-        self.unchanged(before, stages=[1])
+        self.unchanged(before, stages=[1], run=PY2)
 
     def test_print(self):
         before = """
@@ -844,7 +845,7 @@ class TestFuturizeStage1(CodeHandler):
         except AttributeError as e:
             pass
         """
-        self.convert_check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1], run=PY2)
 
     def test_octal_literals(self):
         before = """
