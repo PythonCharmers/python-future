@@ -293,7 +293,8 @@ skip26 = unittest.skipIf(sys.version_info[:2] == (2, 6), "this test is known to 
 
 
 # Renamed in Py3.3:
-unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+if not hasattr(unittest.TestCase, 'assertRaisesRegex'):
+    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
 
 # From Py3.3:
 def assertRegex(self, text, expected_regex, msg=None):
