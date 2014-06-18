@@ -66,7 +66,7 @@ from future.builtins import *
 import future
 import future.utils
 
-__version__ = '0.13.0-dev'
+__version__ = '0.12.3-dev'
 
 import sys
 import logging
