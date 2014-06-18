@@ -9,6 +9,7 @@ from future.tests.base import unittest, CodeHandler
 import textwrap
 import sys
 import os
+import io
 
 
 # Don't import requests first. This avoids the problem we want to expose:
@@ -31,7 +32,8 @@ class write_module(object):
 
     def __enter__(self):
         print('Creating {0}test_imports_future_stdlib.py ...'.format(self.tempdir))
-        with open(self.tempdir + 'test_imports_future_stdlib.py', 'w') as f:
+        with io.open(self.tempdir + 'test_imports_future_stdlib.py', 'wt',
+                     encoding='utf-8') as f:
             f.write(textwrap.dedent(self.code))
         sys.path.insert(0, self.tempdir)
         return self

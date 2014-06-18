@@ -10,6 +10,7 @@ import sys
 import pprint
 import tempfile
 import os
+import io
 from subprocess import Popen, PIPE
 
 from past import utils
@@ -40,7 +41,10 @@ class TestTranslate(unittest.TestCase):
     def write_and_import(self, code, modulename='mymodule'):
         self.assertTrue('.py' not in modulename)
         filename = modulename + '.py'
-        with open(self.tempdir + filename, 'w') as f:
+        if isinstance(code, bytes):
+            code = code.decode('utf-8')
+        # Be explicit about encoding the temp file as UTF-8 (issue #63):
+        with io.open(self.tempdir + filename, 'w', encoding='utf-8') as f:
             f.write(textwrap.dedent(code).strip() + '\n')
 
         # meta_path_len = len(sys.meta_path)

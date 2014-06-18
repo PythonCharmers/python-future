@@ -5,6 +5,7 @@ import sys
 import subprocess
 import re
 import warnings
+import io
 if not hasattr(unittest, 'skip'):
     import unittest2 as unittest
 from textwrap import dedent
@@ -172,10 +173,17 @@ class CodeHandler(unittest.TestCase):
 
         If ignore_imports is True, passes the code blocks into the
         strip_future_imports method.
+
+        If one code block is a unicode string and the other a
+        byte-string, it assumes the byte-string is encoded as utf-8.
         """
         if ignore_imports:
             output = self.strip_future_imports(output)
             expected = self.strip_future_imports(expected)
+        if isinstance(output, bytes) and not isinstance(expected, bytes):
+            output = output.decode('utf-8')
+        if isinstance(expected, bytes) and not isinstance(output, bytes):
+            expected = expected.decode('utf-8')
         self.assertEqual(order_future_lines(output.rstrip()),
                          expected.rstrip())
 
@@ -236,7 +244,7 @@ class CodeHandler(unittest.TestCase):
             headers = ''
 
         self.compare(output, reformat_code(headers + expected),
-                    ignore_imports=ignore_imports)
+                     ignore_imports=ignore_imports)
 
     def unchanged(self, code, **kwargs):
         """
@@ -250,11 +258,14 @@ class CodeHandler(unittest.TestCase):
         Dedents the given code (a multiline string) and writes it out to
         a file in a temporary folder like /tmp/tmpUDCn7x/mytestscript.py.
         """
-        with open(self.tempdir + filename, 'w') as f:
+        if isinstance(code, bytes):
+            code = code.decode('utf-8')
+        # Be explicit about encoding the temp file as UTF-8 (issue #63):
+        with io.open(self.tempdir + filename, 'wt', encoding='utf-8') as f:
             f.write(dedent(code))
 
     def _read_test_script(self, filename='mytestscript.py'):
-        with open(self.tempdir + filename) as f:
+        with io.open(self.tempdir + filename, 'rt', encoding='utf-8') as f:
             newsource = f.read()
         return newsource
 
