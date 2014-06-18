@@ -4,7 +4,7 @@ Futurize: 2 to both
 --------------------
 
 For example, running ``futurize`` turns this Python 2 code::
-    
+
     import ConfigParser                 # Py2 module name
 
     class Upper(object):
@@ -21,7 +21,7 @@ For example, running ``futurize`` turns this Python 2 code::
         print letter,                   # Py2-style print statement
 
 into this code which runs on both Py2 and Py3::
-    
+
     from __future__ import print_function
     from future import standard_library
     standard_library.install_hooks()
@@ -145,10 +145,51 @@ The complete set of fixers applied by ``futurize --stage1`` is::
     lib2to3.fixes.fix_ws_comma
     lib2to3.fixes.fix_xreadlines
     libfuturize.fixes.fix_absolute_import
-    libfuturize.fixes.fix_division
     libfuturize.fixes.fix_print_with_import
     libfuturize.fixes.fix_raise
     libfuturize.fixes.fix_order___future__imports
+
+
+Not applied:
+
+.. code-block:: python
+
+    lib2to3.fixes.fix_import
+
+The ``fix_absolute_import`` fixer in`` libfuturize.fixes`` is applied instead of
+this. The new fixer both makes implicit relative imports explicit and
+adds the declaration ``from __future__ import absolute_import`` at the top
+of each relevant module.
+
+.. code-block:: python
+
+    lib2to3.fixes.fix_print
+
+The ``fix_print_with_import`` fixer in ``libfuturize.fixes`` changes the code to
+use print as a function and also adds ``from __future__ import
+print_function`` to the top of modules using ``print()``.
+
+.. code-block:: python
+
+    lib2to3.fixes.fix_raise
+
+This fixer translates code to use the Python 3-only ``with_traceback()``
+method on exceptions.
+
+.. code-block:: python
+
+    lib2to3.fixes.fix_set_literal
+
+This converts ``set([1, 2, 3]``) to ``{1, 2, 3}``, breaking Python 2.6 support.
+
+.. code-block:: python
+
+    lib2to3.fixes.fix_ws_comma
+
+This performs cosmetic changes. This is not applied by default because it
+does not serve improve Python 2/3 compatibility. (In some cases it may
+also reduce readability: see issue #58.)
+
 
 
 .. _forwards-conversion-stage2:
@@ -158,7 +199,7 @@ Stage 2: Py3-style code with ``future`` wrappers for Py2
 
 Run stage 2 of the conversion process with::
 
-    futurize —-stage2 myfolder/*.py
+    futurize --stage2 myfolder/*.py
 
 This stage adds a dependency on the ``future`` package. The goal for stage 2 is
 to make further mostly safe changes to the Python 2 code to use Python 3-style
@@ -205,10 +246,64 @@ For example::
     import ConfigParser
 
 becomes::
-    
+
     from future import standard_library
     standard_library.install_hooks()
     import configparser
+
+A complete list of fixers applied in Stage 2 is::
+
+    lib2to3.fixes.fix_basestring
+    lib2to3.fixes.fix_dict
+    lib2to3.fixes.fix_exec
+    lib2to3.fixes.fix_getcwdu
+    lib2to3.fixes.fix_input
+    lib2to3.fixes.fix_itertools
+    lib2to3.fixes.fix_itertools_imports
+    lib2to3.fixes.fix_filter
+    lib2to3.fixes.fix_long
+    lib2to3.fixes.fix_map
+    lib2to3.fixes.fix_nonzero
+    lib2to3.fixes.fix_operator
+    lib2to3.fixes.fix_raw_input
+    lib2to3.fixes.fix_zip
+
+    libfuturize.fixes.fix_cmp
+    libfuturize.fixes.fix_division
+    libfuturize.fixes.fix_execfile
+    libfuturize.fixes.fix_future_builtins
+    libfuturize.fixes.fix_future_standard_library
+    libfuturize.fixes.fix_future_standard_library_urllib
+    libfuturize.fixes.fix_metaclass
+    libpasteurize.fixes.fix_newstyle
+    libfuturize.fixes.fix_object
+    libfuturize.fixes.fix_order___future__imports
+    libfuturize.fixes.fix_unicode_keep_u
+    libfuturize.fixes.fix_xrange_with_import
+
+
+Not applied::
+
+    lib2to3.fixes.fix_buffer    # Perhaps not safe. Test this.
+    lib2to3.fixes.fix_callable  # Not needed in Py3.2+
+    lib2to3.fixes.fix_execfile  # Some problems: see issue #37.
+                                # We use the custom libfuturize.fixes.fix_execfile instead.
+    lib2to3.fixes.fix_future    # Removing __future__ imports is bad for Py2 compatibility!
+    lib2to3.fixes.fix_imports   # Called by libfuturize.fixes.fix_future_standard_library
+    lib2to3.fixes.fix_imports2  # We don't handle this yet (dbm)
+    lib2to3.fixes.fix_metaclass # Causes SyntaxError in Py2! Use the one from ``six`` instead
+    lib2to3.fixes.fix_unicode   # Strips off the u'' prefix, which removes a potentially
+                                # helpful source of information for disambiguating
+                                # unicode/byte strings.
+    lib2to3.fixes.fix_urllib    # Included in libfuturize.fix_future_standard_library_urllib
+    lib2to3.fixes.fix_xrange    # Custom one because of a bug with Py3.3's lib2to3
+
+
+Fixes applied with the ``futurize --conservative`` option::
+
+    libfuturize.fixes.fix_division_safe
+    (instead of libfuturize.fixes.fix_division).
+
 
 
 .. Ideally the output of this stage should not be a ``SyntaxError`` on either
@@ -225,7 +320,7 @@ string literals with either ``b`` or ``u`` accordingly. Furthermore, to ensure
 that these types behave similarly on Python 2 as on Python 3, also wrap
 byte-strings or text in the ``bytes`` and ``str`` types from ``future``. For
 example::
-    
+
     from future.builtins import bytes, str
     b = bytes(b'\x00ABCD')
     s = str(u'This is normal text')
