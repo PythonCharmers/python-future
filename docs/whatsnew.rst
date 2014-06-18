@@ -7,26 +7,28 @@ What's New in v0.12.x
 What's new in version 0.12.3
 ============================
 
-- Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts (issue #57)
+- Add "Python 3.4 support": Py3.4 is now listed among the PyPI Trove
+  classifiers and Travis-CI tests are now also run on Py3.4 (issue #67).
+- Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts
+  (issue #57).
+- Fix ``future.utils.ensure_new_type`` with ``long`` input (issue #65).
 - Testing fixes:
-    - Don't hard-code Python interpreter command in tests (issue #62). (Patch
-      contributed by Elliott Sales de Andrade.)
-    - Fix deprecated ``unittest`` usage in Py3 (also issue #62). (Patch
-      contributed by Elliott Sales de Andrade.)
+    - Don't hard-code Python interpreter command in tests (issue #62).
+    - Fix deprecated ``unittest`` usage in Py3 (also issue #62).
     - Be explicit about encoding temporary file contents as UTF-8 for
       when LANG=C (e.g. when building an RPM) (issue #63).
-- Docs: add list of fixers used by ``futurize``
-- Docs: add list of contributors to credits page
+- Docs: add list of fixers used by ``futurize``.
+- Docs: add list of contributors to credits page.
 
 .. whats-new-0.12.2:
 
 What's new in version 0.12.2
 ============================
 
-- Add ``bytes.maketrans()`` method (issue #51)
-- Add support for Python versions between 2.7.0 and 2.7.3 (inclusive). (Patch
-  contributed by Nicolas Delaby.) (issue #53)
-- Bug fix for ``newlist(newlist([1, 2, 3]))``: issue #50
+- Add ``bytes.maketrans()`` method (issue #51).
+- Add support for Python versions between 2.7.0 and 2.7.3 (inclusive)
+  (issue #53).
+- Bug fix for ``newlist(newlist([1, 2, 3]))``: issue #50.
 
 
 .. whats-new-0.12.1:
