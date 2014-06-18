@@ -130,7 +130,7 @@ class CodeHandler(unittest.TestCase):
         standard_library.install_hooks()
         from future.builtins import *
         """)
-        self.interpreters = ['python']
+        self.interpreters = [sys.executable]
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         self.env = {'PYTHONPATH': os.getcwd()}
 
@@ -278,13 +278,13 @@ class CodeHandler(unittest.TestCase):
                 params.append('--conservative')
             # No extra params needed
 
-        output = subprocess.check_output(['python', script] + params +
+        output = subprocess.check_output([sys.executable, script] + params +
                                          ['-w', self.tempdir + filename],
                                          stderr=subprocess.STDOUT)
         return output
 
     def _run_test_script(self, filename='mytestscript.py',
-                         interpreter='python'):
+                         interpreter=sys.executable):
         env = {'PYTHONPATH': os.getcwd()}
         return subprocess.check_output([interpreter, self.tempdir + filename],
                                        env=env)
@@ -295,7 +295,8 @@ skip26 = unittest.skipIf(sys.version_info[:2] == (2, 6), "this test is known to 
 
 
 # Renamed in Py3.3:
-unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+if not hasattr(unittest.TestCase, 'assertRaisesRegex'):
+    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
 
 # From Py3.3:
 def assertRegex(self, text, expected_regex, msg=None):

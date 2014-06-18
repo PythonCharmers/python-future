@@ -31,10 +31,10 @@ class TestMagicSuper(unittest.TestCase):
         s2 = Sub2()
         d = Diamond()
         for x in range(10):
-            self.assertEquals(b.calc(x),2*x)
-            self.assertEquals(s1.calc(x),7+(2*x))
-            self.assertEquals(s2.calc(x),(2*x)-1)
-            self.assertEquals(d.calc(x),3*(7+((2*x)-1)))
+            self.assertEqual(b.calc(x),2*x)
+            self.assertEqual(s1.calc(x),7+(2*x))
+            self.assertEqual(s2.calc(x),(2*x)-1)
+            self.assertEqual(d.calc(x),3*(7+((2*x)-1)))
 
     def test_with_unrelated_methods(self):
         class Base(object):
@@ -49,7 +49,7 @@ class TestMagicSuper(unittest.TestCase):
             def other(self):
                 return super().other()
         ss = SubSub()
-        self.assertEquals(ss.hello(),"hello world")
+        self.assertEqual(ss.hello(),"hello world")
 
     @unittest.skipIf(utils.PY3, "this test isn't relevant on Py3")
     def test_fails_for_oldstyle_class(self):
@@ -106,7 +106,7 @@ class TestMagicSuper(unittest.TestCase):
             def getit(self):
                 return 10 * future.builtins.newsuper.superm()
         s = Sub()
-        self.assertEquals(s.getit(),20)
+        self.assertEqual(s.getit(),20)
 
     def test_use_inside_dunder_new(self):
         class Terminal(str):
@@ -128,7 +128,7 @@ class TestMagicSuper(unittest.TestCase):
             def getit(cls):
                 print(super())
                 return super().getit() + 1
-        self.assertEquals(Singleton.getit(), 43)
+        self.assertEqual(Singleton.getit(), 43)
 
 
 if __name__ == '__main__':
