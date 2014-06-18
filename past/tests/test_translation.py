@@ -123,6 +123,8 @@ class TestTranslate(unittest.TestCase):
         """
         module = self.write_and_import(code, 'future_standard_library')
         self.assertTrue('configparser' in dir(module))
+        from future import standard_library
+        standard_library.remove_hooks()
 
     def test_old_builtin_functions(self):
         code = """
