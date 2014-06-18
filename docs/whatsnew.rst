@@ -2,6 +2,22 @@ What's New in v0.12.x
 *********************
 
 
+.. whats-new-0.12.3:
+
+What's new in version 0.12.3
+============================
+
+- Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts (issue #57)
+- Testing fixes:
+    - Don't hard-code Python interpreter command in tests (issue #62). (Patch
+      contributed by Elliott Sales de Andrade.)
+    - Fix deprecated ``unittest`` usage in Py3 (also issue #62). (Patch
+      contributed by Elliott Sales de Andrade.)
+    - Be explicit about encoding temporary file contents as UTF-8 for
+      when LANG=C (e.g. when building an RPM) (issue #63).
+- Docs: add list of fixers used by ``futurize``
+- Docs: add list of contributors to credits page
+
 .. whats-new-0.12.2:
 
 What's new in version 0.12.2
