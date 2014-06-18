@@ -8,13 +8,14 @@ from future.builtins import (bytes, dict, int, range, round, str, super,
                              ascii, chr, hex, input, next, oct, open, pow,
                              filter, map, zip)
 from future.utils.surrogateescape import register_surrogateescape
-from future.tests.base import unittest
+from future.tests.base import unittest, expectedFailurePY26
 
 
 class TestSurrogateEscape(unittest.TestCase):
     def setUp(self):
         register_surrogateescape()
 
+    @expectedFailurePY26    # Python 2.6 str.decode() takes no keyword args
     def test_surrogateescape(self):
         """
         From the backport of the email package

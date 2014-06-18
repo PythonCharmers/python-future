@@ -20,7 +20,7 @@ import random
 # import UserDict
 from os import unlink
 from operator import neg
-from future.tests.base import unittest, expectedFailurePY3
+from future.tests.base import unittest, expectedFailurePY3, skip26
 
 # count the number of test runs.
 # used to skip running test_execfile() multiple times
@@ -1126,6 +1126,7 @@ class BuiltinTest(unittest.TestCase):
 
         self.assertRaises(TypeError, pow)
 
+    @skip26
     @expectedFailurePY3
     def test_range(self):
         self.assertEqual(range(3), [0, 1, 2])
@@ -1564,6 +1565,7 @@ class BuiltinTest(unittest.TestCase):
                     return i
         self.assertRaises(ValueError, zip, BadSeq(), BadSeq())
 
+    @skip26
     @expectedFailurePY3
     def test_format(self):
         # Test the basic machinery of the format() builtin.  Don't test
