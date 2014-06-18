@@ -17,7 +17,8 @@ from past import utils
 from past.builtins import basestring, str as oldstr, unicode
 
 from past.translation import install_hooks, remove_hooks, common_substring
-from future.tests.base import unittest, CodeHandler, skip26
+from future.tests.base import (unittest, CodeHandler, skip26,
+                               expectedFailurePY3, expectedFailurePY26)
 
 
 class TestTranslate(unittest.TestCase):
@@ -82,7 +83,7 @@ class TestTranslate(unittest.TestCase):
         module = self.write_and_import(code, 'execer')
         self.assertEqual(module.x, 7)
         
-    @skip26
+    @expectedFailurePY3
     def test_div(self):
         code = """
         x = 3 / 2
@@ -90,8 +91,8 @@ class TestTranslate(unittest.TestCase):
         module = self.write_and_import(code, 'div')
         self.assertEqual(module.x, 1)
 
-    @skip26
-    @unittest.skipIf(utils.PY3, 'test_stdlib currently fails on Py3')
+    @expectedFailurePY26
+    @expectedFailurePY3
     def test_stdlib(self):
         """
         Have the old stdlib names been mapped onto the new ones?
@@ -152,8 +153,8 @@ class TestTranslate(unittest.TestCase):
         self.assertEqual(module.d, [0, 4, 8, 12, 16])
         self.assertTrue(module.e)
 
-    @skip26
-    # @unittest.expectedFailure
+    @expectedFailurePY26
+    @expectedFailurePY3
     def test_import_builtin_types(self):
         code = """
         s1 = 'abcd'

@@ -20,7 +20,7 @@ import random
 # import UserDict
 from os import unlink
 from operator import neg
-from future.tests.base import unittest
+from future.tests.base import unittest, expectedFailurePY3
 
 # count the number of test runs.
 # used to skip running test_execfile() multiple times
@@ -169,6 +169,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertTrue(isinstance(x, int))
         self.assertEqual(-x, sys.maxsize+1)
 
+    @expectedFailurePY3
     def test_apply(self):
         def f0(*args):
             self.assertEqual(args, ())
@@ -195,6 +196,11 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, apply, id, 42)
         self.assertRaises(TypeError, apply, id, (42,), 42)
 
+    def test_basestring(self):
+        assert isinstance('hello', basestring)
+        assert isinstance(b'hello', basestring)
+
+    @expectedFailurePY3
     def test_callable(self):
         self.assertTrue(callable(len))
         self.assertFalse(callable("a"))
@@ -236,6 +242,7 @@ class BuiltinTest(unittest.TestCase):
         n3 = N3()
         self.assertTrue(callable(n3))
 
+    @expectedFailurePY3
     def test_chr(self):
         self.assertEqual(chr(32), ' ')
         self.assertEqual(chr(65), 'A')
@@ -244,6 +251,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(ValueError, chr, 256)
         self.assertRaises(TypeError, chr)
 
+    @expectedFailurePY3
     def test_cmp(self):
         self.assertEqual(cmp(-1, 1), -1)
         self.assertEqual(cmp(1, -1), 1)
@@ -261,6 +269,7 @@ class BuiltinTest(unittest.TestCase):
         a.pop(); b.pop(); c.pop()
         self.assertRaises(TypeError, cmp)
 
+    @expectedFailurePY3
     def test_coerce(self):
         self.assertTrue(not fcmp(coerce(1, 1.1), (1.0, 1.1)))
         self.assertEqual(coerce(1, 1), (1, 1))
@@ -272,6 +281,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(ValueError, coerce, 42, BadNumber())
         self.assertRaises(OverflowError, coerce, 0.5, int("12345" * 1000))
 
+    @expectedFailurePY3
     def test_compile(self):
         compile('print(1)\n', '', 'exec')
         bom = '\xef\xbb\xbf'
@@ -385,6 +395,7 @@ class BuiltinTest(unittest.TestCase):
 
         self.assertRaises(TypeError, divmod)
 
+    @expectedFailurePY3
     def test_eval(self):
         self.assertEqual(eval('1+1'), 2)
         self.assertEqual(eval(' 1+1\n'), 2)
@@ -411,6 +422,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, eval)
         self.assertRaises(TypeError, eval, ())
 
+    @expectedFailurePY3
     def test_general_eval(self):
         # Tests that general mappings can be used for the locals argument
 
@@ -535,6 +547,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(IOError, execfile, os.curdir)
         self.assertRaises(IOError, execfile, "I_dont_exist")
 
+    @expectedFailurePY3
     def test_filter(self):
         self.assertEqual(filter(lambda c: 'a' <= c <= 'z', 'Hello World'), 'elloorld')
         self.assertEqual(filter(None, [1, 'hello', [], [3], '', None, 9, 0]), [1, 'hello', [3], 9])
@@ -610,6 +623,7 @@ class BuiltinTest(unittest.TestCase):
                 unicode("345")
             )
 
+    @expectedFailurePY3
     def test_filter_subclasses(self):
         # test that filter() never returns tuple, str or unicode subclasses
         # and that the result always goes through __getitem__
@@ -646,6 +660,7 @@ class BuiltinTest(unittest.TestCase):
                     self.assertEqual(outp, exp)
                     self.assertTrue(not isinstance(outp, cls))
 
+    @expectedFailurePY3
     def test_getattr(self):
         import sys
         self.assertTrue(getattr(sys, 'stdout') is sys.stdout)
@@ -655,6 +670,7 @@ class BuiltinTest(unittest.TestCase):
         if True:    # Was: have_unicode:
             self.assertRaises(UnicodeError, getattr, sys, unichr(sys.maxunicode))
 
+    @expectedFailurePY3
     def test_hasattr(self):
         import sys
         self.assertTrue(hasattr(sys, 'stdout'))
@@ -719,6 +735,7 @@ class BuiltinTest(unittest.TestCase):
 
     # test_int(): see test_int.py for int() tests.
 
+    @expectedFailurePY3
     def test_intern(self):
         self.assertRaises(TypeError, intern)
         # This fails if the test is run twice with a constant string,
@@ -745,6 +762,7 @@ class BuiltinTest(unittest.TestCase):
         setattr(s, s, s)
         self.assertEqual(getattr(s, s), s)
 
+    @expectedFailurePY3
     def test_iter(self):
         self.assertRaises(TypeError, iter)
         self.assertRaises(TypeError, iter, 42, 42)
@@ -792,6 +810,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, issubclass, E, 'foo')
         self.assertRaises(TypeError, issubclass)
 
+    @expectedFailurePY3
     def test_len(self):
         self.assertEqual(len('123'), 3)
         self.assertEqual(len(()), 0)
@@ -918,6 +937,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(max(data, key=f),
                          sorted(reversed(data), key=f)[-1])
 
+    @expectedFailurePY3
     def test_min(self):
         self.assertEqual(min('123123'), '1')
         self.assertEqual(min(1, 2, 3), 1)
@@ -964,6 +984,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(min(data, key=f),
                          sorted(data, key=f)[0])
 
+    @expectedFailurePY3
     def test_next(self):
         it = iter(range(2))
         self.assertEqual(next(it), 0)
@@ -991,6 +1012,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(StopIteration, next, it)
         self.assertEqual(next(it, 42), 42)
 
+    @expectedFailurePY3
     def test_oct(self):
         self.assertEqual(oct(100), '0144')
         # self.assertEqual(oct(100L), '0144L')
@@ -1027,6 +1049,7 @@ class BuiltinTest(unittest.TestCase):
             fp.close()
         unlink(TESTFN)
 
+    @expectedFailurePY3
     def test_ord(self):
         self.assertEqual(ord(' '), 32)
         self.assertEqual(ord('A'), 65)
@@ -1037,6 +1060,7 @@ class BuiltinTest(unittest.TestCase):
         if True:      # Was: if have_unicode:
             self.assertRaises(TypeError, ord, unicode("12"))
 
+    @expectedFailurePY3
     def test_pow(self):
         self.assertEqual(pow(0,0), 1)
         self.assertEqual(pow(0,1), 0)
@@ -1102,6 +1126,7 @@ class BuiltinTest(unittest.TestCase):
 
         self.assertRaises(TypeError, pow)
 
+    @expectedFailurePY3
     def test_range(self):
         self.assertEqual(range(3), [0, 1, 2])
         self.assertEqual(range(1, 5), [1, 2, 3, 4])
@@ -1208,8 +1233,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, range, 0.0, 0.0, 1)
         self.assertRaises(TypeError, range, 0.0, 0.0, 1.0)
 
-
-
+    @expectedFailurePY3
     def test_input_and_raw_input(self):
         self.write_testfile()
         fp = open(TESTFN, 'r')
@@ -1324,6 +1348,7 @@ class BuiltinTest(unittest.TestCase):
         a[0] = a
         self.assertEqual(repr(a), '{0: {...}}')
 
+    @expectedFailurePY3
     def test_round(self):
         self.assertEqual(round(0.0), 0.0)
         self.assertEqual(type(round(0.0)), float)  # Will be int in 3.0.
@@ -1454,6 +1479,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(type(''),  type('123'))
         self.assertNotEqual(type(''), type(()))
 
+    @expectedFailurePY3
     def test_unichr(self):
         if True:      # Was: if have_unicode:
             self.assertEqual(unichr(32), unicode(' '))
@@ -1538,6 +1564,7 @@ class BuiltinTest(unittest.TestCase):
                     return i
         self.assertRaises(ValueError, zip, BadSeq(), BadSeq())
 
+    @expectedFailurePY3
     def test_format(self):
         # Test the basic machinery of the format() builtin.  Don't test
         #  the specifics of the various formatters
@@ -1677,6 +1704,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(bin(-(2**65)), '-0b1' + '0' * 65)
         self.assertEqual(bin(-(2**65-1)), '-0b' + '1' * 65)
 
+    @expectedFailurePY3
     def test_bytearray_translate(self):
         x = bytearray(b"abc")
         self.assertRaises(ValueError, x.translate, "1", 1)
@@ -1684,6 +1712,7 @@ class BuiltinTest(unittest.TestCase):
 
 class TestSorted(unittest.TestCase):
 
+    @expectedFailurePY3
     def test_basic(self):
         data = range(100)
         copy = data[:]

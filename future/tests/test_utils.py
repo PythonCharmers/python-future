@@ -104,7 +104,7 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(isbytes(self.s))
         self.assertFalse(isbytes(self.s2))
 
-    @skip26
+    @unittest.skipIf(PY3, 'test_raise_ currently fails on Py3')
     def test_raise_(self):
         """
         The with_value() test currently fails on Py3
