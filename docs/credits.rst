@@ -52,6 +52,7 @@ Patches
 
 - Denis Cornehl
 - Nicolas Delaby
+- Corey Farwell
 - Marcin Kuzminski
 - Joshua Landau
 - German Larrain
