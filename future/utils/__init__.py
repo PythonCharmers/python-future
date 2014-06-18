@@ -610,6 +610,8 @@ else:
                 return newstr(obj)
             elif native_type == int:
                 return newint(obj)
+            elif native_type == long:
+                return newint(obj)
             elif native_type == dict:
                 return newdict(obj)
             else:
