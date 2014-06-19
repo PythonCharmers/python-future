@@ -517,9 +517,6 @@ def install_aliases():
         __import__(oldmodname)
         oldmod = sys.modules[oldmodname]
 
-        import pdb
-        pdb.set_trace()
-
         obj = getattr(oldmod, oldobjname)
         setattr(newmod, newobjname, obj)
 

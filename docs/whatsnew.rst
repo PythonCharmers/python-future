@@ -10,6 +10,9 @@ What's new in version 0.12.3
 - Add "official Python 3.4 support": Py3.4 is now listed among the PyPI Trove
   classifiers and the tests now run successfully on Py3.4 (issue #67).
 
+- Add backports of ``collections.OrderedDict`` and
+  ``collections.Counter`` for Python 2.6.
+
 - Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts
   (issue #57).
 
