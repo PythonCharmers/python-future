@@ -11,7 +11,12 @@ What's new in version 0.12.3
   classifiers and Travis-CI tests are now also run on Py3.4 (issue #67).
 - Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts
   (issue #57).
+
 - Fix ``future.utils.ensure_new_type`` with ``long`` input (issue #65).
+
+- Remove some false alarms on checks for ambiguous fixer names with
+  ``futurize -f ...``.
+
 - Testing fixes:
     - Don't hard-code Python interpreter command in tests (issue #62).
     - Fix deprecated ``unittest`` usage in Py3 (also issue #62).
