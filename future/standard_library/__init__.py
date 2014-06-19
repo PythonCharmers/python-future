@@ -185,6 +185,9 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('subprocess', 'getoutput', 'commands', 'getoutput'),
          ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
          ('math', 'ceil', 'future.backports.misc', 'ceil'),
+         ('collections', 'OrderedDict', 'future.backports.misc', 'OrderedDict'),
+         ('collections', 'Counter', 'future.backports.misc', 'Counter'),
+
 # This is no use, since "import urllib.request" etc. still fails:
 #          ('urllib', 'error', 'future.moves.urllib', 'error'),
 #          ('urllib', 'parse', 'future.moves.urllib', 'parse'),
@@ -513,6 +516,9 @@ def install_aliases():
 
         __import__(oldmodname)
         oldmod = sys.modules[oldmodname]
+
+        import pdb
+        pdb.set_trace()
 
         obj = getattr(oldmod, oldobjname)
         setattr(newmod, newobjname, obj)
