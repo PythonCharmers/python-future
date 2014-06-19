@@ -42,7 +42,7 @@ from lib2to3 import refactor
 import future
 from libpasteurize.fixes import fix_names
 
-__version__ = '0.12.3-dev'
+__version__ = '0.12.3'
 
 if __version__ != future.__version__:
     warn('The libfuturize and future packages have different versions. '
