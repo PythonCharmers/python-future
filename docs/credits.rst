@@ -35,20 +35,21 @@ Sponsor
 Python Charmers Pty Ltd, Australia, and Python Charmers Pte Ltd, Singapore.
 http://pythoncharmers.com
 
+
 .. _authors:
 
 Authors
-=======
+-------
 
 Python-Future is written and maintained by Ed Schofield and various contributors:
 
 Development Lead
-----------------
+~~~~~~~~~~~~~~~~
 
 - Ed Schofield <ed@pythoncharmers.com>
 
 Patches
--------
+~~~~~~~
 
 - Denis Cornehl
 - Nicolas Delaby
@@ -63,7 +64,7 @@ Patches
 - Mystic-Mirage (GitHub)
 
 Suggestions and Feedback
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Chris Adams
 - Martijn Faassen
@@ -72,8 +73,9 @@ Suggestions and Feedback
 - wluebbe (GitHub)
 
 
-Others
-------
+Other Credits
+-------------
+
 - The backported ``super()`` and ``range()`` functions are derived from Ryan
   Kelly's ``magicsuper`` module and Dan Crosta's ``xrange`` module.
 
