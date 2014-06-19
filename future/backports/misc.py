@@ -1,9 +1,16 @@
 """
 Miscellaneous function (re)definitions from the Py3.3 standard library for
 Python 2.6/2.7.
+
+math.ceil
+
+collections.OrderedDict  (for Python 2.6)
+collections.Counter      (for Python 2.6)
 """
 
 from math import ceil as oldceil
+
+from future.utils import iteritems, PY26
 
 
 def ceil(x):
@@ -14,7 +21,22 @@ def ceil(x):
     return int(oldceil(x))
 
 
-# Implementations of collections.OrderedDict and Counter for Python 2.6:
+# OrderedDict Shim from  Raymond Hettinger, python core dev
+# http://code.activestate.com/recipes/576693-ordered-dictionary-for-py24/
+# here to support version 2.6.
+
+if PY26:
+    # don't need this except in 2.6
+    try:
+        from thread import get_ident
+    except ImportError:
+        from dummy_thread import get_ident
+
+try:
+    from _abcoll import KeysView, ValuesView, ItemsView
+except ImportError:
+    pass
+
 
 class _OrderedDict(dict):
 
@@ -203,7 +225,7 @@ class _OrderedDict(dict):
 
     def __repr__(self, _repr_running={}):
         'od.__repr__() <==> repr(od)'
-        call_key = id(self), _get_ident()
+        call_key = id(self), get_ident()
         if call_key in _repr_running:
             return '...'
         _repr_running[call_key] = 1
