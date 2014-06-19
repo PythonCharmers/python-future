@@ -3,7 +3,7 @@
 from __future__ import absolute_import, division, unicode_literals
 import sys
 
-from future.tests.base import unittest, expectedFailurePY2
+from future.tests.base import unittest, skip26, expectedFailurePY2
 from future import utils
 from future.builtins import super
 
@@ -155,6 +155,7 @@ class TestSuperFromTestDescrDotPy(unittest.TestCase):
     """
     These are from Python 3.3.5/Lib/test/test_descr.py
     """
+    @skip26
     def test_classmethods(self):
         # Testing class methods...
         class C(object):

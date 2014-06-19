@@ -3,8 +3,7 @@ python:
   - "3.4"
   - "3.3"
   - "2.7"
-# Disable auto 2.6 tests for now: still about 45-50 failures or errors on Py2.6:
-#  - "2.6"
+  - "2.6"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 # These packages only exist on Ubuntu 13.04 and newer:
 # before_install:
