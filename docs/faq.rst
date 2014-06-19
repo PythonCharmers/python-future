@@ -207,8 +207,9 @@ What is the relationship between ``future`` and ``six``?
 --------------------------------------------------------
 
 ``python-future`` is a higher-level compatibility layer than ``six`` that
-includes more backported functionality from Python 3 and supports cleaner
-code but requires more modern Python versions to run.
+includes more backported functionality from Python 3, more forward-ported
+functionality from Python 2, and supports cleaner code, but requires more
+modern Python versions to run.
 
 ``python-future`` and ``six`` share the same goal of making it possible to write
 a single-source codebase that works on both Python 2 and Python 3.
