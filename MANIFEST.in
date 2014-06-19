@@ -1,8 +1,22 @@
-include README.rst
-include futurize.py
-include discover_tests.py
-include LICENSE.txt
-include docs/*.py
-include docs/*.txt
-include docs/*.rst
+include *.sh
+include *.txt
+include *.rst
+include *.py
+include .travis.yml
+include pytest.ini
+recursive-include docs *.conf
+recursive-include docs *.css_t
+recursive-include docs *.html
+recursive-include docs *.inc
+recursive-include docs *.ipynb
+recursive-include docs *.png
+recursive-include docs *.py
+recursive-include docs *.sh
+recursive-include docs *.tiff
+recursive-include docs *.txt
+recursive-include docs Makefile
+recursive-include future *.gif
+recursive-include future *.pem
+recursive-include future *.py
+recursive-include future *.txt
 
