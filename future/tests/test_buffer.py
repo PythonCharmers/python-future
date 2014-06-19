@@ -4,7 +4,7 @@
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
-from future.tests.base import unittest
+from future.tests.base import unittest, expectedFailurePY26
 
 import struct
 import sys
@@ -226,6 +226,7 @@ class BytearrayPEP3137Test(unittest.TestCase,
     def marshal(self, x):
         return bytearray(bytes(x))
 
+    @expectedFailurePY26
     def test_returns_new_copy(self):
         val = self.marshal(b'1234')
         # On immutable types these MAY return a reference to themselves

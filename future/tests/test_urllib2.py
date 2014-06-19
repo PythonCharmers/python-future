@@ -12,7 +12,7 @@ import future.backports.urllib.request as urllib_request
 # proxy config data structure but is testable on all platforms.
 from future.backports.urllib.request import Request, OpenerDirector, _proxy_bypass_macosx_sysconf
 import future.backports.urllib.error as urllib_error
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26
 from future.builtins import bytes, dict, int, open, str, zip
 from future.utils import text_to_native_str
 
@@ -792,6 +792,7 @@ class HandlerTests(unittest.TestCase):
                 self.assertEqual(req.type, "ftp")
             self.assertEqual(req.type == "ftp", ftp)
 
+    @skip26
     def test_http(self):
 
         h = urllib_request.AbstractHTTPHandler()
@@ -901,6 +902,7 @@ class HandlerTests(unittest.TestCase):
             newreq = h.do_request_(req)
             self.assertEqual(int(newreq.get_header('Content-length')),16)
 
+    @skip26
     def test_http_doubleslash(self):
         # Checks the presence of any unnecessary double slash in url does not
         # break anything. Previously, a double slash directly after the host

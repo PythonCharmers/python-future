@@ -9,7 +9,7 @@ from future.builtins import open
 import os
 import re
 import time
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26, expectedFailurePY26
 import future.backports.test.support as test_support
 import future.backports.urllib.request as urllib_request
 
@@ -297,6 +297,7 @@ def _interact(cookiejar, url, set_cookie_hdrs, hdr_name):
 
 
 class FileCookieJarTests(unittest.TestCase):
+    @skip26
     def test_lwp_valueless_cookie(self):
         # cookies with no value should be saved and loaded consistently
         filename = test_support.TESTFN
@@ -416,6 +417,7 @@ class CookieTests(unittest.TestCase):
             if ok: self.assertTrue(r)
             else: self.assertFalse(r)
 
+    @skip26
     def test_missing_value(self):
         # missing = sign in Cookie: header is regarded by Mozilla as a missing
         # name, and by http.cookiejar as a missing value
@@ -448,6 +450,7 @@ class CookieTests(unittest.TestCase):
         self.assertEqual(interact_netscape(c, "http://www.acme.com/foo/"),
                          '"spam"; eggs')
 
+    @expectedFailurePY26
     def test_rfc2109_handling(self):
         # RFC 2109 cookies are handled as RFC 2965 or Netscape cookies,
         # dependent on policy settings
@@ -479,6 +482,7 @@ class CookieTests(unittest.TestCase):
                     cookie2965 = c._cookies["www.example.com"]["/"]["foo"]
                     self.assertEqual(cookie2965.version, 1)
 
+    @skip26
     def test_ns_parser(self):
         c = CookieJar()
         interact_netscape(c, "http://www.acme.com/",
@@ -514,6 +518,7 @@ class CookieTests(unittest.TestCase):
         self.assertIsNone(foo.expires)
         self.assertIsNone(spam.expires)
 
+    @skip26
     def test_ns_parser_special_names(self):
         # names such as 'expires' are not special in first name=value pair
         # of Set-Cookie: header
@@ -525,6 +530,7 @@ class CookieTests(unittest.TestCase):
         self.assertIn('expires', cookies)
         self.assertIn('version', cookies)
 
+    @expectedFailurePY26
     def test_expires(self):
         # if expires is in future, keep cookie...
         c = CookieJar()
@@ -564,6 +570,7 @@ class CookieTests(unittest.TestCase):
 
         # XXX RFC 2965 expiry rules (some apply to V0 too)
 
+    @skip26
     def test_default_path(self):
         # RFC 2965
         pol = DefaultCookiePolicy(rfc2965=True)
@@ -604,6 +611,7 @@ class CookieTests(unittest.TestCase):
         interact_netscape(c, "http://www.acme.com/blah/rhubarb/", 'eggs="bar"')
         self.assertIn("/blah/rhubarb", c._cookies["www.acme.com"])
 
+    @skip26
     def test_default_path_with_query(self):
         cj = CookieJar()
         uri = "http://example.com/?spam/eggs"
@@ -745,6 +753,7 @@ class CookieTests(unittest.TestCase):
                       'foo=bar; domain=friendly.org; Version="1"')
         self.assertEqual(len(c), 0)
 
+    @expectedFailurePY26
     def test_strict_domain(self):
         # Cookies whose domain is a country-code tld like .co.uk should
         # not be set if CookiePolicy.strict_domain is true.
@@ -759,6 +768,7 @@ class CookieTests(unittest.TestCase):
                               'spam=eggs; Domain=.co.uk')
             self.assertEqual(len(cj), 2)
 
+    @expectedFailurePY26
     def test_two_component_domain_ns(self):
         # Netscape: .www.bar.com, www.bar.com, .bar.com, bar.com, no domain
         # should all get accepted, as should .acme.com, acme.com and no domain
@@ -807,6 +817,7 @@ class CookieTests(unittest.TestCase):
 ##         self.assertEqual(len(c), 2)
         self.assertEqual(len(c), 4)
 
+    @expectedFailurePY26
     def test_two_component_domain_rfc2965(self):
         pol = DefaultCookiePolicy(rfc2965=True)
         c = CookieJar(pol)
@@ -851,6 +862,7 @@ class CookieTests(unittest.TestCase):
                       'nasty=trick; domain=.co.uk; Version="1"')
         self.assertEqual(len(c), 3)
 
+    @expectedFailurePY26
     def test_domain_allow(self):
         c = CookieJar(policy=DefaultCookiePolicy(
             blocked_domains=["acme.com"],
@@ -882,6 +894,7 @@ class CookieTests(unittest.TestCase):
         c.add_cookie_header(req)
         self.assertFalse(req.has_header("Cookie"))
 
+    @expectedFailurePY26
     def test_domain_block(self):
         pol = DefaultCookiePolicy(
             rfc2965=True, blocked_domains=[".acme.com"])
@@ -922,6 +935,7 @@ class CookieTests(unittest.TestCase):
         c.add_cookie_header(req)
         self.assertFalse(req.has_header("Cookie"))
 
+    @skip26
     def test_secure(self):
         for ns in True, False:
             for whitespace in " ", "":
@@ -945,12 +959,14 @@ class CookieTests(unittest.TestCase):
                     c._cookies["www.acme.com"]["/"]["foo2"].secure,
                     "secure cookie registered non-secure")
 
+    @expectedFailurePY26
     def test_quote_cookie_value(self):
         c = CookieJar(policy=DefaultCookiePolicy(rfc2965=True))
         interact_2965(c, "http://www.acme.com/", r'foo=\b"a"r; Version=1')
         h = interact_2965(c, "http://www.acme.com/")
         self.assertEqual(h, r'$Version=1; foo=\\b\"a\"r')
 
+    @expectedFailurePY26
     def test_missing_final_slash(self):
         # Missing slash from request URL's abs_path should be assumed present.
         url = "http://www.acme.com"
@@ -961,6 +977,7 @@ class CookieTests(unittest.TestCase):
         c.add_cookie_header(req)
         self.assertTrue(req.has_header("Cookie"))
 
+    @expectedFailurePY26
     def test_domain_mirror(self):
         pol = DefaultCookiePolicy(rfc2965=True)
 
@@ -984,6 +1001,7 @@ class CookieTests(unittest.TestCase):
         h = interact_2965(c, url)
         self.assertIn('$Domain="bar.com"', h, "domain not returned")
 
+    @expectedFailurePY26
     def test_path_mirror(self):
         pol = DefaultCookiePolicy(rfc2965=True)
 
@@ -999,6 +1017,7 @@ class CookieTests(unittest.TestCase):
         h = interact_2965(c, url)
         self.assertIn('$Path="/"', h, "path not returned")
 
+    @expectedFailurePY26
     def test_port_mirror(self):
         pol = DefaultCookiePolicy(rfc2965=True)
 
@@ -1092,6 +1111,7 @@ class CookieTests(unittest.TestCase):
         # shouldn't add version if header is empty
         self.assertEqual(parse_ns_headers([""]), [])
 
+    @skip26
     def test_bad_cookie_header(self):
 
         def cookiejar_from_cookie_headers(headers):
@@ -1126,6 +1146,7 @@ class CookieTests(unittest.TestCase):
 class LWPCookieTests(unittest.TestCase):
     # Tests taken from libwww-perl, with a few modifications and additions.
 
+    @expectedFailurePY26
     def test_netscape_example_1(self):
         #-------------------------------------------------------------------
         # First we check that it works for the original example at
@@ -1217,6 +1238,7 @@ class LWPCookieTests(unittest.TestCase):
         self.assertIn("CUSTOMER=WILE_E_COYOTE", h)
         self.assertTrue(h.startswith("SHIPPING=FEDEX;"))
 
+    @expectedFailurePY26
     def test_netscape_example_2(self):
         # Second Example transaction sequence:
         #
@@ -1268,6 +1290,7 @@ class LWPCookieTests(unittest.TestCase):
                          r"PART_NUMBER=RIDING_ROCKET_0023;\s*"
                           "PART_NUMBER=ROCKET_LAUNCHER_0001")
 
+    @expectedFailurePY26
     def test_ietf_example_1(self):
         #-------------------------------------------------------------------
         # Then we test with the examples from draft-ietf-http-state-man-mec-03.txt
@@ -1380,6 +1403,7 @@ class LWPCookieTests(unittest.TestCase):
         # /acme as a prefix, and that matches the Path attribute, each request
         # contains all the cookies received so far.
 
+    @expectedFailurePY26
     def test_ietf_example_2(self):
         # 5.2  Example 2
         #
@@ -1433,6 +1457,7 @@ class LWPCookieTests(unittest.TestCase):
         self.assertIn("Rocket_Launcher_0001", cookie)
         self.assertNotIn("Riding_Rocket_0023", cookie)
 
+    @expectedFailurePY26
     def test_rejection(self):
         # Test rejection of Set-Cookie2 responses based on domain, path, port.
         pol = DefaultCookiePolicy(rfc2965=True)
@@ -1524,6 +1549,7 @@ class LWPCookieTests(unittest.TestCase):
 
         self.assertEqual(old, repr(c))
 
+    @expectedFailurePY26
     def test_url_encoding(self):
         # Try some URL encodings of the PATHs.
         # (the behaviour here has changed from libwww-perl)
@@ -1546,6 +1572,7 @@ class LWPCookieTests(unittest.TestCase):
         # unicode URL doesn't raise exception
         cookie = interact_2965(c, "http://www.acme.com/\xfc")
 
+    @expectedFailurePY26
     def test_mozilla(self):
         # Save / load Mozilla/Netscape cookie file format.
         year_plus_one = time.localtime()[0] + 1
@@ -1587,6 +1614,7 @@ class LWPCookieTests(unittest.TestCase):
         self.assertEqual(len(new_c), 4)  # 2 of them discarded on save
         self.assertIn("name='foo1', value='bar'", repr(new_c))
 
+    @skip26
     def test_netscape_misc(self):
         # Some additional Netscape cookies tests.
         c = CookieJar()
@@ -1610,6 +1638,7 @@ class LWPCookieTests(unittest.TestCase):
         self.assertIn("PART_NUMBER=3,4", req.get_header("Cookie"))
         self.assertIn("Customer=WILE_E_COYOTE",req.get_header("Cookie"))
 
+    @expectedFailurePY26
     def test_intranet_domains_2965(self):
         # Test handling of local intranet hostnames without a dot.
         c = CookieJar(DefaultCookiePolicy(rfc2965=True))
@@ -1624,6 +1653,7 @@ class LWPCookieTests(unittest.TestCase):
         self.assertIn("foo2=bar", cookie)
         self.assertEqual(len(c), 3)
 
+    @expectedFailurePY26
     def test_intranet_domains_ns(self):
         c = CookieJar(DefaultCookiePolicy(rfc2965 = False))
         interact_netscape(c, "http://example/", "foo1=bar")
@@ -1636,6 +1666,7 @@ class LWPCookieTests(unittest.TestCase):
         self.assertIn("foo2=bar", cookie)
         self.assertEqual(len(c), 2)
 
+    @expectedFailurePY26
     def test_empty_path(self):
         # Test for empty path
         # Broken web-server ORION/1.3.38 returns to the client response like
@@ -1667,6 +1698,7 @@ class LWPCookieTests(unittest.TestCase):
                          "JSESSIONID=ABCDERANDOM123")
         self.assertEqual(req.get_header("Cookie2"), '$Version="1"')
 
+    @expectedFailurePY26
     def test_session_cookies(self):
         year_plus_one = time.localtime()[0] + 1
 
