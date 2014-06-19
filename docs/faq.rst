@@ -123,7 +123,7 @@ Is it tested?
 currently being used to help with porting 800,000 lines of Python 2 code in
 `Sage <http://sagemath.org>`_ to Python 2/3.
 
-Currently ``python-future`` has 800+ unit tests. Many of these are straight
+Currently ``python-future`` has 850+ unit tests. Many of these are straight
 from the Python 3.3 test suite.
 
 In general, the ``future`` package itself is in good shape, whereas the
