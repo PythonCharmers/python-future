@@ -5,7 +5,7 @@ int tests from Py3.3
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
-from future.tests.base import unittest
+from future.tests.base import unittest, expectedFailurePY2
 from future.utils import PY26
 
 import sys
@@ -239,7 +239,7 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(int('2br45qc', 35), 4294967297)
         self.assertEqual(int('1z141z5', 36), 4294967297)
 
-    @unittest.expectedFailure     # fails on Py2
+    @expectedFailurePY2     # fails on Py2
     @cpython_only
     def test_small_ints(self):
         # Bug #3236: Return small longs from PyLong_FromString
@@ -264,7 +264,7 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(seconds, 6000)
         self.assertTrue(isinstance(seconds, float))
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_keyword_args_2(self):
         # newint causes these to fail:
         self.assertRaises(TypeError, int, base=10)
@@ -401,7 +401,7 @@ class IntTestCases(unittest.TestCase):
     
     # Exception messages in Py2 are 8-bit strings. The following fails,
     # even if the testlist strings are wrapped in str() calls...
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_error_message(self):
         testlist = ('\xbd', '123\xbd', '  123 456  ')
         for s in testlist:
