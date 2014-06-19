@@ -308,14 +308,7 @@ skip26 = unittest.skipIf(PY26, "this test is known to fail on Py2.6")
 def expectedFailurePY3(func):
     if not PY3:
         return func
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-        except Exception:
-            raise unittest.case._ExpectedFailure(sys.exc_info())
-        raise unittest.case._UnexpectedSuccess
-    return wrapper
+    return unittest.expectedFailure(func)
 
 
 def expectedFailurePY26(func):
