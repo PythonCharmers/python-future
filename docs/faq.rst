@@ -266,6 +266,13 @@ definitions) that greatly reduce the maintenance burden for single-source
 Py2/3 compatible code. ``future`` leverages these features and aims to
 close the remaining gap between Python 3 and 2.6 / 2.7.
 
+Python 2.6 does not offer the following features which help with Py3
+compatibility:
+- ``surrogateescape`` error handler for string encoding or decoding;
+- ``memoryview`` objects.
+
+Otherwise Python 2.6 is mostly supported.
+
 Python 3.2 could perhaps be supported too, although the illegal unicode
 literal ``u'...'`` syntax may be inconvenient to work around. The Py3.2
 userbase is very small, however. Please let us know via GitHub `issue #29
