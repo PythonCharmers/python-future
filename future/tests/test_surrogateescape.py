@@ -8,7 +8,7 @@ from future.builtins import (bytes, dict, int, range, round, str, super,
                              ascii, chr, hex, input, next, oct, open, pow,
                              filter, map, zip)
 from future.utils.surrogateescape import register_surrogateescape
-from future.tests.base import unittest, expectedFailurePY26
+from future.tests.base import unittest, expectedFailurePY26, expectedFailurePY2
 
 
 class TestSurrogateEscape(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestSurrogateEscape(unittest.TestCase):
         b = payload.encode('ascii', 'surrogateescape')
         self.assertEqual(b, b'cMO2c3RhbA\xc3\xa1=\n')
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_encode_ascii_surrogateescape_non_newstr(self):
         """
         As above but without a newstr object. Fails on Py2.
@@ -70,7 +70,7 @@ class SurrogateEscapeTest(unittest.TestCase):
         # self.assertEqual("foo\udc80bar".encode("ascii", "surrogateescape"),
         #                  b"foo\x80bar")
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_charmap(self):
         # bad byte: \xa5 is unmapped in iso-8859-3
         self.assertEqual(b"foo\xa5bar".decode("iso-8859-3", "surrogateescape"),
@@ -84,7 +84,7 @@ class SurrogateEscapeTest(unittest.TestCase):
                          b"\xe4\xeb\xef\xf6\xfc")
 
     # FIXME:
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_encoding_works_normally(self):
         """
         Test that encoding into various encodings (particularly utf-16)

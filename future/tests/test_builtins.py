@@ -9,7 +9,7 @@ from future.builtins import (bytes, dict, int, range, round, str, super,
                              filter, map, zip)
 
 from future.utils import PY3, exec_, native_str, implements_iterator
-from future.tests.base import unittest, skip26
+from future.tests.base import unittest, skip26, expectedFailurePY2
 
 import sys
 import textwrap
@@ -91,7 +91,7 @@ class TestBuiltins(unittest.TestCase):
         self.assertTrue(isinstance(u'string', str))
         self.assertFalse(isinstance(u'string', bytes))
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_type(self):
         """
         The following fails when passed a unicode string on Python
@@ -855,7 +855,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(list(filter(lambda x: x>=3, (1, 2, 3, 4))), [3, 4])
         self.assertRaises(TypeError, list, filter(42, (1, 2)))
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_filter_pickle(self):
         f1 = filter(filter_char, "abcdeabcde")
         f2 = filter(filter_char, "abcdeabcde")
@@ -1058,7 +1058,7 @@ class BuiltinTest(unittest.TestCase):
             raise RuntimeError
         self.assertRaises(RuntimeError, list, map(badfunc, range(5)))
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_map_pickle(self):
         m1 = map(map_char, "Is this the real life?")
         m2 = map(map_char, "Is this the real life?")
@@ -1425,7 +1425,7 @@ class BuiltinTest(unittest.TestCase):
         a[0] = a
         self.assertEqual(repr(a), '{0: {...}}')
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_round(self):
         self.assertEqual(round(0.0), 0.0)
         # Was: self.assertEqual(type(round(0.0)), int)
@@ -1643,7 +1643,7 @@ class BuiltinTest(unittest.TestCase):
                     return i
         self.assertRaises(ValueError, list, zip(BadSeq(), BadSeq()))
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_zip_pickle(self):
         a = (1, 2, 3)
         b = (4, 5, 6)
