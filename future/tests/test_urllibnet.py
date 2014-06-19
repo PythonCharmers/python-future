@@ -16,7 +16,7 @@ import future.moves.urllib.request as urllib_request
 import email.message as email_message
 from email.message import Message
 
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26
 from future.builtins import int, open
 
 
@@ -110,6 +110,7 @@ class urlopenNetworkTests(unittest.TestCase):
     # On Windows, socket handles are not file descriptors; this
     # test can't pass on Windows.
     @unittest.skipIf(sys.platform in ('win32',), 'not appropriate for Windows')
+    @skip26
     def test_fileno(self):
         # Make sure fd returned by fileno is valid.
         with self.urlopen("http://www.python.org/", timeout=None) as open_url:

@@ -142,6 +142,7 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(str(e), "An error")
 
 
+    @skip26
     def test_as_native_str(self):
         """
         Tests the decorator as_native_str()
