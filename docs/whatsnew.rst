@@ -11,7 +11,7 @@ What's new in version 0.12.3
   classifiers and the tests now run successfully on Py3.4 (issue #67).
 
 - Add backports of ``collections.OrderedDict`` and
-  ``collections.Counter`` for Python 2.6.
+  ``collections.Counter`` for Python 2.6 (issue #52).
 
 - Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts
   (issue #57).
