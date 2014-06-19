@@ -1726,9 +1726,18 @@ class BuiltinTest(unittest.TestCase):
         # Issue #7994: object.__format__ with a non-empty format string is
         #  deprecated
         def test_deprecated_format_string(obj, fmt_str, should_raise_warning):
-            with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter("always", DeprecationWarning)
-                format(obj, fmt_str)
+            if sys.version_info[0] == 3 and sys.version_info[1] >= 4:
+                if should_raise_warning:
+                    self.assertRaises(TypeError, format, obj, fmt_str)
+                else:
+                    try:
+                        format(obj, fmt_str)
+                    except TypeError:
+                        self.fail('object.__format__ raised TypeError unexpectedly')
+            else:
+                with warnings.catch_warnings(record=True) as w:
+                    warnings.simplefilter("always", DeprecationWarning)
+                    format(obj, fmt_str)
             # Was:
             # if should_raise_warning:
             #     self.assertEqual(len(w), 1)
