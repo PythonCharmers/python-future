@@ -80,8 +80,8 @@ same behaviours as Python 3's :class:`str`::
     >>> assert s.split('B') == ['A', 'CD']
 
 .. If you must ensure identical use of (unicode) strings across Py3 and Py2 in a
-.. single-source codebase, you can wrap string literals in a :func:`~str` call, as
-..  follows::
+.. single-source codebase, you can wrap string literals in a :func:`~str` call,
+.. as follows::
 ..     
 ..     from __future__ import unicode_literals
 ..     from future.builtins import *
