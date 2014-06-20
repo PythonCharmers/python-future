@@ -389,7 +389,7 @@ def scrub_py2_sys_modules():
 def scrub_future_sys_modules():
     """
     On Py2 only: Removes any modules such as ``http`` and ``html.parser`` from
-    the ``sys.modules`` cache. Such modules would confuse code such as this:
+    the ``sys.modules`` cache. Such modules would confuse code such as this::
 
         # PyChecker does something like this:
         try:
@@ -399,12 +399,12 @@ def scrub_future_sys_modules():
         finally:
             PY3 = True
 
-    or this:
+    or this::
 
         import urllib       # We want this to pull in only the Py2 module
                             # after scrub_future_sys_modules() has been called
 
-    or this:
+    or this::
 
         # Requests does this in requests/packages/urllib3/connection.py:
         try: # Python 3
@@ -412,8 +412,9 @@ def scrub_future_sys_modules():
         except ImportError:
             from httplib import HTTPConnection, HTTPException
 
-    This function removes items matching this spec from sys.modules:
-        key: new_py3_module_name
+    This function removes items matching this spec from sys.modules::
+
+        key:   new_py3_module_name
         value: either future.backports module or py2 module with
                another name
     """
@@ -742,7 +743,9 @@ def from_import(module_name, *symbol_names, **kwargs):
     and this on Py2:
 
         >>> from future.moves.module_name import symbol_names[0], ...
+
     or:
+
         >>> from future.backports.module_name import symbol_names[0], ...
 
     except that it also handles dotted module names such as ``http.client``.

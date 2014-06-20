@@ -28,7 +28,7 @@ class newrange(Sequence):
     """
     Pure-Python backport of Python 3's range object.  See `the CPython
     documentation for details:
-        <http://docs.python.org/py3k/library/functions.html#range>`_
+    <http://docs.python.org/py3k/library/functions.html#range>`_
     """
 
     def __init__(self, *args):
