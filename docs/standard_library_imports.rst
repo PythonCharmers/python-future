@@ -70,7 +70,7 @@ install_hooks() call
 --------------------
 
 The fourth interface to the reorganized standard library is via an
-explicit call to ``install_hooks``::
+explicit call to ``install_hooks()``::
 
     from future import standard_library
     standard_library.install_hooks()
@@ -117,12 +117,13 @@ modules on Py2::
 List of standard library modules
 --------------------------------
 
-The modules available via ``future.moves`` are::
+The modules available from ``future.moves`` via one of the interfaces above are::
 
     import socketserver
     import queue
     import configparser
     from collections import UserList
+    from collections import Counter, OrderedDict   # backported to Py2.6
     from itertools import filterfalse, zip_longest
     
     import html

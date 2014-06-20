@@ -97,6 +97,7 @@ be accessed under their Python 3 names and locations in Python 2::
         import queue
         import configparser
         from collections import UserList
+        from collections import Counter, OrderedDict   # even on Py2.6
         from itertools import filterfalse, zip_longest
 
         import html
