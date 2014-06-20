@@ -15,7 +15,7 @@ Contributions to the ``lib2to3``-based fixers for ``futurize`` and
 ``pasteurize`` are particularly welcome! Please see :ref:`contributing`.
 
 
-.. _futurize-limitations
+.. _futurize-limitations:
 
 Known limitations
 -----------------

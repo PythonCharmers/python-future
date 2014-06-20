@@ -315,8 +315,8 @@ As usual, this feature has no effect on Python 3.
 
 
 
-Utility functions raise_ and exec_
-----------------------------------
+Utility functions ``raise_`` and ``exec_``
+------------------------------------------
 
 The functions ``raise_with_traceback()`` and ``raise_()`` were
 added to ``future.utils`` to offer either the Python 3.x or Python 2.x
