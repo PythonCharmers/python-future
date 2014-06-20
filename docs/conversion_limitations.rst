@@ -15,12 +15,12 @@ Contributions to the ``lib2to3``-based fixers for ``futurize`` and
 ``pasteurize`` are particularly welcome! Please see :ref:`contributing`.
 
 
-.. _futurize-limitations
+.. _futurize-limitations:
 
 Known limitations
 -----------------
 
-``futurize`` doesn't currently make this change automatically::
+``futurize`` doesn't currently make this change automatically:
 
 1. Strings containing ``\U`` produce a ``SyntaxError`` on Python 3. An example is::
 

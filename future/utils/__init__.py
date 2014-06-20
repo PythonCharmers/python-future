@@ -2,32 +2,38 @@
 A selection of cross-compatible functions for Python 2 and 3.
 
 These come from several sources:
-* Jinja2 (BSD licensed: see https://github.com/mitsuhiko/jinja2/blob/master/LICENSE
-* Pandas compatibility module pandas.compat
-* six.py by Benjamin Peterson
-* Django
+
+    * Jinja2 (BSD licensed: see
+      https://github.com/mitsuhiko/jinja2/blob/master/LICENSE)
+    * Pandas compatibility module pandas.compat
+    * six.py by Benjamin Peterson
+    * Django
 
 This exports useful functions for 2/3 compatible code that are not
 builtins on Python 3:
-* bind_method: binds functions to classes
-* ``native_str_to_bytes`` and ``bytes_to_native_str``
-* ``native_str``: always equal to the native platform string object (because
-  this may be shadowed by imports from future.builtins)
-* lists: lrange(), lmap(), lzip(), lfilter()
-* iterable method compatibility: iteritems, iterkeys, itervalues
-  * Uses the original method if available, otherwise uses items, keys, values.
-* types:
-    * text_type: unicode in Python 2, str in Python 3
-    * binary_type: str in Python 2, bythes in Python 3
-    * string_types: basestring in Python 2, str in Python 3
 
-* bchr(c):
-    Take an integer and make a 1-character byte string
-* bord(c)
-    Take the result of indexing on a byte string and make an integer
-* tobytes(s)
-    Take a text string, a byte string, or a sequence of characters taken
-    from a byte string, and make a byte string.
+    * bind_method: binds functions to classes
+    * ``native_str_to_bytes`` and ``bytes_to_native_str``
+    * ``native_str``: always equal to the native platform string object (because
+      this may be shadowed by imports from future.builtins)
+    * lists: lrange(), lmap(), lzip(), lfilter()
+    * iterable method compatibility: iteritems, iterkeys, itervalues
+
+        * Uses the original method if available, otherwise uses items, keys, values.
+
+    * types:
+
+        * text_type: unicode in Python 2, str in Python 3
+        * binary_type: str in Python 2, bythes in Python 3
+        * string_types: basestring in Python 2, str in Python 3
+
+    * bchr(c):
+        Take an integer and make a 1-character byte string
+    * bord(c)
+        Take the result of indexing on a byte string and make an integer
+    * tobytes(s)
+        Take a text string, a byte string, or a sequence of characters taken
+        from a byte string, and make a byte string.
 
 This module also defines a simple decorator called
 ``python_2_unicode_compatible`` (from django.utils.encoding) which

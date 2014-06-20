@@ -52,8 +52,8 @@ One workaround is to replace the dot with an underscore::
 
     import future.moves.http.client as http_client
 
-import_ and from_import functions
----------------------------------
+``import_`` and ``from_import`` functions
+-----------------------------------------
 
 A third option, which also works with two-level imports, is to use the
 ``import_`` and ``from_import`` functions from ``future.standard_library`` as
