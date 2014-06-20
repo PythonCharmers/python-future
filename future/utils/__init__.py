@@ -619,16 +619,18 @@ else:
             return obj
 
 
-__all__ = ['PY3', 'PY2', 'PYPY', 'python_2_unicode_compatible',
-           'as_native_str',
-           'with_metaclass', 'bchr', 'bstr', 'bord',
-           'tobytes', 'str_to_native_bytes', 'bytes_to_native_str', 
-           'lrange', 'lmap', 'lzip', 'lfilter',
-           'isidentifier', 'iteritems', 'iterkeys', 'itervalues',
-           'viewitems', 'viewkeys', 'viewvalues',
-           'bind_method', 'getexception',
-           'reraise', 'implements_iterator', 'get_next', 'encode_filename',
-           'is_new_style', 'native_str', 'old_div', 'as_native_str',
-           'listvalues', 'listitems'
+__all__ = ['PY2', 'PY26', 'PY3', 'PYPY',
+           'as_native_str', 'bind_method', 'bord', 'bstr',
+           'bytes_to_native_str', 'encode_filename', 'ensure_new_type',
+           'exec_', 'get_next', 'getexception', 'implements_iterator',
+           'is_new_style', 'isbytes', 'isidentifier', 'isint',
+           'isnewbytes', 'istext', 'iteritems', 'iterkeys', 'itervalues',
+           'lfilter', 'listitems', 'listvalues', 'lmap', 'lrange',
+           'lzip', 'native', 'native_bytes', 'native_str',
+           'native_str_to_bytes', 'old_div',
+           'python_2_unicode_compatible', 'raise_',
+           'raise_with_traceback', 'reraise', 'text_to_native_str',
+           'tobytes', 'viewitems', 'viewkeys', 'viewvalues',
+           'with_metaclass'
           ]
 
