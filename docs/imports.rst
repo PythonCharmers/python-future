@@ -3,7 +3,7 @@
 Imports
 =======
 
-.. ___future__-imports:
+.. _-__future__-imports:
 
 __future__ imports
 ------------------

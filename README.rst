@@ -166,8 +166,6 @@ the top of each module.
 In both cases, the result should be relatively clean Py3-style code that runs
 mostly unchanged on both Python 2 and Python 3.
 
-.. _forwards-conversion:
-
 Futurize: 2 to both
 ~~~~~~~~~~~~~~~~~~~
 

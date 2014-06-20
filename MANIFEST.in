@@ -11,6 +11,7 @@ recursive-include docs *.inc
 recursive-include docs *.ipynb
 recursive-include docs *.png
 recursive-include docs *.py
+recursive-include docs *.rst
 recursive-include docs *.sh
 recursive-include docs *.tiff
 recursive-include docs *.txt

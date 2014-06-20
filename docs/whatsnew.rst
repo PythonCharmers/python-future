@@ -26,7 +26,7 @@ What's new in version 0.12.3
     - Fix deprecated ``unittest`` usage in Py3 (also issue #62).
     - Be explicit about encoding temporary file contents as UTF-8 for
       when LANG=C (e.g. when building an RPM) (issue #63).
-    - All undecorated tests are now passing again on Python 2.7, 3.3,
+    - All undecorated tests are now passing again on Python 2.6, 2.7, 3.3,
       and 3.4 (thanks to Elliott Sales de Andrade).
 
 - Docs:

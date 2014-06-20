@@ -315,8 +315,8 @@ As usual, this feature has no effect on Python 3.
 
 
 
-Utility functions raise_ and exec_
-----------------------------------
+Utility functions ``raise_`` and ``exec_``
+------------------------------------------
 
 The functions ``raise_with_traceback()`` and ``raise_()`` were
 added to ``future.utils`` to offer either the Python 3.x or Python 2.x
@@ -463,19 +463,19 @@ v0.11.4:
 
 v0.11.3:
   * The ``futurize`` and ``pasteurize`` scripts add an explicit call to
-  ``future.standard_library.install_hooks()`` whenever modules affected by PEP
-  3108 are imported.
+    ``future.standard_library.install_hooks()`` whenever modules affected by
+    PEP 3108 are imported.
 
   * The ``future.builtins.bytes`` constructor now accepts ``frozenset``
-  objects as on Py3.
+    objects as on Py3.
 
 v0.11.2:
   * The ``past.autotranslate`` feature now finds modules to import more
-  robustly and works with Python eggs.
+    robustly and works with Python eggs.
 
 v0.11.1:
   * Update to ``requirements_py26.txt`` for Python 2.6. Small updates to
-  docs and tests.
+    docs and tests.
 
 v0.11:
   * New ``past`` package with ``past.builtins`` and ``past.translation``
