@@ -10,8 +10,8 @@ compatible code.
 
 .. include:: bytes_object.rst
 .. include:: str_object.rst
-.. include:: int_object.rst
 .. include:: dict_object.rst
+.. include:: int_object.rst
 .. include:: isinstance.rst
 .. include:: open_function.rst
 .. include:: custom_str_methods.rst

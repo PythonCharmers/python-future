@@ -15,7 +15,6 @@ which passes most of the Python 3 tests for :mod:`bytes`. (See
 follows::
 
     >>> from future.builtins import bytes
-    
     >>> b = bytes(b'ABCD')
 
 On Py3, this is simply the builtin :class:`bytes` object. On Py2, this

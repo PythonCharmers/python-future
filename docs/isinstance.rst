@@ -52,7 +52,7 @@ However, note that the last test requires that ``unicode_literals`` be imported 
     >>> assert isinstance('unicode string 2', str)
 
 This works because the backported types ``int``, ``bytes`` and ``str``
-have metaclasses that override ``__instancecheck__``. See `PEP 3119
+(and others) have metaclasses that override ``__instancecheck__``. See `PEP 3119
 <http://www.python.org/dev/peps/pep-3119/#overloading-isinstance-and-issubclass>`_
 for details.
 
