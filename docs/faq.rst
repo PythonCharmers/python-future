@@ -234,7 +234,7 @@ fewer compatibility hacks.
 
 
 What is the relationship between ``python-future`` and ``python-modernize``?
------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 ``python-future`` contains, in addition to the ``future`` compatibility
 package, a ``futurize`` script that is similar to ``python-modernize.py``
@@ -257,7 +257,7 @@ Platform and version support
 .. _supported-versions:
 
 Which versions of Python does ``python-future`` support?
--------------------------------------------------
+--------------------------------------------------------
 
 Python 2.6, 2.7, and 3.3+ only.
 
@@ -289,7 +289,7 @@ and pull requests are welcome!
 
 
 Do you support IronPython and/or Jython?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Not sure. This would be nice...
 

@@ -82,7 +82,7 @@ super()
 round()
 -------
 Python 3 modifies the behaviour of ``round()`` to use "Banker's Rounding".
-See http://stackoverflow.com/a/10825998_. See the ``newround`` module
+See http://stackoverflow.com/a/10825998. See the ``newround`` module
 docstring for more details.
 
 """
