@@ -22,6 +22,9 @@ are `Mezzanine <http://mezzanine.jupo.org/>`_ and `ObsPy
 Features
 --------
 
+.. image:: https://travis-ci.org/PythonCharmers/python-future.svg?branch=master
+       :target: https://travis-ci.org/PythonCharmers/python-future
+
 -   ``future.builtins`` package provides backports and remappings for 19
     builtins with different semantics on Py3 versus Py2
 
