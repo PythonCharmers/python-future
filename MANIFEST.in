@@ -4,6 +4,8 @@ include *.rst
 include *.py
 include .travis.yml
 include pytest.ini
+recursive-include docs LICENSE
+recursive-include docs README
 recursive-include docs *.conf
 recursive-include docs *.css_t
 recursive-include docs *.html
@@ -16,6 +18,7 @@ recursive-include docs *.sh
 recursive-include docs *.tiff
 recursive-include docs *.txt
 recursive-include docs Makefile
+recursive-include future *.au
 recursive-include future *.gif
 recursive-include future *.pem
 recursive-include future *.py
