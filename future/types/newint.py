@@ -4,12 +4,8 @@ Backport of Python 3's int, based on Py2's long.
 They are very similar. The most notable difference is:
 
 - representation: trailing L in Python 2 removed in Python 3
-
 """
-
 from __future__ import division
-
-from numbers import Integral
 
 from future.types.newbytes import newbytes
 from future.utils import PY3, isint, istext, isbytes, with_metaclass
@@ -36,15 +32,16 @@ class newint(with_metaclass(BaseNewInt, long)):
         |  int(x=0) -> integer
         |  int(x, base=10) -> integer
         |
-        |  Convert a number or string to an integer, or return 0 if no arguments
-        |  are given.  If x is a number, return x.__int__().  For floating point
-        |  numbers, this truncates towards zero.
+        |  Convert a number or string to an integer, or return 0 if no
+        |  arguments are given.  If x is a number, return x.__int__().  For
+        |  floating point numbers, this truncates towards zero.
         |
         |  If x is not a number or if base is given, then x must be a string,
         |  bytes, or bytearray instance representing an integer literal in the
-        |  given base.  The literal can be preceded by '+' or '-' and be surrounded
-        |  by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
-        |  Base 0 means to interpret the base from the string as an integer literal.
+        |  given base.  The literal can be preceded by '+' or '-' and be
+        |  surrounded by whitespace.  The base defaults to 10.  Valid bases are
+        |  0 and 2-36. Base 0 means to interpret the base from the string as an
+        |  integer literal.
         |  >>> int('0b100', base=0)
         |  4
 
@@ -55,12 +52,14 @@ class newint(with_metaclass(BaseNewInt, long)):
             val = x
         else:
             if not isint(val):
-                raise TypeError('__int__ returned non-int ({0})'.format(type(val)))
+                raise TypeError('__int__ returned non-int ({0})'.format(
+                    type(val)))
 
         if base != 10:
             # Explicit base
             if not (istext(val) or isbytes(val) or isinstance(val, bytearray)):
-                raise TypeError("int() can't convert non-string with explicit base")
+                raise TypeError(
+                    "int() can't convert non-string with explicit base")
             try:
                 return super(newint, cls).__new__(cls, val, base)
             except TypeError:
@@ -77,9 +76,8 @@ class newint(with_metaclass(BaseNewInt, long)):
             try:
                 return super(newint, cls).__new__(cls, newbytes(val))
             except:
-                raise TypeError("newint argument must be a string or a number, not '{0}'".format(
-                                    type(val)))
-
+                raise TypeError("newint argument must be a string or a number,"
+                                "not '{0}'".format(type(val)))
 
     def __repr__(self):
         """
@@ -117,7 +115,7 @@ class newint(with_metaclass(BaseNewInt, long)):
         value = super(newint, self).__mul__(other)
         if isint(value):
             return newint(value)
-        if value is NotImplemented:
+        elif value is NotImplemented:
             return long(self) * other
         return value
 
@@ -125,26 +123,30 @@ class newint(with_metaclass(BaseNewInt, long)):
         value = super(newint, self).__rmul__(other)
         if isint(value):
             return newint(value)
-        if value is NotImplemented:
+        elif value is NotImplemented:
             return other * long(self)
         return value
 
     def __div__(self, other):
+        # We override this rather than e.g. relying on object.__div__ or
+        # long.__div__ because we want to wrap the value in a newint()
+        # call if other is another int
         value = long(self) / other
-        if isint(value):
+        if isinstance(other, (int, long)):
             return newint(value)
         else:
             return value
 
     def __rdiv__(self, other):
         value = other / long(self)
-        if isint(value):
+        if isinstance(other, (int, long)):
             return newint(value)
         else:
             return value
 
     def __idiv__(self, other):
-        # long has no __idiv__ method. Use __itruediv__ and cast back to newint:
+        # long has no __idiv__ method. Use __itruediv__ and cast back to
+        # newint:
         value = self.__itruediv__(other)
         if isinstance(other, (int, long)):
             return newint(value)
@@ -199,44 +201,51 @@ class newint(with_metaclass(BaseNewInt, long)):
         return (newint(value[0]), newint(value[1]))
 
     def __pow__(self, other):
-        return newint(super(newint, self).__pow__(other))
+        value = super(newint, self).__pow__(other)
+        if value is NotImplemented:
+            return long(self) ** other
+        return newint(value)
 
     def __rpow__(self, other):
-        return newint(super(newint, self).__rpow__(other))
+        value = super(newint, self).__rpow__(other)
+        if value is NotImplemented:
+            return other ** long(self)
+        return newint(value)
 
     def __lshift__(self, other):
-        return newint(super(newint, self).__lshift__(other))
-
-    def __rlshift__(self, other):
+        if not isint(other):
+            raise TypeError(
+                "unsupported operand type(s) for <<: '%s' and '%s'" %
+                (type(self).__name__, type(other).__name__))
         return newint(super(newint, self).__lshift__(other))
 
     def __rshift__(self, other):
-        return newint(super(newint, self).__rshift__(other))
-
-    def __rrshift__(self, other):
+        if not isint(other):
+            raise TypeError(
+                "unsupported operand type(s) for >>: '%s' and '%s'" %
+                (type(self).__name__, type(other).__name__))
         return newint(super(newint, self).__rshift__(other))
 
     def __and__(self, other):
+        if not isint(other):
+            raise TypeError(
+                "unsupported operand type(s) for &: '%s' and '%s'" %
+                (type(self).__name__, type(other).__name__))
         return newint(super(newint, self).__and__(other))
 
-    def __rand__(self, other):
-        return newint(super(newint, self).__rand__(other))
-
     def __or__(self, other):
+        if not isint(other):
+            raise TypeError(
+                "unsupported operand type(s) for |: '%s' and '%s'" %
+                (type(self).__name__, type(other).__name__))
         return newint(super(newint, self).__or__(other))
 
-    def __ror__(self, other):
-        return newint(super(newint, self).__ror__(other))
-
     def __xor__(self, other):
+        if not isint(other):
+            raise TypeError(
+                "unsupported operand type(s) for ^: '%s' and '%s'" %
+                (type(self).__name__, type(other).__name__))
         return newint(super(newint, self).__xor__(other))
-
-    def __rxor__(self, other):
-        return newint(super(newint, self).__rxor__(other))
-
-    # __radd__(self, other) __rsub__(self, other) __rmul__(self, other) __rdiv__(self, other) __rtruediv__(self, other) __rfloordiv__(self, other) __rmod__(self, other) __rdivmod__(self, other) __rpow__(self, other) __rlshift__(self, other) __rrshift__(self, other) __rand__(self, other) __rxor__(self, other) __ror__(self, other)
-
-    # __iadd__(self, other) __isub__(self, other) __imul__(self, other) __idiv__(self, other) __itruediv__(self, other) __ifloordiv__(self, other) __imod__(self, other) __ipow__(self, other, [modulo]) __ilshift__(self, other) __irshift__(self, other) __iand__(self, other) __ixor__(self, other) __ior__(self, other)
 
     def __neg__(self):
         return newint(super(newint, self).__neg__())
