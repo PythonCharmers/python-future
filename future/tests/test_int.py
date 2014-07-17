@@ -655,6 +655,40 @@ class IntTestCases(unittest.TestCase):
         self.assertTrue(isinstance(a % 0.5, float))
         self.assertTrue(isinstance(0.5 % a, float))
 
+    def test_upcasting_to_complex(self):
+        """
+        Integers should automatically be upcasted to complex numbers for
+        arithmetic operations.
+
+        Python 3 cannot mod complex numbers so this does not have to be
+        supported here.
+        """
+        a = int(3)
+
+        # Addition with complex.
+        self.assertEqual(a + 0.5j, 3.0 + 0.5j)
+        self.assertEqual(0.5j + a, 3.0 + 0.5j)
+        self.assertTrue(isinstance(a + 0.5j, complex))
+        self.assertTrue(isinstance(0.5j + a, complex))
+
+        # Subtraction with complex.
+        self.assertEqual(a - 0.5j, 3.0 - 0.5j)
+        self.assertEqual(0.5j - a, -3.0 + 0.5j)
+        self.assertTrue(isinstance(a - 0.5j, complex))
+        self.assertTrue(isinstance(0.5j - a, complex))
+
+        # Multiplication with complex.
+        self.assertEqual(a * 0.5j, 1.5j)
+        self.assertEqual(0.5j * a, 1.5j)
+        self.assertTrue(isinstance(a * 0.5j, complex))
+        self.assertTrue(isinstance(0.5j * a, complex))
+
+        # Division with complex.
+        self.assertEqual(a / 0.5j, -6.0j)
+        self.assertEqual(0.5j / a, (0.5 / 3.0) * 1j)
+        self.assertTrue(isinstance(a / 0.5j, complex))
+        self.assertTrue(isinstance(0.5j / a, complex))
+
 
 if __name__ == "__main__":
     unittest.main()
