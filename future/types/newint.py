@@ -127,28 +127,31 @@ class newint(with_metaclass(BaseNewInt, long)):
             return other * long(self)
         return value
 
-    #def __div__(self, other):
-        #value = long(self) / other
-        #if isint(value):
-            #return newint(value)
-        #else:
-            #return value
+    def __div__(self, other):
+        # We override this rather than e.g. relying on object.__div__ or
+        # long.__div__ because we want to wrap the value in a newint()
+        # call if other is another int
+        value = long(self) / other
+        if isinstance(other, (int, long)):
+            return newint(value)
+        else:
+            return value
 
-    #def __rdiv__(self, other):
-        #value = other / long(self)
-        #if isint(value):
-            #return newint(value)
-        #else:
-            #return value
+    def __rdiv__(self, other):
+        value = other / long(self)
+        if isinstance(other, (int, long)):
+            return newint(value)
+        else:
+            return value
 
-    #def __idiv__(self, other):
-        ## long has no __idiv__ method. Use __itruediv__ and cast back to
-        ## newint:
-        #value = self.__itruediv__(other)
-        #if isinstance(other, (int, long)):
-            #return newint(value)
-        #else:
-            #return value
+    def __idiv__(self, other):
+        # long has no __idiv__ method. Use __itruediv__ and cast back to
+        # newint:
+        value = self.__itruediv__(other)
+        if isinstance(other, (int, long)):
+            return newint(value)
+        else:
+            return value
 
     def __truediv__(self, other):
         value = super(newint, self).__truediv__(other)
