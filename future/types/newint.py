@@ -35,11 +35,11 @@ class newint(with_metaclass(BaseNewInt, long)):
 
         |  int(x=0) -> integer
         |  int(x, base=10) -> integer
-        |  
+        |
         |  Convert a number or string to an integer, or return 0 if no arguments
         |  are given.  If x is a number, return x.__int__().  For floating point
         |  numbers, this truncates towards zero.
-        |  
+        |
         |  If x is not a number or if base is given, then x must be a string,
         |  bytes, or bytearray instance representing an integer literal in the
         |  given base.  The literal can be preceded by '+' or '-' and be surrounded
@@ -79,8 +79,8 @@ class newint(with_metaclass(BaseNewInt, long)):
             except:
                 raise TypeError("newint argument must be a string or a number, not '{0}'".format(
                                     type(val)))
-            
-        
+
+
     def __repr__(self):
         """
         Without the L suffix
@@ -92,20 +92,29 @@ class newint(with_metaclass(BaseNewInt, long)):
     def __add__(self, other):
         value = super(newint, self).__add__(other)
         if value is NotImplemented:
-            # e.g. a float
+            # e.g. a float, complex, ...
             return long(self) + other
         return newint(value)
 
     def __radd__(self, other):
         value = super(newint, self).__radd__(other)
+        if value is NotImplemented:
+            # e.g. a float, complex, ...
+            return other + long(self)
         return newint(value)
 
     def __sub__(self, other):
         value = super(newint, self).__sub__(other)
+        if value is NotImplemented:
+            # e.g. a float, complex, ...
+            return long(self) - other
         return newint(value)
 
     def __rsub__(self, other):
         value = super(newint, self).__rsub__(other)
+        if value is NotImplemented:
+            # e.g. a float, complex, ...
+            return other - long(self)
         return newint(value)
 
     def __mul__(self, other):
@@ -120,6 +129,8 @@ class newint(with_metaclass(BaseNewInt, long)):
         value = super(newint, self).__rmul__(other)
         if isint(value):
             return newint(value)
+        if value is NotImplemented:
+            return other * long(self)
         return value
 
     def __div__(self, other):
@@ -129,6 +140,8 @@ class newint(with_metaclass(BaseNewInt, long)):
         value = long(self) / other
         if isinstance(other, (int, long)):
             return newint(value)
+        elif value is NotImplemented:
+            return long(self) / other
         else:
             return value
 
@@ -136,6 +149,8 @@ class newint(with_metaclass(BaseNewInt, long)):
         value = other / long(self)
         if isinstance(other, (int, long)):
             return newint(value)
+        elif value is NotImplemented:
+            return other / long(self)
         else:
             return value
 
@@ -175,10 +190,18 @@ class newint(with_metaclass(BaseNewInt, long)):
         return newint(mylong)
 
     def __mod__(self, other):
-        return newint(super(newint, self).__mod__(other))
+        value = super(newint, self).__mod__(other)
+        if value is NotImplemented:
+            # e.g. a float, complex, ...
+            return long(self) % other
+        return newint(value)
 
     def __rmod__(self, other):
-        return newint(super(newint, self).__rmod__(other))
+        value = super(newint, self).__rmod__(other)
+        if value is NotImplemented:
+            # e.g. a float, complex, ...
+            return other % long(self)
+        return newint(value)
 
     def __divmod__(self, other):
         value = super(newint, self).__divmod__(other)
@@ -224,19 +247,19 @@ class newint(with_metaclass(BaseNewInt, long)):
     def __rxor__(self, other):
         return newint(super(newint, self).__rxor__(other))
 
-    # __radd__(self, other) __rsub__(self, other) __rmul__(self, other) __rdiv__(self, other) __rtruediv__(self, other) __rfloordiv__(self, other) __rmod__(self, other) __rdivmod__(self, other) __rpow__(self, other) __rlshift__(self, other) __rrshift__(self, other) __rand__(self, other) __rxor__(self, other) __ror__(self, other) 
+    # __radd__(self, other) __rsub__(self, other) __rmul__(self, other) __rdiv__(self, other) __rtruediv__(self, other) __rfloordiv__(self, other) __rmod__(self, other) __rdivmod__(self, other) __rpow__(self, other) __rlshift__(self, other) __rrshift__(self, other) __rand__(self, other) __rxor__(self, other) __ror__(self, other)
 
     # __iadd__(self, other) __isub__(self, other) __imul__(self, other) __idiv__(self, other) __itruediv__(self, other) __ifloordiv__(self, other) __imod__(self, other) __ipow__(self, other, [modulo]) __ilshift__(self, other) __irshift__(self, other) __iand__(self, other) __ixor__(self, other) __ior__(self, other)
 
     def __neg__(self):
         return newint(super(newint, self).__neg__())
-        
+
     def __pos__(self):
         return newint(super(newint, self).__pos__())
-    
+
     def __abs__(self):
         return newint(super(newint, self).__abs__())
-    
+
     def __invert__(self):
         return newint(super(newint, self).__invert__())
 
