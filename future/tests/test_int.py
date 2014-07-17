@@ -398,7 +398,7 @@ class IntTestCases(unittest.TestCase):
     ####################################################################
     # future-specific tests are below:
     ####################################################################
-    
+
     # Exception messages in Py2 are 8-bit strings. The following fails,
     # even if the testlist strings are wrapped in str() calls...
     @expectedFailurePY2
@@ -617,6 +617,43 @@ class IntTestCases(unittest.TestCase):
         c = a.astype(int)
         print(b.dtype)
         assert b.dtype == np.int64 == c.dtype
+
+    def test_upcasting_to_floats(self):
+        """
+        Integers should automatically be upcasted to floats for arithmetic
+        operations.
+        """
+        a = int(3)
+
+        # Addition with floats.
+        self.assertEqual(a + 0.5, 3.5)
+        self.assertEqual(0.5 + a, 3.5)
+        self.assertTrue(isinstance(a + 0.5, float))
+        self.assertTrue(isinstance(0.5 + a, float))
+
+        # Subtraction with floats.
+        self.assertEqual(a - 0.5, 2.5)
+        self.assertEqual(0.5 - a, -2.5)
+        self.assertTrue(isinstance(a - 0.5, float))
+        self.assertTrue(isinstance(0.5 - a, float))
+
+        # Multiplication with floats.
+        self.assertEqual(a * 0.5, 1.5)
+        self.assertEqual(0.5 * a, 1.5)
+        self.assertTrue(isinstance(a * 0.5, float))
+        self.assertTrue(isinstance(0.5 * a, float))
+
+        # Division with floats.
+        self.assertEqual(a / 0.5, 6.0)
+        self.assertEqual(0.5 / a, 0.5 / 3.0)
+        self.assertTrue(isinstance(a / 0.5, float))
+        self.assertTrue(isinstance(0.5 / a, float))
+
+        # Modulo with floats.
+        self.assertEqual(a % 0.5, 0.0)
+        self.assertEqual(0.5 % a, 0.5)
+        self.assertTrue(isinstance(a % 0.5, float))
+        self.assertTrue(isinstance(0.5 % a, float))
 
 
 if __name__ == "__main__":
