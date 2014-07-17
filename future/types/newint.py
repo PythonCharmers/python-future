@@ -92,28 +92,24 @@ class newint(with_metaclass(BaseNewInt, long)):
     def __add__(self, other):
         value = super(newint, self).__add__(other)
         if value is NotImplemented:
-            # e.g. a float, complex, ...
             return long(self) + other
         return newint(value)
 
     def __radd__(self, other):
         value = super(newint, self).__radd__(other)
         if value is NotImplemented:
-            # e.g. a float, complex, ...
             return other + long(self)
         return newint(value)
 
     def __sub__(self, other):
         value = super(newint, self).__sub__(other)
         if value is NotImplemented:
-            # e.g. a float, complex, ...
             return long(self) - other
         return newint(value)
 
     def __rsub__(self, other):
         value = super(newint, self).__rsub__(other)
         if value is NotImplemented:
-            # e.g. a float, complex, ...
             return other - long(self)
         return newint(value)
 
@@ -134,23 +130,16 @@ class newint(with_metaclass(BaseNewInt, long)):
         return value
 
     def __div__(self, other):
-        # We override this rather than e.g. relying on object.__div__ or
-        # long.__div__ because we want to wrap the value in a newint()
-        # call if other is another int
         value = long(self) / other
-        if isinstance(other, (int, long)):
+        if isint(value):
             return newint(value)
-        elif value is NotImplemented:
-            return long(self) / other
         else:
             return value
 
     def __rdiv__(self, other):
         value = other / long(self)
-        if isinstance(other, (int, long)):
+        if isint(value):
             return newint(value)
-        elif value is NotImplemented:
-            return other / long(self)
         else:
             return value
 
@@ -192,14 +181,12 @@ class newint(with_metaclass(BaseNewInt, long)):
     def __mod__(self, other):
         value = super(newint, self).__mod__(other)
         if value is NotImplemented:
-            # e.g. a float, complex, ...
             return long(self) % other
         return newint(value)
 
     def __rmod__(self, other):
         value = super(newint, self).__rmod__(other)
         if value is NotImplemented:
-            # e.g. a float, complex, ...
             return other % long(self)
         return newint(value)
 
