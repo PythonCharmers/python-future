@@ -709,6 +709,7 @@ class IntTestCases(unittest.TestCase):
         """
         a = int(3)
         b = int(5)
+        c = int(-5)
 
         self.assertEqual(b - a, 2)
         self.assertTrue(isinstance(b - a, int))
@@ -721,6 +722,10 @@ class IntTestCases(unittest.TestCase):
 
         self.assertEqual(a ** b, 243)
         self.assertTrue(isinstance(a ** b, int))
+
+        self.assertEqual(abs(c), 5)
+        self.assertEqual(abs(c), b)
+        self.assertTrue(isinstance(abs(c), int))
 
     def test_bitwise_operations(self):
         """
@@ -757,6 +762,21 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(~a, -4)
         self.assertTrue(isinstance(~a, int))
 
+    def test_unary_operators(self):
+        a = int(3)
+        b = int(-3)
+
+        self.assertEqual(+a, a)
+        self.assertEqual(+a, 3)
+        self.assertEqual(+b, b)
+        self.assertEqual(+b, -3)
+        self.assertTrue(isinstance(+a, int))
+
+        self.assertEqual(-a, b)
+        self.assertEqual(-a, -3)
+        self.assertEqual(-b, a)
+        self.assertEqual(-b, 3)
+        self.assertTrue(isinstance(-a, int))
 
 if __name__ == "__main__":
     unittest.main()
