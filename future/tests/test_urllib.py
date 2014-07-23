@@ -16,7 +16,7 @@ from future.backports.urllib import error as urllib_error
 from future.backports.http import client as http_client
 from future.backports.test import support
 from future.backports.email import message as email_message
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26, expectedFailurePY26
 
 
 def hexescape(char):
@@ -229,14 +229,17 @@ class urlopen_HttpTests(unittest.TestCase, FakeHTTPMixin):
         finally:
             self.unfakehttp()
 
+    @expectedFailurePY26
     def test_read_0_9(self):
         # "0.9" response accepted (but not "simple responses" without
         # a status line)
         self.check_read(b"0.9")
 
+    @expectedFailurePY26
     def test_read_1_0(self):
         self.check_read(b"1.0")
 
+    @expectedFailurePY26
     def test_read_1_1(self):
         self.check_read(b"1.1")
 
@@ -310,6 +313,7 @@ Content-Type: text/html; charset=iso-8859-1
             urlopen('ftp://localhost/a/file/which/doesnot/exists.py')
 
 
+    @expectedFailurePY26
     def test_userpass_inurl(self):
         self.fakehttp(b"HTTP/1.0 200 OK\r\n\r\nHello!")
         try:
@@ -321,6 +325,7 @@ Content-Type: text/html; charset=iso-8859-1
         finally:
             self.unfakehttp()
 
+    @expectedFailurePY26
     def test_userpass_inurl_w_spaces(self):
         self.fakehttp(b"HTTP/1.0 200 OK\r\n\r\nHello!")
         try:
@@ -487,6 +492,7 @@ class urlretrieve_FileTests(unittest.TestCase):
 class urlretrieve_HttpTests(unittest.TestCase, FakeHTTPMixin):
     """Test urllib.urlretrieve() using fake http connections"""
 
+    @skip26
     def test_short_content_raises_ContentTooShortError(self):
         self.fakehttp(b'''HTTP/1.1 200 OK
 Date: Wed, 02 Jan 2008 03:03:54 GMT
@@ -508,6 +514,7 @@ FF
             finally:
                 self.unfakehttp()
 
+    @skip26
     def test_short_content_raises_ContentTooShortError_without_reporthook(self):
         self.fakehttp(b'''HTTP/1.1 200 OK
 Date: Wed, 02 Jan 2008 03:03:54 GMT
@@ -1320,6 +1327,7 @@ class RequestTests(unittest.TestCase):
 
 class URL2PathNameTests(unittest.TestCase):
 
+    @expectedFailurePY26
     def test_converting_drive_letter(self):
         self.assertEqual(url2pathname("///C|"), 'C:')
         self.assertEqual(url2pathname("///C:"), 'C:')

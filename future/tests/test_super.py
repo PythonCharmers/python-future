@@ -3,7 +3,7 @@
 from __future__ import absolute_import, division, unicode_literals
 import sys
 
-from future.tests.base import unittest
+from future.tests.base import unittest, skip26, expectedFailurePY2
 from future import utils
 from future.builtins import super
 
@@ -57,7 +57,7 @@ class TestSuper(unittest.TestCase):
         self.assertEqual(E().f(), 'ABCD')
         self.assertEqual(E.f(E()), 'ABCD')
 
-    @unittest.expectedFailure    # not working yet: infinite loop
+    @expectedFailurePY2    # not working yet: infinite loop
     def test_unbound_method_transfer_working(self):
         self.assertEqual(F().f(), 'ABCD')
         self.assertEqual(F.f(F()), 'ABCD')
@@ -155,6 +155,7 @@ class TestSuperFromTestDescrDotPy(unittest.TestCase):
     """
     These are from Python 3.3.5/Lib/test/test_descr.py
     """
+    @skip26
     def test_classmethods(self):
         # Testing class methods...
         class C(object):

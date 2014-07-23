@@ -1,16 +1,70 @@
+.. whats-new-0.13
+
+What's New in v0.13.0
+*********************
+
+The following internal modules are deprecated. They will be removed in the next
+major release:
+
+- ``future.utils.encoding`` and ``future.utils.six``.
+
+See `here <http://fedoraproject.org/wiki/Packaging:No_Bundled_Libraries`_ for a rationale for unbundling them.
+
+
+.. whats-new-0.12.4:
+
 What's New in v0.12.x
 *********************
 
+
+.. whats-new-0.12.4:
+
+What's new in version 0.12.4
+============================
+
+- Fix upcasting behaviour of newint (issue #76).
+
+
+.. whats-new-0.12.3:
+
+What's new in version 0.12.3
+============================
+
+- Add "official Python 3.4 support": Py3.4 is now listed among the PyPI Trove
+  classifiers and the tests now run successfully on Py3.4 (issue #67).
+
+- Add backports of ``collections.OrderedDict`` and
+  ``collections.Counter`` for Python 2.6 (issue #52).
+
+- Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts
+  (issue #57).
+
+- Fix ``future.utils.ensure_new_type`` with ``long`` input (issue #65).
+
+- Remove some false alarms on checks for ambiguous fixer names with
+  ``futurize -f ...``.
+
+- Testing fixes:
+    - Don't hard-code Python interpreter command in tests (issue #62).
+    - Fix deprecated ``unittest`` usage in Py3 (also issue #62).
+    - Be explicit about encoding temporary file contents as UTF-8 for
+      when LANG=C (e.g. when building an RPM) (issue #63).
+    - All undecorated tests are now passing again on Python 2.6, 2.7, 3.3,
+      and 3.4 (thanks to Elliott Sales de Andrade).
+
+- Docs:
+    - Add list of fixers used by ``futurize`` (issue #58).
+    - Add list of contributors to the Credits page.
 
 .. whats-new-0.12.2:
 
 What's new in version 0.12.2
 ============================
 
-- Add ``bytes.maketrans()`` method (issue #51)
-- Add support for Python versions between 2.7.0 and 2.7.3 (inclusive). (Patch
-  contributed by Nicolas Delaby.) (issue #53)
-- Bug fix for ``newlist(newlist([1, 2, 3]))``: issue #50
+- Add ``bytes.maketrans()`` method (issue #51).
+- Add support for Python versions between 2.7.0 and 2.7.3 (inclusive)
+  (issue #53).
+- Bug fix for ``newlist(newlist([1, 2, 3]))`` (issue #50).
 
 
 .. whats-new-0.12.1:

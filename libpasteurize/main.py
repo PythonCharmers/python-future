@@ -36,11 +36,19 @@ from future.builtins import *
 import sys
 import logging
 import optparse
-
 from lib2to3.main import main, warn, StdoutRefactoringTool
 from lib2to3 import refactor
 
+import future
 from libpasteurize.fixes import fix_names
+
+__version__ = '0.13.0-dev'
+
+if __version__ != future.__version__:
+    warn('The libfuturize and future packages have different versions. '
+         'This may break the pasteurize script. Please ensure the versions '
+         'are consistent.')
+
 
 
 def main(args=None):
@@ -49,7 +57,9 @@ def main(args=None):
     Returns a suggested exit status (0, 1, 2).
     """
     # Set up option parser
-    parser = optparse.OptionParser(usage="futurize [options] file|dir ...")
+    parser = optparse.OptionParser(usage="pasteurize [options] file|dir ...")
+    parser.add_option("-V", "--version", action="store_true",
+                      help="Report the version number of pasteurize")
     parser.add_option("-a", "--all-imports", action="store_true",
                       help="Adds all __future__ and future imports to each module")
     parser.add_option("-d", "--doctests_only", action="store_true",
@@ -85,6 +95,9 @@ def main(args=None):
         warn("not writing files and not printing diffs; that's not very useful")
     if not options.write and options.nobackups:
         parser.error("Can't use -n without -w")
+    if options.version:
+        print(__version__)
+        return 0
     if options.list_fixes:
         print("Available transformations for the -f/--fix option:")
         for fixname in sorted(avail_fixes):

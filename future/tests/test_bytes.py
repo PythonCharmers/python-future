@@ -8,7 +8,7 @@ from future.builtins import *
 from future import utils
 
 from numbers import Integral
-from future.tests.base import unittest
+from future.tests.base import unittest, expectedFailurePY2
 
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
@@ -115,7 +115,7 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(b[0:1], b'A')
         self.assertEqual(b[:], b'ABCD')
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_b_literal_creates_newbytes_object(self):
         """
         It would nice if the b'' literal syntax could be coaxed into producing

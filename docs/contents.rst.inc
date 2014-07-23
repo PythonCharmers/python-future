@@ -12,7 +12,7 @@ Contents:
    what_else
    automatic_conversion
    porting
-   standard_library_incompatibilities
+   stdlib_incompatibilities
    faq
    changelog
    credits

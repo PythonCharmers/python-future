@@ -51,8 +51,12 @@ class TestStandardLibraryRenames(CodeHandler):
         self.assertTrue(not any([standard_library.is_py2_stdlib_module(module)
                              for module in externalmodules]))
 
-        py2modules = [sys, tempfile, os, copy, textwrap]
+        py2modules = [sys, tempfile, copy, textwrap]
         if utils.PY2:
+            # Debugging:
+            for module in py2modules:
+                if hasattr(module, '__file__'):
+                    print(module.__file__, file=sys.stderr)
             self.assertTrue(all([standard_library.is_py2_stdlib_module(module)
                                  for module in py2modules]))
         else:

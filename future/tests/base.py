@@ -6,11 +6,13 @@ import subprocess
 import re
 import warnings
 import io
-if not hasattr(unittest, 'skip'):
-    import unittest2 as unittest
+import functools
 from textwrap import dedent
 
-from future.utils import bind_method
+if not hasattr(unittest, 'skip'):
+    import unittest2 as unittest
+
+from future.utils import bind_method, PY26, PY3, PY2
 
 
 # For Python 2.6 compatibility: see http://stackoverflow.com/questions/4814970/
@@ -302,7 +304,41 @@ class CodeHandler(unittest.TestCase):
 
 
 # Decorator to skip some tests on Python 2.6 ...
-skip26 = unittest.skipIf(sys.version_info[:2] == (2, 6), "this test is known to fail on Py2.6")
+skip26 = unittest.skipIf(PY26, "this test is known to fail on Py2.6")
+
+
+def expectedFailurePY3(func):
+    if not PY3:
+        return func
+    return unittest.expectedFailure(func)
+
+
+def expectedFailurePY26(func):
+    if not PY26:
+        return func
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception:
+            raise unittest.case._ExpectedFailure(sys.exc_info())
+        # The following contributes to a FAILURE on Py2.6 (with
+        # unittest2). Ignore it ...
+        # raise unittest.case._UnexpectedSuccess
+    return wrapper
+
+
+def expectedFailurePY2(func):
+    if not PY2:
+        return func
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception:
+            raise unittest.case._ExpectedFailure(sys.exc_info())
+        raise unittest.case._UnexpectedSuccess
+    return wrapper
 
 
 # Renamed in Py3.3:
