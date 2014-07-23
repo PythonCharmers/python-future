@@ -1,27 +1,5 @@
-Credits and Licensing
+Licensing and credits
 =====================
-
-:Author:  Ed Schofield
-:Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
-          Ltd, Singapore. http://pythoncharmers.com
-:Others:  - The backported ``super()`` and ``range()`` functions are
-            derived from Ryan Kelly's ``magicsuper`` module and Dan
-            Crosta's ``xrange`` module.
-          - The ``futurize`` and ``pasteurize`` scripts use ``lib2to3``,
-            ``lib3to2``, and parts of Armin Ronacher's ``python-modernize``
-            code.
-          - The ``python_2_unicode_compatible`` decorator is from
-            Django. The ``implements_iterator`` and ``with_metaclass``
-            decorators are from Jinja2.
-          - The ``exec_`` function and some others in ``future.utils``
-            are from the ``six`` module by Benjamin Peterson.
-          - The ``raise_`` and ``raise_with_traceback`` functions were
-            contributed by Jeff Tratner.
-          - Documentation is generated with ``sphinx`` using the
-            ``sphinx-bootstrap`` theme.
-          - ``past.translation`` is inspired by and borrows some code from
-            Sanjay Vinip's ``uprefix`` module.
-
 
 .. _licence:
 
@@ -49,4 +27,73 @@ The software is distributed under an MIT licence. The text is as follows
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
+
+.. _sponsor:
+
+Sponsor
+-------
+Python Charmers Pty Ltd, Australia, and Python Charmers Pte Ltd, Singapore.
+http://pythoncharmers.com
+
+
+.. _authors:
+
+Authors
+-------
+
+Python-Future is written and maintained by Ed Schofield and various contributors:
+
+Development Lead
+~~~~~~~~~~~~~~~~
+
+- Ed Schofield <ed@pythoncharmers.com>
+
+Patches
+~~~~~~~
+
+- Denis Cornehl
+- Nicolas Delaby
+- Corey Farwell
+- Marcin Kuzminski
+- Joshua Landau
+- German Larrain
+- Chris Lasher
+- Elliott Sales de Andrade
+- Jeff Tratner
+
+- Mystic-Mirage (GitHub)
+
+Suggestions and Feedback
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Chris Adams
+- Martijn Faassen
+- Lion Krischer
+
+- wluebbe (GitHub)
+
+
+Other Credits
+-------------
+
+- The backported ``super()`` and ``range()`` functions are derived from Ryan
+  Kelly's ``magicsuper`` module and Dan Crosta's ``xrange`` module.
+
+- The ``futurize`` and ``pasteurize`` scripts use ``lib2to3``, ``lib3to2``, and
+  parts of Armin Ronacher's ``python-modernize`` code.
+
+- The ``python_2_unicode_compatible`` decorator is from Django. The
+  ``implements_iterator`` and ``with_metaclass`` decorators are from Jinja2.
+
+- The ``exec_`` function and some others in ``future.utils`` are from the
+  ``six`` module by Benjamin Peterson.
+
+- The ``raise_`` and ``raise_with_traceback`` functions were contributed by
+  Jeff Tratner.
+
+- Documentation is generated with ``sphinx`` using the ``sphinx-bootstrap``
+  theme.
+
+- ``past.translation`` is inspired by and borrows some code from Sanjay Vinip's
+  ``uprefix`` module.
 

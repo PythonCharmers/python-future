@@ -1,8 +1,8 @@
-future: clean single-source support for Python 2/3
-======================================================
+Easy, clean, reliable Python 2/3 compatibility
+==============================================
 
-``future`` is the missing compatibility layer between Python 2 and Python
-3. It allows you to use a single, clean Python 3.x-compatible
+``python-future`` is the missing compatibility layer between Python 2 and
+Python 3. It allows you to use a single, clean Python 3.x-compatible
 codebase to support both Python 2 and Python 3 with minimal overhead.
 
 

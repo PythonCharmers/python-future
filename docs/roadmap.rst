@@ -5,14 +5,17 @@ futurize script
 ---------------
 
 1. "Safe" mode -- from Py2 to modern Py2 or Py3 to more-compatible Py3
+
    - Split the fixers into two categories: safe and bold
    - Safe is highly unlikely to break existing Py2 or Py3 support. The
      output of this still requires :mod:`future` imports. Examples:
-     - Compatible metaclass syntax on Py3
-     - Explicit inheritance from object on Py3
+
+      - Compatible metaclass syntax on Py3
+      - Explicit inheritance from object on Py3
     
    - Bold might make assumptions about which strings on Py2 should be
      unicode strings and which should be bytestrings.
+
      - We should also build up a database of which standard library
        interfaces on Py2 and Py3 accept unicode strings versus
        byte-strings, which have changed, and which haven't.

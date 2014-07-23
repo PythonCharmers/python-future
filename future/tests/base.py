@@ -5,11 +5,14 @@ import sys
 import subprocess
 import re
 import warnings
-if not hasattr(unittest, 'skip'):
-    import unittest2 as unittest
+import io
+import functools
 from textwrap import dedent
 
-from future.utils import bind_method
+if not hasattr(unittest, 'skip'):
+    import unittest2 as unittest
+
+from future.utils import bind_method, PY26, PY3, PY2
 
 
 # For Python 2.6 compatibility: see http://stackoverflow.com/questions/4814970/
@@ -172,10 +175,17 @@ class CodeHandler(unittest.TestCase):
 
         If ignore_imports is True, passes the code blocks into the
         strip_future_imports method.
+
+        If one code block is a unicode string and the other a
+        byte-string, it assumes the byte-string is encoded as utf-8.
         """
         if ignore_imports:
             output = self.strip_future_imports(output)
             expected = self.strip_future_imports(expected)
+        if isinstance(output, bytes) and not isinstance(expected, bytes):
+            output = output.decode('utf-8')
+        if isinstance(expected, bytes) and not isinstance(output, bytes):
+            expected = expected.decode('utf-8')
         self.assertEqual(order_future_lines(output.rstrip()),
                          expected.rstrip())
 
@@ -236,7 +246,7 @@ class CodeHandler(unittest.TestCase):
             headers = ''
 
         self.compare(output, reformat_code(headers + expected),
-                    ignore_imports=ignore_imports)
+                     ignore_imports=ignore_imports)
 
     def unchanged(self, code, **kwargs):
         """
@@ -250,11 +260,14 @@ class CodeHandler(unittest.TestCase):
         Dedents the given code (a multiline string) and writes it out to
         a file in a temporary folder like /tmp/tmpUDCn7x/mytestscript.py.
         """
-        with open(self.tempdir + filename, 'w') as f:
+        if isinstance(code, bytes):
+            code = code.decode('utf-8')
+        # Be explicit about encoding the temp file as UTF-8 (issue #63):
+        with io.open(self.tempdir + filename, 'wt', encoding='utf-8') as f:
             f.write(dedent(code))
 
     def _read_test_script(self, filename='mytestscript.py'):
-        with open(self.tempdir + filename) as f:
+        with io.open(self.tempdir + filename, 'rt', encoding='utf-8') as f:
             newsource = f.read()
         return newsource
 
@@ -291,7 +304,41 @@ class CodeHandler(unittest.TestCase):
 
 
 # Decorator to skip some tests on Python 2.6 ...
-skip26 = unittest.skipIf(sys.version_info[:2] == (2, 6), "this test is known to fail on Py2.6")
+skip26 = unittest.skipIf(PY26, "this test is known to fail on Py2.6")
+
+
+def expectedFailurePY3(func):
+    if not PY3:
+        return func
+    return unittest.expectedFailure(func)
+
+
+def expectedFailurePY26(func):
+    if not PY26:
+        return func
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception:
+            raise unittest.case._ExpectedFailure(sys.exc_info())
+        # The following contributes to a FAILURE on Py2.6 (with
+        # unittest2). Ignore it ...
+        # raise unittest.case._UnexpectedSuccess
+    return wrapper
+
+
+def expectedFailurePY2(func):
+    if not PY2:
+        return func
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception:
+            raise unittest.case._ExpectedFailure(sys.exc_info())
+        raise unittest.case._UnexpectedSuccess
+    return wrapper
 
 
 # Renamed in Py3.3:

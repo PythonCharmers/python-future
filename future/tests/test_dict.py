@@ -6,7 +6,7 @@ Tests for the backported class:`dict` class.
 from __future__ import absolute_import, unicode_literals, print_function
 from future.builtins import *
 from future import utils
-from future.tests.base import unittest
+from future.tests.base import unittest, expectedFailurePY2
 
 import os
 import sys
@@ -87,7 +87,7 @@ class TestDict(unittest.TestCase):
         assert isinstance(d1.values() | d2.keys(), set)
         assert isinstance(d1.items() | d2.items(), set)
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_braces_create_newdict_object(self):
         """
         It would nice if the {} dict syntax could be coaxed

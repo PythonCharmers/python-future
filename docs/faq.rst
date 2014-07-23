@@ -123,7 +123,7 @@ Is it tested?
 currently being used to help with porting 800,000 lines of Python 2 code in
 `Sage <http://sagemath.org>`_ to Python 2/3.
 
-Currently ``python-future`` has 800+ unit tests. Many of these are straight
+Currently ``python-future`` has 850+ unit tests. Many of these are straight
 from the Python 3.3 test suite.
 
 In general, the ``future`` package itself is in good shape, whereas the
@@ -207,8 +207,9 @@ What is the relationship between ``future`` and ``six``?
 --------------------------------------------------------
 
 ``python-future`` is a higher-level compatibility layer than ``six`` that
-includes more backported functionality from Python 3 and supports cleaner
-code but requires more modern Python versions to run.
+includes more backported functionality from Python 3, more forward-ported
+functionality from Python 2, and supports cleaner code, but requires more
+modern Python versions to run.
 
 ``python-future`` and ``six`` share the same goal of making it possible to write
 a single-source codebase that works on both Python 2 and Python 3.
@@ -233,7 +234,7 @@ fewer compatibility hacks.
 
 
 What is the relationship between ``python-future`` and ``python-modernize``?
------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 ``python-future`` contains, in addition to the ``future`` compatibility
 package, a ``futurize`` script that is similar to ``python-modernize.py``
@@ -256,7 +257,7 @@ Platform and version support
 .. _supported-versions:
 
 Which versions of Python does ``python-future`` support?
--------------------------------------------------
+--------------------------------------------------------
 
 Python 2.6, 2.7, and 3.3+ only.
 
@@ -265,6 +266,13 @@ features (such as import hooks, ``b'...'`` literals and ``__future__``
 definitions) that greatly reduce the maintenance burden for single-source
 Py2/3 compatible code. ``future`` leverages these features and aims to
 close the remaining gap between Python 3 and 2.6 / 2.7.
+
+Python 2.6 does not offer the following features which help with Py3
+compatibility:
+- ``surrogateescape`` error handler for string encoding or decoding;
+- ``memoryview`` objects.
+
+Otherwise Python 2.6 is mostly supported.
 
 Python 3.2 could perhaps be supported too, although the illegal unicode
 literal ``u'...'`` syntax may be inconvenient to work around. The Py3.2
@@ -281,7 +289,7 @@ and pull requests are welcome!
 
 
 Do you support IronPython and/or Jython?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Not sure. This would be nice...
 

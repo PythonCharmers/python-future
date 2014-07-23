@@ -84,7 +84,7 @@ This is a standard Python 3 data type, so, when called from Python 3 code,
     builtins.dict_keys
 
 
-.. _translation-limitations
+.. _translation-limitations:
 
 Known limitations of ``past.translation``
 *******************************************

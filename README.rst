@@ -1,12 +1,11 @@
 .. _overview:
 
-Overview: an easier, safer, cleaner upgrade path to Python 3
-============================================================
+Overview: Easy, clean, reliable Python 2/3 compatibility
+========================================================
 
-
-``python-future`` is the missing compatibility layer between Python 3 and
-Python 2. It allows you to maintain a single, clean Python 3.x-compatible
-codebase with minimal cruft and run it easily on Python 2 mostly unchanged.
+``python-future`` is the missing compatibility layer between Python 2 and
+Python 3. It allows you to use a single, clean Python 3.x-compatible
+codebase to support both Python 2 and Python 3 with minimal overhead.
 
 It provides ``future`` and ``past`` packages with backports and forward ports of
 features from Python 3 and 2. It also comes with ``futurize`` and
@@ -14,13 +13,17 @@ features from Python 3 and 2. It also comes with ``futurize`` and
 Py2 or Py3 code easily to support both Python 2 and 3 in a single clean
 Py3-style codebase, module by module.
 
-Notable projects that use ``future`` for Python 3/2 compatibility are `Mezzanine
-<http://mezzanine.jupo.org/>`_ and `ObsPy <http://obspy.org>`_.
+Notable projects that use ``python-future`` for Python 3/2 compatibility
+are `Mezzanine <http://mezzanine.jupo.org/>`_ and `ObsPy
+<http://obspy.org>`_.
 
 .. _features:
 
 Features
 --------
+
+.. image:: https://travis-ci.org/PythonCharmers/python-future.svg?branch=master
+       :target: https://travis-ci.org/PythonCharmers/python-future
 
 -   ``future.builtins`` package provides backports and remappings for 19
     builtins with different semantics on Py3 versus Py2
@@ -37,7 +40,7 @@ Features
 -   ``past.translation`` package supports transparent translation of Python 2
     modules to Python 3 upon import. [This feature is currently in alpha.] 
 
--   800+ unit tests, including many from the Py3.3 source tree.
+-   850+ unit tests, including many from the Py3.3 source tree.
 
 -   ``futurize`` and ``pasteurize`` scripts based on ``2to3`` and parts of
     ``3to2`` and ``python-modernize``, for automatic conversion from either Py2
@@ -163,8 +166,6 @@ the top of each module.
 In both cases, the result should be relatively clean Py3-style code that runs
 mostly unchanged on both Python 2 and Python 3.
 
-.. _forwards-conversion:
-
 Futurize: 2 to both
 ~~~~~~~~~~~~~~~~~~~
 
@@ -254,14 +255,15 @@ Licensing
 ---------
 
 :Author:  Ed Schofield
+
+:Copyright: 2013-2014 Python Charmers Pty Ltd, Australia.
+
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
-:Others:  See `Credits <http://python-future.org/credits.html>`_.
 
-Copyright 2013-2014 Python Charmers Pty Ltd, Australia.
+:Licence: MIT. See ``LICENSE.txt`` or `here <http://python-future.org/credits.html>`_.
 
-The software is distributed under an MIT licence. See ``LICENSE.txt`` or `Licensing
-<http://python-future.org/licensing.html>`_.
+:Other credits:  See `here <http://python-future.org/credits.html>`_.
 
 
 Next steps

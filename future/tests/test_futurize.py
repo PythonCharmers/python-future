@@ -12,7 +12,7 @@ from lib2to3.pytree import Leaf, Node
 from lib2to3.pygram import token
 
 from future.tests.base import (CodeHandler, unittest, skip26, reformat_code,
-                               order_future_lines)
+                               order_future_lines, expectedFailurePY26)
 from future.utils import PY2
 
 
@@ -310,6 +310,7 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.unchanged(code)
 
+    @expectedFailurePY26
     def test_import_builtins(self):
         before = """
         a = raw_input()
@@ -359,8 +360,13 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         self.convert_check(before, after, ignore_imports=False)
+<<<<<<< HEAD
 
     @skip26
+=======
+    
+    @expectedFailurePY26
+>>>>>>> master
     def test_source_coding_utf8(self):
         """
         Tests to ensure that the source coding line is not corrupted or
@@ -452,6 +458,7 @@ class TestFuturizeSimple(CodeHandler):
         # with open('/tmp/' + filename, 'w') as tarball:
         #     tarball.write(r2.content)
 
+    @expectedFailurePY26
     def test_raw_input(self):
         """
         Passes in a string to the waiting input() after futurize
