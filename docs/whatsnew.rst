@@ -2,6 +2,14 @@ What's New in v0.12.x
 *********************
 
 
+.. whats-new-0.12.4:
+
+What's new in version 0.12.4
+============================
+
+- Fix upcasting behaviour of newint (issue #76).
+
+
 .. whats-new-0.12.3:
 
 What's new in version 0.12.3

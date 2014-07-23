@@ -398,7 +398,7 @@ class IntTestCases(unittest.TestCase):
     ####################################################################
     # future-specific tests are below:
     ####################################################################
-    
+
     # Exception messages in Py2 are 8-bit strings. The following fails,
     # even if the testlist strings are wrapped in str() calls...
     @expectedFailurePY2
@@ -618,6 +618,165 @@ class IntTestCases(unittest.TestCase):
         print(b.dtype)
         assert b.dtype == np.int64 == c.dtype
 
+    def test_upcasting_to_floats(self):
+        """
+        Integers should automatically be upcasted to floats for arithmetic
+        operations.
+        """
+        a = int(3)
+
+        # Addition with floats.
+        self.assertEqual(a + 0.5, 3.5)
+        self.assertEqual(0.5 + a, 3.5)
+        self.assertTrue(isinstance(a + 0.5, float))
+        self.assertTrue(isinstance(0.5 + a, float))
+
+        # Subtraction with floats.
+        self.assertEqual(a - 0.5, 2.5)
+        self.assertEqual(0.5 - a, -2.5)
+        self.assertTrue(isinstance(a - 0.5, float))
+        self.assertTrue(isinstance(0.5 - a, float))
+
+        # Multiplication with floats.
+        self.assertEqual(a * 0.5, 1.5)
+        self.assertEqual(0.5 * a, 1.5)
+        self.assertTrue(isinstance(a * 0.5, float))
+        self.assertTrue(isinstance(0.5 * a, float))
+
+        # Division with floats.
+        self.assertEqual(a / 0.5, 6.0)
+        self.assertEqual(0.5 / a, 0.5 / 3.0)
+        self.assertTrue(isinstance(a / 0.5, float))
+        self.assertTrue(isinstance(0.5 / a, float))
+
+        # Modulo with floats.
+        self.assertEqual(a % 0.5, 0.0)
+        self.assertEqual(0.5 % a, 0.5)
+        self.assertTrue(isinstance(a % 0.5, float))
+        self.assertTrue(isinstance(0.5 % a, float))
+
+        # Power with floats.
+        self.assertEqual(1.0 ** a, 1.0)
+        self.assertTrue(isinstance(1.0 ** a, float))
+
+        self.assertEqual(a ** 1.0, a)
+        self.assertTrue(isinstance(a ** 1.0, float))
+
+    def test_upcasting_to_complex(self):
+        """
+        Integers should automatically be upcasted to complex numbers for
+        arithmetic operations.
+
+        Python 3 cannot mod complex numbers so this does not have to be
+        supported here.
+        """
+        a = int(3)
+
+        # Addition with complex.
+        self.assertEqual(a + 0.5j, 3.0 + 0.5j)
+        self.assertEqual(0.5j + a, 3.0 + 0.5j)
+        self.assertTrue(isinstance(a + 0.5j, complex))
+        self.assertTrue(isinstance(0.5j + a, complex))
+
+        # Subtraction with complex.
+        self.assertEqual(a - 0.5j, 3.0 - 0.5j)
+        self.assertEqual(0.5j - a, -3.0 + 0.5j)
+        self.assertTrue(isinstance(a - 0.5j, complex))
+        self.assertTrue(isinstance(0.5j - a, complex))
+
+        # Multiplication with complex.
+        self.assertEqual(a * 0.5j, 1.5j)
+        self.assertEqual(0.5j * a, 1.5j)
+        self.assertTrue(isinstance(a * 0.5j, complex))
+        self.assertTrue(isinstance(0.5j * a, complex))
+
+        # Division with complex.
+        self.assertEqual(a / 0.5j, -6.0j)
+        self.assertEqual(0.5j / a, (0.5 / 3.0) * 1j)
+        self.assertTrue(isinstance(a / 0.5j, complex))
+        self.assertTrue(isinstance(0.5j / a, complex))
+
+        # Power with floats.
+        self.assertEqual(5.0j ** int(1), 5.0j)
+        self.assertTrue(isinstance(5.0j ** int(1), complex))
+
+        self.assertEqual(a ** 1.0j, 3.0 ** 1.0j)
+        self.assertTrue(isinstance(a ** 1.0j, complex))
+
+    def test_more_arithmetics(self):
+        """
+        More arithmetic tests to improve test coverage.
+        """
+        a = int(3)
+        b = int(5)
+        c = int(-5)
+
+        self.assertEqual(b - a, 2)
+        self.assertTrue(isinstance(b - a, int))
+
+        self.assertEqual(a * b, 15)
+        self.assertTrue(isinstance(a * b, int))
+
+        self.assertEqual(b % a, 2)
+        self.assertTrue(isinstance(b % a, int))
+
+        self.assertEqual(a ** b, 243)
+        self.assertTrue(isinstance(a ** b, int))
+
+        self.assertEqual(abs(c), 5)
+        self.assertEqual(abs(c), b)
+        self.assertTrue(isinstance(abs(c), int))
+
+    def test_bitwise_operations(self):
+        """
+        Tests bitwise operations.
+        """
+        a = int(3)
+        b = int(1)
+
+        self.assertEqual(a >> b, 1)
+        self.assertEqual(a >> 1, 1)
+        self.assertTrue(isinstance(a >> b, int))
+        self.assertTrue(isinstance(a >> 1, int))
+
+        self.assertEqual(a << b, 6)
+        self.assertEqual(a << 1, 6)
+        self.assertTrue(isinstance(a << b, int))
+        self.assertTrue(isinstance(a << 1, int))
+
+        self.assertEqual(a & b, 1)
+        self.assertEqual(a & 1, 1)
+        self.assertTrue(isinstance(a & b, int))
+        self.assertTrue(isinstance(a & 1, int))
+
+        self.assertEqual(a | b, 3)
+        self.assertEqual(a | 1, 3)
+        self.assertTrue(isinstance(a | b, int))
+        self.assertTrue(isinstance(a | 1, int))
+
+        self.assertEqual(a ^ b, 2)
+        self.assertEqual(a ^ 1, 2)
+        self.assertTrue(isinstance(a ^ b, int))
+        self.assertTrue(isinstance(a ^ 1, int))
+
+        self.assertEqual(~a, -4)
+        self.assertTrue(isinstance(~a, int))
+
+    def test_unary_operators(self):
+        a = int(3)
+        b = int(-3)
+
+        self.assertEqual(+a, a)
+        self.assertEqual(+a, 3)
+        self.assertEqual(+b, b)
+        self.assertEqual(+b, -3)
+        self.assertTrue(isinstance(+a, int))
+
+        self.assertEqual(-a, b)
+        self.assertEqual(-a, -3)
+        self.assertEqual(-b, a)
+        self.assertEqual(-b, 3)
+        self.assertTrue(isinstance(-a, int))
 
 if __name__ == "__main__":
     unittest.main()
