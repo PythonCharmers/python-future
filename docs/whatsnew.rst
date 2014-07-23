@@ -1,3 +1,18 @@
+.. whats-new-0.13
+
+What's New in v0.13.0
+*********************
+
+The following internal modules are deprecated. They will be removed in the next
+major release:
+
+- ``future.utils.encoding`` and ``future.utils.six``.
+
+See `here <http://fedoraproject.org/wiki/Packaging:No_Bundled_Libraries`_ for a rationale for unbundling them.
+
+
+.. whats-new-0.12.4:
+
 What's New in v0.12.x
 *********************
 
