@@ -150,13 +150,13 @@ class TestFuturizeSimple(CodeHandler):
         An old-style class used as an iterator should be converted
         properly. This requires ``futurize`` to do both steps (adding
         inheritance from object and adding the newobject import) in the
-        right order.
+        right order. Any next() method should also be renamed to __next__.
         """
         before = """
         class Upper:
             def __init__(self, iterable):
                 self._iter = iter(iterable)
-            def next(self):                 # note the Py2 interface
+            def next(self):
                 return next(self._iter).upper()
             def __iter__(self):
                 return self
@@ -169,7 +169,7 @@ class TestFuturizeSimple(CodeHandler):
         class Upper(object):
             def __init__(self, iterable):
                 self._iter = iter(iterable)
-            def __next__(self):                 # note the Py3 interface
+            def __next__(self):
                 return next(self._iter).upper()
             def __iter__(self):
                 return self
@@ -183,7 +183,7 @@ class TestFuturizeSimple(CodeHandler):
         class Upper():
             def __init__(self, iterable):
                 self._iter = iter(iterable)
-            def next(self):                 # note the Py2 interface
+            def next(self):
                 return next(self._iter).upper()
             def __iter__(self):
                 return self
@@ -711,7 +711,7 @@ class TestFuturizeStage1(CodeHandler):
         assert next(itr) == 'E'
         assert list(itr) == list('LLO')
         """
-        self.convert_check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1], run=PY2)
 
     @unittest.expectedFailure
     def test_next_2(self):
@@ -748,7 +748,7 @@ class TestFuturizeStage1(CodeHandler):
         assert next(itr) == 'E'
         assert list(itr) == list('LLO')
         """
-        self.convert_check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1], run=PY2)
 
     def test_xrange(self):
         """
