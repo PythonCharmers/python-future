@@ -73,7 +73,7 @@ __license__ = 'MIT'
 __copyright__ = 'Copyright 2014 Python Charmers Pty Ltd'
 __ver_major__ = 0
 __ver_minor__ = 12
-__ver_patch__ = 4
-__ver_sub__ = ''
+__ver_patch__ = 5
+__ver_sub__ = '-dev'
 __version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
                               __ver_patch__, __ver_sub__)

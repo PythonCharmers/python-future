@@ -2,6 +2,15 @@ What's New in v0.12.x
 *********************
 
 
+.. whats-new-0.12.5:
+
+What's new in version 0.12.5
+============================
+
+- Use a private logger instead of the global logger in
+  ``future.standard_library`` (issue #82).
+
+
 .. whats-new-0.12.4:
 
 What's new in version 0.12.4
