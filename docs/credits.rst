@@ -54,13 +54,13 @@ Patches
 - Denis Cornehl
 - Nicolas Delaby
 - Corey Farwell
+- Eric Firing
 - Marcin Kuzminski
 - Joshua Landau
 - German Larrain
 - Chris Lasher
 - Elliott Sales de Andrade
 - Jeff Tratner
-
 - Mystic-Mirage (GitHub)
 
 Suggestions and Feedback
@@ -69,7 +69,6 @@ Suggestions and Feedback
 - Chris Adams
 - Martijn Faassen
 - Lion Krischer
-
 - wluebbe (GitHub)
 
 
