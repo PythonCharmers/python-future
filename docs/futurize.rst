@@ -131,7 +131,7 @@ The complete set of fixers applied by ``futurize --stage1`` is::
     lib2to3.fixes.fix_isinstance
     lib2to3.fixes.fix_methodattrs
     lib2to3.fixes.fix_ne
-    lib2to3.fixes.fix_next
+    libfuturize.fixes.fix_next_call
     lib2to3.fixes.fix_numliterals
     lib2to3.fixes.fix_paren
     lib2to3.fixes.fix_reduce
@@ -160,6 +160,17 @@ The ``fix_absolute_import`` fixer in`` libfuturize.fixes`` is applied instead of
 this. The new fixer both makes implicit relative imports explicit and
 adds the declaration ``from __future__ import absolute_import`` at the top
 of each relevant module.
+
+.. code-block:: python
+
+    lib2to3.fixes.fix_next
+
+The ``fix_next_call`` fixer in ``libfuturize.fixes`` is applied instead of
+``fix_next`` in stage 1. The new fixer changes any ``obj.next()`` calls to
+``next(obj)``, which is Py2/3 compatible, but doesn't change any ``next`` method
+names to ``__next__``, which would break Py2 compatibility.
+
+``fix_next`` is applied in stage 2.
 
 .. code-block:: python
 

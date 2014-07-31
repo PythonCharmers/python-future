@@ -9,6 +9,9 @@ What's new in version 0.12.5
 
 - Use a private logger instead of the global logger in
   ``future.standard_library`` (issue #82).
+- Stage 1 of ``futurize`` no longer renames ``next`` methods to ``__next__``
+  (issue #81). It still converts ``obj.next()`` method calls to
+  ``next(obj)`` correctly.
 
 
 .. whats-new-0.12.4:

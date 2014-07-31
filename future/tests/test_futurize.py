@@ -156,7 +156,7 @@ class TestFuturizeSimple(CodeHandler):
         class Upper:
             def __init__(self, iterable):
                 self._iter = iter(iterable)
-            def next(self):                 # note the Py3 interface
+            def next(self):                 # note the Py2 interface
                 return next(self._iter).upper()
             def __iter__(self):
                 return self
@@ -183,7 +183,7 @@ class TestFuturizeSimple(CodeHandler):
         class Upper():
             def __init__(self, iterable):
                 self._iter = iter(iterable)
-            def next(self):                 # note the Py3 interface
+            def next(self):                 # note the Py2 interface
                 return next(self._iter).upper()
             def __iter__(self):
                 return self
@@ -675,6 +675,79 @@ class TestFuturizeStage1(CodeHandler):
         assert f(*args) == 3
         assert f(*('a', 'b')) == 'ab'
         '''
+        self.convert_check(before, after, stages=[1])
+
+    def test_next_1(self):
+        """
+        Custom next methods should not be converted to __next__ in stage1, but
+        any obj.next() calls should be converted to next(obj).
+        """
+        before = """
+        class Upper:
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def next(self):                 # note the Py2 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        itr = Upper('hello')
+        assert itr.next() == 'H'
+        assert next(itr) == 'E'
+        assert list(itr) == list('LLO')
+        """
+
+        after = """
+        class Upper:
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def next(self):                 # note the Py2 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        itr = Upper('hello')
+        assert next(itr) == 'H'
+        assert next(itr) == 'E'
+        assert list(itr) == list('LLO')
+        """
+        self.convert_check(before, after, stages=[1])
+
+    @unittest.expectedFailure
+    def test_next_2(self):
+        """
+        This version of the above doesn't currently work: the self._iter.next() call in
+        line 5 isn't converted to next(self._iter).
+        """
+        before = """
+        class Upper:
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def next(self):                 # note the Py2 interface
+                return self._iter.next().upper()
+            def __iter__(self):
+                return self
+
+        itr = Upper('hello')
+        assert itr.next() == 'H'
+        assert next(itr) == 'E'
+        assert list(itr) == list('LLO')
+        """
+
+        after = """
+        class Upper(object):
+            def __init__(self, iterable):
+                self._iter = iter(iterable)
+            def next(self):                 # note the Py2 interface
+                return next(self._iter).upper()
+            def __iter__(self):
+                return self
+
+        itr = Upper('hello')
+        assert next(itr) == 'H'
+        assert next(itr) == 'E'
+        assert list(itr) == list('LLO')
+        """
         self.convert_check(before, after, stages=[1])
 
     def test_xrange(self):
