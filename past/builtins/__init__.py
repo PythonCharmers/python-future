@@ -63,10 +63,8 @@ if utils.PY3:
     # Only shadow builtins on Py3; no new names
     __all__ = ['filter', 'map', 'range', 'reduce', 'zip', 
                'basestring', 'dict', 'str', 'long', 'unicode',
-               'apply', 'chr', 'cmp', 'execfile', 'intern', 'raw_input', 'reload',
-               'unichr', 'unicode', 'xrange'
-    #            'ascii', 'chr', 'hex', 'input', 'oct', 'open', 'unichr',
-    #            'bytes', 'dict', 'int', 'range', 'round', 'str', 'super',
+               'apply', 'chr', 'cmp', 'execfile', 'intern', 'raw_input',
+               'reload', 'unichr', 'xrange'
               ]
 
 else:
