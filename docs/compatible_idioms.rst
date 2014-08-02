@@ -53,6 +53,7 @@ print
 
     # Python 2 and 3:
     print('Hello')
+
 To print multiple strings, import ``print_function`` to prevent Py2 from
 interpreting it as a tuple:
 
@@ -96,6 +97,7 @@ Raising exceptions
 
     # Python 2 and 3:
     raise ValueError("dodgy value")
+
 Raising bare string exceptions:
 
 .. code:: python
@@ -106,6 +108,7 @@ Raising bare string exceptions:
 
     # Python 2 and 3:
     raise Exception("dodgy value")
+
 Raising exceptions with a traceback:
 
 .. code:: python
@@ -137,16 +140,18 @@ Catching exceptions
 
 .. code:: python
 
+    # Python 2 only:
     try:
-        # ...
-    except ValueError, e:    # Python 2 only
-        # ...
+        ...
+    except ValueError, e:
+        ...
 .. code:: python
 
+    # Python 2 and 3:
     try:
-        # ...
-    except ValueError as e:    # Python 2 and 3
-        # ...
+        ...
+    except ValueError as e:
+        ...
 Division
 ~~~~~~~~
 
@@ -160,6 +165,7 @@ Integer division (rounding down):
 
     # Python 2 and 3:
     assert 2 // 3 == 0
+
 "True division" (float division):
 
 .. code:: python
@@ -172,6 +178,7 @@ Integer division (rounding down):
     from __future__ import division    # (at top of module)
     
     assert 3 / 2 == 1.5
+
 "Old division" (i.e. compatible with Py2 behaviour):
 
 .. code:: python
@@ -293,6 +300,7 @@ prefixes:
     # Python 2 and 3
     s1 = u'The Zen of Python'
     s2 = u'きたないのよりきれいな方がいい\n'
+
 The ``futurize`` and ``python-modernize`` tools do not currently offer
 an option to do this automatically.
 
@@ -306,6 +314,7 @@ this idiom to make all string literals in a module unicode strings:
     
     s1 = 'The Zen of Python'
     s2 = 'きたないのよりきれいな方がいい\n'
+
 See http://python-future.org/unicode\_literals.html for more discussion
 on which style to use.
 
@@ -408,6 +417,7 @@ StringIO
     # Python 2 and 3:
     from io import BytesIO     # for handling byte strings
     from io import StringIO    # for handling unicode strings
+
 Imports relative to a package
 -----------------------------
 
@@ -437,12 +447,14 @@ and the code below is in ``submodule1.py``:
     # To make Py2 code safer (more like Py3) by preventing
     # implicit relative imports, you can also add this to the top:
     from __future__ import absolute_import
+
 Dictionaries
 ------------
 
 .. code:: python
 
     heights = {'Fred': 175, 'Anne': 166, 'Joe': 192}
+
 Iterating through ``dict`` keys/values/items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -487,6 +499,7 @@ Iterable dict values:
     
     for key in itervalues(heights):
         # ...
+
 Iterable dict items:
 
 .. code:: python
@@ -508,6 +521,7 @@ Iterable dict items:
     
     for (key, value) in iteritems(heights):
         # ...
+
 dict keys/values/items as a list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -523,6 +537,7 @@ dict keys as a list:
     # Python 2 and 3:
     keylist = list(heights)
     assert isinstance(keylist, list)
+
 dict values as a list:
 
 .. code:: python
@@ -556,6 +571,7 @@ dict values as a list:
     from six import itervalues
     
     valuelist = list(itervalues(heights))
+
 dict items as a list:
 
 .. code:: python
@@ -1058,7 +1074,7 @@ reload()
     from imp import reload
     reload(mymodule)
 Standard library
-================
+----------------
 
 StringIO module
 ~~~~~~~~~~~~~~~
