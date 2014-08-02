@@ -4,7 +4,7 @@ Cheat Sheet: Writing Python 2-3 compatible code
 
 -  **Copyright (c):** 2013-2014 Python Charmers Pty Ltd, Australia.
 -  **Author:** Ed Schofield.
--  **Licence:** Creative Commons Attribution
+-  **Licence:** Creative Commons Attribution.
 
 This notebook shows you idioms for writing future-proof code that is
 compatible with both versions of Python: 2 and 3.
@@ -34,7 +34,6 @@ The following scripts are also ``pip``-installable:
 
     futurize             # pip install future
     pasteurize           # pip install future
-    python-modernize     # pip install modernize
 
 See http://python-future.org and https://pythonhosted.org/six/ for more
 information.
@@ -42,8 +41,8 @@ information.
 Essential syntax differences
 ----------------------------
 
-``print``
-~~~~~~~~~
+print
+~~~~~
 
 .. code:: python
 
@@ -74,7 +73,7 @@ interpreting it as a tuple:
     # Python 2 and 3:
     from __future__ import print_function    # (at top of module)
     
-    print('Hello', sys.stderr)
+    print('Hello', file=sys.stderr)
 .. code:: python
 
     # Python 2 only:
@@ -115,6 +114,10 @@ Raising exceptions with a traceback:
     raise ValueError, "dodgy value", traceback
 .. code:: python
 
+    # Python 3 only:
+    raise ValueError("dodgy value").with_traceback()
+.. code:: python
+
     # Python 2 and 3: option 1
     from six import reraise as raise_
     # or
@@ -122,10 +125,6 @@ Raising exceptions with a traceback:
     
     traceback = sys.exc_info()[2]
     raise_(ValueError, "dodgy value", traceback)
-.. code:: python
-
-    # Python 3 only:
-    raise ValueError("dodgy value").with_traceback()
 .. code:: python
 
     # Python 2 and 3: option 2
@@ -154,10 +153,12 @@ Integer division (rounding down):
 
 .. code:: python
 
-    assert 2 / 3 == 0     # Python 2 only
+    # Python 2 only:
+    assert 2 / 3 == 0
 .. code:: python
 
-    assert 2 // 3 == 0    # Python 2 and 3
+    # Python 2 and 3:
+    assert 2 // 3 == 0
 "True division" (float division):
 
 .. code:: python
@@ -170,6 +171,18 @@ Integer division (rounding down):
     from __future__ import division    # (at top of module)
     
     assert 3 / 2 == 1.5
+"Old division" (i.e. compatible with Py2 behaviour):
+
+.. code:: python
+
+    # Python 2 only:
+    a = b / c            # with any types
+.. code:: python
+
+    # Python 2 and 3:
+    from future.utils import old_div
+    
+    a = old_div(b, c)    # always same as / on Py2
 Long integers
 ~~~~~~~~~~~~~
 
@@ -201,13 +214,13 @@ Short integers are gone in Python 3 and ``long`` has become ``int``
     if isinstance(x, int):
         # ...
     
-    # Python 2 and 3: alternative 1
-    from future.builtins import int
+    # Python 2 and 3: option 1
+    from future.builtins import int    # subclass of long on Py2
     
-    if isinstance(x, int):
+    if isinstance(x, int):             # matches both int and long on Py2
         # ...
     
-    # Python 2 and 3: alternative 2
+    # Python 2 and 3: option 2
     from past.builtins import long
     
     if isinstance(x, (int, long)):
@@ -221,6 +234,15 @@ Octal constants
 .. code:: python
 
     0o644    # Python 2 and 3
+Backtick repr
+~~~~~~~~~~~~~
+
+.. code:: python
+
+    `x`      # Python 2 only
+.. code:: python
+
+    repr(x)  # Python 2 and 3
 Metaclasses
 ~~~~~~~~~~~
 
@@ -303,18 +325,16 @@ each character as a byte-string of length 1:
 
     # Python 2 only:
     for bytechar in 'byte-string with high-bit chars like \xf9':
-        print(bytechar)      # returns a byte string
+        ...
     
     # Python 3 only:
     for myint in b'byte-string with high-bit chars like \xf9':
-        char = bytes([myint])    # returns a one-char byte-string
-        print(char)
+        bytechar = bytes([myint])
     
-    # Python 2 and 3: alternative 2: retrieving char as a byte-string
+    # Python 2 and 3:
     from future.builtins import bytes
     for myint in bytes(b'byte-string with high-bit chars like \xf9'):
-        char = bytes([myint])    # returns a one-char byte-string
-        print(char)
+        bytechar = bytes([myint])
 As an alternative, ``chr()`` and ``.encode('latin-1')`` can be used to
 convert an int into a 1-char byte string:
 
@@ -324,30 +344,28 @@ convert an int into a 1-char byte string:
     for myint in b'byte-string with high-bit chars like \xf9':
         char = chr(myint)    # returns a unicode string
         bytechar = char.encode('latin-1')
-        print(bytechar)
     
-    # Python 2 and 3: alternative 1: retrieving char as a byte-string
+    # Python 2 and 3:
     from future.builtins import bytes, chr
     for myint in bytes(b'byte-string with high-bit chars like \xf9'):
         char = chr(myint)    # returns a unicode string
         bytechar = char.encode('latin-1')    # forces returning a byte str
-        print(char)
-``basestring``
-~~~~~~~~~~~~~~
+basestring
+~~~~~~~~~~
 
 .. code:: python
 
     # Python 2 only:
     a = u'abc'
     b = 'def'
-    assert isinstance(a, basestring) and isinstance(b, basestring)
+    assert (isinstance(a, basestring) and isinstance(b, basestring))
     
     # Python 2 and 3: alternative 1
     from past.builtins import basestring    # pip install future
     
     a = u'abc'
     b = b'def'
-    assert isinstance(a, basestring) and isinstance(b, basestring)
+    assert (isinstance(a, basestring) and isinstance(b, basestring))
 .. code:: python
 
     # Python 2 and 3: alternative 2: refactor the code to avoid considering
@@ -359,8 +377,8 @@ convert an int into a 1-char byte string:
     c = b.decode()
     assert isinstance(a, str) and isinstance(c, str)
     # ...
-``unicode``
-~~~~~~~~~~~
+unicode
+~~~~~~~
 
 .. code:: python
 
@@ -392,18 +410,32 @@ StringIO
 Imports relative to a package
 -----------------------------
 
+Suppose the package is:
+
+::
+
+    mypackage/
+        __init__.py
+        submodule1.py
+        submodule2.py
+        
+
+and the code below is in ``submodule1.py``:
+
 .. code:: python
 
-    import submodule           # Python 2 only
+    # Python 2 only: 
+    import submodule2
 .. code:: python
 
-    from . import submodule    # Python 2 and 3
+    # Python 2 and 3:
+    from . import submodule2
 .. code:: python
 
     # Python 2 and 3:
     # To make Py2 code safer (more like Py3) by preventing
     # implicit relative imports, you can also add this to the top:
-    from __future__ import absolute_import    # (at top of module)
+    from __future__ import absolute_import
 Dictionaries
 ------------
 
@@ -442,9 +474,9 @@ Iterable dict values:
     # Python 2 and 3: option 1
     from future.builtins import dict
     
-    heights = dict((('Fred', 175), ('Anne', 166), ('Joe', 192)))
+    heights = dict(Fred=175, Anne=166, Joe=192)
     for key in heights.values():    # efficient on Py2 and Py3
-        # ...
+        ...
 .. code:: python
 
     # Python 2 and 3: option 2
@@ -476,7 +508,7 @@ Iterable dict items:
     for (key, value) in iteritems(heights):
         # ...
 dict keys/values/items as a list
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 dict keys as a list:
 
@@ -507,7 +539,7 @@ dict values as a list:
     # Python 2 and 3: option 2
     from future.builtins import dict
     
-    heights = dict((('Fred', 175), ('Anne', 166), ('Joe', 192)))
+    heights = dict(Fred=175, Anne=166, Joe=192)
     valuelist = list(heights.values())
 .. code:: python
 
@@ -555,13 +587,13 @@ Custom iterators
     class Upper(object):
         def __init__(self, iterable):
             self._iter = iter(iterable)
-        def next(self):                         # Py2-style next method
-            return self._iter.next().upper()    # Py2-style again
+        def next(self):          # Py2-style
+            return self._iter.next().upper()
         def __iter__(self):
             return self
     
     itr = Upper('hello')
-    assert itr.next() == 'H'
+    assert itr.next() == 'H'     # Py2-style
     assert list(itr) == list('ELLO')
 .. code:: python
 
@@ -571,13 +603,13 @@ Custom iterators
     class Upper(object):
         def __init__(self, iterable):
             self._iter = iter(iterable)
-        def __next__(self):                  # Py3-style iterator interface
+        def __next__(self):      # Py3-style iterator interface
             return next(self._iter).upper()  # builtin next() function calls
         def __iter__(self):
             return self
     
     itr = Upper('hello')
-    assert next(itr) == 'H'
+    assert next(itr) == 'H'      # compatible style
     assert list(itr) == list('ELLO')
 .. code:: python
 
@@ -597,7 +629,7 @@ Custom iterators
     assert next(itr) == 'H'
     assert list(itr) == list('ELLO')
 Custom ``__str__`` methods
---------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -622,8 +654,14 @@ Custom ``__str__`` methods
     
     a = MyClass()
     print(a)    # prints string encoded as utf-8 on Py2
-``__nonzero__`` vs ``__bool__`` method:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. parsed-literal::
+
+    Unicode string: 孔子
+
+
+Custom ``__nonzero__`` vs ``__bool__`` method:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -652,8 +690,8 @@ Custom ``__str__`` methods
 Lists versus iterators
 ----------------------
 
-``xrange``
-~~~~~~~~~~
+xrange
+~~~~~~
 
 .. code:: python
 
@@ -672,8 +710,8 @@ Lists versus iterators
     from past.builtins import xrange
     for i in xrange(10**8):
         # ...
-``range``
-~~~~~~~~~
+range
+~~~~~
 
 .. code:: python
 
@@ -706,8 +744,8 @@ Lists versus iterators
     
     mylist = range(5)
     assert mylist == [0, 1, 2, 3, 4]
-``zip``, ``map``, ``filter``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+map
+~~~
 
 .. code:: python
 
@@ -751,13 +789,53 @@ Lists versus iterators
     
     mynewlist = map(f, myoldlist)
     assert mynewlist == [f(x) for x in myoldlist]
-As above with ``zip`` and ``filter`` too.
+imap
+~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    from itertools import imap
+    
+    myiter = imap(func, myoldlist)
+    assert isinstance(myiter, iter)
+.. code:: python
+
+    # Python 3 only:
+    myiter = map(func, myoldlist)
+    assert isinstance(myiter, iter)
+.. code:: python
+
+    # Python 2 and 3: option 1
+    from future.builtins import map
+    
+    myiter = map(func, myoldlist)
+    assert isinstance(myiter, iter)
+.. code:: python
+
+    # Python 2 and 3: option 2
+    try:
+        import itertools.imap as map
+    except ImportError:
+        pass
+    
+    myiter = map(func, myoldlist)
+    assert isinstance(myiter, iter)
+zip, izip
+~~~~~~~~~
+
+As above with ``zip`` and ``itertools.izip``.
+
+filter, ifilter
+~~~~~~~~~~~~~~~
+
+As above with ``filter`` and ``itertools.ifilter`` too.
 
 Other builtins
 --------------
 
-File IO with ``open``
-~~~~~~~~~~~~~~~~~~~~~
+File IO with open()
+~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -776,8 +854,8 @@ File IO with ``open``
     from io import open
     f = open('myfile.txt', encoding='utf-8')
     text = f.read()    # unicode, not bytes
-``reduce``
-~~~~~~~~~~
+reduce()
+~~~~~~~~
 
 .. code:: python
 
@@ -789,8 +867,8 @@ File IO with ``open``
     from functools import reduce
     
     assert reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) == 1+2+3+4+5
-``raw_input``
-~~~~~~~~~~~~~
+raw\_input()
+~~~~~~~~~~~~
 
 .. code:: python
 
@@ -804,8 +882,8 @@ File IO with ``open``
     
     name = input('What is your name? ')
     assert isinstance(name, str)    # native str on Py2 and Py3
-``input``
-~~~~~~~~~
+input()
+~~~~~~~
 
 .. code:: python
 
@@ -816,10 +894,10 @@ File IO with ``open``
     # Python 2 and 3
     from future.builtins import input
     eval(input("Type something safe please: "))
-Warning: using ``eval`` is **unsafe**, like using Py2's ``input()``.
+Warning: using either of these is **unsafe** with untrusted input.
 
-``file``
-~~~~~~~~
+file()
+~~~~~~
 
 .. code:: python
 
@@ -834,9 +912,9 @@ Warning: using ``eval`` is **unsafe**, like using Py2's ``input()``.
     from io import open
     f = open(pathname, 'rb')   # if f.read() should return bytes
     # or
-    f = open(pathname, 'rt')   # if f.read() should return text
-``execfile``
-~~~~~~~~~~~~
+    f = open(pathname, 'rt')   # if f.read() should return unicode text
+execfile()
+~~~~~~~~~~
 
 .. code:: python
 
@@ -856,8 +934,8 @@ Warning: using ``eval`` is **unsafe**, like using Py2's ``input()``.
     # This can sometimes cause this:
     #     SyntaxError: function ... uses import * and bare exec ...
     # See https://github.com/PythonCharmers/python-future/issues/37
-``unichr``
-~~~~~~~~~~
+unichr()
+~~~~~~~~
 
 .. code:: python
 
@@ -865,11 +943,15 @@ Warning: using ``eval`` is **unsafe**, like using Py2's ``input()``.
     assert unichr(8364) == '€'
 .. code:: python
 
+    # Python 3 only:
+    assert chr(8364) == '€'
+.. code:: python
+
     # Python 2 and 3:
     from future.builtins import chr
     assert chr(8364) == '€'
-``intern``
-~~~~~~~~~~
+intern()
+~~~~~~~~
 
 .. code:: python
 
@@ -893,13 +975,13 @@ Warning: using ``eval`` is **unsafe**, like using Py2's ``input()``.
     except ImportError:
         pass
     intern('mystring')
-``apply``
-~~~~~~~~~
+apply()
+~~~~~~~
 
 .. code:: python
 
-    args = (arg1, arg2)
-    kwargs = {'kwarg1': val1}
+    args = ('a', 'b')
+    kwargs = {'kwarg1': True}
 .. code:: python
 
     # Python 2 only:
@@ -913,21 +995,40 @@ Warning: using ``eval`` is **unsafe**, like using Py2's ``input()``.
     # Python 2 and 3: alternative 2
     from past.builtins import apply
     apply(f, args, kwargs)
-``chr``
-~~~~~~~
+chr()
+~~~~~
 
 .. code:: python
 
     # Python 2 only:
-    assert chr(64) == '@'
-    assert chr(200) == '\xc8'
+    assert chr(64) == b'@'
+    assert chr(200) == b'\xc8'
 .. code:: python
 
-    # Python 2 and 3:
+    # Python 3 only: option 1
+    assert chr(64).encode('latin-1') == b'@'
+    assert chr(0xc8).encode('latin-1') == b'\xc8'
+.. code:: python
+
+    # Python 2 and 3: option 1
+    from future.builtins import chr
+    
+    assert chr(64).encode('latin-1') == b'@'
+    assert chr(0xc8).encode('latin-1') == b'\xc8'
+.. code:: python
+
+    # Python 3 only: option 2
     assert bytes([64]) == b'@'
-    assert bytes([200]) == b'\xc8'
-``cmp``
-~~~~~~~
+    assert bytes([0xc8]) == b'\xc8'
+.. code:: python
+
+    # Python 2 and 3: option 2
+    from future.builtins import bytes
+    
+    assert bytes([64]) == b'@'
+    assert bytes([0xc8]) == b'\xc8'
+cmp()
+~~~~~
 
 .. code:: python
 
@@ -943,8 +1044,8 @@ Warning: using ``eval`` is **unsafe**, like using Py2's ``input()``.
     # Python 2 and 3: alternative 2
     cmp = lambda(x, y): (x > y) - (x < y)
     assert cmp('a', 'b') < 0 and cmp('b', 'a') > 0 and cmp('c', 'c') == 0
-``reload``
-~~~~~~~~~~
+reload()
+~~~~~~~~
 
 .. code:: python
 
@@ -958,8 +1059,8 @@ Warning: using ``eval`` is **unsafe**, like using Py2's ``input()``.
 Standard library
 ================
 
-``StringIO``
-~~~~~~~~~~~~
+StringIO module
+~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -971,24 +1072,28 @@ Standard library
     # Python 2 and 3
     from io import BytesIO
     # and refactor StringIO() calls to BytesIO() if passing byte-strings
-``sys.intern``
-~~~~~~~~~~~~~~
+http module
+~~~~~~~~~~~
 
 .. code:: python
 
     # Python 2 only:
-    intern(...)
-    
-    # Python 3 only:
-    from sys import intern
-    intern(...)
+    import httplib
+    import Cookie
+    import cookielib
+    import BaseHTTPServer
+    import SimpleHTTPServer
+    import CGIHttpServer
     
     # Python 2 and 3:
     from future.standard_library import hooks
     with hooks():
-        from sys import intern
-``urllib``
-~~~~~~~~~~
+        import http.client
+        import http.cookies
+        import http.cookiejar
+        import http.server
+urllib module
+~~~~~~~~~~~~~
 
 This uses ``urllib`` as an example. The same pattern applies to other
 moved modules too. (See
@@ -1007,9 +1112,9 @@ for a full list).
 .. code:: python
 
     # Python 2 and 3: alternative 1
-    from future import standard_library
+    from future.standard_library import hooks
     
-    with standard_library.hooks():
+    with hooks():
         from urllib.parse import urlparse, urlencode
 .. code:: python
 
