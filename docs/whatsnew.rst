@@ -12,6 +12,7 @@ What's new in version 0.12.5
 - Stage 1 of ``futurize`` no longer renames ``next`` methods to ``__next__``
   (issue #81). It still converts ``obj.next()`` method calls to
   ``next(obj)`` correctly.
+- Add :ref:`compatible-idioms` from Ed Schofield's PyConAU 2014 talk.
 
 
 .. whats-new-0.12.4:

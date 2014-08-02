@@ -11,7 +11,8 @@ Contents:
    standard_library_imports
    what_else
    automatic_conversion
-   porting
+   compatible_idioms
+   futurize_cheatsheet
    stdlib_incompatibilities
    faq
    changelog

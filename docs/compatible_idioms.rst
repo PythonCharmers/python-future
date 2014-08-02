@@ -1,3 +1,4 @@
+.. _compatible-idioms:
 
 Cheat Sheet: Writing Python 2-3 compatible code
 ===============================================
