@@ -175,7 +175,8 @@ available in ``future.backports``::
 
     http.client
     http.server
-    html.server
+    html.entities
+    html.parser
     urllib
     xmlrpc.client
     xmlrpc.server
