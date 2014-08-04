@@ -59,9 +59,7 @@ class newrange(Sequence):
         self._len = (stop - start) // step + bool((stop - start) % step)
 
     def __repr__(self):
-        if self._start == 0 and self._step == 1:
-            return 'range(%d)' % self._stop
-        elif self._step == 1:
+        if self._step == 1:
             return 'range(%d, %d)' % (self._start, self._stop)
         return 'range(%d, %d, %d)' % (self._start, self._stop, self._step)
 
