@@ -181,7 +181,7 @@ For example, running ``futurize -w mymodule.py`` turns this Python 2 code:
         print 'Hello',
         print name
 
-    print 'What's your name?',
+    print "What's your name?",
     name = raw_input()
     greet(name)
 
@@ -201,7 +201,7 @@ into this code which runs on both Py2 and Py3:
         print('Hello', end=' ')
         print(name)
 
-    print('What's your name?', end=' ')
+    print("What's your name?", end=' ')
     name = input()
     greet(name)
 
