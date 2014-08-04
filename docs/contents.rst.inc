@@ -7,11 +7,11 @@ Contents:
    overview
    whatsnew
    quickstart
+   compatible_idioms
    imports
    standard_library_imports
    what_else
    automatic_conversion
-   compatible_idioms
    futurize_cheatsheet
    stdlib_incompatibilities
    faq

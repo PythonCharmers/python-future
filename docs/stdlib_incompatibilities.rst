@@ -1,12 +1,5 @@
 .. _stdlib-incompatibilities:
 
-Use of strings and bytes in standard library interfaces
-=======================================================
-
-- io.StringIO: takes a unicode on both Py2 and Py3
-- io.BytesIO: takes a byte-string on both Py2 and Py3
-
-
 Standard library incompatibilities
 ==================================
 

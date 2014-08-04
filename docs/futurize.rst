@@ -3,7 +3,9 @@
 Futurize: 2 to both
 --------------------
 
-For example, running ``futurize`` turns this Python 2 code::
+For example, running ``futurize`` turns this Python 2 code:
+
+.. code-block:: python
 
     import ConfigParser                 # Py2 module name
 
@@ -20,7 +22,9 @@ For example, running ``futurize`` turns this Python 2 code::
     for letter in itr:
         print letter,                   # Py2-style print statement
 
-into this code which runs on both Py2 and Py3::
+into this code which runs on both Py2 and Py3:
+
+.. code-block:: python
 
     from __future__ import print_function
     from future import standard_library
@@ -72,6 +76,7 @@ up-to-date without breaking Py2 compatibility. The resulting code will be
 modern Python 2.6-compatible code plus ``__future__`` imports from the
 following set::
 
+.. code-block:: python
     from __future__ import absolute_import
     from __future__ import division
     from __future__ import print_function
@@ -119,7 +124,9 @@ porting process, but without introducing any bugs. It should be uncontroversial
 and safe to apply to every Python 2 package. The subsequent patches introducing
 Python 3 compatibility should then be shorter and easier to review.
 
-The complete set of fixers applied by ``futurize --stage1`` is::
+The complete set of fixers applied by ``futurize --stage1`` is:
+
+.. code-block:: python
 
     lib2to3.fixes.fix_apply
     lib2to3.fixes.fix_except
