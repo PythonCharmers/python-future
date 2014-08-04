@@ -167,8 +167,20 @@ face of magic like Django's auto-reloader and tools like ``py2exe`` and
 more detail of bugs related to the ``six.moves`` approach.
 
 
-Backports
----------
+External backports
+------------------
+
+Backports of the following modules from the Python 3.x standard library are
+available independently of the python-future project::
+
+    import enum              # pip install enum34
+    import singledispatch    # pip install singledispatch
+    import pathlib           # pip install pathlib
+    import statistics        # is a backport available?
+
+
+Included backports
+------------------
 
 Backports of the following modules from Python 3.3's standard library to Python 2.x are also
 available in ``future.backports``::
