@@ -305,7 +305,7 @@ class newint(with_metaclass(BaseNewInt, long)):
         if length < 0:
             raise ValueError("length argument must be non-negative")
         if length == 0 and num == 0:
-            return bytes()
+            return newbytes()
         h = b'%x' % num
         s = newbytes((b'0'*(len(h) % 2) + h).zfill(length*2).decode('hex'))
         if len(s) > length:
