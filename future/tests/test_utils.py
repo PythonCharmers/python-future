@@ -9,6 +9,7 @@ from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
                          native_str, raise_, as_native_str, ensure_new_type,
                          bytes_to_native_str, raise_from)
+from future.tests.base import expectedFailurePY3
 
 from numbers import Integral
 from future.tests.base import unittest, skip26
@@ -264,7 +265,7 @@ class TestCause(unittest.TestCase):
         else:
             self.fail("No exception raised")
 
-    @unittest.expectedFailure
+    @expectedFailurePY3
     def test_instance_cause(self):
         cause = KeyError('blah')
         try:
