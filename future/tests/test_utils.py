@@ -8,7 +8,7 @@ import sys
 from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
                          native_str, raise_, as_native_str, ensure_new_type,
-                         bytes_to_native_str)
+                         bytes_to_native_str, raise_from)
 
 from numbers import Integral
 from future.tests.base import unittest, skip26
@@ -141,7 +141,16 @@ class TestUtils(unittest.TestCase):
         except IOError as e:
             self.assertEqual(str(e), "An error")
 
-
+    def test_raise_from_None(self):
+        try:
+            try:
+                raise TypeError("foo")
+            except:
+                raise_from(ValueError(), None)
+        except ValueError as e:
+            self.assertTrue(isinstance(e.__context__, TypeError))
+            self.assertIsNone(e.__cause__)
+    
     @skip26
     def test_as_native_str(self):
         """
@@ -188,6 +197,98 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(s, 'abc')
         self.assertTrue(isinstance(s, native_str))
         self.assertEqual(type(s), native_str)
+
+
+class TestCause(unittest.TestCase):
+    """
+    Except for the first method, these were adapted from Py3.3's
+    Lib/test/test_raise.py.
+    """
+    def test_normal_use(self):
+        """
+        Adapted from PEP 3134 docs
+        """
+        # Setup:
+        class DatabaseError(Exception):
+            pass
+
+        # Python 2 and 3:
+        from future.utils import raise_from
+        
+        class FileDatabase:
+            def __init__(self, filename):
+                try:
+                    self.file = open(filename)
+                except IOError as exc:
+                    raise_from(DatabaseError('failed to open'), exc)
+
+        # Testing the above:
+        try:
+            fd = FileDatabase('non_existent_file.txt')
+        except Exception as e:
+            assert isinstance(e.__cause__, IOError)   # FileNotFoundError on
+                                                      # Py3.3+ inherits from IOError        
+
+    def testCauseSyntax(self):
+        try:
+            try:
+                try:
+                    raise TypeError
+                except Exception:
+                    raise_from(ValueError, None)
+            except ValueError as exc:
+                self.assertIsNone(exc.__cause__)
+                self.assertTrue(exc.__suppress_context__)
+                exc.__suppress_context__ = False
+                raise exc
+        except ValueError as exc:
+            e = exc
+
+        self.assertIsNone(e.__cause__)
+        self.assertFalse(e.__suppress_context__)
+        self.assertIsInstance(e.__context__, TypeError)
+
+    def test_invalid_cause(self):
+        try:
+            raise_from(IndexError, 5)
+        except TypeError as e:
+            self.assertIn("exception cause", str(e))
+        else:
+            self.fail("No exception raised")
+
+    def test_class_cause(self):
+        try:
+            raise_from(IndexError, KeyError)
+        except IndexError as e:
+            self.assertIsInstance(e.__cause__, KeyError)
+        else:
+            self.fail("No exception raised")
+
+    @unittest.expectedFailure
+    def test_instance_cause(self):
+        cause = KeyError('blah')
+        try:
+            raise_from(IndexError, cause)
+        except IndexError as e:
+            # FAILS:
+            self.assertTrue(e.__cause__ is cause)
+            # Even this weaker version seems to fail, although repr(cause) looks correct.
+            # Is there something strange about testing exceptions for equality?
+            self.assertEqual(e.__cause__, cause)
+        else:
+            self.fail("No exception raised")
+
+    def test_erroneous_cause(self):
+        class MyException(Exception):
+            def __init__(self):
+                raise RuntimeError()
+
+        try:
+            raise_from(IndexError, MyException)
+        except RuntimeError:
+            pass
+        else:
+            self.fail("No exception raised")
 
 
 if __name__ == '__main__':
