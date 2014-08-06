@@ -74,6 +74,9 @@ import types
 import sys
 import numbers
 import functools
+import copy
+import inspect
+
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
@@ -336,7 +339,49 @@ def getexception():
     return sys.exc_info()[1]
 
 
+def _get_caller_globals_and_locals():
+    """
+    Returns the globals and locals of the calling frame.
+
+    Is there an alternative to frame hacking here?
+    """
+    caller_frame = inspect.stack()[2]
+    myglobals = caller_frame[0].f_globals
+    mylocals = caller_frame[0].f_locals
+    return myglobals, mylocals
+
+
+def _repr_strip(mystring):
+    """
+    Returns the string without any initial or final quotes.
+    """
+    r = repr(mystring)
+    if r.startswith("'") and r.endswith("'"):
+        return r[1:-1]
+    else:
+        return r
+
+
 if PY3:
+    def raise_from(exc, cause):
+        """
+        Equivalent to:
+
+            raise EXCEPTION from CAUSE
+
+        on Python 3. (See PEP 3134).
+        """
+        # Is either arg an exception class (e.g. IndexError) rather than
+        # instance (e.g. IndexError('my message here')? If so, pass the
+        # name of the class undisturbed through to "raise ... from ...".
+        if isinstance(exc, type) and issubclass(exc, Exception):
+            exc = exc.__name__
+        if isinstance(cause, type) and issubclass(cause, Exception):
+            cause = cause.__name__
+        execstr = "raise " + _repr_strip(exc) + " from " + _repr_strip(cause)
+        myglobals, mylocals = _get_caller_globals_and_locals()
+        exec(execstr, myglobals, mylocals)
+
     def raise_(tp, value=None, tb=None):
         """
         A function that matches the Python 2.x ``raise`` statement. This
@@ -358,6 +403,18 @@ if PY3:
         raise exc.with_traceback(traceback)
 
 else:
+    def raise_from(exc, cause):
+        """
+        Equivalent to:
+
+            raise EXCEPTION from CAUSE
+
+        on Python 3. (See PEP 3134).
+        """
+        exc_copy = copy.copy(exc)
+        exc_copy.__cause__ = cause
+        raise exc_copy
+
     exec('''
 def raise_(tp, value=None, tb=None):
     raise tp, value, tb
