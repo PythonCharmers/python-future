@@ -13,6 +13,7 @@ What's new in version 0.12.5
   (issue #81). It still converts ``obj.next()`` method calls to
   ``next(obj)`` correctly.
 - Add :ref:`compatible-idioms` from Ed Schofield's PyConAU 2014 talk.
+- Add ``future.utils.raise_from`` as an equivalent to Py3's ``raise ... from ...`` syntax (issue #86).
 
 
 .. whats-new-0.12.4:
