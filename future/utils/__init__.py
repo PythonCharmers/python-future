@@ -422,12 +422,16 @@ else:
             # exec(execstr, myglobals, mylocals)
         else:
             e = exc
+        e.__suppress_context__ = False
         if isinstance(cause, type) and issubclass(cause, Exception):
             e.__cause__ = cause()
+            e.__suppress_context__ = True
         elif cause is None:
             e.__cause__ = None
+            e.__suppress_context__ = True
         elif isinstance(cause, BaseException):
             e.__cause__ = cause
+            e.__suppress_context__ = True
         else:
             raise TypeError("exception causes must derive from BaseException")
         e.__context__ = sys.exc_info()[1]
