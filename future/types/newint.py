@@ -7,8 +7,11 @@ They are very similar. The most notable difference is:
 """
 from __future__ import division
 
+import struct
+import collections
+
 from future.types.newbytes import newbytes
-from future.utils import PY3, isint, istext, isbytes, with_metaclass
+from future.utils import PY3, isint, istext, isbytes, with_metaclass, native
 
 
 if PY3:
@@ -273,6 +276,85 @@ class newint(with_metaclass(BaseNewInt, long)):
 
     def __native__(self):
         return long(self)
+
+    def to_bytes(self, length, byteorder='big', signed=False):
+        """
+        Return an array of bytes representing an integer.
+
+        The integer is represented using length bytes.  An OverflowError is
+        raised if the integer is not representable with the given number of
+        bytes.
+
+        The byteorder argument determines the byte order used to represent the
+        integer.  If byteorder is 'big', the most significant byte is at the
+        beginning of the byte array.  If byteorder is 'little', the most
+        significant byte is at the end of the byte array.  To request the native
+        byte order of the host system, use `sys.byteorder' as the byte order value.
+
+        The signed keyword-only argument determines whether two's complement is
+        used to represent the integer.  If signed is False and a negative integer
+        is given, an OverflowError is raised.
+        """
+        if signed:
+            raise NotImplementedError("Not yet implemented. Please contribute a patch at http://python-future.org")
+        else:
+            if self < 0:
+                raise OverflowError("can't convert negative int to unsigned")
+            num = self
+        if byteorder not in ('little', 'big'):
+            raise ValueError("byteorder must be either 'little' or 'big'")
+        if length < 0:
+            raise ValueError("length argument must be non-negative")
+        if length == 0 and num == 0:
+            return newbytes()
+        h = b'%x' % num
+        s = newbytes((b'0'*(len(h) % 2) + h).zfill(length*2).decode('hex'))
+        if len(s) > length:
+            raise OverflowError("int too big to convert")
+        return s if byteorder == 'big' else s[::-1]
+
+    @classmethod
+    def from_bytes(cls, mybytes, byteorder='big', signed=False):
+        """
+        Return the integer represented by the given array of bytes.
+
+        The mybytes argument must either support the buffer protocol or be an
+        iterable object producing bytes.  Bytes and bytearray are examples of
+        built-in objects that support the buffer protocol.
+
+        The byteorder argument determines the byte order used to represent the
+        integer.  If byteorder is 'big', the most significant byte is at the
+        beginning of the byte array.  If byteorder is 'little', the most
+        significant byte is at the end of the byte array.  To request the native
+        byte order of the host system, use `sys.byteorder' as the byte order value.
+
+        The signed keyword-only argument indicates whether two's complement is
+        used to represent the integer.
+        """
+        if signed:
+            raise NotImplementedError("Not yet implemented. Please contribute a patch at http://python-future.org")
+        if byteorder not in ('little', 'big'):
+            raise ValueError("byteorder must be either 'little' or 'big'")
+        if isinstance(mybytes, unicode):
+            raise TypeError("cannot convert unicode objects to bytes")
+        # mybytes can also be passed as a sequence of integers on Py3.
+        # Test for this:
+        elif isinstance(mybytes, collections.Iterable):
+            mybytes = newbytes(mybytes)
+        b = mybytes if byteorder == 'big' else mybytes[::-1]
+        if len(b) == 0:
+            b = b'\x00'
+        # The encode() method has been disabled by newbytes, but Py2's
+        # str has it:
+        num = int(native(b).encode('hex'), 16)
+        return cls(num)
+
+
+# def _twos_comp(val, bits):
+#     """compute the 2's compliment of int value val"""
+#     if( (val&(1<<(bits-1))) != 0 ):
+#         val = val - (1<<bits)
+#     return val
 
 
 __all__ = ['newint']
