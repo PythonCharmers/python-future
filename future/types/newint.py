@@ -8,6 +8,7 @@ They are very similar. The most notable difference is:
 from __future__ import division
 
 import struct
+import collections
 
 from future.types.newbytes import newbytes
 from future.utils import PY3, isint, istext, isbytes, with_metaclass, native
@@ -313,11 +314,11 @@ class newint(with_metaclass(BaseNewInt, long)):
         return s if byteorder == 'big' else s[::-1]
 
     @classmethod
-    def from_bytes(cls, bytes, byteorder='big', signed=False):
+    def from_bytes(cls, mybytes, byteorder='big', signed=False):
         """
         Return the integer represented by the given array of bytes.
 
-        The bytes argument must either support the buffer protocol or be an
+        The mybytes argument must either support the buffer protocol or be an
         iterable object producing bytes.  Bytes and bytearray are examples of
         built-in objects that support the buffer protocol.
 
@@ -334,7 +335,13 @@ class newint(with_metaclass(BaseNewInt, long)):
             raise NotImplementedError("Not yet implemented. Please contribute a patch at http://python-future.org")
         if byteorder not in ('little', 'big'):
             raise ValueError("byteorder must be either 'little' or 'big'")
-        b = bytes if byteorder == 'big' else bytes[::-1]
+        if isinstance(mybytes, unicode):
+            raise TypeError("cannot convert unicode objects to bytes")
+        # mybytes can also be passed as a sequence of integers on Py3.
+        # Test for this:
+        elif isinstance(mybytes, collections.Iterable):
+            mybytes = newbytes(mybytes)
+        b = mybytes if byteorder == 'big' else mybytes[::-1]
         if len(b) == 0:
             b = b'\x00'
         # The encode() method has been disabled by newbytes, but Py2's
