@@ -10,7 +10,7 @@ from __future__ import division
 import struct
 
 from future.types.newbytes import newbytes
-from future.utils import PY3, isint, istext, isbytes, with_metaclass
+from future.utils import PY3, isint, istext, isbytes, with_metaclass, native
 
 
 if PY3:
@@ -337,7 +337,9 @@ class newint(with_metaclass(BaseNewInt, long)):
         b = bytes if byteorder == 'big' else bytes[::-1]
         if len(b) == 0:
             b = b'\x00'
-        num = int(b.encode('hex'), 16)
+        # The encode() method has been disabled by newbytes, but Py2's
+        # str has it:
+        num = int(native(b).encode('hex'), 16)
         return cls(num)
 
 
