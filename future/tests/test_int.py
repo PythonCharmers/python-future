@@ -784,7 +784,7 @@ class IntTestCases(unittest.TestCase):
             for test, expected in tests.items():
                 try:
                     self.assertEqual(
-                        test.to_bytes(len(expected), byteorder, signed=signed),
+                        int(test).to_bytes(len(expected), byteorder, signed=signed),
                         expected)
                 except Exception as err:
                     raise_from(AssertionError(
@@ -884,7 +884,7 @@ class IntTestCases(unittest.TestCase):
                 try:
                     self.assertEqual(
                         int.from_bytes(test, byteorder, signed=signed),
-                        expected)
+                        int(expected))
                 except Exception as err:
                     raise_from(AssertionError(
                         "failed to convert {0} with byteorder={1!r} and signed={2}"
