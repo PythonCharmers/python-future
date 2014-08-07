@@ -187,6 +187,9 @@ The ``fix_print_with_import`` fixer in ``libfuturize.fixes`` changes the code to
 use print as a function and also adds ``from __future__ import
 print_function`` to the top of modules using ``print()``.
 
+In addition, it avoids adding an extra set of parentheses if these already
+exist. So ``print(x)`` does not become ``print((x))``.
+
 .. code-block:: python
 
     lib2to3.fixes.fix_raise
