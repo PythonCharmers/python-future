@@ -17,6 +17,7 @@ from lib2to3.pgen2 import driver
 
 # Local imports
 from future.tests.base import unittest
+from future.builtins import str
 
 
 test_dir = os.path.dirname(__file__)
@@ -77,7 +78,7 @@ class FixerTestCase(unittest.TestCase):
         before = reformat(before)
         after = reformat(after)
         tree = self.refactor.refactor_string(before, self.filename)
-        self.assertEqual(after, unicode(tree))
+        self.assertEqual(after, str(tree))
         return tree
 
     def check(self, before, after, ignore_warnings=False):
