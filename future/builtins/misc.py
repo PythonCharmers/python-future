@@ -59,6 +59,7 @@ if utils.PY2:
     from future.builtins.newnext import newnext as next
     from future.builtins.newround import newround as round
     from future.builtins.newsuper import newsuper as super
+    from future.types.newint import newint
 
     _SENTINEL = object()
 
@@ -70,11 +71,11 @@ if utils.PY2:
         equivalent to (x**y) % z, but may be more efficient (e.g. for ints).
         """
         # Handle newints
-        if isinstance(x, float.builtins.int):
+        if isinstance(x, newint):
             x = long(x)
-        if isinstance(y, float.builtins.int):
+        if isinstance(y, newint):
             y = long(y)
-        if isinstance(z, float.builtins.int):
+        if isinstance(z, newint):
             z = long(z)
 
         try:
