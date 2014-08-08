@@ -84,18 +84,15 @@ class TestFuturizeSimple(CodeHandler):
         # and more comments
 
         import math
-        1 / 5
         print 'Hello!'
         """
         after = """
         #!/usr/bin/env python
         # some comments
         # and more comments
-        from __future__ import division
         from __future__ import print_function
 
         import math
-        1 / 5
         print('Hello!')
         """
         self.convert_check(before, after)
@@ -111,7 +108,6 @@ class TestFuturizeSimple(CodeHandler):
         a doc string
         """
         import math
-        1 / 5
         print 'Hello!'
         '''
         after = '''
@@ -119,10 +115,8 @@ class TestFuturizeSimple(CodeHandler):
         """
         a doc string
         """
-        from __future__ import division
         from __future__ import print_function
         import math
-        1 / 5
         print('Hello!')
         '''
         self.convert_check(before, after)
