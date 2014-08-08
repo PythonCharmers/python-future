@@ -3,10 +3,8 @@
 pasteurize.py
 =============
 
-Like Armin Ronacher's ``modernize.py``, but using the ``future`` package rather than a direct dependency on ``six``'.
-
-pasteurize.py attempts to turn Py3 code into relatively clean Py3 code that is also
-compatible with Py2 when using the ``future`` package.
+pasteurize.py attempts to turn Py3 code into relatively clean Py3 code that is
+also compatible with Py2 when using the ``future`` package.
 
 
 Licensing
