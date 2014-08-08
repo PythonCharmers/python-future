@@ -51,7 +51,7 @@ class TestFuturizeSimple(CodeHandler):
         #!/usr/bin/env python
 
         from __future__ import division
-        from past.utils import old_div
+        from future.utils import old_div
         import math
         old_div(1, 5)
         """
@@ -515,7 +515,7 @@ class TestFuturizeSimple(CodeHandler):
         x = 1 / 2
         """
         after = """
-        from past.utils import old_div
+        from future.utils import old_div
         x = old_div(1, 2)
         """
         self.convert_check(before, after, stages=[1, 2])
@@ -1114,7 +1114,7 @@ class TestConservativeFuturize(CodeHandler):
         """
         after = """
         from __future__ import division
-        from past.utils import old_div
+        from future.utils import old_div
         x = old_div(3, 2)
         y = old_div(3., 2)
         assert x == 1 and isinstance(x, int)
@@ -1124,8 +1124,8 @@ class TestConservativeFuturize(CodeHandler):
 
     def test_safe_division_overloaded(self):
         """
-        If division is overloaded, futurize may produce spurious old_div
-        calls.  This test is for whether the code still works on Py2
+        If division is overloaded, futurize may produce spurious old_div()
+        calls. This test is for whether the code still works on Py2
         despite these calls.
         """
         before = """
@@ -1142,7 +1142,7 @@ class TestConservativeFuturize(CodeHandler):
         """
         after = """
         from __future__ import division
-        from past.utils import old_div
+        from past.utils import div
         class Path(str):
             def __div__(self, other):
                 return self.__truediv__(other)

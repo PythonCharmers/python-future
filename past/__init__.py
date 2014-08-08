@@ -41,6 +41,8 @@ Here are some code examples that run identically on Python 3 and 2::
     >>> div(3, 2.0)  # like 3/2.0 in Py2
     1.5
 
+    This is an alias for ``future.utils.old_div``.
+
     >>> # List-producing versions of range, reduce, map, filter
     >>> from past.builtins import range, reduce
     >>> range(10)

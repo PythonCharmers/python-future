@@ -617,11 +617,8 @@ else:
         exec("""exec code in globs, locs""")
 
 
-# Defined here too for backward compatibility:
 def old_div(a, b):
     """
-    DEPRECATED: import ``old_div`` from ``past.utils`` instead.
-
     Equivalent to ``a / b`` on Python 2 without ``from __future__ import
     division``.
 
