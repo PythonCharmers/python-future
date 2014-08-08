@@ -8,11 +8,15 @@ Adds this import line:
 at the top and changes any old-style divisions to be calls to
 past.utils.old_div so the code runs as before on Py2.6/2.7 and has the same
 behaviour on Py3.
+
+If "from __future__ import division" is already in effect, this fixer does
+nothing.
 """
 
 from lib2to3 import fixer_base
-from lib2to3.fixer_util import syms
-from libfuturize.fixer_util import token, future_import, touch_import_top
+from lib2to3.fixer_util import syms, does_tree_import
+from libfuturize.fixer_util import (token, future_import, touch_import_top,
+                                    wrap_in_fn_call)
 
 
 def match_division(node):
@@ -35,10 +39,17 @@ class FixDivisionSafe(fixer_base.BaseFix):
     term<(not('/') any)+ '/' ((not('/') any))>
     """
 
+    def start_tree(self, tree, name):
+        """
+        Skip this fixer if "__future__.division" is already imported.
+        """
+        super(FixDivisionSafe, self).start_tree(tree, name)
+        self.skip = "division" in tree.future_features
+
     def match(self, node):
         u"""
         Since the tree needs to be fixed once and only once if and only if it
-        matches, then we can start discarding matches after we make the first.
+        matches, we can start discarding matches after the first.
         """
         if (node.type == self.syms.term and 
                     len(node.children) == 3 and
@@ -49,7 +60,10 @@ class FixDivisionSafe(fixer_base.BaseFix):
             return False
 
     def transform(self, node, results):
+        if self.skip:
+            return
         future_import(u"division", node)
+
         touch_import_top(u'past.utils', u'old_div', node)
         expr1, expr2 = results[0].clone(), results[1].clone()
         # Strip any leading space for the first number:
