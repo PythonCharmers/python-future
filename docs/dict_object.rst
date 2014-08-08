@@ -57,8 +57,7 @@ If you already have large native dictionaries, the downside to wrapping them in
 a ``dict`` call is that memory is copied (on both Py3 and with
 ``future.builtins.dict``). For example::
 
-    # Currently, this allocates and then frees a large amount of temporary
-    # memory:
+    # This allocates and then frees a large amount of temporary memory:
     d = dict({i: i**2 for i in range(10**7)})
 
 If dictionary methods like ``values`` and ``items`` are called only once, this

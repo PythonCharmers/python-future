@@ -3,7 +3,9 @@
 Futurize: 2 to both
 --------------------
 
-For example, running ``futurize`` turns this Python 2 code::
+For example, running ``futurize`` turns this Python 2 code:
+
+.. code-block:: python
 
     import ConfigParser                 # Py2 module name
 
@@ -20,7 +22,9 @@ For example, running ``futurize`` turns this Python 2 code::
     for letter in itr:
         print letter,                   # Py2-style print statement
 
-into this code which runs on both Py2 and Py3::
+into this code which runs on both Py2 and Py3:
+
+.. code-block:: python
 
     from __future__ import print_function
     from future import standard_library
@@ -70,7 +74,9 @@ the code. With luck, this will not introduce any bugs into the code, or will at
 least be trivial to fix. The changes are those that bring the Python code
 up-to-date without breaking Py2 compatibility. The resulting code will be
 modern Python 2.6-compatible code plus ``__future__`` imports from the
-following set::
+following set:
+
+.. code-block:: python
 
     from __future__ import absolute_import
     from __future__ import division
@@ -83,7 +89,9 @@ which case they are all added.
 The ``from __future__ import unicode_literals`` declaration is not added
 unless the ``--unicode-literals`` flag is passed to ``futurize``.
 
-The changes include::
+The changes include:
+
+.. code-block:: python
 
     - except MyException, e:
     + except MyException as e:
@@ -101,7 +109,9 @@ The changes include::
     - if d.has_key(key):
     + if key in d:
 
-Implicit relative imports fixed, e.g.::
+Implicit relative imports fixed, e.g.:
+
+.. code-block:: python
 
     - import mymodule
     + from __future__ import absolute_import
@@ -119,7 +129,9 @@ porting process, but without introducing any bugs. It should be uncontroversial
 and safe to apply to every Python 2 package. The subsequent patches introducing
 Python 3 compatibility should then be shorter and easier to review.
 
-The complete set of fixers applied by ``futurize --stage1`` is::
+The complete set of fixers applied by ``futurize --stage1`` is:
+
+.. code-block:: python
 
     lib2to3.fixes.fix_apply
     lib2to3.fixes.fix_except
@@ -131,7 +143,6 @@ The complete set of fixers applied by ``futurize --stage1`` is::
     lib2to3.fixes.fix_isinstance
     lib2to3.fixes.fix_methodattrs
     lib2to3.fixes.fix_ne
-    lib2to3.fixes.fix_next
     lib2to3.fixes.fix_numliterals
     lib2to3.fixes.fix_paren
     lib2to3.fixes.fix_reduce
@@ -145,6 +156,7 @@ The complete set of fixers applied by ``futurize --stage1`` is::
     lib2to3.fixes.fix_ws_comma
     lib2to3.fixes.fix_xreadlines
     libfuturize.fixes.fix_absolute_import
+    libfuturize.fixes.fix_next_call
     libfuturize.fixes.fix_print_with_import
     libfuturize.fixes.fix_raise
     libfuturize.fixes.fix_order___future__imports
@@ -163,11 +175,25 @@ of each relevant module.
 
 .. code-block:: python
 
+    lib2to3.fixes.fix_next
+
+The ``fix_next_call`` fixer in ``libfuturize.fixes`` is applied instead of
+``fix_next`` in stage 1. The new fixer changes any ``obj.next()`` calls to
+``next(obj)``, which is Py2/3 compatible, but doesn't change any ``next`` method
+names to ``__next__``, which would break Py2 compatibility.
+
+``fix_next`` is applied in stage 2.
+
+.. code-block:: python
+
     lib2to3.fixes.fix_print
 
 The ``fix_print_with_import`` fixer in ``libfuturize.fixes`` changes the code to
 use print as a function and also adds ``from __future__ import
 print_function`` to the top of modules using ``print()``.
+
+In addition, it avoids adding an extra set of parentheses if these already
+exist. So ``print(x)`` does not become ``print((x))``.
 
 .. code-block:: python
 

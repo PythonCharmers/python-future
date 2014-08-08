@@ -65,8 +65,7 @@ from __future__ import (absolute_import, print_function, unicode_literals)
 from future.builtins import *
 import future
 import future.utils
-
-__version__ = '0.13.0-dev'
+from future import __version__
 
 import sys
 import logging
@@ -82,11 +81,6 @@ from libfuturize.fixes import (lib2to3_fix_names_stage1,
                                libfuturize_fix_names_stage2)
 
 fixer_pkg = 'libfuturize.fixes'
-
-if __version__ != future.__version__:
-    warn('The libfuturize and future packages have different versions. '
-         'This may break the futurize script. Please ensure the versions '
-         'are consistent.')
 
 
 def main(args=None):

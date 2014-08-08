@@ -17,6 +17,24 @@ What's New in v0.12.x
 *********************
 
 
+.. whats-new-0.12.5:
+
+What's new in version 0.12.5
+============================
+
+- Use a private logger instead of the global logger in
+  ``future.standard_library`` (issue #82).
+- Stage 1 of ``futurize`` no longer renames ``next`` methods to ``__next__``
+  (issue #81). It still converts ``obj.next()`` method calls to
+  ``next(obj)`` correctly.
+- Docs: Add :ref:`compatible-idioms` from Ed Schofield's PyConAU 2014 talk.
+- Add ``newint.to_bytes()`` and ``newint.from_bytes()`` (issue #85)
+- Add ``future.utils.raise_from`` as an equivalent to Py3's ``raise ... from
+  ...`` syntax (issue #86).
+- Prevent introduction of a second set of parentheses in ``print()`` calls in
+  some further cases.
+
+
 .. whats-new-0.12.4:
 
 What's new in version 0.12.4

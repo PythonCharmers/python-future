@@ -1,9 +1,10 @@
-.. _porting:
+.. _futurize_cheatsheet:
 
-Python 2 to 2&3 porting cheat-sheet
-===================================
+``futurize`` cheat-sheet: automatic conversion from Py2 to Py2&3
+================================================================
 
-Instructions and notes on porting code from Python 2 to both Python 3 and 2 using ``future``:
+Instructions and notes on converting code from supporting only Python 2 to
+supporting both Python 3 and 2 with a single codebase using ``futurize``:
 
 .. _porting-setup:
 
@@ -14,7 +15,7 @@ Step 0 goal: set up and see the tests passing on Python 2 and failing on Python 
 
 a. Clone the package from github/bitbucket. Optionally rename your repo to ``package-future``. Examples: ``reportlab-future``, ``paramiko-future``, ``mezzanine-future``.
 b. Create and activate a Python 2 conda environment or virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test`` or ``nosetests``)
-c. Optionally: if there’s a ``.travis.yml`` file, add Python version 3.3 and remove any versions < 2.6.
+c. Optionally: if there is a ``.travis.yml`` file, add Python version 3.3 and remove any versions < 2.6.
 d. Install Python 3.3 with e.g. ``sudo apt-get install python3``. On other platforms, an easy way is to use `Miniconda <http://repo.continuum.io/miniconda/index.html>`_. Then e.g.::
     
     conda create -n py33 python=3.3 pip
@@ -31,7 +32,8 @@ The goal for this step is to modernize the Python 2 code without introducing any
           pip install future
   
 **1b**. Run ``futurize --stage1 -w *.py subdir1/*.py subdir2/*.py``. Note that with
-``zsh``, you can apply stage1 to all Python source files recursively with::
+recursive globbing in ``bash`` or ``zsh``, you can apply stage 1 to all Python
+source files recursively with::
 
         futurize --stage1 -w **/*.py
 
@@ -76,10 +78,10 @@ again with the help of the ``future`` package.
 
 **2a**. Run::
 
-        futurize —-stage2 myfolder1/*.py myfolder2/*.py
+        futurize --stage2 myfolder1/*.py myfolder2/*.py
 
-Alternatively, with ``zsh``, you can view the stage 2 changes to all Python source files
-recursively with::
+Or, using recursive globbing with ``bash`` or ``zsh``, you can view the stage 2
+changes to all Python source files recursively with::
 
     futurize --stage2 **/*.py
 
@@ -93,13 +95,13 @@ These will likely require imports from ``future``, such as::
     from future.builtins import bytes
     from future.builtins import open
 
-Optionally, you can use the ``--unicode-literals`` flag to adds this further
-import to the top of each module::
+Optionally, you can use the ``--unicode-literals`` flag to add this import to
+the top of each module::
 
     from __future__ import unicode_literals
 
-All strings would then be unicode (on Py2 as on Py3) unless explicitly marked
-with a ``b''`` prefix.
+All strings in the module would then be unicode on Py2 (as on Py3) unless
+explicitly marked with a ``b''`` prefix.
 
 If you would like ``futurize`` to import all the changed builtins to have their
 Python 3 semantics on Python 2, invoke it like this::
@@ -111,19 +113,11 @@ Python 3 semantics on Python 2, invoke it like this::
 
 **2c**. Commit your changes! :)
 
-**2d**. Now run your tests on Python 2 and notice the errors. Add wrappers from ``future`` to re-enable Python 2 compatibility:
-
-- :func:`utils.reraise()` function for raising exceptions compatibly
-- ``bytes(b'blah')`` instead of ``b'blah'``
-- ``str('my string')`` instead of ``'my string'`` if you need to enforce Py3’s strict type-checking on Py2
-- ``int(1234)`` instead of ``1234`` if you want to enforce a Py3-like long integer
-- :func:`@utils.implements_iterator` decorator for any custom iterator class with a ``.__next__()`` method (which used to be ``.next()``)
-- :func:`@utils.python_2_unicode_compatible` decorator for any class with a ``__str__`` method (which used to be ``__unicode__``).
-- :func:`utils.with_metaclass` to define any metaclasses.
-
-See :ref:`what-else` for more info.
+**2d**. Now run your tests on Python 2 and notice the errors. Add wrappers from
+``future`` to re-enable Python 2 compatibility. See the
+:ref:`compatible-idioms` cheat sheet or :ref:`what-else` for more info.
 
 After each change, re-run the tests on Py3 and Py2 to ensure they pass on both.
 
-**2e.** You’re done! Celebrate! Push your code and announce to the world! Hashtags
+**2e**. You're done! Celebrate! Push your code and announce to the world! Hashtags
 #python3 #python-future.

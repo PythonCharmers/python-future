@@ -8,7 +8,7 @@ Turns any print statements into functions and adds this import line:
 at the top to retain compatibility with Python 2.6+.
 """
 
-from lib2to3.fixes.fix_print import FixPrint
+from libfuturize.fixes.fix_print import FixPrint
 from libfuturize.fixer_util import future_import
 
 class FixPrintWithImport(FixPrint):

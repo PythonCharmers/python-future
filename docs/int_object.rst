@@ -31,6 +31,8 @@ that deals with ``long`` and ``int`` as special cases on Py2. An example is the
 following code from ``xlwt-future`` (called by the ``xlwt.antlr.BitSet`` class)
 for writing out Excel ``.xls`` spreadsheets. With ``future``, the code is::
 
+    from future.builtins import int
+
     def longify(data):
         """
         Turns data (an int or long, or a list of ints or longs) into a

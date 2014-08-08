@@ -6,10 +6,11 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
 from future.tests.base import unittest, expectedFailurePY2
-from future.utils import PY26
+from future.utils import PY26, PY2, raise_from
 
 import sys
 import random
+import array
 
 try:
     import numpy as np
@@ -777,6 +778,250 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(-b, a)
         self.assertEqual(-b, 3)
         self.assertTrue(isinstance(-a, int))
+
+    def test_to_bytes(self):
+        def check(tests, byteorder, signed=False):
+            for test, expected in tests.items():
+                try:
+                    self.assertEqual(
+                        int(test).to_bytes(len(expected), byteorder, signed=signed),
+                        expected)
+                except Exception as err:
+                    raise_from(AssertionError(
+                        "failed to convert {0} with byteorder={1} and signed={2}"
+                        .format(test, byteorder, signed)), err)
+
+        # Convert integers to signed big-endian byte arrays.
+        tests1 = {
+            0: bytes(b'\x00'),
+            1: bytes(b'\x01'),
+            -1: bytes(b'\xff'),
+            -127: bytes(b'\x81'),
+            -128: bytes(b'\x80'),
+            -129: bytes(b'\xff\x7f'),
+            127: bytes(b'\x7f'),
+            129: bytes(b'\x00\x81'),
+            -255: bytes(b'\xff\x01'),
+            -256: bytes(b'\xff\x00'),
+            255: bytes(b'\x00\xff'),
+            256: bytes(b'\x01\x00'),
+            32767: bytes(b'\x7f\xff'),
+            -32768: bytes(b'\xff\x80\x00'),
+            65535: bytes(b'\x00\xff\xff'),
+            -65536: bytes(b'\xff\x00\x00'),
+            -8388608: bytes(b'\x80\x00\x00')
+        }
+        # check(tests1, 'big', signed=True)
+
+        # Convert integers to signed little-endian byte arrays.
+        tests2 = {
+            0: bytes(b'\x00'),
+            1: bytes(b'\x01'),
+            -1: bytes(b'\xff'),
+            -127: bytes(b'\x81'),
+            -128: bytes(b'\x80'),
+            -129: bytes(b'\x7f\xff'),
+            127: bytes(b'\x7f'),
+            129: bytes(b'\x81\x00'),
+            -255: bytes(b'\x01\xff'),
+            -256: bytes(b'\x00\xff'),
+            255: bytes(b'\xff\x00'),
+            256: bytes(b'\x00\x01'),
+            32767: bytes(b'\xff\x7f'),
+            -32768: bytes(b'\x00\x80'),
+            65535: bytes(b'\xff\xff\x00'),
+            -65536: bytes(b'\x00\x00\xff'),
+            -8388608: bytes(b'\x00\x00\x80')
+        }
+        # check(tests2, 'little', signed=True)
+
+        # Convert integers to unsigned big-endian byte arrays.
+        tests3 = {
+            0: bytes(b'\x00'),
+            1: bytes(b'\x01'),
+            127: bytes(b'\x7f'),
+            128: bytes(b'\x80'),
+            255: bytes(b'\xff'),
+            256: bytes(b'\x01\x00'),
+            32767: bytes(b'\x7f\xff'),
+            32768: bytes(b'\x80\x00'),
+            65535: bytes(b'\xff\xff'),
+            65536: bytes(b'\x01\x00\x00')
+        }
+        check(tests3, 'big', signed=False)
+
+        # Convert integers to unsigned little-endian byte arrays.
+        tests4 = {
+            0: bytes(b'\x00'),
+            1: bytes(b'\x01'),
+            127: bytes(b'\x7f'),
+            128: bytes(b'\x80'),
+            255: bytes(b'\xff'),
+            256: bytes(b'\x00\x01'),
+            32767: bytes(b'\xff\x7f'),
+            32768: bytes(b'\x00\x80'),
+            65535: bytes(b'\xff\xff'),
+            65536: bytes(b'\x00\x00\x01')
+        }
+        check(tests4, 'little', signed=False)
+
+        self.assertRaises(OverflowError, int(256).to_bytes, 1, 'big', signed=False)
+        # self.assertRaises(OverflowError, int(256).to_bytes, 1, 'big', signed=True)
+        self.assertRaises(OverflowError, int(256).to_bytes, 1, 'little', signed=False)
+        # self.assertRaises(OverflowError, int(256).to_bytes, 1, 'little', signed=True)
+        self.assertRaises(OverflowError, int(-1).to_bytes, 2, 'big', signed=False),
+        self.assertRaises(OverflowError, int(-1).to_bytes, 2, 'little', signed=False)
+        self.assertEqual(int(0).to_bytes(0, 'big'), b'')
+        self.assertEqual(int(1).to_bytes(5, 'big'), b'\x00\x00\x00\x00\x01')
+        self.assertEqual(int(0).to_bytes(5, 'big'), b'\x00\x00\x00\x00\x00')
+        # self.assertEqual(int(-1).to_bytes(5, 'big', signed=True),
+        #                  bytes(b'\xff\xff\xff\xff\xff'))
+        self.assertRaises(OverflowError, int(1).to_bytes, 0, 'big')
+
+    def test_from_bytes(self):
+        def check(tests, byteorder, signed=False):
+            for test, expected in tests.items():
+                try:
+                    self.assertEqual(
+                        int.from_bytes(test, byteorder, signed=signed),
+                        int(expected))
+                except Exception as err:
+                    raise_from(AssertionError(
+                        "failed to convert {0} with byteorder={1!r} and signed={2}"
+                        .format(test, byteorder, signed)), err)
+
+        # Convert signed big-endian byte arrays to integers.
+        tests1 = {
+            bytes(b''): 0,
+            bytes(b'\x00'): 0,
+            bytes(b'\x00\x00'): 0,
+            bytes(b'\x01'): 1,
+            bytes(b'\x00\x01'): 1,
+            bytes(b'\xff'): -1,
+            bytes(b'\xff\xff'): -1,
+            bytes(b'\x81'): -127,
+            bytes(b'\x80'): -128,
+            bytes(b'\xff\x7f'): -129,
+            bytes(b'\x7f'): 127,
+            bytes(b'\x00\x81'): 129,
+            bytes(b'\xff\x01'): -255,
+            bytes(b'\xff\x00'): -256,
+            bytes(b'\x00\xff'): 255,
+            bytes(b'\x01\x00'): 256,
+            bytes(b'\x7f\xff'): 32767,
+            bytes(b'\x80\x00'): -32768,
+            bytes(b'\x00\xff\xff'): 65535,
+            bytes(b'\xff\x00\x00'): -65536,
+            bytes(b'\x80\x00\x00'): -8388608
+        }
+        # check(tests1, 'big', signed=True)
+
+        # Convert signed little-endian byte arrays to integers.
+        tests2 = {
+            bytes(b''): 0,
+            bytes(b'\x00'): 0,
+            bytes(b'\x00\x00'): 0,
+            bytes(b'\x01'): 1,
+            bytes(b'\x00\x01'): 256,
+            bytes(b'\xff'): -1,
+            bytes(b'\xff\xff'): -1,
+            bytes(b'\x81'): -127,
+            bytes(b'\x80'): -128,
+            bytes(b'\x7f\xff'): -129,
+            bytes(b'\x7f'): 127,
+            bytes(b'\x81\x00'): 129,
+            bytes(b'\x01\xff'): -255,
+            bytes(b'\x00\xff'): -256,
+            bytes(b'\xff\x00'): 255,
+            bytes(b'\x00\x01'): 256,
+            bytes(b'\xff\x7f'): 32767,
+            bytes(b'\x00\x80'): -32768,
+            bytes(b'\xff\xff\x00'): 65535,
+            bytes(b'\x00\x00\xff'): -65536,
+            bytes(b'\x00\x00\x80'): -8388608
+        }
+        # check(tests2, 'little', signed=True)
+
+        # Convert unsigned big-endian byte arrays to integers.
+        tests3 = {
+            bytes(b''): 0,
+            bytes(b'\x00'): 0,
+            bytes(b'\x01'): 1,
+            bytes(b'\x7f'): 127,
+            bytes(b'\x80'): 128,
+            bytes(b'\xff'): 255,
+            bytes(b'\x01\x00'): 256,
+            bytes(b'\x7f\xff'): 32767,
+            bytes(b'\x80\x00'): 32768,
+            bytes(b'\xff\xff'): 65535,
+            bytes(b'\x01\x00\x00'): 65536,
+        }
+        check(tests3, 'big', signed=False)
+
+        # Convert integers to unsigned little-endian byte arrays.
+        tests4 = {
+            bytes(b''): 0,
+            bytes(b'\x00'): 0,
+            bytes(b'\x01'): 1,
+            bytes(b'\x7f'): 127,
+            bytes(b'\x80'): 128,
+            bytes(b'\xff'): 255,
+            bytes(b'\x00\x01'): 256,
+            bytes(b'\xff\x7f'): 32767,
+            bytes(b'\x00\x80'): 32768,
+            bytes(b'\xff\xff'): 65535,
+            bytes(b'\x00\x00\x01'): 65536,
+        }
+        check(tests4, 'little', signed=False)
+
+        class myint(int):
+            pass
+
+        if PY2:
+            import __builtin__
+            oldbytes = __builtin__.bytes
+            types = (bytes, oldbytes)
+        else:
+            types = (bytes,)
+        for mytype in types:
+            self.assertIs(type(myint.from_bytes(mytype(b'\x00'), 'big')), myint)
+            self.assertEqual(myint.from_bytes(mytype(b'\x01'), 'big'), 1)
+            self.assertIs(
+                type(myint.from_bytes(mytype(b'\x00'), 'big', signed=False)), myint)
+            self.assertEqual(myint.from_bytes(mytype(b'\x01'), 'big', signed=False), 1)
+            self.assertIs(type(myint.from_bytes(mytype(b'\x00'), 'little')), myint)
+            self.assertEqual(myint.from_bytes(mytype(b'\x01'), 'little'), 1)
+            self.assertIs(type(myint.from_bytes(
+                mytype(b'\x00'), 'little', signed=False)), myint)
+            self.assertEqual(myint.from_bytes(mytype(b'\x01'), 'little', signed=False), 1)
+            # self.assertEqual(
+            #     int.from_bytes([255, 0, 0], 'big', signed=True), -65536)
+            # self.assertEqual(
+            #     int.from_bytes((255, 0, 0), 'big', signed=True), -65536)
+            # self.assertEqual(int.from_bytes(
+            #     bytearray(mytype(b'\xff\x00\x00')), 'big', signed=True), -65536)
+            # self.assertEqual(int.from_bytes(
+            #     bytearray(mytype(b'\xff\x00\x00')), 'big', signed=True), -65536)
+            # self.assertEqual(int.from_bytes(
+            #     array.array('B', mytype(b'\xff\x00\x00')), 'big', signed=True), -65536)
+            # self.assertEqual(int.from_bytes(
+            #     memoryview(mytype(b'\xff\x00\x00')), 'big', signed=True), -65536)
+
+        self.assertRaises(TypeError, int.from_bytes, u"", 'big')
+        self.assertRaises(TypeError, int.from_bytes, u"\x00", 'big')
+        self.assertRaises(TypeError, myint.from_bytes, u"", 'big')
+        self.assertRaises(TypeError, myint.from_bytes, u"\x00", 'big')
+
+        types = (int, lambda x: x) if PY2 else (lambda x: x,)
+        for mytype in types:
+            self.assertRaises(ValueError, int.from_bytes, [mytype(256)], 'big')
+            self.assertRaises(ValueError, int.from_bytes, [mytype(0)], 'big\x00')
+            self.assertRaises(ValueError, int.from_bytes, [mytype(0)], 'little\x00')
+            self.assertRaises(TypeError, int.from_bytes, mytype(0), 'big')
+            # self.assertRaises(TypeError, int.from_bytes, mytype(0), 'big', True)
+            self.assertRaises(TypeError, myint.from_bytes, mytype(0), 'big')
+            # self.assertRaises(TypeError, int.from_bytes, mytype(0), 'big', True)
+
 
 if __name__ == "__main__":
     unittest.main()

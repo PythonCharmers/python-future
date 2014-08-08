@@ -54,6 +54,7 @@ Patches
 - Denis Cornehl
 - Nicolas Delaby
 - Corey Farwell
+- Eric Firing
 - Lion Krischer
 - Marcin Kuzminski
 - Joshua Landau
@@ -68,6 +69,7 @@ Suggestions and Feedback
 
 - Chris Adams
 - Martijn Faassen
+- Lion Krischer
 - wluebbe (GitHub)
 
 

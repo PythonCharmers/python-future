@@ -70,6 +70,15 @@ import types
 import copy
 import os
 
+# Make a dedicated logger; leave the root logger to be configured
+# by the application.
+flog = logging.getLogger('future_stdlib')
+_formatter = logging.Formatter(logging.BASIC_FORMAT)
+_handler = logging.StreamHandler()
+_handler.setFormatter(_formatter)
+flog.addHandler(_handler)
+flog.setLevel(logging.WARN)
+
 from future.utils import PY2, PY3
 
 # The modules that are defined under the same names on Py3 but with
@@ -214,7 +223,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
 #         module_info = imp.find_module(name, self.path)
 #         module = imp.load_module(name, *module_info)
 #         sys.modules[name] = module
-#         logging.warning("Imported deprecated module %s", name)
+#         flog.warning("Imported deprecated module %s", name)
 #         return module
 
 
@@ -278,10 +287,10 @@ class RenameImport(object):
                 path = package.__path__
             except AttributeError:
                 # This could be e.g. moves.
-                logging.debug('Package {0} has no __path__.'.format(package))
+                flog.debug('Package {0} has no __path__.'.format(package))
                 if name in sys.modules:
                     return sys.modules[name]
-                logging.debug('What to do here?')
+                flog.debug('What to do here?')
 
         name = bits[0]
         # We no longer use the fake module six.moves:
@@ -311,7 +320,7 @@ class hooks(object):
     imported modules (like requests).
     """
     def __enter__(self):
-        # logging.debug('Entering hooks context manager')
+        # flog.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
         self.scrubbed = scrub_py2_sys_modules()
@@ -319,7 +328,7 @@ class hooks(object):
         return self
 
     def __exit__(self, *args):
-        # logging.debug('Exiting hooks context manager')
+        # flog.debug('Exiting hooks context manager')
         restore_sys_modules(self.scrubbed)
         if not self.hooks_were_installed:
             remove_hooks()
@@ -344,7 +353,7 @@ def is_py2_stdlib_module(m):
         if not len(set(stdlib_paths)) == 1:
             # This seems to happen on travis-ci.org. Very strange. We'll try to
             # ignore it.
-            logging.warn('Multiple locations found for the Python standard '
+            flog.warn('Multiple locations found for the Python standard '
                          'library: %s' % stdlib_paths)
         # Choose the first one arbitrarily
         is_py2_stdlib_module.stdlib_path = stdlib_paths[0]
@@ -380,7 +389,7 @@ def scrub_py2_sys_modules():
         module = sys.modules[modulename]
 
         if is_py2_stdlib_module(module):
-            logging.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
+            flog.debug('Deleting (Py2) {} from sys.modules'.format(modulename))
             scrubbed[modulename] = sys.modules[modulename]
             del sys.modules[modulename]
     return scrubbed
@@ -423,7 +432,7 @@ def scrub_future_sys_modules():
         return {}
     for modulename, module in sys.modules.items():
         if modulename.startswith('future'):
-            logging.debug('Not removing %s' % modulename)
+            flog.debug('Not removing %s' % modulename)
             continue
         # We don't want to remove Python 2.x urllib if this is cached.
         # But we do want to remove modules under their new names, e.g.
@@ -437,7 +446,7 @@ def scrub_future_sys_modules():
 
             if module is None:
                 # This happens for e.g. __future__ imports. Delete it.
-                logging.debug('Deleting empty module {0} from sys.modules'
+                flog.debug('Deleting empty module {0} from sys.modules'
                               .format(modulename))
                 del sys.modules[modulename]
                 continue
@@ -448,12 +457,12 @@ def scrub_future_sys_modules():
             # six.moves doesn't have a __file__ attribute:
             if (hasattr(module, '__file__') and p in module.__file__ or
                 hasattr(module, '__future_module__')):
-                logging.debug('Deleting (future) {0} {1} from sys.modules'
+                flog.debug('Deleting (future) {0} {1} from sys.modules'
                               .format(modulename, module))
                 scrubbed[modulename] = sys.modules[modulename]
                 del sys.modules[modulename]
             else:
-                logging.debug('Not deleting {0} {1} from sys.modules'
+                flog.debug('Not deleting {0} {1} from sys.modules'
                               .format(modulename, module))
     return scrubbed
 
@@ -561,14 +570,14 @@ def install_hooks():
 
     install_aliases()
 
-    logging.debug('sys.meta_path was: {0}'.format(sys.meta_path))
-    logging.debug('Installing hooks ...')
+    flog.debug('sys.meta_path was: {0}'.format(sys.meta_path))
+    flog.debug('Installing hooks ...')
 
     # Add it unless it's there already
     newhook = RenameImport(RENAMES)
     if not detect_hooks():
         sys.meta_path.append(newhook)
-    logging.debug('sys.meta_path is now: {0}'.format(sys.meta_path))
+    flog.debug('sys.meta_path is now: {0}'.format(sys.meta_path))
 
 
 def enable_hooks():
@@ -585,7 +594,7 @@ def remove_hooks(scrub_sys_modules=True):
     """
     if PY3:
         return
-    logging.debug('Uninstalling hooks ...')
+    flog.debug('Uninstalling hooks ...')
     # Loop backwards, so deleting items keeps the ordering:
     for i, hook in list(enumerate(sys.meta_path))[::-1]:
         if hasattr(hook, 'RENAMER'):
@@ -611,12 +620,12 @@ def detect_hooks():
     """
     Returns True if the import hooks are installed, False if not.
     """
-    logging.debug('Detecting hooks ...')
+    flog.debug('Detecting hooks ...')
     present = any([hasattr(hook, 'RENAMER') for hook in sys.meta_path])
     if present:
-        logging.debug('Detected.')
+        flog.debug('Detected.')
     else:
-        logging.debug('Not detected.')
+        flog.debug('Not detected.')
     return present
 
 

@@ -25,7 +25,7 @@ Features
 .. image:: https://travis-ci.org/PythonCharmers/python-future.svg?branch=master
        :target: https://travis-ci.org/PythonCharmers/python-future
 
--   ``future.builtins`` package provides backports and remappings for 19
+-   ``future.builtins`` package provides backports and remappings for 20
     builtins with different semantics on Py3 versus Py2
 
 -   ``future.standard_library``, in conjunction with ``future.moves``, provides
@@ -34,8 +34,8 @@ Features
 -   ``future.backports`` package provides backports from the Py3.3
     standard library
 
--   ``past.builtins`` package provides forward-ports of Python 2 types and
-    resurrects some Python 2 builtins (to aid with per-module code migrations)
+-   ``past.builtins`` package provides forward-ports of 19 Python 2 types and
+    builtin functions. These can aid with per-module code migrations.
 
 -   ``past.translation`` package supports transparent translation of Python 2
     modules to Python 3 upon import. [This feature is currently in alpha.] 
@@ -181,7 +181,7 @@ For example, running ``futurize -w mymodule.py`` turns this Python 2 code:
         print 'Hello',
         print name
 
-    print 'What's your name?',
+    print "What's your name?",
     name = raw_input()
     greet(name)
 
@@ -201,7 +201,7 @@ into this code which runs on both Py2 and Py3:
         print('Hello', end=' ')
         print(name)
 
-    print('What's your name?', end=' ')
+    print("What's your name?", end=' ')
     name = input()
     greet(name)
 

@@ -45,6 +45,7 @@ provide support for running your code on Python 2.6 and 2.7 mostly unchanged.
 - For more examples, see :ref:`overview`.
 - For explicit import forms, see :ref:`imports`.
 - For more details, see :ref:`what-else`.
+- For a cheat sheet, see :ref:`compatible-idioms`.
 
 
 To convert existing Python 3 code
@@ -97,6 +98,7 @@ be accessed under their Python 3 names and locations in Python 2::
         import queue
         import configparser
         from collections import UserList
+        from collections import Counter, OrderedDict   # even on Py2.6
         from itertools import filterfalse, zip_longest
 
         import html
@@ -151,5 +153,6 @@ For more information on the automatic translation feature, see :ref:`translation
 
 Next steps
 ----------
-For more information about writing Py3/2-compatible code, see :ref:`what-else`.
+For more information about writing Py2/3-compatible code, see
+:ref:`compatible-idioms` and :ref:`what-else`.
 
