@@ -1144,7 +1144,7 @@ class TestConservativeFuturize(CodeHandler):
         """
         after = """
         from __future__ import division
-        from past.utils import old_div
+        from past.utils import div
         class Path(str):
             def __div__(self, other):
                 return self.__truediv__(other)

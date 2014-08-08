@@ -65,6 +65,7 @@ def native(obj):
         return obj
 
 
+# An alias for future.utils.old_div():
 def old_div(a, b):
     """
     Equivalent to ``a / b`` on Python 2 without ``from __future__ import
@@ -77,6 +78,4 @@ def old_div(a, b):
     else:
         return a / b
 
-
 __all__ = ['PY3', 'PY2', 'PYPY', 'with_metaclass', 'native', 'old_div']
-

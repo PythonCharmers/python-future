@@ -1,23 +1,9 @@
-.. whats-new-0.13
-
-What's New in v0.13.0
-*********************
-
-The following internal modules are deprecated. They will be removed in the next
-major release:
-
-- ``future.utils.encoding`` and ``future.utils.six``.
-
-See `here <http://fedoraproject.org/wiki/Packaging:No_Bundled_Libraries`_ for a rationale for unbundling them.
-
-
-.. whats-new-0.12.4:
+.. _whats-new-0.12.x:
 
 What's New in v0.12.x
 *********************
 
-
-.. whats-new-0.12.5:
+.. _whats-new-0.12.5:
 
 What's new in version 0.12.5
 ============================
@@ -33,9 +19,10 @@ What's new in version 0.12.5
   ...`` syntax (issue #86).
 - Prevent introduction of a second set of parentheses in ``print()`` calls in
   some further cases.
+- Fix isinstance checks for subclasses of future types (issue #89).
 
 
-.. whats-new-0.12.4:
+.. _whats-new-0.12.4:
 
 What's new in version 0.12.4
 ============================
@@ -43,7 +30,7 @@ What's new in version 0.12.4
 - Fix upcasting behaviour of newint (issue #76).
 
 
-.. whats-new-0.12.3:
+.. _whats-new-0.12.3:
 
 What's new in version 0.12.3
 ============================
@@ -74,7 +61,7 @@ What's new in version 0.12.3
     - Add list of fixers used by ``futurize`` (issue #58).
     - Add list of contributors to the Credits page.
 
-.. whats-new-0.12.2:
+.. _whats-new-0.12.2:
 
 What's new in version 0.12.2
 ============================
@@ -85,7 +72,7 @@ What's new in version 0.12.2
 - Bug fix for ``newlist(newlist([1, 2, 3]))`` (issue #50).
 
 
-.. whats-new-0.12.1:
+.. _whats-new-0.12.1:
 
 What's new in version 0.12.1
 ============================
@@ -97,7 +84,7 @@ What's new in version 0.12.1
 - Doc updates
 
 
-.. whats-new-0.12:
+.. _whats-new-0.12:
 
 What's new in version 0.12.0
 ============================
