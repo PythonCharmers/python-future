@@ -65,7 +65,7 @@ if utils.PY2:
     def pow(x, y, z=_SENTINEL):
         """
         pow(x, y[, z]) -> number
-    
+
         With two arguments, equivalent to x**y.  With three arguments,
         equivalent to (x**y) % z, but may be more efficient (e.g. for ints).
         """
@@ -73,12 +73,12 @@ if utils.PY2:
             if z == _SENTINEL:
                 return _builtin_pow(x, y)
             else:
-                return _builtin_pow(x, y, z)
+                return _builtin_pow(long(x), long(y), long(z))
         except ValueError:
             if z == _SENTINEL:
                 return _builtin_pow(x+0j, y)
             else:
-                return _builtin_pow(x+0j, y, z)
+                return _builtin_pow(long(x+0j), long(y), long(z))
 
     # ``future`` doesn't support Py3.0/3.1. If we ever did, we'd add this:
     #     callable = __builtin__.callable
