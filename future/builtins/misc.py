@@ -70,11 +70,11 @@ if utils.PY2:
         equivalent to (x**y) % z, but may be more efficient (e.g. for ints).
         """
         # Handle newints
-        if isinstance(x, float.builtins.int)
+        if isinstance(x, float.builtins.int):
             x = long(x)
-        if isinstance(y, float.builtins.int)
+        if isinstance(y, float.builtins.int):
             y = long(y)
-        if isinstance(z, float.builtins.int)
+        if isinstance(z, float.builtins.int):
             z = long(z)
 
         try:
