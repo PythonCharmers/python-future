@@ -60,8 +60,8 @@ class FixDivisionSafe(fixer_base.BaseFix):
             return False
 
     def transform(self, node, results):
-        # We can't do this here; otherwise only one old_div() call can
-        # be added per module. We do it in a different fixer:
+        if self.skip:
+            return
         future_import(u"division", node)
 
         touch_import_top(u'future.utils', u'old_div', node)
