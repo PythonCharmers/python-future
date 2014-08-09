@@ -25,7 +25,11 @@ ver = sys.version_info[:2]
 
 class BaseNewList(type):
     def __instancecheck__(cls, instance):
-        return isinstance(instance, _builtin_list)
+        if cls == newlist:
+            return isinstance(instance, _builtin_list)
+        else:
+            return issubclass(instance.__class__, cls)
+
 
 class newlist(with_metaclass(BaseNewList, _builtin_list, newobject)):
     """

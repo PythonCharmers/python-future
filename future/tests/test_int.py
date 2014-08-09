@@ -49,6 +49,16 @@ L = [
 
 class IntTestCases(unittest.TestCase):
 
+    def test_isinstance_int_subclass(self):
+        """
+        Issue #89
+        """
+        value = int(10)
+        class Magic(int):
+            pass
+        self.assertTrue(isinstance(value, int))
+        self.assertFalse(isinstance(value, Magic))
+
     def test_basic(self):
         self.assertEqual(int(314), 314)
         self.assertEqual(int(3.14), 3)

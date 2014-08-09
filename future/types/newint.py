@@ -11,6 +11,7 @@ import struct
 import collections
 
 from future.types.newbytes import newbytes
+from future.types.newobject import newobject
 from future.utils import PY3, isint, istext, isbytes, with_metaclass, native
 
 
@@ -20,11 +21,14 @@ if PY3:
 
 class BaseNewInt(type):
     def __instancecheck__(cls, instance):
-        # Special case for Py2 short or long int
-        return isinstance(instance, (int, long))
+        if cls == newint:
+            # Special case for Py2 short or long int
+            return isinstance(instance, (int, long))
+        else:
+            return issubclass(instance.__class__, cls)
 
 
-class newint(with_metaclass(BaseNewInt, long)):
+class newint(with_metaclass(BaseNewInt, long, newobject)):
     """
     A backport of the Python 3 int object to Py2
     """
