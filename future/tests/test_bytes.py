@@ -99,6 +99,16 @@ class TestBytes(unittest.TestCase):
     def test_isinstance_bytes(self):
         self.assertTrue(isinstance(bytes(b'blah'), bytes))
 
+    def test_isinstance_bytes_subclass(self):
+        """
+        Issue #89
+        """
+        value = bytes(b'abc')
+        class Magic(bytes):
+            pass
+        self.assertTrue(isinstance(value, bytes))
+        self.assertFalse(isinstance(value, Magic))
+
     def test_isinstance_oldbytestrings_bytes(self):
         """
         Watch out for this. Byte-strings produced in various places in Py2
