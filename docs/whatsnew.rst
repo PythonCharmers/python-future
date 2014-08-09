@@ -50,6 +50,7 @@ Bug fixes
   ``next(obj)`` correctly.
 - Prevent introduction of a second set of parentheses in ``print()`` calls in
   some further cases.
+- Fix isinstance checks for subclasses of future types (issue #89).
 
 Test fixes
 ----------
