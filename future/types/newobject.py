@@ -51,6 +51,7 @@ ver = sys.version_info[:2]
 #     def __instancecheck__(cls, instance):
 #         return isinstance(instance, _builtin_object)
 
+
 class newobject(_builtin_object):
     """
     A magical object class that provides Python 2 compatibility methods::

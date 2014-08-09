@@ -11,6 +11,7 @@ import string
 
 from future.utils import istext, isbytes, PY3, with_metaclass
 from future.types import no, issubset
+from future.types.newobject import newobject
 
 
 _builtin_bytes = bytes
@@ -22,10 +23,13 @@ if PY3:
 
 class BaseNewBytes(type):
     def __instancecheck__(cls, instance):
-        return isinstance(instance, _builtin_bytes)
+        if cls == newbytes:
+            return isinstance(instance, _builtin_bytes)
+        else:
+            return issubclass(instance.__class__, cls)
 
 
-class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
+class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes, newobject)):
     """
     A backport of the Python 3 bytes object to Py2
     """
