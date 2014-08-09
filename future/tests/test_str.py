@@ -94,6 +94,16 @@ class TestStr(unittest.TestCase):
     def test_isinstance_str(self):
         self.assertTrue(isinstance(str('blah'), str))
 
+    def test_isinstance_str_subclass(self):
+        """
+        Issue #89
+        """
+        value = str(u'abc')
+        class Magic(str):
+            pass
+        self.assertTrue(isinstance(value, str))
+        self.assertFalse(isinstance(value, Magic))
+
     def test_str_getitem(self):
         s = str('ABCD')
         self.assertNotEqual(s[0], 65)

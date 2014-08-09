@@ -64,6 +64,16 @@ class TestDict(unittest.TestCase):
         d = self.d1
         self.assertTrue(isinstance(d, dict))
 
+    def test_isinstance_dict_subclass(self):
+        """
+        Issue #89
+        """
+        value = dict()
+        class Magic(dict):
+            pass
+        self.assertTrue(isinstance(value, dict))
+        self.assertFalse(isinstance(value, Magic))
+
     def test_dict_getitem(self):
         d = dict({'C': 1, 'B': 2, 'A': 3})
         self.assertEqual(d['C'], 1)

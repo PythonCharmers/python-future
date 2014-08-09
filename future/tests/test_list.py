@@ -14,6 +14,16 @@ class TestList(unittest.TestCase):
         self.assertTrue(isinstance([], list))
         self.assertEqual([1, 2, 3], list([1, 2, 3]))
 
+    def test_isinstance_list_subclass(self):
+        """
+        Issue #89
+        """
+        value = list([1, 2, 3])
+        class Magic(list):
+            pass
+        self.assertTrue(isinstance(value, list))
+        self.assertFalse(isinstance(value, Magic))
+
     def test_list_empty(self):
         """
         list() -> []
