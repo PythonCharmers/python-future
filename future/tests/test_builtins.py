@@ -639,7 +639,7 @@ class BuiltinTest(unittest.TestCase):
         #     raise IndexError
         # except:
         #     self.assertEqual(len(dir(sys.exc_info()[2])), 4)
-        # 
+        #
         # # test that object has a __dir__()
         # self.assertEqual(sorted([].__dir__()), dir([]))
 
@@ -1271,9 +1271,9 @@ class BuiltinTest(unittest.TestCase):
         self.assertAlmostEqual(pow(-2.,2), 4.)
         self.assertAlmostEqual(pow(-2.,3), -8.)
 
-        for x in 2, 2.0:
-            for y in 10, 10.0:
-                for z in 1000, 1000.0:
+        for x in 2, int(2), 2.0:
+            for y in 10, int(10), 10.0:
+                for z in 1000, int(1000), 1000.0:
                     if isinstance(x, float) or \
                        isinstance(y, float) or \
                        isinstance(z, float):
