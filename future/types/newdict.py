@@ -19,6 +19,7 @@ The keys, values and items methods now return iterators on Python 2.x
 import sys
 
 from future.utils import with_metaclass
+from future.types.newobject import newobject
 
 
 _builtin_dict = dict
@@ -27,9 +28,13 @@ ver = sys.version_info[:2]
 
 class BaseNewDict(type):
     def __instancecheck__(cls, instance):
-        return isinstance(instance, _builtin_dict)
+        if cls == newdict:
+            return isinstance(instance, _builtin_dict)
+        else:
+            return issubclass(instance.__class__, cls)
 
-class newdict(with_metaclass(BaseNewDict, _builtin_dict)):
+
+class newdict(with_metaclass(BaseNewDict, _builtin_dict, newobject)):
     """
     A backport of the Python 3 dict object to Py2
     """
