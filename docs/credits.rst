@@ -55,6 +55,7 @@ Patches
 - Nicolas Delaby
 - Corey Farwell
 - Eric Firing
+- Lion Krischer
 - Marcin Kuzminski
 - Joshua Landau
 - German Larrain

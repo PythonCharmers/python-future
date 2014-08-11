@@ -138,7 +138,7 @@ class CodeHandler(unittest.TestCase):
         self.env = {'PYTHONPATH': os.getcwd()}
 
     def convert(self, code, stages=(1, 2), all_imports=False, from3=False,
-                reformat=True, run=True):
+                reformat=True, run=True, conservative=False):
         """
         Converts the code block using ``futurize`` and returns the
         resulting code.
@@ -160,7 +160,7 @@ class CodeHandler(unittest.TestCase):
             code = reformat_code(code)
         self._write_test_script(code)
         self._futurize_test_script(stages=stages, all_imports=all_imports,
-                                   from3=from3)
+                                   from3=from3, conservative=conservative)
         output = self._read_test_script()
         if run:
             for interpreter in self.interpreters:
@@ -272,7 +272,7 @@ class CodeHandler(unittest.TestCase):
         return newsource
 
     def _futurize_test_script(self, filename='mytestscript.py', stages=(1, 2),
-                              all_imports=False, from3=False):
+                              all_imports=False, from3=False, conservative=False):
         params = []
         stages = list(stages)
         if all_imports:
@@ -287,6 +287,8 @@ class CodeHandler(unittest.TestCase):
                 params.append('--stage2')
             else:
                 assert stages == [1, 2]
+            if conservative:
+                params.append('--conservative')
             # No extra params needed
 
         output = subprocess.check_output([sys.executable, script] + params +

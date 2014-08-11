@@ -49,10 +49,11 @@ class TestFuturizeSimple(CodeHandler):
         """
         after = """
         #!/usr/bin/env python
-        from __future__ import division
 
+        from __future__ import division
+        from future.utils import old_div
         import math
-        1 / 5
+        old_div(1, 5)
         """
         self.convert_check(before, after)
 
@@ -83,18 +84,15 @@ class TestFuturizeSimple(CodeHandler):
         # and more comments
 
         import math
-        1 / 5
         print 'Hello!'
         """
         after = """
         #!/usr/bin/env python
         # some comments
         # and more comments
-        from __future__ import division
         from __future__ import print_function
 
         import math
-        1 / 5
         print('Hello!')
         """
         self.convert_check(before, after)
@@ -110,7 +108,6 @@ class TestFuturizeSimple(CodeHandler):
         a doc string
         """
         import math
-        1 / 5
         print 'Hello!'
         '''
         after = '''
@@ -118,10 +115,8 @@ class TestFuturizeSimple(CodeHandler):
         """
         a doc string
         """
-        from __future__ import division
         from __future__ import print_function
         import math
-        1 / 5
         print('Hello!')
         '''
         self.convert_check(before, after)
@@ -359,7 +354,7 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         self.convert_check(before, after, ignore_imports=False)
-    
+
     @expectedFailurePY26
     def test_source_coding_utf8(self):
         """
@@ -436,16 +431,16 @@ class TestFuturizeSimple(CodeHandler):
         assert addup(*(10,20)) == 30
         """
         self.convert_check(before, after)
-    
+
     @unittest.skip('not implemented yet')
     def test_download_pypi_package_and_test(self):
         URL = 'http://pypi.python.org/pypi/{0}/json'
-        
+
         import requests
         package = 'future'
         r = requests.get(URL.format(package))
         pprint.pprint(r.json())
-        
+
         download_url = r.json()['urls'][0]['url']
         filename = r.json()['urls'][0]['filename']
         # r2 = requests.get(download_url)
@@ -515,11 +510,7 @@ class TestFuturizeSimple(CodeHandler):
         '''
         self.unchanged(code)
 
-    @unittest.expectedFailure
     def test_division(self):
-        """
-        TODO: implement this!
-        """
         before = """
         x = 1 / 2
         """
@@ -527,7 +518,17 @@ class TestFuturizeSimple(CodeHandler):
         from future.utils import old_div
         x = old_div(1, 2)
         """
-        self.convert_check(before, after, stages=[1])
+        self.convert_check(before, after, stages=[1, 2])
+
+    def test_already_future_division(self):
+        code = """
+        from __future__ import division
+        x = 1 / 2
+        assert x == 0.5
+        y = 3. / 2.
+        assert y == 1.5
+        """
+        self.unchanged(code)
 
 
 class TestFuturizeRenamedStdlib(CodeHandler):
@@ -546,7 +547,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         import io
         """
         self.convert_check(before, after)
-    
+
     @unittest.skip('Not working yet ...')
     def test_urllib_refactor(self):
         # Code like this using urllib is refactored by futurize --stage2 to use
@@ -818,7 +819,7 @@ class TestFuturizeStage1(CodeHandler):
 
     def test_print_already_function(self):
         """
-        Running futurize --stage1 should not add a second set of parentheses 
+        Running futurize --stage1 should not add a second set of parentheses
         """
         before = """
         print('Hello')
@@ -1024,6 +1025,136 @@ class TestFuturizeStage1(CodeHandler):
             pass
         """
         self.unchanged(code)
+
+    def test_range_necessary_list_calls(self):
+        before = """
+        l = range(10)
+        assert isinstance(l, list)
+        for i in range(3):
+            print i
+        for i in xrange(3):
+            print i
+        """
+        after = """
+        from __future__ import print_function
+        from future.builtins import range
+        l = list(range(10))
+        assert isinstance(l, list)
+        for i in range(3):
+            print(i)
+        for i in range(3):
+            print(i)
+        """
+        self.convert_check(before, after)
+
+
+class TestConservativeFuturize(CodeHandler):
+    def test_basestring(self):
+        """
+        In conservative mode, futurize would not modify "basestring"
+        but merely import it, and the following code would still run on
+        both Py2 and Py3.
+        """
+        before = """
+        assert isinstance('hello', basestring)
+        assert isinstance(u'hello', basestring)
+        assert isinstance(b'hello', basestring)
+        """
+        after = """
+        from past.builtins import basestring
+        assert isinstance('hello', basestring)
+        assert isinstance(u'hello', basestring)
+        assert isinstance(b'hello', basestring)
+        """
+        self.convert_check(before, after, conservative=True)
+
+    def test_open(self):
+        """
+        In conservative mode, futurize would not import io.open because
+        this changes the default return type from bytes to text.
+        """
+        before = """
+        filename = 'temp_file_open.test'
+        contents = 'Temporary file contents. Delete me.'
+        with open(filename, 'w') as f:
+            f.write(contents)
+
+        with open(filename, 'r') as f:
+            data = f.read()
+        assert isinstance(data, str)
+        assert data == contents
+        """
+        after = """
+        from past.builtins import open, str as oldbytes, unicode
+        filename = oldbytes(b'temp_file_open.test')
+        contents = oldbytes(b'Temporary file contents. Delete me.')
+        with open(filename, oldbytes(b'w')) as f:
+            f.write(contents)
+
+        with open(filename, oldbytes(b'r')) as f:
+            data = f.read()
+        assert isinstance(data, oldbytes)
+        assert data == contents
+        assert isinstance(oldbytes(b'hello'), basestring)
+        assert isinstance(unicode(u'hello'), basestring)
+        assert isinstance(oldbytes(b'hello'), basestring)
+        """
+        self.convert_check(before, after, conservative=True)
+
+    def test_safe_division(self):
+        """
+        Tests whether Py2 scripts using old-style division still work
+        after futurization.
+        """
+        before = """
+        x = 3 / 2
+        y = 3. / 2
+        assert x == 1 and isinstance(x, int)
+        assert y == 1.5 and isinstance(y, float)
+        """
+        after = """
+        from __future__ import division
+        from future.utils import old_div
+        x = old_div(3, 2)
+        y = old_div(3., 2)
+        assert x == 1 and isinstance(x, int)
+        assert y == 1.5 and isinstance(y, float)
+        """
+        self.convert_check(before, after)
+
+    def test_safe_division_overloaded(self):
+        """
+        If division is overloaded, futurize may produce spurious old_div()
+        calls. This test is for whether the code still works on Py2
+        despite these calls.
+        """
+        before = """
+        class Path(str):
+            def __div__(self, other):
+                return self.__truediv__(other)
+            def __truediv__(self, other):
+                return Path(str(self) + '/' + str(other))
+        path1 = Path('home')
+        path2 = Path('user')
+        z = path1 / path2
+        assert isinstance(z, Path)
+        assert str(z) == 'home/user'
+        """
+        after = """
+        from __future__ import division
+        from future.utils import old_div
+        class Path(str):
+            def __div__(self, other):
+                return self.__truediv__(other)
+            def __truediv__(self, other):
+                return Path(str(self) + '/' + str(other))
+        path1 = Path('home')
+        path2 = Path('user')
+        z = old_div(path1, path2)
+        assert isinstance(z, Path)
+        assert str(z) == 'home/user'
+        """
+        self.convert_check(before, after)
 
 
 if __name__ == '__main__':

@@ -32,6 +32,7 @@ Python 3 with ``pasteurize`` as they are when converting from Python 2 with
 
 from __future__ import (absolute_import, print_function, unicode_literals)
 from future.builtins import *
+from future import __version__
 
 import sys
 import logging
@@ -41,14 +42,6 @@ from lib2to3 import refactor
 
 import future
 from libpasteurize.fixes import fix_names
-
-__version__ = '0.12.5-dev'
-
-if __version__ != future.__version__:
-    warn('The libfuturize and future packages have different versions. '
-         'This may break the pasteurize script. Please ensure the versions '
-         'are consistent.')
-
 
 
 def main(args=None):

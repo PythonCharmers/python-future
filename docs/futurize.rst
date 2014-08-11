@@ -74,9 +74,10 @@ the code. With luck, this will not introduce any bugs into the code, or will at
 least be trivial to fix. The changes are those that bring the Python code
 up-to-date without breaking Py2 compatibility. The resulting code will be
 modern Python 2.6-compatible code plus ``__future__`` imports from the
-following set::
+following set:
 
 .. code-block:: python
+
     from __future__ import absolute_import
     from __future__ import division
     from __future__ import print_function
@@ -88,7 +89,9 @@ which case they are all added.
 The ``from __future__ import unicode_literals`` declaration is not added
 unless the ``--unicode-literals`` flag is passed to ``futurize``.
 
-The changes include::
+The changes include:
+
+.. code-block:: python
 
     - except MyException, e:
     + except MyException as e:
@@ -106,7 +109,9 @@ The changes include::
     - if d.has_key(key):
     + if key in d:
 
-Implicit relative imports fixed, e.g.::
+Implicit relative imports fixed, e.g.:
+
+.. code-block:: python
 
     - import mymodule
     + from __future__ import absolute_import

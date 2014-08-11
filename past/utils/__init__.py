@@ -1,11 +1,19 @@
+"""
+Should we deprecate this module in favour of ``future.utils``?
+"""
+
 import sys
+import numbers
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 PYPY = hasattr(sys, 'pypy_translation_info')
 
+
 def with_metaclass(meta, *bases):
     """
+    DEPRECATED. Import this function from future.utils instead.
+
     Function from jinja2/_compat.py. License: BSD.
 
     Use it like this::
@@ -41,6 +49,8 @@ def with_metaclass(meta, *bases):
 
 def native(obj):
     """
+    DEPRECATED. Import this function from future.utils instead.
+
     On Py2, this is a no-op: native(obj) -> obj
 
     On Py3, returns the corresponding native Py3 types that are
@@ -63,6 +73,19 @@ def native(obj):
     else:
         return obj
 
+
+# # An alias for future.utils.old_div():
+# def div(a, b):
+#     """
+#     Equivalent to ``a / b`` on Python 2 without ``from __future__ import
+#     division``.
+# 
+#     TODO: generalize this to other objects (like arrays etc.)
+#     """
+#     if isinstance(a, numbers.Integral) and isinstance(b, numbers.Integral):
+#         return a // b
+#     else:
+#         return a / b
 
 
 __all__ = ['PY3', 'PY2', 'PYPY', 'with_metaclass', 'native']

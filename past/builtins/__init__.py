@@ -51,8 +51,8 @@ if PY3:
 else:
     from __builtin__ import (basestring, dict, str, long, unicode)
 
-from past.builtins.misc import (apply, chr, cmp, execfile, intern, raw_input,
-                                reload, unichr, unicode, xrange)
+from past.builtins.misc import (apply, chr, cmp, execfile, intern, oct,
+                                raw_input, reload, unichr, unicode, xrange)
 from past import utils
 
 

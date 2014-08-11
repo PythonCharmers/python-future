@@ -7,16 +7,36 @@ from future.utils import PY3, exec_
 
 
 if PY3:
+    import builtins
+
     def apply(f, *args, **kw):
         return f(*args, **kw)
+
     from past.builtins import str as oldstr
+
     def chr(i):
         """
         Return a byte-string of one character with ordinal i; 0 <= i <= 256
         """
         return oldstr(bytes((i,)))
-    cmp = lambda a, b: (a > b) - (a < b)
+
+    def cmp(x, y):
+        """
+        cmp(x, y) -> integer
+
+        Return negative if x<y, zero if x==y, positive if x>y.
+        """
+        return (x > y) - (x < y)
+
     from sys import intern
+
+    def oct(number):
+        """oct(number) -> string
+
+        Return the octal representation of an integer
+        """
+        return '0' + builtins.oct(number)[2:]
+
     raw_input = input
     from imp import reload
     unicode = str
@@ -29,6 +49,7 @@ else:
     cmp = __builtin__.cmp
     execfile = __builtin__.execfile
     intern = __builtin__.intern
+    oct = __builtin__.oct
     raw_input = __builtin__.raw_input
     reload = __builtin__.reload
     unicode = __builtin__.unicode
