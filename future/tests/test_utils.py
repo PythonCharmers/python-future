@@ -6,11 +6,10 @@ Tests for the various utility functions and classes in ``future.utils``
 from __future__ import absolute_import, unicode_literals, print_function
 import sys
 from future.builtins import *
-from future.utils import (istext, isbytes, native, PY2, PY3,
+from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
                          native_str, raise_, as_native_str, ensure_new_type,
                          bytes_to_native_str, raise_from)
 from future.tests.base import expectedFailurePY3
-from future.utils import old_div
 
 from numbers import Integral
 from future.tests.base import unittest, skip26
@@ -28,8 +27,7 @@ class TestUtils(unittest.TestCase):
 
     def test_old_div(self):
         """
-        Tests whether future.utils.old_div(a, b) is always equal to
-        Python 2's a / b.
+        Tests whether old_div(a, b) is always equal to Python 2's a / b.
         """
         self.assertEqual(old_div(1, 2), 0)
         self.assertEqual(old_div(2, 2), 1)

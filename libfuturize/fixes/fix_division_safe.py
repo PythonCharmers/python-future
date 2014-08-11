@@ -6,8 +6,8 @@ Adds this import line:
     from __future__ import division
 
 at the top and changes any old-style divisions to be calls to
-future.utils.old_div so the code runs as before on Py2.6/2.7 and has the
-same behaviour on Py3.
+past.utils.old_div so the code runs as before on Py2.6/2.7 and has the same
+behaviour on Py3.
 
 If "from __future__ import division" is already in effect, this fixer does
 nothing.
@@ -64,7 +64,7 @@ class FixDivisionSafe(fixer_base.BaseFix):
             return
         future_import(u"division", node)
 
-        touch_import_top(u'future.utils', u'old_div', node)
+        touch_import_top(u'past.utils', u'old_div', node)
         expr1, expr2 = results[0].clone(), results[1].clone()
         # Strip any leading space for the first number:
         expr1.prefix = u''
