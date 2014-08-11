@@ -1,13 +1,15 @@
 """
 A selection of cross-compatible functions for Python 2 and 3.
 
-These come from several sources:
+For example:
 
-    * Jinja2 (BSD licensed: see
-      https://github.com/mitsuhiko/jinja2/blob/master/LICENSE)
-    * Pandas compatibility module pandas.compat
-    * six.py by Benjamin Peterson
-    * Django
+    >>> # The old_div() function behaves like Python 2's / operator
+    >>> # without "from __future__ import division"
+    >>> from future.utils import old_div
+    >>> old_div(3, 2)    # like 3/2 in Py2
+    0
+    >>> old_div(3, 2.0)  # like 3/2.0 in Py2
+    1.5
 
 This exports useful functions for 2/3 compatible code that are not
 builtins on Python 3:
@@ -68,6 +70,13 @@ Chinese characters for Confucius::
 
 On Python 3, this decorator is a no-op.
 
+Some of the functions in this module come from the following sources:
+
+    * Jinja2 (BSD licensed: see
+      https://github.com/mitsuhiko/jinja2/blob/master/LICENSE)
+    * Pandas compatibility module pandas.compat
+    * six.py by Benjamin Peterson
+    * Django
 """
 
 import types

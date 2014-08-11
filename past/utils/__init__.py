@@ -9,6 +9,7 @@ PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 PYPY = hasattr(sys, 'pypy_translation_info')
 
+
 def with_metaclass(meta, *bases):
     """
     DEPRECATED. Import this function from future.utils instead.
@@ -73,19 +74,19 @@ def native(obj):
         return obj
 
 
-# An alias for future.utils.old_div():
-def div(a, b):
-    """
-    Equivalent to ``a / b`` on Python 2 without ``from __future__ import
-    division``.
+# # An alias for future.utils.old_div():
+# def div(a, b):
+#     """
+#     Equivalent to ``a / b`` on Python 2 without ``from __future__ import
+#     division``.
+# 
+#     TODO: generalize this to other objects (like arrays etc.)
+#     """
+#     if isinstance(a, numbers.Integral) and isinstance(b, numbers.Integral):
+#         return a // b
+#     else:
+#         return a / b
 
-    TODO: generalize this to other objects (like arrays etc.)
-    """
-    if isinstance(a, numbers.Integral) and isinstance(b, numbers.Integral):
-        return a // b
-    else:
-        return a / b
 
-
-__all__ = ['PY3', 'PY2', 'PYPY', 'with_metaclass', 'native', 'div']
+__all__ = ['PY3', 'PY2', 'PYPY', 'with_metaclass', 'native']
 
