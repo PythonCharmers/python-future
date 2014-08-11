@@ -33,16 +33,6 @@ Here are some code examples that run identically on Python 3 and 2::
     >>> type(philosopher[0])
     <past.builtins.oldstr>
 
-    >>> # The div() function behaves like Python 2's / operator
-    >>> # without "from __future__ import division"
-    >>> from past.utils import div
-    >>> div(3, 2)    # like 3/2 in Py2
-    0
-    >>> div(3, 2.0)  # like 3/2.0 in Py2
-    1.5
-
-    This is an alias for ``future.utils.old_div``.
-
     >>> # List-producing versions of range, reduce, map, filter
     >>> from past.builtins import range, reduce
     >>> range(10)

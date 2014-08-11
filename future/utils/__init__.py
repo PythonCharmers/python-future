@@ -1,14 +1,6 @@
 """
 A selection of cross-compatible functions for Python 2 and 3.
 
-These come from several sources:
-
-    * Jinja2 (BSD licensed: see
-      https://github.com/mitsuhiko/jinja2/blob/master/LICENSE)
-    * Pandas compatibility module pandas.compat
-    * six.py by Benjamin Peterson
-    * Django
-
 This exports useful functions for 2/3 compatible code that are not
 builtins on Python 3:
 
@@ -68,6 +60,13 @@ Chinese characters for Confucius::
 
 On Python 3, this decorator is a no-op.
 
+Some of the functions in this module come from the following sources:
+
+    * Jinja2 (BSD licensed: see
+      https://github.com/mitsuhiko/jinja2/blob/master/LICENSE)
+    * Pandas compatibility module pandas.compat
+    * six.py by Benjamin Peterson
+    * Django
 """
 
 import types
@@ -617,7 +616,7 @@ else:
         exec("""exec code in globs, locs""")
 
 
-# Defined here too for backward compatibility:
+# Defined here for backward compatibility:
 def old_div(a, b):
     """
     DEPRECATED: import ``old_div`` from ``past.utils`` instead.

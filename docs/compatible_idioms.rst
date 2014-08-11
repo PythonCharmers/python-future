@@ -188,7 +188,7 @@ Integer division (rounding down):
 .. code:: python
 
     # Python 2 and 3:
-    from future.utils import old_div
+    from past.utils import old_div
     
     a = old_div(b, c)    # always same as / on Py2
 Long integers

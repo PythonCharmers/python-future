@@ -1,9 +1,25 @@
+"""
+Various non-built-in utility functions and definitions for Py2
+compatibility in Py3.
+
+For example:
+
+    >>> # The old_div() function behaves like Python 2's / operator
+    >>> # without "from __future__ import division"
+    >>> from past.utils import old_div
+    >>> old_div(3, 2)    # like 3/2 in Py2
+    0
+    >>> old_div(3, 2.0)  # like 3/2.0 in Py2
+    1.5
+"""
+
 import sys
 import numbers
 
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 PYPY = hasattr(sys, 'pypy_translation_info')
+
 
 def with_metaclass(meta, *bases):
     """
