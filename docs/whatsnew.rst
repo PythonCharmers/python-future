@@ -8,6 +8,21 @@ What's New in v0.12.x
 What's new in version 0.12.5
 ============================
 
+Deprecations
+------------
+
+The following internal modules are deprecated. They will be removed in a future
+release:
+
+- ``future.utils.encoding`` and ``future.utils.six``.
+
+(Issue #80). See `here <http://fedoraproject.org/wiki/Packaging:No_Bundled_Libraries`_ for a
+rationale for unbundling them.
+
+
+Bug fixes
+---------
+
 - Use a private logger instead of the global logger in
   ``future.standard_library`` (issue #82).
 - Stage 1 of ``futurize`` no longer renames ``next`` methods to ``__next__``
