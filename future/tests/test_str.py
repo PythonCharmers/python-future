@@ -19,6 +19,14 @@ class TestStr(unittest.TestCase):
         self.assertEqual(str('blah'), u'blah')  # u'' prefix: Py3.3 and Py2 only
         self.assertEqual(str(b'1234'), "b'1234'")
 
+    def test_bool_str(self):
+        s1 = str(u'abc')
+        s2 = u'abc'
+        s3 = str(u'')
+        s4 = u''
+        self.assertEqual(bool(s1), bool(s2))
+        self.assertEqual(bool(s3), bool(s4))
+
     def test_os_path_join(self):
         """
         Issue #15: can't os.path.join(u'abc', str(u'def'))
