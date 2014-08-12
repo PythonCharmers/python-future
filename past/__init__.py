@@ -88,15 +88,8 @@ The software is distributed under an MIT licence. See LICENSE.txt.
 # from past.builtins import *
 
 from past.translation import install_hooks as autotranslate
+from future import __version__, __copyright__, __license__
 
 __title__ = 'past'
 __author__ = 'Ed Schofield'
-__license__ = 'MIT'
-__copyright__ = 'Copyright 2014 Python Charmers Pty Ltd'
-__ver_major__ = 0
-__ver_minor__ = 12
-__ver_patch__ = 5
-__ver_sub__ = '-dev'
-__version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
-                              __ver_patch__, __ver_sub__)
 
