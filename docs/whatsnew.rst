@@ -20,6 +20,17 @@ release:
 rationale for unbundling them.
 
 
+New features
+------------
+
+- Docs: Add :ref:`compatible-idioms` from Ed Schofield's PyConAU 2014 talk.
+- Add ``newint.to_bytes()`` and ``newint.from_bytes()`` (issue #85)
+- Add ``future.utils.raise_from`` as an equivalent to Py3's ``raise ... from
+  ...`` syntax (issue #86).
+- Add ``past.builtins.oct()`` function.
+- Add backports for Python 2.6 of ``subprocess.check_output()``,
+  ``itertools.combinations_with_replacement()``, and ``functools.cmp_to_key()``.
+
 Bug fixes
 ---------
 
@@ -28,14 +39,11 @@ Bug fixes
 - Stage 1 of ``futurize`` no longer renames ``next`` methods to ``__next__``
   (issue #81). It still converts ``obj.next()`` method calls to
   ``next(obj)`` correctly.
-- Docs: Add :ref:`compatible-idioms` from Ed Schofield's PyConAU 2014 talk.
-- Add ``newint.to_bytes()`` and ``newint.from_bytes()`` (issue #85)
-- Add ``future.utils.raise_from`` as an equivalent to Py3's ``raise ... from
-  ...`` syntax (issue #86).
 - Prevent introduction of a second set of parentheses in ``print()`` calls in
   some further cases.
 - Fix isinstance checks for subclasses of future types (issue #89).
-
+- Be explicit about encoding file contents as UTF-8 in unit tests (issue #63).
+  Useful for building RPMs and in other environments where ``LANG=C``.
 
 .. _whats-new-0.12.4:
 
