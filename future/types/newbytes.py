@@ -11,7 +11,7 @@ import string
 
 from future.utils import istext, isbytes, PY3, with_metaclass
 from future.types import no, issubset
-from future.types.newobject import newobject
+from future.types.newobject import newobject, BaseNewObject
 
 
 _builtin_bytes = bytes
@@ -21,7 +21,7 @@ if PY3:
     unicode = str
 
 
-class BaseNewBytes(type):
+class BaseNewBytes(BaseNewObject):
     def __instancecheck__(cls, instance):
         if cls == newbytes:
             return isinstance(instance, _builtin_bytes)
