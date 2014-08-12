@@ -63,6 +63,7 @@ Patches
 - Elliott Sales de Andrade
 - Jeff Tratner
 - Mystic-Mirage (GitHub)
+- str4d (GitHub)
 
 Suggestions and Feedback
 ~~~~~~~~~~~~~~~~~~~~~~~~

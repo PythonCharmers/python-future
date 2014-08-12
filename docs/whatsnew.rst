@@ -44,6 +44,9 @@ Bug fixes
 - Fix isinstance checks for subclasses of future types (issue #89).
 - Be explicit about encoding file contents as UTF-8 in unit tests (issue #63).
   Useful for building RPMs and in other environments where ``LANG=C``.
+- Fix for 3-argument ``pow(x, y, z)`` with ``newint`` arguments (issue #87).
+  (Thanks to @str4d).
+
 
 .. _whats-new-0.12.4:
 
