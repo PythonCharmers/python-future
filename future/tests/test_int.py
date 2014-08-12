@@ -299,6 +299,12 @@ class IntTestCases(unittest.TestCase):
             self.assertEqual(int(x), 100, msg=msg)
             self.assertEqual(int(x, 2), 4, msg=msg)
 
+    def test_newint_of_newstr(self):
+        a = str(u'123')
+        b = int(a)
+        self.assertEqual(b, 123)
+        self.assertTrue(isinstance(b, int))
+
     def test_string_float(self):
         self.assertRaises(ValueError, int, '1.2')
 
