@@ -61,7 +61,7 @@ class BaseNewStr(BaseNewObject):
             return issubclass(instance.__class__, cls)
 
 
-class newstr(with_metaclass(BaseNewStr, unicode, newobject)):
+class newstr(with_metaclass(BaseNewStr, unicode)):
     """
     A backport of the Python 3 str object to Py2
     """

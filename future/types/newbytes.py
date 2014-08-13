@@ -29,7 +29,7 @@ class BaseNewBytes(BaseNewObject):
             return issubclass(instance.__class__, cls)
 
 
-class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes, newobject)):
+class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
     """
     A backport of the Python 3 bytes object to Py2
     """

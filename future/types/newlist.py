@@ -31,7 +31,7 @@ class BaseNewList(BaseNewObject):
             return issubclass(instance.__class__, cls)
 
 
-class newlist(with_metaclass(BaseNewList, _builtin_list, newobject)):
+class newlist(with_metaclass(BaseNewList, _builtin_list)):
     """
     A backport of the Python 3 list object to Py2
     """

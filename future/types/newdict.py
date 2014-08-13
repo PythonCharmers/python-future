@@ -34,7 +34,7 @@ class BaseNewDict(BaseNewObject):
             return issubclass(instance.__class__, cls)
 
 
-class newdict(with_metaclass(BaseNewDict, _builtin_dict, newobject)):
+class newdict(with_metaclass(BaseNewDict, _builtin_dict)):
     """
     A backport of the Python 3 dict object to Py2
     """

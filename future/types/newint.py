@@ -28,7 +28,7 @@ class BaseNewInt(BaseNewObject):
             return issubclass(instance.__class__, cls)
 
 
-class newint(with_metaclass(BaseNewInt, long, newobject)):
+class newint(with_metaclass(BaseNewInt, long)):
     """
     A backport of the Python 3 int object to Py2
     """
