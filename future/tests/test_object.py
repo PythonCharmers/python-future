@@ -195,6 +195,15 @@ class TestNewObject(unittest.TestCase):
         h = H()
         self.assertTrue(isinstance(h, object))
 
+    def test_long_special_method(self):
+        class A(object):
+            def __int__(self):
+                return 0
+        a = A()
+        self.assertEqual(int(a), 0)
+        if utils.PY2:
+            self.assertEqual(long(a), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
