@@ -173,11 +173,26 @@ External backports
 Backports of the following modules from the Python 3.x standard library are
 available independently of the python-future project::
 
-    import enum              # pip install enum34
-    import singledispatch    # pip install singledispatch
-    import pathlib           # pip install pathlib
-    import statistics        # is a backport available?
+    import enum                       # pip install enum34
+    import singledispatch             # pip install singledispatch
+    import pathlib                    # pip install pathlib
 
+A few modules from Python 3.4 and 3.3 are also available in the ``backports``
+package namespace::
+
+    from backports import lzma
+    from backports import functools_lru_cache as lru_cache
+
+After ``pip install backports.lzma`` etc.
+
+The following Python 2.6 backports of standard library packages from Python 2.7+
+are also available::
+
+    import argparse                   # pip install argparse
+    import importlib                  # pip install importlib
+    import unittest2 as unittest      # pip install unittest2
+
+These are included in Python 2.7 and Python 3.x.
 
 Included backports
 ------------------
