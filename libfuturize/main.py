@@ -241,7 +241,7 @@ def main(args=None):
                     # First ensure that no names clash (e.g.
                     # lib2to3.fixes.fix_blah and libfuturize.fixes.fix_blah):
                     found = [f for f in avail_fixes
-                             if f.endswith('fix_{}'.format(fix))]
+                             if f.endswith('fix_{0}'.format(fix))]
                     if len(found) > 1:
                         print("Ambiguous fixer name. Choose a fully qualified "
                               "module name instead from these:\n" +
