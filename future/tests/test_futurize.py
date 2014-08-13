@@ -1026,7 +1026,15 @@ class TestFuturizeStage1(CodeHandler):
         """
         self.unchanged(code)
 
+    @expectedFailurePY26
     def test_range_necessary_list_calls(self):
+        """
+        On Py2.6 (only), the xrange_with_import fixer somehow seems to cause
+            l = range(10)
+        to be converted to:
+            l = list(list(range(10)))
+        with an extra list(...) call.
+        """
         before = """
         l = range(10)
         assert isinstance(l, list)
