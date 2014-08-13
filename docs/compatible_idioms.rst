@@ -270,7 +270,7 @@ Metaclasses
 .. code:: python
 
     # Python 3 only:
-    class Form(metaclass=BaseForm):
+    class Form(BaseForm, metaclass=FormType):
         pass
 .. code:: python
 
