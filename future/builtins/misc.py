@@ -59,16 +59,25 @@ if utils.PY2:
     from future.builtins.newnext import newnext as next
     from future.builtins.newround import newround as round
     from future.builtins.newsuper import newsuper as super
+    from future.types.newint import newint
 
     _SENTINEL = object()
 
     def pow(x, y, z=_SENTINEL):
         """
         pow(x, y[, z]) -> number
-    
+
         With two arguments, equivalent to x**y.  With three arguments,
         equivalent to (x**y) % z, but may be more efficient (e.g. for ints).
         """
+        # Handle newints
+        if isinstance(x, newint):
+            x = long(x)
+        if isinstance(y, newint):
+            y = long(y)
+        if isinstance(z, newint):
+            z = long(z)
+
         try:
             if z == _SENTINEL:
                 return _builtin_pow(x, y)
