@@ -83,7 +83,6 @@ class TestTranslate(unittest.TestCase):
         module = self.write_and_import(code, 'execer')
         self.assertEqual(module.x, 7)
         
-    @expectedFailurePY3
     def test_div(self):
         code = """
         x = 3 / 2
