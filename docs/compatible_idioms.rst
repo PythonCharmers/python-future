@@ -53,7 +53,6 @@ print
 
     # Python 2 and 3:
     print('Hello')
-
 To print multiple strings, import ``print_function`` to prevent Py2 from
 interpreting it as a tuple:
 
@@ -64,7 +63,8 @@ interpreting it as a tuple:
 .. code:: python
 
     # Python 2 and 3:
-    from __future__ import print_function
+    from __future__ import print_function    # (at top of module)
+    
     print('Hello', 'Guido')
 .. code:: python
 
@@ -73,7 +73,7 @@ interpreting it as a tuple:
 .. code:: python
 
     # Python 2 and 3:
-    from __future__ import print_function    # (at top of module)
+    from __future__ import print_function
     
     print('Hello', file=sys.stderr)
 .. code:: python
@@ -83,7 +83,7 @@ interpreting it as a tuple:
 .. code:: python
 
     # Python 2 and 3:
-    from __future__ import print_function    # (at top of module)
+    from __future__ import print_function
     
     print('Hello', end='')
 Raising exceptions
@@ -97,18 +97,6 @@ Raising exceptions
 
     # Python 2 and 3:
     raise ValueError("dodgy value")
-
-Raising bare string exceptions:
-
-.. code:: python
-
-    # Python 2 only:
-    raise "dodgy value"
-.. code:: python
-
-    # Python 2 and 3:
-    raise Exception("dodgy value")
-
 Raising exceptions with a traceback:
 
 .. code:: python
@@ -135,6 +123,40 @@ Raising exceptions with a traceback:
     from future.utils import raise_with_traceback
     
     raise_with_traceback(ValueError("dodgy value"))
+Exception chaining (PEP 3134):
+
+.. code:: python
+
+    # Setup:
+    class DatabaseError(Exception):
+        pass
+.. code:: python
+
+    # Python 3 only
+    class FileDatabase:
+        def __init__(self, filename):
+            try:
+                self.file = open(filename)
+            except IOError as exc:
+                raise DatabaseError('failed to open') from exc
+.. code:: python
+
+    # Python 2 and 3:
+    from future.utils import raise_from
+    
+    class FileDatabase:
+        def __init__(self, filename):
+            try:
+                self.file = open(filename)
+            except IOError as exc:
+                raise_from(DatabaseError('failed to open'), exc)
+.. code:: python
+
+    # Testing the above:
+    try:
+        fd = FileDatabase('non_existent_file.txt')
+    except Exception as e:
+        assert isinstance(e.__cause__, IOError)    # FileNotFoundError on Py3.3+ inherits from IOError
 Catching exceptions
 ~~~~~~~~~~~~~~~~~~~
 
@@ -165,7 +187,6 @@ Integer division (rounding down):
 
     # Python 2 and 3:
     assert 2 // 3 == 0
-
 "True division" (float division):
 
 .. code:: python
@@ -178,7 +199,6 @@ Integer division (rounding down):
     from __future__ import division    # (at top of module)
     
     assert 3 / 2 == 1.5
-
 "Old division" (i.e. compatible with Py2 behaviour):
 
 .. code:: python
@@ -212,27 +232,29 @@ Short integers are gone in Python 3 and ``long`` has become ``int``
     # Python 2 and 3
     from future.builtins import int
     bigint = int(1)
+To test whether a value is an integer (of any kind):
+
 .. code:: python
 
     # Python 2 only:
     if isinstance(x, (int, long)):
-        # ...
+        ...
     
     # Python 3 only:
     if isinstance(x, int):
-        # ...
+        ...
     
     # Python 2 and 3: option 1
     from future.builtins import int    # subclass of long on Py2
     
     if isinstance(x, int):             # matches both int and long on Py2
-        # ...
+        ...
     
     # Python 2 and 3: option 2
     from past.builtins import long
     
     if isinstance(x, (int, long)):
-        # ...
+        ...
 Octal constants
 ~~~~~~~~~~~~~~~
 
@@ -300,7 +322,6 @@ prefixes:
     # Python 2 and 3
     s1 = u'The Zen of Python'
     s2 = u'きたないのよりきれいな方がいい\n'
-
 The ``futurize`` and ``python-modernize`` tools do not currently offer
 an option to do this automatically.
 
@@ -314,7 +335,6 @@ this idiom to make all string literals in a module unicode strings:
     
     s1 = 'The Zen of Python'
     s2 = 'きたないのよりきれいな方がいい\n'
-
 See http://python-future.org/unicode\_literals.html for more discussion
 on which style to use.
 
@@ -417,7 +437,6 @@ StringIO
     # Python 2 and 3:
     from io import BytesIO     # for handling byte strings
     from io import StringIO    # for handling unicode strings
-
 Imports relative to a package
 -----------------------------
 
@@ -447,14 +466,12 @@ and the code below is in ``submodule1.py``:
     # To make Py2 code safer (more like Py3) by preventing
     # implicit relative imports, you can also add this to the top:
     from __future__ import absolute_import
-
 Dictionaries
 ------------
 
 .. code:: python
 
     heights = {'Fred': 175, 'Anne': 166, 'Joe': 192}
-
 Iterating through ``dict`` keys/values/items
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -464,24 +481,24 @@ Iterable dict keys:
 
     # Python 2 only:
     for key in heights.iterkeys():
-        # ...
+        ...
 .. code:: python
 
     # Python 2 and 3:
     for key in heights:
-        # ...
+        ...
 Iterable dict values:
 
 .. code:: python
 
     # Python 2 only:
     for value in heights.itervalues():
-        # ...
+        ...
 .. code:: python
 
     # Idiomatic Python 3
     for value in heights.values():    # extra memory overhead on Py2
-        # ...
+        ...
 .. code:: python
 
     # Python 2 and 3: option 1
@@ -498,20 +515,19 @@ Iterable dict values:
     from six import itervalues
     
     for key in itervalues(heights):
-        # ...
-
+        ...
 Iterable dict items:
 
 .. code:: python
 
     # Python 2 only:
     for (key, value) in heights.iteritems():
-        # ...
+        ...
 .. code:: python
 
     # Python 2 and 3: option 1
     for (key, value) in heights.items():    # inefficient on Py2    
-        # ...
+        ...
 .. code:: python
 
     # Python 2 and 3: option 2
@@ -520,8 +536,7 @@ Iterable dict items:
     from six import iteritems
     
     for (key, value) in iteritems(heights):
-        # ...
-
+        ...
 dict keys/values/items as a list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -537,7 +552,6 @@ dict keys as a list:
     # Python 2 and 3:
     keylist = list(heights)
     assert isinstance(keylist, list)
-
 dict values as a list:
 
 .. code:: python
@@ -571,7 +585,6 @@ dict values as a list:
     from six import itervalues
     
     valuelist = list(itervalues(heights))
-
 dict items as a list:
 
 .. code:: python
@@ -714,19 +727,19 @@ xrange
 
     # Python 2 only:
     for i in xrange(10**8):
-        # ...
+        ...
 .. code:: python
 
     # Python 2 and 3: forward-compatible
     from future.builtins import range
     for i in range(10**8):
-        # ...
+        ...
 .. code:: python
 
     # Python 2 and 3: backward-compatible
     from past.builtins import xrange
     for i in xrange(10**8):
-        # ...
+        ...
 range
 ~~~~~
 
