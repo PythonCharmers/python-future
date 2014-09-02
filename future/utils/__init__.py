@@ -395,6 +395,7 @@ if PY3:
             exc = tp
         if exc.__traceback__ is not tb:
             raise exc.with_traceback(tb)
+        raise exc
 
     def raise_with_traceback(exc, traceback=Ellipsis):
         if traceback == Ellipsis:
