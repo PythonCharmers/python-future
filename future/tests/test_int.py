@@ -1038,6 +1038,31 @@ class IntTestCases(unittest.TestCase):
             self.assertRaises(TypeError, myint.from_bytes, mytype(0), 'big')
             # self.assertRaises(TypeError, int.from_bytes, mytype(0), 'big', True)
 
+    def test_multiple_inheritance(self):
+        """
+        Issue #96 (for newint instead of newobject)
+        """
+        import collections
+
+        class Base(int):
+            pass
+
+        class Foo(Base, collections.Container):
+            def __add__(self, other):
+                return 0
+
+    def test_with_metaclass_and_int(self):
+        """
+        Issue #91 (for newint instead of newobject)
+        """
+        from future.utils import with_metaclass
+
+        class MetaClass(type):
+            pass
+
+        class TestClass(with_metaclass(MetaClass, int)):
+            pass
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,7 +7,7 @@ from __future__ import absolute_import, division
 from future import utils
 from future.builtins import object, str, next, int, super
 from future.utils import implements_iterator, python_2_unicode_compatible
-from future.tests.base import unittest
+from future.tests.base import unittest, expectedFailurePY2
 
 
 class TestNewObject(unittest.TestCase):
@@ -162,6 +162,7 @@ class TestNewObject(unittest.TestCase):
         self.assertFalse(isinstance(b, C))
         self.assertTrue(isinstance(c, C))
 
+    @expectedFailurePY2
     def test_types_isinstance_newobject(self):
         a = list()
         b = dict()
@@ -203,6 +204,31 @@ class TestNewObject(unittest.TestCase):
         self.assertEqual(int(a), 0)
         if utils.PY2:
             self.assertEqual(long(a), 0)
+
+    def test_multiple_inheritance(self):
+        """
+        Issue #96
+        """
+        import collections
+
+        class Base(object):
+            pass
+
+        class Foo(Base, collections.Container):
+            def __contains__(self, item):
+                return False
+
+    def test_with_metaclass_and_object(self):
+        """
+        Issue #91
+        """
+        from future.utils import with_metaclass
+
+        class MetaClass(type):
+            pass
+
+        class TestClass(with_metaclass(MetaClass, object)):
+            pass
 
 
 if __name__ == '__main__':

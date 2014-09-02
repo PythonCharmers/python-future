@@ -53,8 +53,17 @@ class BaseNewObject(type):
         else:
             return issubclass(instance.__class__, cls)
 
+# We no longer define a metaclass for newobject because this breaks multiple
+# inheritance and custom metaclass use with this exception:
 
-class newobject(with_metaclass(BaseNewObject, _builtin_object)):
+# TypeError: Error when calling the metaclass bases
+#     metaclass conflict: the metaclass of a derived class must be a
+#     (non-strict) subclass of the metaclasses of all its bases
+
+# See issues #91 and #96.
+
+
+class newobject(object):
     """
     A magical object class that provides Python 2 compatibility methods::
         next

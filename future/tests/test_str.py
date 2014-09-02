@@ -524,6 +524,31 @@ class TestStr(unittest.TestCase):
         self.assertRaises(TypeError, 'hello'.translate)
         self.assertRaises(TypeError, 'abababc'.translate, 'abc', 'xyz')
 
+    def test_multiple_inheritance(self):
+        """
+        Issue #96 (for newstr instead of newobject)
+        """
+        import collections
+
+        class Base(str):
+            pass
+
+        class Foo(Base, collections.Container):
+            def __contains__(self, item):
+                return False
+
+    def test_with_metaclass_and_str(self):
+        """
+        Issue #91 (for newstr instead of newobject)
+        """
+        from future.utils import with_metaclass
+
+        class MetaClass(type):
+            pass
+
+        class TestClass(with_metaclass(MetaClass, str)):
+            pass
+
 
 if __name__ == '__main__':
     unittest.main()
