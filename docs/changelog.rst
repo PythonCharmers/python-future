@@ -1,3 +1,5 @@
+.. _whats-old:
+
 Changes in previous versions
 ****************************
 
