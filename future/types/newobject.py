@@ -46,13 +46,6 @@ _builtin_object = object
 ver = sys.version_info[:2]
 
 
-class BaseNewObject(type):
-    def __instancecheck__(cls, instance):
-        if cls == newobject:
-            return isinstance(instance, _builtin_object)
-        else:
-            return issubclass(instance.__class__, cls)
-
 # We no longer define a metaclass for newobject because this breaks multiple
 # inheritance and custom metaclass use with this exception:
 

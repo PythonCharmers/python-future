@@ -16,14 +16,14 @@ import sys
 import copy
 
 from future.utils import with_metaclass
-from future.types.newobject import newobject, BaseNewObject
+from future.types.newobject import newobject
 
 
 _builtin_list = list
 ver = sys.version_info[:2]
 
 
-class BaseNewList(BaseNewObject):
+class BaseNewList(type):
     def __instancecheck__(cls, instance):
         if cls == newlist:
             return isinstance(instance, _builtin_list)

@@ -600,6 +600,7 @@ class TestBytes(unittest.TestCase):
         with self.assertRaises(TypeError):
             bytes(b'%r' % 'abc')
 
+    @expectedFailurePY2
     def test_multiple_inheritance(self):
         """
         Issue #96 (for newbytes instead of newobject)
@@ -613,6 +614,7 @@ class TestBytes(unittest.TestCase):
             def __contains__(self, item):
                 return False
 
+    @expectedFailurePY2
     def test_with_metaclass_and_bytes(self):
         """
         Issue #91 (for newdict instead of newobject)

@@ -1038,6 +1038,7 @@ class IntTestCases(unittest.TestCase):
             self.assertRaises(TypeError, myint.from_bytes, mytype(0), 'big')
             # self.assertRaises(TypeError, int.from_bytes, mytype(0), 'big', True)
 
+    @expectedFailurePY2
     def test_multiple_inheritance(self):
         """
         Issue #96 (for newint instead of newobject)
@@ -1051,6 +1052,7 @@ class IntTestCases(unittest.TestCase):
             def __add__(self, other):
                 return 0
 
+    @expectedFailurePY2
     def test_with_metaclass_and_int(self):
         """
         Issue #91 (for newint instead of newobject)

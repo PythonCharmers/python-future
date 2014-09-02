@@ -6,7 +6,7 @@ Tests for the backported class:`str` class.
 from __future__ import absolute_import, unicode_literals, print_function
 from future.builtins import *
 from future import utils
-from future.tests.base import unittest
+from future.tests.base import unittest, expectedFailurePY2
 
 import os
 
@@ -524,6 +524,7 @@ class TestStr(unittest.TestCase):
         self.assertRaises(TypeError, 'hello'.translate)
         self.assertRaises(TypeError, 'abababc'.translate, 'abc', 'xyz')
 
+    @expectedFailurePY2
     def test_multiple_inheritance(self):
         """
         Issue #96 (for newstr instead of newobject)
@@ -537,6 +538,7 @@ class TestStr(unittest.TestCase):
             def __contains__(self, item):
                 return False
 
+    @expectedFailurePY2
     def test_with_metaclass_and_str(self):
         """
         Issue #91 (for newstr instead of newobject)

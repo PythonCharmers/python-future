@@ -106,6 +106,7 @@ class TestDict(unittest.TestCase):
         d = self.d1
         self.assertTrue(type(d) == dict)
 
+    @expectedFailurePY2
     def test_multiple_inheritance(self):
         """
         Issue #96 (for newdict instead of newobject)
@@ -119,6 +120,7 @@ class TestDict(unittest.TestCase):
             def __contains__(self, item):
                 return False
 
+    @expectedFailurePY2
     def test_with_metaclass_and_dict(self):
         """
         Issue #91 (for newdict instead of newobject)
