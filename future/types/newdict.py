@@ -19,14 +19,14 @@ The keys, values and items methods now return iterators on Python 2.x
 import sys
 
 from future.utils import with_metaclass
-from future.types.newobject import newobject, BaseNewObject
+from future.types.newobject import newobject
 
 
 _builtin_dict = dict
 ver = sys.version_info[:2]
 
 
-class BaseNewDict(BaseNewObject):
+class BaseNewDict(type):
     def __instancecheck__(cls, instance):
         if cls == newdict:
             return isinstance(instance, _builtin_dict)
