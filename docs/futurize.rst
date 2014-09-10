@@ -74,9 +74,10 @@ the code. With luck, this will not introduce any bugs into the code, or will at
 least be trivial to fix. The changes are those that bring the Python code
 up-to-date without breaking Py2 compatibility. The resulting code will be
 modern Python 2.6-compatible code plus ``__future__`` imports from the
-following set::
+following set:
 
 .. code-block:: python
+
     from __future__ import absolute_import
     from __future__ import division
     from __future__ import print_function
