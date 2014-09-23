@@ -330,11 +330,11 @@ class TestStandardLibraryRenames(CodeHandler):
 
     def test_urllib_request_http(self):
         """
-        This site (amazon.com) uses plain http (as of 2014-04-12).
+        This site (python-future.org) uses plain http (as of 2014-09-23).
         """
         import future.moves.urllib.request as urllib_request
         from pprint import pprint
-        URL = 'http://amazon.com'
+        URL = 'http://python-future.org'
         r = urllib_request.urlopen(URL)
         data = r.read()
         self.assertTrue(b'<html>' in data)
