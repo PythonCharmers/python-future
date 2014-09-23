@@ -177,13 +177,11 @@ most inputs; worse, it allows arbitrary code execution by the user
 for specially crafted inputs because of the ``eval()`` executed by Python
 2's ``input()`` function.
 
-This is not an isolated example; almost every output of ``2to3`` will
-need modification to provide backward compatibility with Python 2.
-``future`` is designed for just this purpose.
-
-The ``future`` source tree contains a script called ``futurize`` that is
-based on ``lib2to3``. It is designed to turn either Python 2-only or
-Python 3-only code into code that is compatible with both platforms.
+This is not an isolated example; almost every output of ``2to3`` will need
+modification to provide backward compatibility with Python 2. As an
+alternative, the ``python-future`` project provides a script called
+``futurize`` that is based on ``lib2to3`` but will produce code that is
+compatible with both platforms (Py2 and Py3).
 
 
 Can I maintain a Python 2 codebase and use 2to3 to automatically convert to Python 3 in the setup script?

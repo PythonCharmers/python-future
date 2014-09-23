@@ -61,6 +61,8 @@ Patches
 - German Larrain
 - Chris Lasher
 - Elliott Sales de Andrade
+- Tim Shaffer
+- Daniel Szoska
 - Jeff Tratner
 - Mystic-Mirage (GitHub)
 - str4d (GitHub)

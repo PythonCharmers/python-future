@@ -77,7 +77,9 @@ See :ref:`backwards-conversion` for more details.
 To convert existing Python 2 code
 ---------------------------------
 
-Start with this page: :ref:`automatic-conversion`.
+.. include:: futurize_overview.rst
+
+See :ref:`forwards-conversion-stage1` and :ref:`forwards-conversion-stage2` for more details.
 
 .. If you already know Python 3, start with the :ref:`automatic-conversion` page.
 .. If you don't know Python 3 yet, start with :ref:`python3-essentials`.
@@ -153,6 +155,7 @@ For more information on the automatic translation feature, see :ref:`translation
 
 Next steps
 ----------
-For more information about writing Py2/3-compatible code, see
-:ref:`compatible-idioms` and :ref:`what-else`.
+For more information about writing Py2/3-compatible code, see:
 
+- :ref:`compatible-idioms`
+- :ref:`what-else`.

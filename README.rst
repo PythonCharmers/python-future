@@ -205,11 +205,7 @@ into this code which runs on both Py2 and Py3:
     name = input()
     greet(name)
 
-
-For complex projects, it may be better to divide the porting into two stages.
-``futurize`` supports a ``--stage1`` flag for safe changes that modernize the
-code but do not break Python 2.6 compatibility or introduce a depdendency on the
-``future`` package. Calling ``futurize --stage2`` then completes the process.
+See :ref:`forwards-conversion` and :ref:`backwards-conversion` for more details.
 
 
 Automatic translation

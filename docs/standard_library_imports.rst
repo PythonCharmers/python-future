@@ -10,13 +10,13 @@ modules from Python 3.3 (``future.backports``).
 
 There are currently four interfaces to the reorganized standard library.
 
-
 Context-manager interface
 -------------------------
+
 The recommended interface is via a context-manager called ``hooks``::
 
-    from future import standard_library
-    with standard_library.hooks():
+    from future.standard_library import hooks
+    with hooks():
         import socketserver
         import queue
         import configparser
@@ -55,7 +55,7 @@ One workaround is to replace the dot with an underscore::
 ``import_`` and ``from_import`` functions
 -----------------------------------------
 
-A third option, which also works with two-level imports, is to use the
+A third interface, which also works with two-level imports, is to use the
 ``import_`` and ``from_import`` functions from ``future.standard_library`` as
 follows::
 
@@ -117,7 +117,7 @@ modules on Py2::
 List of standard library modules
 --------------------------------
 
-The modules available from ``future.moves`` via one of the interfaces above are::
+The complete list of modules available via one of the four interfaces above is::
 
     import socketserver
     import queue
@@ -178,12 +178,10 @@ available independently of the python-future project::
     import pathlib                    # pip install pathlib
 
 A few modules from Python 3.4 and 3.3 are also available in the ``backports``
-package namespace::
+package namespace after ``pip install backports.lzma`` etc.::
 
     from backports import lzma
     from backports import functools_lru_cache as lru_cache
-
-After ``pip install backports.lzma`` etc.
 
 The following Python 2.6 backports of standard library packages from Python 2.7+
 are also available::
