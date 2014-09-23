@@ -337,7 +337,7 @@ class TestStandardLibraryRenames(CodeHandler):
         URL = 'http://python-future.org'
         r = urllib_request.urlopen(URL)
         data = r.read()
-        self.assertTrue(b'<html>' in data)
+        self.assertTrue(b'</html>' in data)
 
     def test_html_import(self):
         import html
