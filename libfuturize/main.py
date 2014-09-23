@@ -141,6 +141,7 @@ def main(args=None):
                       "ex: --add-suffix='3' will generate .py3 files.")
 
     # Parse command line arguments
+    flags = {}
     refactor_stdin = False
     options, args = parser.parse_args(args)
 
@@ -206,8 +207,6 @@ def main(args=None):
               file=sys.stderr)
         print("Use --help to show usage.", file=sys.stderr)
         return 2
-
-    flags = {}
 
     unwanted_fixes = set(fixer_pkg + ".fix_" + fix for fix in options.nofix)
 

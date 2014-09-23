@@ -106,6 +106,34 @@ class TestDict(unittest.TestCase):
         d = self.d1
         self.assertTrue(type(d) == dict)
 
+    @expectedFailurePY2
+    def test_multiple_inheritance(self):
+        """
+        Issue #96 (for newdict instead of newobject)
+        """
+        import collections
+
+        class Base(dict):
+            pass
+
+        class Foo(Base, collections.Container):
+            def __contains__(self, item):
+                return False
+
+    @expectedFailurePY2
+    def test_with_metaclass_and_dict(self):
+        """
+        Issue #91 (for newdict instead of newobject)
+        """
+        from future.utils import with_metaclass
+
+        class MetaClass(type):
+            pass
+
+        class TestClass(with_metaclass(MetaClass, dict)):
+            pass
+
+
 
 if __name__ == '__main__':
     unittest.main()

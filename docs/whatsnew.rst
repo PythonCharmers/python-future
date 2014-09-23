@@ -46,4 +46,7 @@ Bug fixes
   (Thanks to @str4d).
 
 
+Previous versions
+-----------------
 
+See the :ref:`whats-old` for versions prior to v0.13.
