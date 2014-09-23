@@ -53,11 +53,11 @@ unicode strings (``unicode`` on Py2).
 All imports
 -----------
 
-The --all-imports option forces adding all ``__future__`` imports and ``from
-future import standard_library``, even if they don't seem necessary for
-the current state of each module. (This can simplify testing, and can
-reduce the need to think about Py2 compatibility when editing the code
-further.)
+The --all-imports option forces adding all ``__future__`` imports,
+``future.builtins`` imports, and standard library hooks, even if they don't
+seem necessary for the current state of each module. (This can simplify
+testing, and can reduce the need to think about Py2 compatibility when editing
+the code further.)
 
 """
 
@@ -217,13 +217,14 @@ def main(args=None):
     # further.)
     extra_fixes = set()
     if options.all_imports:
-        prefix = 'libfuturize.fixes.'
         if options.stage1:
+            prefix = 'libfuturize.fixes.'
             extra_fixes.add(prefix +
                             'fix_add__future__imports_except_unicode_literals')
         else:
             # In case the user hasn't run stage1 for some reason:
-            extra_fixes.add(prefix + 'fix_add__future__imports')
+            prefix = 'libpasteurize.fixes.'
+            extra_fixes.add(prefix + 'fix_add_all__future__imports')
             extra_fixes.add(prefix + 'fix_add_future_standard_library_import')
             extra_fixes.add(prefix + 'fix_add_all_future_builtins')
     explicit = set()
