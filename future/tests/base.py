@@ -246,7 +246,7 @@ class CodeHandler(unittest.TestCase):
         else:
             headers = ''
 
-        self.compare(output, reformat_code(headers + expected),
+        self.compare(output, headers + reformat_code(expected),
                      ignore_imports=ignore_imports)
 
     def unchanged(self, code, **kwargs):

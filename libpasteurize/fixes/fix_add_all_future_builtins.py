@@ -25,10 +25,10 @@ class FixAddAllFutureBuiltins(fixer_base.BaseFix):
     run_order = 1
 
     def transform(self, node, results):
-        import_str = """(ascii, bytes, chr, dict, filter, hex, input,
-                             int, list, map, next, object, oct, open, pow,
-                             range, round, str, super, zip)"""
-        touch_import_top(u'future.builtins', import_str, node)
+        # import_str = """(ascii, bytes, chr, dict, filter, hex, input,
+        #                      int, list, map, next, object, oct, open, pow,
+        #                      range, round, str, super, zip)"""
+        touch_import_top(u'future.builtins', '*', node)
 
         # builtins = """ascii bytes chr dict filter hex input
         #                      int list map next object oct open pow

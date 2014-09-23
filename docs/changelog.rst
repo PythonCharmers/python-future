@@ -642,7 +642,7 @@ imports deemed necessary.
 There is now an ``--all-imports`` option to the ``futurize`` script which
 gives the previous behaviour, which is to add all ``__future__`` imports
 and ``from future.builtins import *`` imports to every module. (This even
-applies to an empty ``__init__.py`` file.
+applies to an empty ``__init__.py`` file.)
 
 
 Looser type-checking for the backported ``str`` object
