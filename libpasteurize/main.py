@@ -28,6 +28,12 @@ Note that separate stages are not available (or needed) when converting from
 Python 3 with ``pasteurize`` as they are when converting from Python 2 with
 ``futurize``.
 
+The --all-imports option forces adding all ``__future__`` imports,
+``future.builtins`` imports, and standard library hooks, even if they don't
+seem necessary for the current state of each module. (This can simplify
+testing, and can reduce the need to think about Py2 compatibility when editing
+the code further.)
+
 """
 
 from __future__ import (absolute_import, print_function, unicode_literals)
@@ -115,22 +121,12 @@ def main(args=None):
     # Initialize the refactoring tool
     unwanted_fixes = set(fixer_pkg + ".fix_" + fix for fix in options.nofix)
 
-    # The 'all-imports' option forces adding all imports __future__ and "from
-    # future import standard_library", even if they don't seem necessary for
-    # the current state of each module. (This can simplify testing, and can
-    # reduce the need to think about Py2 compatibility when editing the code
-    # further.)
     extra_fixes = set()
     if options.all_imports:
-        prefix = 'libfuturize.fixes.'
-        if options.stage1:
-            extra_fixes.add(prefix +
-                            'fix_add__future__imports_except_unicode_literals')
-        else:
-            # In case the user hasn't run stage1 for some reason:
-            extra_fixes.add(prefix + 'fix_add__future__imports')
-            extra_fixes.add(prefix + 'fix_add_future_standard_library_import')
-            extra_fixes.add(prefix + 'fix_add_all_future_builtins')
+        prefix = 'libpasteurize.fixes.'
+        extra_fixes.add(prefix + 'fix_add_all__future__imports')
+        extra_fixes.add(prefix + 'fix_add_future_standard_library_import')
+        extra_fixes.add(prefix + 'fix_add_all_future_builtins')
 
     fixer_names = avail_fixes | extra_fixes - unwanted_fixes
 

@@ -210,11 +210,6 @@ def main(args=None):
 
     unwanted_fixes = set(fixer_pkg + ".fix_" + fix for fix in options.nofix)
 
-    # The 'all-imports' option forces adding all __future__ imports and "from
-    # future import standard_library", even if they don't seem necessary for
-    # the current state of each module. (This can simplify testing, and can
-    # reduce the need to think about Py2 compatibility when editing the code
-    # further.)
     extra_fixes = set()
     if options.all_imports:
         if options.stage1:

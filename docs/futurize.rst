@@ -154,7 +154,6 @@ The complete set of fixers applied by ``futurize --stage1`` is:
     libfuturize.fixes.fix_next_call
     libfuturize.fixes.fix_print_with_import
     libfuturize.fixes.fix_raise
-    libfuturize.fixes.fix_order___future__imports
 
 
 Not applied:
@@ -298,7 +297,6 @@ A complete list of fixers applied in Stage 2 is::
     libfuturize.fixes.fix_metaclass
     libpasteurize.fixes.fix_newstyle
     libfuturize.fixes.fix_object
-    libfuturize.fixes.fix_order___future__imports
     libfuturize.fixes.fix_unicode_keep_u
     libfuturize.fixes.fix_xrange_with_import
 

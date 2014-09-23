@@ -30,3 +30,9 @@ class FixAddAllFutureBuiltins(fixer_base.BaseFix):
                              range, round, str, super, zip)"""
         touch_import_top(u'future.builtins', import_str, node)
 
+        # builtins = """ascii bytes chr dict filter hex input
+        #                      int list map next object oct open pow
+        #                      range round str super zip"""
+        # for builtin in sorted(builtins.split(), reverse=True):
+        #     touch_import_top(u'future.builtins', builtin, node)
+

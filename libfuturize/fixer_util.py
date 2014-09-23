@@ -306,6 +306,10 @@ def touch_import_top(package, name_to_import, node):
     if does_tree_import(package, name_to_import, root):
         return
 
+    # Ideally, we would look for whether futurize --all-imports has been run,
+    # as indicated by the presence of ``from future.builtins import (ascii, ...,
+    # zip)`` -- and, if it has, we wouldn't import the name again.
+
     # Look for __future__ imports and insert below them
     found = False
     for name in ['absolute_import', 'division', 'print_function',
