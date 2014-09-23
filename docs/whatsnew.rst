@@ -1,5 +1,17 @@
 .. _whats-new-0.13.x:
 
+What's new in version 0.13.1
+****************************
+
+This is a minor bug-fix release.
+
+- Fix ``futurize --all-imports`` (issue #101)
+- Fix ``futurize --output-dir`` logging (issue #102)
+- Fix (multiple) inheritance of ``future.builtins.object`` with metaclasses (issues #91 and #96)
+- Fix ``futurize``'s refactoring of ``urllib`` imports (issue #94)
+- Doc formatting fixes (issues #98, 100)
+
+
 What's New in v0.13
 *******************
 
