@@ -173,6 +173,7 @@ def main(args=None):
     # Set up logging handler
     level = logging.DEBUG if options.verbose else logging.INFO
     logging.basicConfig(format='%(name)s: %(message)s', level=level)
+    logger = logging.getLogger('libfuturize.main')
 
     if options.stage1 or options.stage2:
         assert options.both_stages is None
