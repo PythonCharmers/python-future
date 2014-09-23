@@ -1171,6 +1171,7 @@ class TestFuturizeAllImports(CodeHandler):
     """
     Tests "futurize --all-imports".
     """
+    @expectedFailurePY26
     def test_all_imports(self):
         before = """
         import math
