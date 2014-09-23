@@ -11,7 +11,7 @@ This notebook shows you idioms for writing future-proof code that is
 compatible with both versions of Python: 2 and 3.
 
 It accompanies Ed Schofield's talk at PyCon AU 2014, "Writing 2/3
-compatible code".
+compatible code". (The video is `here <http://www.youtube.com/watch?v=KOqk8j11aAI&t=10m14s>`_.) 
 
 Minimum versions:
 
