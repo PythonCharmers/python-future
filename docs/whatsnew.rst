@@ -6,19 +6,22 @@ What's New
 What's new in version 0.13.2
 ============================
 
-This release expands the ``future.moves`` package to include most of the remaining
-modules that were moved in the standard library reorganization (PEP 3108).
-(Issue #104). See :ref:`list-standard-library-moves` for an updated list.
+- This release expands the ``future.moves`` package to include most of the remaining
+  modules that were moved in the standard library reorganization (PEP 3108).
+  (Issue #104). See :ref:`list-standard-library-moves` for an updated list.
+
+- This release also removes the broken ``--doctests_only`` option from the ``futurize``
+  and ``pasteurize`` scripts for now (issue #103).
 
 What's new in version 0.13.1
 ============================
 
-This is a minor bug-fix release.
+This is a bug-fix release:
 
-- Fix ``futurize --all-imports`` (issue #101)
-- Fix ``futurize --output-dir`` logging (issue #102)
 - Fix (multiple) inheritance of ``future.builtins.object`` with metaclasses (issues #91 and #96)
 - Fix ``futurize``'s refactoring of ``urllib`` imports (issue #94)
+- Fix ``futurize --all-imports`` (issue #101)
+- Fix ``futurize --output-dir`` logging (issue #102)
 - Doc formatting fix (issues #98, 100)
 
 
