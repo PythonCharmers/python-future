@@ -7,11 +7,13 @@ supports Cython modules.
 If spam is being imported from the local directory, this import:
     from spam import eggs
 becomes:
+    from __future__ import absolute_import
     from .spam import eggs
 
 and this import:
     import spam
 becomes:
+    from __future__ import absolute_import
     from . import spam
 """
 

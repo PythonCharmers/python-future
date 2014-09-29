@@ -100,8 +100,6 @@ def main(args=None):
                       help="Report the version number of futurize")
     parser.add_option("-a", "--all-imports", action="store_true",
                       help="Add all __future__ and future imports to each module")
-    parser.add_option("-d", "--doctests_only", action="store_true",
-                      help="Fix up doctests only")
     parser.add_option("-1", "--stage1", action="store_true",
                       help="Modernize Python 2 code only; no compatibility with Python 3 (or dependency on ``future``)")
     parser.add_option("-2", "--stage2", action="store_true",
@@ -281,6 +279,7 @@ def main(args=None):
                         'output_dir': options.output_dir,
                         'input_base_dir': input_base_dir,
                        }
+
     rt = StdoutRefactoringTool(
             sorted(fixer_names), flags, sorted(explicit),
             options.nobackups, not options.no_diffs,
@@ -292,7 +291,7 @@ def main(args=None):
             rt.refactor_stdin()
         else:
             try:
-                rt.refactor(args, options.write, options.doctests_only,
+                rt.refactor(args, options.write, None,
                             options.processes)
             except refactor.MultiprocessingUnsupported:
                 assert options.processes > 1

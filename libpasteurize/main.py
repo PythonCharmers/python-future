@@ -61,8 +61,6 @@ def main(args=None):
                       help="Report the version number of pasteurize")
     parser.add_option("-a", "--all-imports", action="store_true",
                       help="Adds all __future__ and future imports to each module")
-    parser.add_option("-d", "--doctests_only", action="store_true",
-                      help="Fix up doctests only")
     parser.add_option("-f", "--fix", action="append", default=[],
                       help="Each FIX specifies a transformation; default: all")
     parser.add_option("-j", "--processes", action="store", default=1,
@@ -139,7 +137,7 @@ def main(args=None):
             rt.refactor_stdin()
         else:
             try:
-                rt.refactor(args, options.write, options.doctests_only,
+                rt.refactor(args, options.write, None,
                             options.processes)
             except refactor.MultiprocessingUnsupported:
                 assert options.processes > 1
