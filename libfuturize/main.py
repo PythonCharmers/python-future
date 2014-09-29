@@ -101,7 +101,7 @@ def main(args=None):
     parser.add_option("-a", "--all-imports", action="store_true",
                       help="Add all __future__ and future imports to each module")
     parser.add_option("-d", "--doctests_only", action="store_true",
-                      help="Fix up doctests only")
+                      help="Fix up doctests instead of regular code")
     parser.add_option("-1", "--stage1", action="store_true",
                       help="Modernize Python 2 code only; no compatibility with Python 3 (or dependency on ``future``)")
     parser.add_option("-2", "--stage2", action="store_true",
@@ -275,6 +275,18 @@ def main(args=None):
                         'output_dir': options.output_dir,
                         'input_base_dir': input_base_dir,
                        }
+    # refactor_doctest() in lib2to3/refactor.py has an assert statement
+    # that dies if it sees a __future__ import. So strip these out.
+    if options.doctests_only:
+        print('Warning: due to a limitation in lib2to3, doctests will not '
+              'include __future__ imports (issue #103)',
+              file=sys.stderr)
+        fixer_names -= set(['libfuturize.fixes.fix_print_with_import',
+                            'libfuturize.fixes.fix_absolute_import',
+                            'libfuturize.fixes.fix_division_safe'])
+        fixer_names |= set(['lib2to3.fixes.fix_print',
+                            'lib2to3.fixes.fix_import'])
+
     rt = StdoutRefactoringTool(
             sorted(fixer_names), flags, sorted(explicit),
             options.nobackups, not options.no_diffs,
