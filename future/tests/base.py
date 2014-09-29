@@ -17,19 +17,8 @@ from future.utils import bind_method, PY26, PY3, PY2
 
 # For Python 2.6 compatibility: see http://stackoverflow.com/questions/4814970/
 if "check_output" not in dir(subprocess): # duck punch it in!
-    def f(*popenargs, **kwargs):
-        if 'stdout' in kwargs:
-            raise ValueError('stdout argument not allowed, it will be overridden.')
-        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            cmd = kwargs.get("args")
-            if cmd is None:
-                cmd = popenargs[0]
-            raise subprocess.CalledProcessError(retcode, cmd)
-        return output
-    subprocess.check_output = f
+    from future.moves.subprocess import check_output
+    subprocess.check_output = check_output
 
 
 def reformat_code(code):

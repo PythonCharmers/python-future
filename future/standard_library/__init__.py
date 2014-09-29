@@ -25,11 +25,15 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import xmlrpc.client, xmlrpc.server
 
     import _thread
-    import _dummythread
+    import _dummy_thread
     import _markupbase
 
     from itertools import filterfalse, zip_longest
     from sys import intern
+    from collections import UserList, UserDict
+    from collections import OrderedDict, Counter     # even on Py2.6
+    from subprocess import getoutput, getstatusoutput
+    from subprocess import check_output              # even on Py2.6
 
 (The renamed modules and functions are still available under their old
 names on Python 2.)

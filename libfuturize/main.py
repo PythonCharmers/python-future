@@ -249,10 +249,16 @@ def main(args=None):
                               file=sys.stderr)
                         return 2
                     explicit.add(found[0])
+        if len(explicit & unwanted_fixes) > 0:
+            print("Conflicting usage: the following fixers have been "
+                  "simultaneously requested and disallowed:\n" +
+                  "\n".join("  " + myf for myf in (explicit & unwanted_fixes)),
+                  file=sys.stderr)
+            return 2
         requested = avail_fixes.union(explicit) if all_present else explicit
     else:
         requested = avail_fixes.union(explicit)
-    fixer_names = requested | extra_fixes - unwanted_fixes
+    fixer_names = (requested | extra_fixes) - unwanted_fixes
 
     input_base_dir = os.path.commonprefix(args)
     if (input_base_dir and not input_base_dir.endswith(os.sep)

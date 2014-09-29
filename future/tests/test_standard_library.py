@@ -406,6 +406,125 @@ class TestStandardLibraryRenames(CodeHandler):
         imp.reload(imp)
         self.assertTrue(True)
 
+class TestFutureMoves(CodeHandler):
+    def test_future_moves_urllib_request(self):
+        from future.moves.urllib import request as urllib_request
+        functions = ['getproxies',
+                     'pathname2url',
+                     'proxy_bypass',
+                     'quote',
+                     'request_host',
+                     'splitattr',
+                     'splithost',
+                     'splitpasswd',
+                     'splitport',
+                     'splitquery',
+                     'splittag',
+                     'splittype',
+                     'splituser',
+                     'splitvalue',
+                     'thishost',
+                     'to_bytes',
+                     'unquote',
+                     # 'unquote_to_bytes',   # Is there an equivalent in the Py2 stdlib?
+                     'unwrap',
+                     'url2pathname',
+                     'urlcleanup',
+                     'urljoin',
+                     'urlopen',
+                     'urlparse',
+                     'urlretrieve',
+                     'urlsplit',
+                     'urlunparse']
+        self.assertTrue(all(fn in dir(urllib_request) for fn in functions))
+
+    def test_future_moves(self):
+        """
+        Ensure everything is available from the future.moves interface that we
+        claim and expect. (Issue #104).
+        """
+        from future.moves.collections import Counter, OrderedDict   # backported to Py2.6
+        from future.moves.collections import UserDict, UserList
+
+        from future.moves import configparser
+        from future.moves import copyreg
+
+        from future.moves.itertools import filterfalse, zip_longest
+
+        from future.moves import html
+        import future.moves.html.entities
+        import future.moves.html.parser
+
+        from future.moves import http
+        import future.moves.http.client
+        import future.moves.http.cookies
+        import future.moves.http.cookiejar
+        import future.moves.http.server
+
+        from future.moves import queue
+
+        from future.moves import socketserver
+
+        from future.moves.subprocess import check_output              # even on Py2.6
+        from future.moves.subprocess import getoutput, getstatusoutput
+
+        from future.moves.sys import intern
+
+        from future.moves import urllib
+        import future.moves.urllib.error
+        import future.moves.urllib.parse
+        import future.moves.urllib.request
+        import future.moves.urllib.response
+        import future.moves.urllib.robotparser
+
+        try:
+            # Is _winreg available on Py2? If so, ensure future.moves._winreg is available too:
+            import _winreg
+        except ImportError:
+            pass
+        else:
+            from future.moves import winreg
+
+        from future.moves import xmlrpc
+        import future.moves.xmlrpc.client
+        import future.moves.xmlrpc.server
+
+        from future.moves import _dummy_thread
+        from future.moves import _markupbase
+        from future.moves import _thread
+
+    def test_future_moves_dbm(self):
+        """
+        Do the dbm imports work?
+        """
+        from future.moves import dbm
+        dbm.ndbm
+        from future.moves.dbm import dumb
+        try:
+            # Is gdbm available on Py2? If so, ensure dbm.gnu is available too:
+            import gdbm
+        except ImportError:
+            pass
+        else:
+            from future.moves.dbm import gnu
+        from future.moves.dbm import ndbm
+
+    def test_future_moves_tkinter(self):
+        """
+        Do the tkinter imports work?
+        """
+        from future.moves import tkinter
+        from future.moves.tkinter import dialog
+        from future.moves.tkinter import filedialog
+        from future.moves.tkinter import scrolledtext
+        from future.moves.tkinter import simpledialog
+        from future.moves.tkinter import tix
+        from future.moves.tkinter import constants
+        from future.moves.tkinter import dnd
+        from future.moves.tkinter import colorchooser
+        from future.moves.tkinter import commondialog
+        from future.moves.tkinter import font
+        from future.moves.tkinter import messagebox
 
 if __name__ == '__main__':
     unittest.main()

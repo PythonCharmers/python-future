@@ -3,6 +3,13 @@
 What's New
 **********
 
+What's new in version 0.13.2
+============================
+
+This release expands the ``future.moves`` package to include most of the remaining
+modules that were moved in the standard library reorganization (PEP 3108).
+(Issue #104). See :ref:`list-standard-library-moves` for an updated list.
+
 What's new in version 0.13.1
 ============================
 

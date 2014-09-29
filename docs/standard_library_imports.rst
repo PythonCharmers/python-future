@@ -8,10 +8,71 @@ the standard Python 3 names and locations, it provides access to either the
 corresponding native standard library modules (``future.moves``) or to backported
 modules from Python 3.3 (``future.backports``).
 
+.. _list-standard-library-moves:
+
+List of moved standard library modules
+--------------------------------------
+
+The complete list of modules available via one of the interfaces below is::
+
+    from collections import Counter, OrderedDict   # backported to Py2.6
+    from collections import UserList, UserDict
+
+    import configparser
+    import copyreg
+
+    import dbm
+    import dbm.dumb
+    import dbm.gnu
+    import dbm.ndbm
+
+    from itertools import filterfalse, zip_longest
+
+    import html
+    import html.entities
+    import html.parser
+
+    import http
+    import http.client
+    import http.cookies
+    import http.cookiejar
+    import http.server
+
+    import queue
+
+    import socketserver
+
+    from subprocess import check_output            # backported to Py2.6
+    from subprocess import getoutput, getstatusoutput
+
+    from sys import intern
+
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+    import urllib.response
+    import urllib.robotparser
+
+    import winreg                                  # Windows only
+
+    import xmlrpc.client
+    import xmlrpc.server
+
+    import _dummy_thread
+    import _markupbase
+    import _thread
+
+..  Disabled: import test.support
+
+
+
+Interfaces
+----------
+
 There are currently four interfaces to the reorganized standard library.
 
 Context-manager interface
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The recommended interface is via a context-manager called ``hooks``::
 
@@ -29,7 +90,7 @@ The recommended interface is via a context-manager called ``hooks``::
         # and other moved modules and definitions
 
 Direct interface
-----------------
+~~~~~~~~~~~~~~~~
 
 The second interface avoids import hooks. It may therefore be more
 robust, at the cost of less idiomatic code. Use it as follows::
@@ -53,7 +114,7 @@ One workaround is to replace the dot with an underscore::
     import future.moves.http.client as http_client
 
 ``import_`` and ``from_import`` functions
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A third interface, which also works with two-level imports, is to use the
 ``import_`` and ``from_import`` functions from ``future.standard_library`` as
@@ -67,7 +128,7 @@ follows::
     urlopen, urlsplit = from_import('urllib.request', 'urlopen', 'urlsplit')
 
 install_hooks() call
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 The fourth interface to the reorganized standard library is via an
 explicit call to ``install_hooks()``::
@@ -112,39 +173,6 @@ modules on Py2::
 ..     http.client = client
 
 .. but it has the advantage that it can be used by automatic translation scripts such as ``futurize`` and ``pasteurize``.
-
-
-List of standard library modules
---------------------------------
-
-The complete list of modules available via one of the four interfaces above is::
-
-    import socketserver
-    import queue
-    import configparser
-    from collections import UserList
-    from collections import Counter, OrderedDict   # backported to Py2.6
-    from itertools import filterfalse, zip_longest
-    
-    import html
-    import html.entities
-    import html.parser
-
-    import http
-    import http.client
-    import http.server
-    import http.cookies
-    import http.cookiejar
-    
-    import urllib
-    import urllib.parse
-    import urllib.request
-    import urllib.error
-
-    import xmlrpc.client
-    import xmlrpc.server
-
-..  Disabled: import test.support
 
 
 Comparing future.moves and six.moves
