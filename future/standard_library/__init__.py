@@ -30,7 +30,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
 
     from itertools import filterfalse, zip_longest
     from sys import intern
-    from collections import UserList, UserDict
+    from collections import UserDict, UserList, UserString
     from collections import OrderedDict, Counter     # even on Py2.6
     from subprocess import getoutput, getstatusoutput
     from subprocess import check_output              # even on Py2.6

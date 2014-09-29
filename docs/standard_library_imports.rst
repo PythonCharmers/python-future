@@ -16,7 +16,7 @@ List of moved standard library modules
 The complete list of modules available via one of the interfaces below is::
 
     from collections import Counter, OrderedDict   # backported to Py2.6
-    from collections import UserList, UserDict
+    from collections import UserDict, UserList, UserString
 
     import configparser
     import copyreg

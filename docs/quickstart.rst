@@ -99,7 +99,7 @@ be accessed under their Python 3 names and locations in Python 2::
         import socketserver
         import queue
         import configparser
-        from collections import UserList
+        from collections import UserDict, UserList, UserString
         from collections import Counter, OrderedDict   # even on Py2.6
         from itertools import filterfalse, zip_longest
 
@@ -122,6 +122,7 @@ be accessed under their Python 3 names and locations in Python 2::
         import xmlrpc.client
         import xmlrpc.server
 
+and others. For a complete list, see :ref:`list-standard-library-moves`.
 
 .. _py2-dependencies:
 

@@ -406,6 +406,7 @@ class TestStandardLibraryRenames(CodeHandler):
         imp.reload(imp)
         self.assertTrue(True)
 
+
 class TestFutureMoves(CodeHandler):
     def test_future_moves_urllib_request(self):
         from future.moves.urllib import request as urllib_request
@@ -444,7 +445,7 @@ class TestFutureMoves(CodeHandler):
         claim and expect. (Issue #104).
         """
         from future.moves.collections import Counter, OrderedDict   # backported to Py2.6
-        from future.moves.collections import UserDict, UserList
+        from future.moves.collections import UserDict, UserList, UserString
 
         from future.moves import configparser
         from future.moves import copyreg
