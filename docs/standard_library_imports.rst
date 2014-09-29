@@ -15,6 +15,8 @@ List of moved standard library modules
 
 The complete list of modules available via one of the interfaces below is::
 
+    import builtins
+
     from collections import Counter, OrderedDict   # backported to Py2.6
     from collections import UserDict, UserList, UserString
 
@@ -46,6 +48,8 @@ The complete list of modules available via one of the interfaces below is::
     from subprocess import getoutput, getstatusoutput
 
     from sys import intern
+
+    from tkinter import ...
 
     import urllib.error
     import urllib.parse
