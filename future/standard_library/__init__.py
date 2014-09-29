@@ -197,6 +197,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('base64', 'decodebytes','base64', 'decodestring'),
          ('subprocess', 'getoutput', 'commands', 'getoutput'),
          ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
+         ('subprocess', 'check_output', 'future.backports.misc', 'check_output'),
          ('math', 'ceil', 'future.backports.misc', 'ceil'),
          ('collections', 'OrderedDict', 'future.backports.misc', 'OrderedDict'),
          ('collections', 'Counter', 'future.backports.misc', 'Counter'),
@@ -297,11 +298,6 @@ class RenameImport(object):
                 flog.debug('What to do here?')
 
         name = bits[0]
-        # We no longer use the fake module six.moves:
-        # if name == 'moves':
-        #     # imp.find_module doesn't find this fake module
-        #     from future.utils.six import moves
-        #     return moves
         module_info = imp.find_module(name, path)
         return imp.load_module(name, *module_info)
 
@@ -316,7 +312,7 @@ class hooks(object):
     >>> from future import standard_library
     >>> with standard_library.hooks():
     ...     import http.client
-    >>> import requests     # incompatible with ``future``'s standard library hooks
+    >>> import requests
 
     For this to work, http.client will be scrubbed from sys.modules after the
     'with' block. That way the modules imported in the 'with' block will

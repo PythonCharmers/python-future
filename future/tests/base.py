@@ -2,7 +2,6 @@ import os
 import tempfile
 import unittest
 import sys
-import subprocess
 import re
 import warnings
 import io
@@ -13,12 +12,7 @@ if not hasattr(unittest, 'skip'):
     import unittest2 as unittest
 
 from future.utils import bind_method, PY26, PY3, PY2
-
-
-# For Python 2.6 compatibility: see http://stackoverflow.com/questions/4814970/
-if "check_output" not in dir(subprocess): # duck punch it in!
-    from future.moves.subprocess import check_output
-    subprocess.check_output = check_output
+from future.moves.subprocess import check_output, STDOUT
 
 
 def reformat_code(code):
@@ -282,15 +276,15 @@ class CodeHandler(unittest.TestCase):
                 params.append('--conservative')
             # No extra params needed
 
-        output = subprocess.check_output([sys.executable, script] + params +
+        output = check_output([sys.executable, script] + params +
                                          ['-w', self.tempdir + filename],
-                                         stderr=subprocess.STDOUT)
+                                         stderr=STDOUT)
         return output
 
     def _run_test_script(self, filename='mytestscript.py',
                          interpreter=sys.executable):
         env = {'PYTHONPATH': os.getcwd()}
-        return subprocess.check_output([interpreter, self.tempdir + filename],
+        return check_output([interpreter, self.tempdir + filename],
                                        env=env)
 
 

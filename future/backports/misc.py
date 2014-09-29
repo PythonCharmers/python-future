@@ -9,6 +9,7 @@ collections.Counter      (for Python 2.6)
 """
 
 from math import ceil as oldceil
+import subprocess
 
 from future.utils import iteritems, PY26
 
@@ -488,3 +489,17 @@ except ImportError:
     OrderedDict = _OrderedDict
     Counter = _Counter
 
+
+# For Python 2.6 compatibility: see http://stackoverflow.com/questions/4814970/
+def check_output(*popenargs, **kwargs):
+    if 'stdout' in kwargs:
+        raise ValueError('stdout argument not allowed, it will be overridden.')
+    process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+    output, unused_err = process.communicate()
+    retcode = process.poll()
+    if retcode:
+        cmd = kwargs.get("args")
+        if cmd is None:
+            cmd = popenargs[0]
+        raise subprocess.CalledProcessError(retcode, cmd)
+    return output
