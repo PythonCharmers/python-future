@@ -397,75 +397,9 @@ def scrub_py2_sys_modules():
 
 def scrub_future_sys_modules():
     """
-    On Py2 only: Removes any modules such as ``http`` and ``html.parser`` from
-    the ``sys.modules`` cache. Such modules would confuse code such as this::
-
-        # PyChecker does something like this:
-        try:
-            import builtins
-        except:
-            PY3 = False
-        finally:
-            PY3 = True
-
-    or this::
-
-        import urllib       # We want this to pull in only the Py2 module
-                            # after scrub_future_sys_modules() has been called
-
-    or this::
-
-        # Requests does this in requests/packages/urllib3/connection.py:
-        try: # Python 3
-            from http.client import HTTPConnection, HTTPException
-        except ImportError:
-            from httplib import HTTPConnection, HTTPException
-
-    This function removes items matching this spec from sys.modules::
-
-        key:   new_py3_module_name
-        value: either future.backports module or py2 module with
-               another name
+    Deprecated.
     """
-    scrubbed = {}
-    if PY3:
-        return {}
-    for modulename, module in sys.modules.items():
-        if modulename.startswith('future'):
-            flog.debug('Not removing %s' % modulename)
-            continue
-        # We don't want to remove Python 2.x urllib if this is cached.
-        # But we do want to remove modules under their new names, e.g.
-        # 'builtins'.
-
-        # We look for builtins, configparser, urllib, email, http, etc., and
-        # their submodules
-        if (modulename in RENAMES.values() or
-            any(modulename.startswith(m + '.') for m in RENAMES.values()) or
-            'urllib' in modulename):
-
-            if module is None:
-                # This happens for e.g. __future__ imports. Delete it.
-                flog.debug('Deleting empty module {0} from sys.modules'
-                              .format(modulename))
-                del sys.modules[modulename]
-                continue
-
-            # Not all modules come from future.moves. Example:
-            # sys.modules['builtins'] == <module '__builtin__' (built-in)>
-            p = os.path.join('future', 'moves', modulename.replace('.', os.sep))
-            # six.moves doesn't have a __file__ attribute:
-            if (hasattr(module, '__file__') and p in module.__file__ or
-                hasattr(module, '__future_module__')):
-                flog.debug('Deleting (future) {0} {1} from sys.modules'
-                              .format(modulename, module))
-                scrubbed[modulename] = sys.modules[modulename]
-                del sys.modules[modulename]
-            else:
-                flog.debug('Not deleting {0} {1} from sys.modules'
-                              .format(modulename, module))
-    return scrubbed
-
+    return {}    
 
 class suspend_hooks(object):
     """
