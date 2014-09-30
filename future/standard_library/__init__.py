@@ -745,6 +745,9 @@ class exclude_local_folder_imports(object):
     def __init__(self, *args):
         assert len(args) > 0
         self.module_names = args
+        # Disallow dotted module names like http.client:
+        if any(['.' in m for m in self.module_names]):
+            raise NotImplementedError('Dotted module names are not supported')
 
     def __enter__(self):
         self.old_sys_path = copy.copy(sys.path)
@@ -762,10 +765,13 @@ class exclude_local_folder_imports(object):
 
         # Ensure we import the system module:
         for m in self.module_names:
-            try:
-                del sys.modules[m]
-            except KeyError:
-                pass
+            # Delete the module and any submodules from sys.modules:
+            for key in list(sys.modules):
+                if key == m or key.startswith(m + '.'):
+                    try:
+                        del sys.modules[key]
+                    except KeyError:
+                        pass
             try:
                 module = __import__(m, level=0)
             except ImportError:

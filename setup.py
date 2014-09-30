@@ -16,10 +16,10 @@ with exclude_local_folder_imports('configparser'):
         from distutils.core import setup
 
 
-
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
+
 
 NAME = "future"
 PACKAGES = ["future",
@@ -75,6 +75,7 @@ if sys.version_info[:2] < (3, 0):
             "_markupbase",
             "_thread",
            ]
+
 PACKAGE_DATA = {'': [
                      'README.rst',
                      'LICENSE.txt',
@@ -130,4 +131,3 @@ setup(name=NAME,
       test_suite = "discover_tests",
       **setup_kwds
      )
-

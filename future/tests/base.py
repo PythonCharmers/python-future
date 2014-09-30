@@ -284,8 +284,11 @@ class CodeHandler(unittest.TestCase):
     def _run_test_script(self, filename='mytestscript.py',
                          interpreter=sys.executable):
         env = {'PYTHONPATH': os.getcwd()}
-        return check_output([interpreter, self.tempdir + filename],
-                                       env=env)
+        return check_output([interpreter,
+                             self.tempdir + filename])
+        # Passing the environment with PYTHONPATH set
+        # to the python-future source folder causes
+        # scripts run from that folder to fail on Py3.
 
 
 # Decorator to skip some tests on Python 2.6 ...

@@ -7,6 +7,4 @@ if sys.version_info[0] < 3:
     # Overwrite any old definitions with the equivalent future.builtins ones:
     from future.builtins import *
 else:
-    from future.standard_library import exclude_local_folder_imports
-    with exclude_local_folder_imports('builtins'):
-        from builtins import *
+    raise ImportError('Cannot import module from python-future source folder')

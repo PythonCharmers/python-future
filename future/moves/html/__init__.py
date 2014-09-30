@@ -1,10 +1,10 @@
 from __future__ import absolute_import, unicode_literals
 from future.utils import PY3
+__future_module__ = True
 
 if PY3:
     from html import *
 else:
-    __future_module__ = True
 
     # cgi.escape isn't good enough for the single Py3.3 html test to pass.
     # Define it inline here instead. From the Py3.3 stdlib

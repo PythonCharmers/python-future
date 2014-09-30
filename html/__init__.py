@@ -3,11 +3,9 @@ import sys
 __future_module__ = True
 
 if sys.version_info[0] == 3:
-    from future.standard_library import exclude_local_folder_imports
-    with exclude_local_folder_imports('html'):
-        from html import *
-else:
+    raise ImportError('Cannot import module from python-future source folder')
 
+else:
     # cgi.escape isn't good enough for the single Py3.3 html test to pass.
     # Define it inline here instead. From the Py3.3 stdlib
     """

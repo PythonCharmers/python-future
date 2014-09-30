@@ -3,9 +3,7 @@ import sys
 __future_module__ = True
 
 if sys.version_info[0] == 3:
-    from future.standard_library import exclude_local_folder_imports
-    with exclude_local_folder_imports('http.server'):
-        from http.server import *
+    raise ImportError('Cannot import module from python-future source folder')
 else:
     __future_module__ = True
     from BaseHTTPServer import *

@@ -490,7 +490,7 @@ class TestFuturizeSimple(CodeHandler):
 
         for interpreter in self.interpreters:
             p1 = Popen([interpreter, self.tempdir + 'mytestscript.py'],
-                       stdout=PIPE, stdin=PIPE, stderr=PIPE, env=self.env)
+                       stdout=PIPE, stdin=PIPE, stderr=PIPE)
             (stdout, stderr) = p1.communicate(b'Ed')
             self.assertEqual(stderr, b'')
             self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")

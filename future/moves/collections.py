@@ -1,8 +1,8 @@
 from __future__ import absolute_import
+from future.utils import PY2, PY26
+__future_module__ = True
 
 from collections import *
-
-from future.utils import PY2, PY26
 
 if PY2:
     from UserDict import UserDict

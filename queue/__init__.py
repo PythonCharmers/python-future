@@ -5,7 +5,4 @@ __future_module__ = True
 if sys.version_info[0] < 3:
     from Queue import *
 else:
-    from future.standard_library import exclude_local_folder_imports
-    with exclude_local_folder_imports('queue'):
-        from queue import Queue
-        from queue import *
+    raise ImportError('Cannot import module from python-future source folder')

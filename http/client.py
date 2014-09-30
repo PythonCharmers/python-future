@@ -1,7 +1,8 @@
-from future.utils import PY3
+from __future__ import absolute_import
+import sys
+__future_module__ = True
 
-if PY3:
-    from http.client import *
-else:
+if sys.version_info[0] < 3:
     from httplib import *
-    __future_module__ = True
+else:
+    raise ImportError('Cannot import module from python-future source folder')
