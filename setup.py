@@ -3,9 +3,9 @@
 import os
 import os.path
 import sys
-import copy
 
 import future
+import future.moves         # to allow running this script in the python-future source folder
 from future.standard_library import exclude_local_folder_imports
 
 
