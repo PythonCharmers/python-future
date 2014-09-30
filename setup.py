@@ -81,17 +81,22 @@ PACKAGE_DATA = {'': [
                      'futurize.py',
                      'pasteurize.py',
                      'discover_tests.py',
-                     'check_rst.sh'
+                     'check_rst.sh',
+                     'TESTING.txt',
                     ]}
 REQUIRES = []
+TEST_REQUIRES = []
+if sys.version_info[:2] == (2, 6):
+    REQUIRES += ['importlib', 'argparse']
+    TEST_REQUIRES += ['unittest2']
 VERSION = future.__version__
 DESCRIPTION = "Clean single-source support for Python 3 and 2"
 LONG_DESC = future.__doc__
 AUTHOR = "Ed Schofield"
 AUTHOR_EMAIL = "ed@pythoncharmers.com"
-URL="https://github.com/PythonCharmers/python-future"
+URL="https://python-future.org"
 LICENSE = "MIT"
-KEYWORDS = "future python3 migration backport six 2to3 futurize modernize past pasteurize"
+KEYWORDS = "future past python3 migration futurize backport six 2to3 modernize pasteurize 3to2"
 CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 2.6",
@@ -106,6 +111,7 @@ CLASSIFIERS = [
 ]
 
 setup_kwds = {}
+
 
 setup(name=NAME,
       version=VERSION,
@@ -128,5 +134,6 @@ setup(name=NAME,
       install_requires=REQUIRES,
       classifiers=CLASSIFIERS,
       test_suite = "discover_tests",
+      tests_require=TEST_REQUIRES,
       **setup_kwds
      )
