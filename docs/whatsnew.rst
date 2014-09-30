@@ -58,7 +58,8 @@ Bug fixes
 ---------
 
 - Use a private logger instead of the global logger in
-  ``future.standard_library`` (issue #82).
+  ``future.standard_library`` (issue #82). This restores compatibility of the
+  standard library hooks with ``flask`` (issue #79).
 - Stage 1 of ``futurize`` no longer renames ``next`` methods to ``__next__``
   (issue #81). It still converts ``obj.next()`` method calls to
   ``next(obj)`` correctly.
