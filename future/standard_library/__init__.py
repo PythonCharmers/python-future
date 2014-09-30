@@ -482,14 +482,39 @@ def install_aliases():
     sys.modules['urllib.error'] = error
     sys.modules['urllib.robotparser'] = robotparser
 
-    from future.moves import http
-    sys.modules['http'] = http
+    # Patch the test module so it appears to have the same structure on Py2 as on Py3
+    try:
+        import test
+    except ImportError:
+        pass
+    else:
+        from future.moves.test import support
+        test.support = support
+        sys.modules['test.support'] = support
 
-    from future.moves import xmlrpc
-    sys.modules['xmlrpc'] = xmlrpc
-
-    from future.moves import html
-    sys.modules['html'] = html
+    # Patch the dbm module so it appears to have the same structure on Py2 as on Py3
+    try:
+        import dbm
+    except ImportError:
+        pass
+    else:
+        from future.moves.dbm import dumb
+        dbm.dumb = dumb
+        sys.modules['dbm.dumb'] = dumb
+        try:
+            from future.moves.dbm import gnu
+        except ImportError:
+            pass
+        else:
+            dbm.gnu = gnu
+            sys.modules['dbm.gnu'] = gnu
+        try:
+            from future.moves.dbm import ndbm
+        except ImportError:
+            pass
+        else:
+            dbm.ndbm = ndbm
+            sys.modules['dbm.ndbm'] = ndbm
 
     # install_aliases.run_already = True
 
