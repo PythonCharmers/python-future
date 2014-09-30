@@ -10,25 +10,19 @@ modules from Python 3.3 (``future.backports``).
 
 .. _list-standard-library-moves:
 
-List of moved standard library modules
---------------------------------------
+List of renamed standard library modules
+----------------------------------------
 
-The complete list of modules available via one of the interfaces below is::
+As of version 0.14, the ``future`` package comes with top-level packages
+for Python 2.x that provide access to the reorganized standard library
+modules under their Python 3.x interfaces. The following renamed modules can be imported and used directly from Python 2/3 compatible code::
+
+    ### Renamed modules:
 
     import builtins
 
-    from collections import Counter, OrderedDict   # backported to Py2.6
-    from collections import UserDict, UserList, UserString
-
     import configparser
     import copyreg
-
-    import dbm
-    import dbm.dumb
-    import dbm.gnu
-    import dbm.ndbm
-
-    from itertools import filterfalse, zip_longest
 
     import html
     import html.entities
@@ -42,20 +36,11 @@ The complete list of modules available via one of the interfaces below is::
 
     import queue
 
+    import reprlib
+
     import socketserver
 
-    from subprocess import check_output            # backported to Py2.6
-    from subprocess import getoutput, getstatusoutput
-
-    from sys import intern
-
     from tkinter import ...
-
-    import urllib.error
-    import urllib.parse
-    import urllib.request
-    import urllib.response
-    import urllib.robotparser
 
     import winreg                                  # Windows only
 
@@ -66,19 +51,55 @@ The complete list of modules available via one of the interfaces below is::
     import _markupbase
     import _thread
 
-..  Disabled: import test.support
+
+List of refactored standard library modules
+-------------------------------------------
+
+Some modules were refactored or extended from Python 2.6/2.7 to
+3.x but were neither renamed nor were the new interfaces backported. The
+``future`` package makes the Python 3.x interfaces available on Python
+2.x after running::
+
+    from future.standard_library import install_aliases
+    install_aliases()
+
+Then the following additional imports work in Python 2/3 compatible code::
+
+    from collections import Counter, OrderedDict   # backported to Py2.6
+    from collections import UserDict, UserList, UserString
+
+    import dbm
+    import dbm.dumb
+    import dbm.gnu
+    import dbm.ndbm
+
+    from itertools import filterfalse, zip_longest
+
+    from subprocess import check_output            # backported to Py2.6
+    from subprocess import getoutput, getstatusoutput
+
+    from sys import intern
+
+    import test.support
+
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+    import urllib.response
+    import urllib.robotparser
 
 
+Older interfaces
+----------------
 
-Interfaces
-----------
+In addition to the above, ``future`` supports four other interfaces to
+the reorganized standard library, largely for historical reasons.
 
-There are currently four interfaces to the reorganized standard library.
 
-Context-manager interface
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Context-manager for import hooks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The recommended interface is via a context-manager called ``hooks``::
+The first interface is via a context-manager called ``hooks``::
 
     from future.standard_library import hooks
     with hooks():
@@ -92,6 +113,9 @@ The recommended interface is via a context-manager called ``hooks``::
         from http.client import HttpConnection
         import urllib.request
         # and other moved modules and definitions
+
+This interface is straightforward and effective, using PEP 302 import
+hooks.
 
 Direct interface
 ~~~~~~~~~~~~~~~~
@@ -180,7 +204,7 @@ modules on Py2::
 
 
 Comparing future.moves and six.moves
-------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``future.moves`` and ``six.moves`` provide a similar Python 3-style
 interface to the native standard library module definitions.
@@ -224,11 +248,12 @@ are also available::
 
 These are included in Python 2.7 and Python 3.x.
 
+
 Included backports
 ------------------
 
-Backports of the following modules from Python 3.3's standard library to Python 2.x are also
-available in ``future.backports``::
+Alpha-quality full backports of the following modules from Python 3.3's
+standard library to Python 2.x are also available in ``future.backports``::
 
     http.client
     http.server
@@ -238,7 +263,9 @@ available in ``future.backports``::
     xmlrpc.client
     xmlrpc.server
  
-These are currently of alpha quality. If you need the full backport of one of
-these, please open an issue `here
+Unlike the modules in the ``future.moves`` package or top-level namespace,
+these contain backports of new functionality introduced in Python 3.3.
+
+If you need the full backport of one of these packages, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.
 
