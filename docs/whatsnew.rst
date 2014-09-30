@@ -3,6 +3,58 @@
 What's New
 **********
 
+What's new in version 0.14.0
+============================
+
+This is a major new release that offers a cleaner interface for most imports in
+Python 2/3 compatible code.
+
+Instead of this interface::
+
+    >>> from future.builtins import str, open, range, dict
+
+    >>> from future.standard_library import hooks
+    >>> with hooks():
+    ...     import queue
+    ...     import configparser
+    ...     import tkinter.dialog
+    ...     # etc.
+
+Python 2/3 compatible code can now use the following interface::
+
+    >>> # Alias for future.builtins on Py2:
+    >>> from builtins import str, open, range, dict
+
+    >>> # Alias for future.moves.* on Py2:
+    >>> import queue
+    >>> import configparser
+    >>> import tkinter.dialog
+    >>> etc.
+
+Of the 44 modules that were refactored with PEP 3108 (standard library
+reorganization), 30 are supported with direct imports. (These are listed here:
+:ref:`_list-standard-library-renamed`.)
+
+The other 14 standard library modules that kept the same top-level names in
+Py3.x are not supported with this direct import interface on Py2. These include
+the 5 modules in the Py3 ``urllib`` package. (These are listed here:
+:ref:`_list-standard-library-refactored`.) These are accessible through the usual
+mechanisms::
+
+    >>> from future.standard_library import hooks
+    >>> with hooks():
+    ...     from collections import UserDict, UserList, UserString
+    ...     import dbm.gnu
+    ...     from itertools import filterfalse, zip_longest
+    ...     from subprocess import getoutput, getstatusoutput
+    ...     from sys import intern
+    ...     import test.support
+    ...     from urllib.request import urlopen
+    ...     from urllib.parse import urlparse
+    ...     # etc.
+    ...     from collections import Counter, OrderedDict     # backported to Py2.6
+
+
 What's new in version 0.13.2
 ============================
 

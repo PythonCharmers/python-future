@@ -8,7 +8,7 @@ the standard Python 3 names and locations, it provides access to either the
 corresponding native standard library modules (``future.moves``) or to backported
 modules from Python 3.3 (``future.backports``).
 
-.. _list-standard-library-moves:
+.. _list-standard-library-renamed:
 
 List of renamed standard library modules
 ----------------------------------------
@@ -28,7 +28,6 @@ modules under their Python 3.x interfaces. The following renamed modules can be 
     import html.entities
     import html.parser
 
-    import http
     import http.client
     import http.cookies
     import http.cookiejar
@@ -40,7 +39,17 @@ modules under their Python 3.x interfaces. The following renamed modules can be 
 
     import socketserver
 
-    from tkinter import ...
+    from tkinter import colorchooser
+    from tkinter import commondialog
+    from tkinter import constants
+    from tkinter import dialog
+    from tkinter import dnd
+    from tkinter import filedialog
+    from tkinter import font
+    from tkinter import messagebox
+    from tkinter import scrolledtext
+    from tkinter import simpledialog
+    from tkinter import tix
 
     import winreg                                  # Windows only
 
@@ -52,30 +61,28 @@ modules under their Python 3.x interfaces. The following renamed modules can be 
     import _thread
 
 
+.. _list-standard-library-refactored:
+
 List of refactored standard library modules
 -------------------------------------------
 
 Some modules were refactored or extended from Python 2.6/2.7 to
 3.x but were neither renamed nor were the new interfaces backported. The
 ``future`` package makes the Python 3.x interfaces available on Python
-2.x after running::
-
-    from future.standard_library import install_aliases
-    install_aliases()
-
-Then the following additional imports work in Python 2/3 compatible code::
+2.x using one of four interfaces described below. Then the following additional
+modules and names are supported::
 
     from collections import Counter, OrderedDict   # backported to Py2.6
     from collections import UserDict, UserList, UserString
 
     import dbm
     import dbm.dumb
-    import dbm.gnu
-    import dbm.ndbm
+    import dbm.gnu                         # requires Python dbm support
+    import dbm.ndbm                        # requires Python dbm support
 
     from itertools import filterfalse, zip_longest
 
-    from subprocess import check_output            # backported to Py2.6
+    from subprocess import check_output    # backported to Py2.6
     from subprocess import getoutput, getstatusoutput
 
     from sys import intern
@@ -158,8 +165,8 @@ follows::
 install_hooks() call
 ~~~~~~~~~~~~~~~~~~~~
 
-The fourth interface to the reorganized standard library is via an
-explicit call to ``install_hooks()``::
+The fourth interface to the reorganized standard library is via a
+call to ``install_hooks()``::
 
     from future import standard_library
     standard_library.install_hooks()
