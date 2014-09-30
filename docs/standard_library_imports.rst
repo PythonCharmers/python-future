@@ -66,11 +66,13 @@ modules under their Python 3.x interfaces. The following renamed modules can be 
 List of refactored standard library modules
 -------------------------------------------
 
-Some modules were refactored or extended from Python 2.6/2.7 to
+The following modules were refactored or extended from Python 2.6/2.7 to
 3.x but were neither renamed nor were the new interfaces backported. The
 ``future`` package makes the Python 3.x interfaces available on Python
-2.x using one of four interfaces described below. Then the following additional
-modules and names are supported::
+2.x as follows::
+
+    from future.standard_library import install_aliases
+    install_aliases()
 
     from collections import Counter, OrderedDict   # backported to Py2.6
     from collections import UserDict, UserList, UserString

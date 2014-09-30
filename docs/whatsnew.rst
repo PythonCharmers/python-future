@@ -38,21 +38,22 @@ reorganization), 30 are supported with direct imports. (These are listed here:
 The other 14 standard library modules that kept the same top-level names in
 Py3.x are not supported with this direct import interface on Py2. These include
 the 5 modules in the Py3 ``urllib`` package. (These are listed here:
-:ref:`_list-standard-library-refactored`.) These are accessible through the usual
-mechanisms::
+:ref:`_list-standard-library-refactored`.) These are accessible through the following
+interface (as well as the previous mechanisms)::
 
-    >>> from future.standard_library import hooks
-    >>> with hooks():
-    ...     from collections import UserDict, UserList, UserString
-    ...     import dbm.gnu
-    ...     from itertools import filterfalse, zip_longest
-    ...     from subprocess import getoutput, getstatusoutput
-    ...     from sys import intern
-    ...     import test.support
-    ...     from urllib.request import urlopen
-    ...     from urllib.parse import urlparse
-    ...     # etc.
-    ...     from collections import Counter, OrderedDict     # backported to Py2.6
+    from future.standard_library import install_aliases
+    install_aliases()
+
+    from collections import UserDict, UserList, UserString
+    import dbm.gnu
+    from itertools import filterfalse, zip_longest
+    from subprocess import getoutput, getstatusoutput
+    from sys import intern
+    import test.support
+    from urllib.request import urlopen
+    from urllib.parse import urlparse
+    # etc.
+    from collections import Counter, OrderedDict     # backported to Py2.6
 
 
 What's new in version 0.13.2
