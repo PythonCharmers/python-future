@@ -93,24 +93,16 @@ from future.utils import PY2, PY3
 #   test
 #   email
 
-REPLACED_MODULES = set(['test', 'urllib', 'pickle'])  # add email and dbm when we support it
+REPLACED_MODULES = set(['test', 'urllib', 'pickle', 'dbm'])  # add email and dbm when we support it
 
 # The following module names are not present in Python 2.x, so they cause no
-# potential clashes:
+# potential clashes between the old and new names:
 #   http
 #   html
 #   tkinter
 #   xmlrpc
-
-# These modules need names from elsewhere being added to them:
-#   subprocess: should provide getoutput and other fns from commands
-#               module but these fns are missing: getstatus, mk2arg,
-#               mkarg
-#   re:         needs an ASCII constant that works compatibly with Py3
-
-
-# Old to new
-# etc: see lib2to3/fixes/fix_imports.py
+# Keys: Py2 / real module names
+# Values: Py3 / simulated module names
 RENAMES = {
            # 'cStringIO': 'io',  # there's a new io module in Python 2.6
                                  # that provides StringIO and BytesIO
@@ -182,6 +174,14 @@ assert len(set(RENAMES.values()) & set(REPLACED_MODULES)) == 0
 
 
 # Harmless renames that we can insert.
+# These modules need names from elsewhere being added to them:
+#   subprocess: should provide getoutput and other fns from commands
+#               module but these fns are missing: getstatus, mk2arg,
+#               mkarg
+#   re:         needs an ASCII constant that works compatibly with Py3
+
+# etc: see lib2to3/fixes/fix_imports.py
+
 # (New module name, new object name, old module name, old object name)
 MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('collections', 'UserDict', 'UserDict', 'UserDict'),
@@ -323,16 +323,16 @@ class hooks(object):
         # flog.debug('Entering hooks context manager')
         self.old_sys_modules = copy.copy(sys.modules)
         self.hooks_were_installed = detect_hooks()
-        self.scrubbed = scrub_py2_sys_modules()
+        # self.scrubbed = scrub_py2_sys_modules()
         install_hooks()
         return self
 
     def __exit__(self, *args):
         # flog.debug('Exiting hooks context manager')
-        restore_sys_modules(self.scrubbed)
+        # restore_sys_modules(self.scrubbed)
         if not self.hooks_were_installed:
             remove_hooks()
-        scrub_future_sys_modules()
+        # scrub_future_sys_modules()
 
 # Sanity check for is_py2_stdlib_module(): We aren't replacing any
 # builtin modules names:
@@ -418,14 +418,13 @@ class suspend_hooks(object):
     def __enter__(self):
         self.hooks_were_installed = detect_hooks()
         remove_hooks()
-        self.scrubbed = scrub_future_sys_modules()
+        # self.scrubbed = scrub_future_sys_modules()
         return self
 
     def __exit__(self, *args):
         if self.hooks_were_installed:
-            # scrub_py2_sys_modules()    # in case they interfere ... e.g. urllib
             install_hooks()
-        restore_sys_modules(self.scrubbed)
+        # restore_sys_modules(self.scrubbed)
 
 
 def restore_sys_modules(scrubbed):
@@ -547,7 +546,7 @@ def enable_hooks():
     install_hooks()
 
 
-def remove_hooks(scrub_sys_modules=True):
+def remove_hooks(scrub_sys_modules=False):
     """
     This function removes the import hook from sys.meta_path.
     """
