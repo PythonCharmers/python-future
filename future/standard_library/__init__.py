@@ -733,3 +733,48 @@ def from_import(module_name, *symbol_names, **kwargs):
         else:
             return output
 
+
+class exclude_local_folder_imports(object):
+    """
+    A context-manager that prevents standard library modules like configparser
+    from being imported from the local python-future source folder on Py3.
+
+    (The presence of a configparser folder would otherwise prevent setuptools
+    from running on Py3.)
+    """
+    def __init__(self, *args):
+        assert len(args) > 0
+        self.module_names = args
+
+    def __enter__(self):
+        self.old_sys_path = copy.copy(sys.path)
+        self.old_sys_modules = copy.copy(sys.modules)
+        if sys.version_info[0] < 3:
+            return
+        FUTURE_SOURCE_SUBFOLDERS = ['future', 'past', 'libfuturize', 'configparser']
+
+        # Look for the future source folder:
+        for folder in self.old_sys_path:
+            if all([os.path.exists(os.path.join(folder, subfolder))
+                    for subfolder in FUTURE_SOURCE_SUBFOLDERS]):
+                # Found it. Remove it.
+                sys.path.remove(folder)
+
+        # Ensure we import the system module:
+        for m in self.module_names:
+            try:
+                del sys.modules[m]
+            except KeyError:
+                pass
+            try:
+                module = __import__(m, level=0)
+            except ImportError:
+                # There's a problem importing the system module. E.g. the
+                # winreg module is not available except on Windows.
+                pass
+
+    def __exit__(self, *args):
+        # Restore sys.path and sys.modules:
+        sys.path = self.old_sys_path
+        for m in set(self.old_sys_modules.keys()) - set(sys.modules.keys()):
+            sys.modules[m] = self.old_sys_modules[m]

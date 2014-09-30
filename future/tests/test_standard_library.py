@@ -445,7 +445,8 @@ class TestStandardLibraryReorganization(CodeHandler):
 
         from sys import intern
 
-        import test.support
+        # test_support may not be available (e.g. on Anaconda Py2.6):
+        # import test.support
 
         import urllib.error
         import urllib.parse

@@ -1,10 +1,12 @@
-from __future__ import absolute_import, unicode_literals
-from future.utils import PY3
+from __future__ import absolute_import
+import sys
+__future_module__ = True
 
-if PY3:
-    from html import *
+if sys.version_info[0] == 3:
+    from future.standard_library import exclude_local_folder_imports
+    with exclude_local_folder_imports('html'):
+        from html import *
 else:
-    __future_module__ = True
 
     # cgi.escape isn't good enough for the single Py3.3 html test to pass.
     # Define it inline here instead. From the Py3.3 stdlib

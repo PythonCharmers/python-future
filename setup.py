@@ -1,13 +1,20 @@
 #!/usr/bin/env python
 
 import os
+import os.path
 import sys
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+import copy
 
 import future
+from future.standard_library import exclude_local_folder_imports
+
+
+with exclude_local_folder_imports('configparser'):
+    try:
+        from setuptools import setup
+    except ImportError:
+        from distutils.core import setup
+
 
 
 if sys.argv[-1] == 'publish':
@@ -48,7 +55,11 @@ PACKAGES = ["future",
             "libfuturize.fixes",
             "libpasteurize",
             "libpasteurize.fixes",
-            # PEP 3108 stdlib moves:
+           ]
+
+# PEP 3108 stdlib moves:
+if sys.version_info[:2] < (3, 0):
+    PACKAGES += [
             "builtins",
             "configparser",
             "copyreg",
