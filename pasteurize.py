@@ -3,6 +3,9 @@
 pasteurize.py
 =============
 
+This script is only used by the unit tests. Another script called "pasteurize"
+is created automatically (without the .py extension) by setuptools.
+
 pasteurize.py attempts to turn Py3 code into relatively clean Py3 code that is
 also compatible with Py2 when using the ``future`` package.
 

@@ -8,17 +8,21 @@ import sys
 import unittest
 
 if not hasattr(unittest.defaultTestLoader, 'discover'):
-    import unittest2 as unittest
+    try:
+        import unittest2 as unittest
+    except ImportError:
+        raise ImportError('The unittest2 module is required to run tests on Python 2.6')
 
 def additional_tests():
     setup_file = sys.modules['__main__'].__file__
     setup_dir = os.path.abspath(os.path.dirname(setup_file))
-    testsuite = unittest.defaultTestLoader.discover(setup_dir)
+    test_dir = os.path.join(setup_dir, 'tests')
+    test_suite = unittest.defaultTestLoader.discover(test_dir)
     blacklist = []
     if '/home/travis' in __file__:
         # Skip some tests that fail on travis-ci
         blacklist.append('test_command')
-    return exclude_tests(testsuite, blacklist)
+    return exclude_tests(test_suite, blacklist)
 
 
 class SkipCase(unittest.TestCase):

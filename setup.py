@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+
 import os
 import os.path
 import sys
 
-import future
-from future.standard_library import exclude_local_folder_imports
 
-
-with exclude_local_folder_imports('configparser', 'reprlib'):
-    try:
-        from setuptools import setup
-    except ImportError:
-        from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 
 if sys.argv[-1] == 'publish':
@@ -41,14 +39,14 @@ PACKAGES = ["future",
             "future.moves.tkinter",
             "future.moves.urllib",
             "future.moves.xmlrpc",
-            "future.tests",
+            "future.tests",     # for future.tests.base
             # "future.tests.test_email",
             "future.utils",
             "past",
             "past.builtins",
             "past.types",
             "past.utils",
-            "past.tests",
+            # "past.tests",
             "past.translation",
             "libfuturize",
             "libfuturize.fixes",
@@ -84,6 +82,7 @@ PACKAGE_DATA = {'': [
                      'check_rst.sh',
                      'TESTING.txt',
                     ],
+                'tests': ['*.py'],
                 }
 
 REQUIRES = []
@@ -91,9 +90,10 @@ TEST_REQUIRES = []
 if sys.version_info[:2] == (2, 6):
     REQUIRES += ['importlib', 'argparse']
     TEST_REQUIRES += ['unittest2']
-VERSION = future.__version__
+import src.future
+VERSION = src.future.__version__
 DESCRIPTION = "Clean single-source support for Python 3 and 2"
-LONG_DESC = future.__doc__
+LONG_DESC = src.future.__doc__
 AUTHOR = "Ed Schofield"
 AUTHOR_EMAIL = "ed@pythoncharmers.com"
 URL="https://python-future.org"
