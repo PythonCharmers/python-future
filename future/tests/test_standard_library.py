@@ -2,7 +2,7 @@
 Tests for the future.standard_library module
 """
 
-from __future__ import absolute_import, unicode_literals, print_function
+from __future__ import absolute_import, print_function
 from future import standard_library
 from future import utils
 from future.tests.base import unittest, CodeHandler, expectedFailurePY2
@@ -64,23 +64,23 @@ class TestStandardLibraryReorganization(CodeHandler):
                     not any ([standard_library.is_py2_stdlib_module(module)
                               for module in py2modules]))
 
-    @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
-    def test_all(self):
-        """
-        Tests whether all of the old imports in RENAMES are accessible
-        under their new names.
-        """
-        for (oldname, newname) in standard_library.RENAMES.items():
-            if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
-                continue
-            if newname in standard_library.REPLACED_MODULES:
-                # Skip this check for e.g. the stdlib's ``test`` module,
-                # which we have replaced completely.
-                continue
-            oldmod = __import__(oldname)
-            newmod = __import__(newname)
-            if '.' not in oldname:
-                self.assertEqual(oldmod, newmod)
+    # @unittest.skip("No longer relevant")
+    # def test_all_modules_identical(self):
+    #     """
+    #     Tests whether all of the old imports in RENAMES are accessible
+    #     under their new names.
+    #     """
+    #     for (oldname, newname) in standard_library.RENAMES.items():
+    #         if newname == 'winreg' and sys.platform not in ['win32', 'win64']:
+    #             continue
+    #         if newname in standard_library.REPLACED_MODULES:
+    #             # Skip this check for e.g. the stdlib's ``test`` module,
+    #             # which we have replaced completely.
+    #             continue
+    #         oldmod = __import__(oldname)
+    #         newmod = __import__(newname)
+    #         if '.' not in oldname:
+    #             self.assertEqual(oldmod, newmod)
 
     @unittest.expectedFailure
     def test_suspend_hooks(self):
@@ -285,7 +285,7 @@ class TestStandardLibraryReorganization(CodeHandler):
     
     def test_stringio(self):
         from io import StringIO
-        s = StringIO('test')
+        s = StringIO(u'test')
         for method in ['tell', 'read', 'seek', 'close', 'flush']:
             self.assertTrue(hasattr(s, method))
 
@@ -427,9 +427,32 @@ class TestStandardLibraryReorganization(CodeHandler):
         """
         from future.standard_library import remove_hooks, install_aliases
         remove_hooks()
-        self.assertTrue('urllib.request' not in sys.modules)
         install_aliases()
+
+        from collections import Counter, OrderedDict   # backported to Py2.6
+        from collections import UserDict, UserList, UserString
+
+        # Requires Python dbm support:
+        # import dbm
+        # import dbm.dumb
+        # import dbm.gnu
+        # import dbm.ndbm
+
+        from itertools import filterfalse, zip_longest
+
+        from subprocess import check_output    # backported to Py2.6
+        from subprocess import getoutput, getstatusoutput
+
+        from sys import intern
+
+        import test.support
+
+        import urllib.error
+        import urllib.parse
         import urllib.request
+        import urllib.response
+        import urllib.robotparser
+
         self.assertTrue('urlopen' in dir(urllib.request))
 
 

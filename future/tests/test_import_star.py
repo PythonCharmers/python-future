@@ -48,23 +48,6 @@ class TestImportStar(unittest.TestCase):
     def test_super(self):
         pass
 
-    @skip26
-    def test_python3_stdlib_imports(self):
-        """
-        The import hooks should be tightened up so that this test never fails
-        """
-        # These should fail on Py2
-        try:
-            import queue
-            import socketserver
-        except ImportError:
-            if utils.PY3:
-                self.fail('Py3 modules failed to load')
-        else:        
-            if utils.PY2:
-                self.fail('Py3 standard library modules should not import on Py2 without explicitly enabling them')
-        self.assertTrue(True)
-
     def test_str(self):
         self.assertIsNot(str, bytes)            # Py2: assertIsNot only in 2.7
         self.assertEqual(str('blah'), u'blah')  # Py3.3 and Py2 only
