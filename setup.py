@@ -143,6 +143,7 @@ setup(name=NAME,
               'pasteurize = libpasteurize.main:main'
           ]
       },
+      package_dir={'': 'src'},
       packages=PACKAGES,
       package_data=PACKAGE_DATA,
       include_package_data=True,
