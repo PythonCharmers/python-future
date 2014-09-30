@@ -784,3 +784,28 @@ class exclude_local_folder_imports(object):
         sys.path = self.old_sys_path
         for m in set(self.old_sys_modules.keys()) - set(sys.modules.keys()):
             sys.modules[m] = self.old_sys_modules[m]
+
+TOP_LEVEL_MODULES = ['builtins',
+                     'configparser',
+                     'copyreg',
+                     'html',
+                     'http',
+                     'queue',
+                     'reprlib',
+                     'socketserver',
+                     'test',
+                     'tkinter',
+                     'winreg',
+                     'xmlrpc',
+                     '_dummy_thread',
+                     '_markupbase',
+                     '_thread',
+                    ]
+
+def import_top_level_modules():
+    with exclude_local_folder_imports(*TOP_LEVEL_MODULES):
+        for m in TOP_LEVEL_MODULES:
+            try:
+                __import__(m)
+            except ImportError:     # e.g. winreg
+                pass

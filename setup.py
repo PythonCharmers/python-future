@@ -5,11 +5,10 @@ import os.path
 import sys
 
 import future
-import future.moves         # to allow running this script in the python-future source folder
 from future.standard_library import exclude_local_folder_imports
 
 
-with exclude_local_folder_imports('configparser'):
+with exclude_local_folder_imports('configparser', 'reprlib'):
     try:
         from setuptools import setup
     except ImportError:
