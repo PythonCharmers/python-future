@@ -11,6 +11,7 @@ TOP_LEVEL_MODULES = ['builtins',
                      'queue',
                      'reprlib',
                      'socketserver',
+                     'test',
                      'tkinter',
                      'winreg',
                      'xmlrpc',
@@ -19,7 +20,7 @@ TOP_LEVEL_MODULES = ['builtins',
                      '_thread',
                     ]
 
-if sys.version_info[0] == 3:
+def import_top_level_modules():
     from future.standard_library import exclude_local_folder_imports
     with exclude_local_folder_imports(*TOP_LEVEL_MODULES):
         for m in TOP_LEVEL_MODULES:
@@ -27,3 +28,6 @@ if sys.version_info[0] == 3:
                 __import__(m)
             except ImportError:     # e.g. winreg
                 pass
+
+if sys.version_info[0] == 3:
+    import_top_level_modules()

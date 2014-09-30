@@ -766,12 +766,12 @@ class exclude_local_folder_imports(object):
         # Ensure we import the system module:
         for m in self.module_names:
             # Delete the module and any submodules from sys.modules:
-            for key in list(sys.modules):
-                if key == m or key.startswith(m + '.'):
-                    try:
-                        del sys.modules[key]
-                    except KeyError:
-                        pass
+            # for key in list(sys.modules):
+            #     if key == m or key.startswith(m + '.'):
+            #         try:
+            #             del sys.modules[key]
+            #         except KeyError:
+            #             pass
             try:
                 module = __import__(m, level=0)
             except ImportError:
