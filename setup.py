@@ -83,7 +83,9 @@ PACKAGE_DATA = {'': [
                      'discover_tests.py',
                      'check_rst.sh',
                      'TESTING.txt',
-                    ]}
+                    ],
+                }
+
 REQUIRES = []
 TEST_REQUIRES = []
 if sys.version_info[:2] == (2, 6):
@@ -111,6 +113,19 @@ CLASSIFIERS = [
 ]
 
 setup_kwds = {}
+
+
+# * Important *
+# We forcibly remove the build folder to avoid breaking the
+# user's Py3 installation if they run "python2 setup.py
+# build" and then "python3 setup.py install".
+
+import distutils.dir_util
+print('removing old build dir')
+try:
+    distutils.dir_util.remove_tree('build')
+except OSError:
+    pass
 
 
 setup(name=NAME,
