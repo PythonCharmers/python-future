@@ -56,6 +56,22 @@ interface (as well as the previous mechanisms)::
     from collections import Counter, OrderedDict     # backported to Py2.6
 
 
+Cleanups
+--------
+
+The following deprecated internal modules have been removed:
+
+- ``future.utils.encoding`` and ``future.utils.six``.
+
+(Issue #80). See `here <http://fedoraproject.org/wiki/Packaging:No_Bundled_Libraries>`_
+for the rationale for unbundling them.
+
+The following internal functions have been deprecated and will be removed in a future release:
+
+- ``future.standard_library.scrub_py2_sys_modules``
+- ``future.standard_library.scrub_future_sys_modules``
+
+
 What's new in version 0.13.2
 ============================
 
