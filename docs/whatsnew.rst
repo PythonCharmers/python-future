@@ -1,7 +1,7 @@
-.. _whats-new-0.13.x:
-
 What's New
 **********
+
+.. _whats-new-0.14.x:
 
 What's new in version 0.14.0
 ============================
@@ -56,8 +56,12 @@ interface (as well as the previous mechanisms)::
     from collections import Counter, OrderedDict     # backported to Py2.6
 
 
-Cleanups
---------
+Internal cleanups
+-----------------
+
+The project folder structure has changed. Top-level packages are now in a
+``src`` folder and the tests have been moved into a project-level ``tests``
+folder.
 
 The following deprecated internal modules have been removed:
 
@@ -66,11 +70,17 @@ The following deprecated internal modules have been removed:
 (Issue #80). See `here <http://fedoraproject.org/wiki/Packaging:No_Bundled_Libraries>`_
 for the rationale for unbundling them.
 
+
+Deprecations
+------------
+
 The following internal functions have been deprecated and will be removed in a future release:
 
 - ``future.standard_library.scrub_py2_sys_modules``
 - ``future.standard_library.scrub_future_sys_modules``
 
+
+.. _whats-new-0.13.x:
 
 What's new in version 0.13.2
 ============================
@@ -81,6 +91,7 @@ What's new in version 0.13.2
 
 - This release also removes the broken ``--doctests_only`` option from the ``futurize``
   and ``pasteurize`` scripts for now (issue #103).
+
 
 What's new in version 0.13.1
 ============================
