@@ -90,8 +90,8 @@ class FuturizeError(CalledProcessError):
         self.output = output
 
     def __str__(self):
-        return ("Command '%s' failed with exit status %d\nMessage: %s"
-                % (self.cmd, self.returncode, self.msg))
+        return ("Command '%s' failed with exit status %d\nMessage: %s\nOutput: %s"
+                % (self.cmd, self.returncode, self.msg, self.output))
 
 class PasteurizeError(FuturizeError):
     pass
@@ -300,11 +300,30 @@ class CodeHandler(unittest.TestCase):
         fn = self.tempdir + filename
         call_args = [sys.executable, script] + params + ['-w', fn]
         try:
-            output = check_output(call_args, stderr=STDOUT)
+            output = check_output(call_args, stderr=STDOUT, env=self.env)
         except CalledProcessError as e:
             msg = ('Error running the command %s\n%s\nContents of file %s:\n\n%s' %
                    (' '.join(call_args),
-                    'PYTHONPATH=%s' % os.environ.get('PYTHONPATH'),
+                    'env=%s' % self.env,
+                    fn,
+                    '----\n%s\n----' % open(fn).read(),
+                   )
+                  )
+            ErrorClass = (FuturizeError if 'futurize' in script else PasteurizeError)
+            raise ErrorClass(msg, e.returncode, e.cmd, output=e.output)
+        return output
+
+    def _run_test_script(self, filename='mytestscript.py',
+                         interpreter=sys.executable):
+        # Absolute file path:
+        fn = self.tempdir + filename
+        try:
+            output = check_output([interpreter, fn],
+                                  env=self.env, stderr=STDOUT)
+        except CalledProcessError as e:
+            msg = ('Error running the command %s\n%s\nContents of file %s:\n\n%s' %
+                   (' '.join([interpreter, fn]),
+                    'env=%s' % self.env,
                     fn,
                     '----\n%s\n----' % open(fn).read(),
                    )
@@ -312,15 +331,6 @@ class CodeHandler(unittest.TestCase):
             ErrorClass = (FuturizeError if 'futurize' in script else PasteurizeError)
             raise ErrorClass(msg, e.returncode, e.cmd)
         return output
-
-    def _run_test_script(self, filename='mytestscript.py',
-                         interpreter=sys.executable):
-        env = {'PYTHONPATH': os.getcwd()}
-        return check_output([interpreter,
-                             self.tempdir + filename])
-        # Passing the environment with PYTHONPATH set
-        # to the python-future source folder causes
-        # scripts run from that folder to fail on Py3.
 
 
 # Decorator to skip some tests on Python 2.6 ...
