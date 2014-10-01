@@ -134,7 +134,7 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         after = """
-        from future.builtins import object
+        from builtins import object
         class Blah(object):
             pass
         """
@@ -159,8 +159,8 @@ class TestFuturizeSimple(CodeHandler):
         assert list(Upper('hello')) == list('HELLO')
         """
         after = """
-        from future.builtins import next
-        from future.builtins import object
+        from builtins import next
+        from builtins import object
         class Upper(object):
             def __init__(self, iterable):
                 self._iter = iter(iterable)
@@ -274,7 +274,7 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         after = """
-        from future.builtins import zip
+        from builtins import zip
         for (a, b) in zip([1, 3, 5], [2, 4, 6]):
             pass
         """
@@ -319,11 +319,11 @@ class TestFuturizeSimple(CodeHandler):
         super(MyClass, self)
         """
         after = """
-        from future.builtins import bytes
-        from future.builtins import filter
-        from future.builtins import input
-        from future.builtins import map
-        from future.builtins import range
+        from builtins import bytes
+        from builtins import filter
+        from builtins import input
+        from builtins import map
+        from builtins import range
         from functools import reduce
         a = input()
         b = open(a, b, c)
@@ -340,7 +340,7 @@ class TestFuturizeSimple(CodeHandler):
 
     def test_xrange(self):
         """
-        The ``from future.builtins import range`` line was being added to the
+        The ``from builtins import range`` line was being added to the
         bottom of the file as of v0.11.4, but only using Py2.7's lib2to3.
         (Py3.3's lib2to3 seems to work.)
         """
@@ -349,7 +349,7 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         after = """
-        from future.builtins import range
+        from builtins import range
         for i in range(10):
             pass
         """
@@ -987,9 +987,9 @@ class TestFuturizeStage1(CodeHandler):
                from __future__ import print_function
                from __future__ import absolute_import
                                  # blank line or comment here
-               from future.builtins import zzz
-               from future.builtins import aaa
-               from future.builtins import blah
+               from builtins import zzz
+               from builtins import aaa
+               from builtins import blah
                # another comment
 
                code_here
@@ -1000,9 +1000,9 @@ class TestFuturizeStage1(CodeHandler):
                from __future__ import absolute_import
                from __future__ import print_function
                                  # blank line or comment here
-               from future.builtins import aaa
-               from future.builtins import blah
-               from future.builtins import zzz
+               from builtins import aaa
+               from builtins import blah
+               from builtins import zzz
                # another comment
 
                code_here
@@ -1045,7 +1045,7 @@ class TestFuturizeStage1(CodeHandler):
         """
         after = """
         from __future__ import print_function
-        from future.builtins import range
+        from builtins import range
         l = list(range(10))
         assert isinstance(l, list)
         for i in range(3):
@@ -1190,8 +1190,8 @@ class TestFuturizeAllImports(CodeHandler):
         from __future__ import absolute_import
         from future import standard_library
         standard_library.install_hooks()
-        from future.builtins import range
-        from future.builtins import *
+        from builtins import range
+        from builtins import *
         import math
         import os
         l = list(range(10))

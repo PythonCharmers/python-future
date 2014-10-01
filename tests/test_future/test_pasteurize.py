@@ -20,7 +20,7 @@ class TestPasteurize(CodeHandler):
     on both Py3 and Py2.
     """
 
-    @skip26    # Python 2.6's lib2to3 causes the "from future.builtins import
+    @skip26    # Python 2.6's lib2to3 causes the "from builtins import
                # range" line to be stuck at the bottom of the module!
     def test_range_slice(self):
         """
