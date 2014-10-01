@@ -82,7 +82,7 @@ class TestStandardLibraryReorganization(CodeHandler):
     #         if '.' not in oldname:
     #             self.assertEqual(oldmod, newmod)
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_suspend_hooks(self):
         """
         Code like the try/except block here appears in Pyflakes v0.6.1. This
@@ -102,7 +102,7 @@ class TestStandardLibraryReorganization(CodeHandler):
         # The import should succeed again now:
         import builtins
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_disable_hooks(self):
         """
         Tests the old (deprecated) names. These deprecated aliases should be
@@ -139,7 +139,7 @@ class TestStandardLibraryReorganization(CodeHandler):
             self.assertTrue(standard_library.detect_hooks())
             self.assertTrue(len(old_meta_path) == len(sys.meta_path))
 
-    @unittest.expectedFailure
+    @expectedFailurePY2
     def test_remove_hooks2(self):
         """
         As above, but with the new names
