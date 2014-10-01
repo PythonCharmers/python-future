@@ -9,7 +9,7 @@ It is designed to be used together with the ``unicode_literals`` import
 as follows:
 
     >>> from __future__ import unicode_literals
-    >>> from future.builtins import str, isinstance
+    >>> from builtins import str, isinstance
 
 On Python 3.x and normally on Python 2.x, these expressions hold
 

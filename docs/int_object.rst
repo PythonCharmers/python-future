@@ -23,7 +23,7 @@ is a subclass of Python 2's ``long`` with the same representation
 behaviour as Python 3's ``int``. To ensure an integer is long compatibly with
 both Py3 and Py2, cast it like this::
 
-    >>> from future.builtins import int
+    >>> from builtins import int
     >>> must_be_a_long_integer = int(1234)
 
 The backported ``int`` object helps with writing doctests and simplifies code
@@ -31,7 +31,7 @@ that deals with ``long`` and ``int`` as special cases on Py2. An example is the
 following code from ``xlwt-future`` (called by the ``xlwt.antlr.BitSet`` class)
 for writing out Excel ``.xls`` spreadsheets. With ``future``, the code is::
 
-    from future.builtins import int
+    from builtins import int
 
     def longify(data):
         """

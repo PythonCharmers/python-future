@@ -88,12 +88,15 @@ changes to all Python source files recursively with::
 To apply the changes, add the ``-w`` argument.
 
 This stage makes further conversions needed to support both Python 2 and 3.
-These will likely require imports from ``future``, such as::
+These will likely require imports from ``future`` on Py2 (and sometimes on Py3),
+such as::
 
     from future import standard_library
-    standard_library.install_hooks()
-    from future.builtins import bytes
-    from future.builtins import open
+    standard_library.install_aliases()
+    # ...
+    from builtins import bytes
+    from builtins import open
+    from future.utils import with_metaclass
 
 Optionally, you can use the ``--unicode-literals`` flag to add this import to
 the top of each module::

@@ -5,7 +5,7 @@ the appropriate Python 2-style ``next`` and ``__unicode__`` methods for compatib
 
 Example use::
 
-    from future.builtins import object
+    from builtins import object
 
     my_unicode_str = u'Unicode string: \u5b54\u5b50'
 
@@ -23,7 +23,7 @@ Example use::
 
 Another example::
 
-    from future.builtins import object
+    from builtins import object
 
     class Upper(object):
         def __init__(self, iterable):

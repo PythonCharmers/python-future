@@ -192,8 +192,8 @@ For example::
 
 would be converted by Stage 2 to this code::
 
-    from future.builtins import input
-    from future.builtins import str
+    from builtins import input
+    from builtins import str
     from future.utils import iteritems, python_2_unicode_compatible
 
     name = input('What is your name?\n')
@@ -290,7 +290,7 @@ that these types behave similarly on Python 2 as on Python 3, also wrap
 byte-strings or text in the ``bytes`` and ``str`` types from ``future``. For
 example::
 
-    from future.builtins import bytes, str
+    from builtins import bytes, str
     b = bytes(b'\x00ABCD')
     s = str(u'This is normal text')
 

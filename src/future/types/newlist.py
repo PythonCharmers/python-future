@@ -5,7 +5,7 @@ The primary difference is that lists have a .copy() method in Py3.
 
 Example use:
 
->>> from future.builtins import list
+>>> from builtins import list
 >>> l1 = list()    # instead of {} for an empty list
 >>> l1.append('hello')
 >>> l2 = l1.copy()

@@ -10,10 +10,10 @@ contents as (unicode) strings unless the binary (``b``) flag is passed, as in::
 
 in which case its methods like :func:`read` return Py3 :class:`bytes` objects.
 
-``future.builtins`` provides an ``open`` function on Py2 that is mostly
-compatible with that on Python 3 (e.g. it offers keyword arguments like
-``encoding``). This maps to the ``open`` backport available in the standard
-library :mod:`io` module on Py2.6 and Py2.7.
+On Py2, ``future.builtins`` (and ``builtins``) provides an ``open`` function
+that is mostly compatible with that on Python 3 (e.g. it offers keyword
+arguments like ``encoding``). This maps to the ``open`` backport available in
+the standard library :mod:`io` module on Py2.6 and Py2.7.
 
 One difference to be aware of between the Python 3 ``open`` and
 ``future.builtins.open`` on Python 2 is that the return types of methods such
@@ -24,7 +24,7 @@ need the returned data to behave the exactly same way on Py2 as on Py3, you can
 cast it explicitly as follows::
 
     from __future__ import unicode_literals
-    from future.builtins import *
+    from builtins import open, bytes
 
     data = open('image.png', 'rb').read()
     # On Py2, data is a standard 8-bit str with loose Unicode coercion.

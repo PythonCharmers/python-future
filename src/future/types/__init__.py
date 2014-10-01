@@ -11,7 +11,7 @@ in the transition from Python 2 to Python 3.
 It is used as follows::
 
     from __future__ import division, absolute_import, print_function
-    from future.builtins import bytes, dict, int, range, str
+    from builtins import bytes, dict, int, range, str
 
 to bring in the new semantics for these functions from Python 3. And
 then, for example::

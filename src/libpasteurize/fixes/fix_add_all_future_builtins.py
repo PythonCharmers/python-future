@@ -3,9 +3,9 @@ For the ``future`` package.
 
 Adds this import line::
 
-    from future.builtins import (ascii, bytes, chr, dict, filter, hex, input,
-                                 int, list, map, next, object, oct, open, pow,
-                                 range, round, str, super, zip)
+    from builtins import (ascii, bytes, chr, dict, filter, hex, input,
+                          int, list, map, next, object, oct, open, pow,
+                          range, round, str, super, zip)
 
 to a module, irrespective of whether each definition is used.
 
@@ -28,11 +28,11 @@ class FixAddAllFutureBuiltins(fixer_base.BaseFix):
         # import_str = """(ascii, bytes, chr, dict, filter, hex, input,
         #                      int, list, map, next, object, oct, open, pow,
         #                      range, round, str, super, zip)"""
-        touch_import_top(u'future.builtins', '*', node)
+        touch_import_top(u'builtins', '*', node)
 
         # builtins = """ascii bytes chr dict filter hex input
         #                      int list map next object oct open pow
         #                      range round str super zip"""
         # for builtin in sorted(builtins.split(), reverse=True):
-        #     touch_import_top(u'future.builtins', builtin, node)
+        #     touch_import_top(u'builtins', builtin, node)
 

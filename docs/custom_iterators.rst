@@ -8,12 +8,12 @@ to retrieve the next item across Py3 and Py2. On Python 3 it is ``__next__``,
 whereas on Python 2 it is ``next``.
 
 The most elegant solution to this is to derive your custom iterator class from
-``future.builtins.object`` and define a ``__next__`` method as you normally
+``builtins.object`` and define a ``__next__`` method as you normally
 would on Python 3. On Python 2, ``object`` then refers to the
 ``future.types.newobject`` base class, which provides a fallback ``next``
 method that calls your ``__next__``. Use it as follows::
 
-    from future.builtins import object
+    from builtins import object
     
     class Upper(object):
         def __init__(self, iterable):
@@ -31,10 +31,10 @@ method that calls your ``__next__``. Use it as follows::
 
 You can use this approach unless you are defining a custom iterator as a
 subclass of a base class defined elsewhere that does not derive from
-``future.builtins.object``.  In that case, you can provide compatibility across
+``newobject``.  In that case, you can provide compatibility across
 Python 2 and Python 3 using the ``next`` function from ``future.builtins``::
 
-    from future.builtins import next
+    from builtins import next
 
     from some_module import some_base_class
 

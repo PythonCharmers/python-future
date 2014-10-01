@@ -297,8 +297,8 @@ def touch_import_top(package, name_to_import, node):
 
     Calling this multiple times adds the imports in reverse order.
         
-    Also adds "standard_library.install_hooks()" after "from future import
-    standard_library". This should probably be factored into another function.
+    Also adds "standard_library.install_aliases()" after "from future import
+    standard_library".  This should probably be factored into another function.
     """
 
     root = find_root(node)
@@ -307,7 +307,7 @@ def touch_import_top(package, name_to_import, node):
         return
 
     # Ideally, we would look for whether futurize --all-imports has been run,
-    # as indicated by the presence of ``from future.builtins import (ascii, ...,
+    # as indicated by the presence of ``from builtins import (ascii, ...,
     # zip)`` -- and, if it has, we wouldn't import the name again.
 
     # Look for __future__ imports and insert below them
@@ -357,14 +357,14 @@ def touch_import_top(package, name_to_import, node):
         import_ = FromImport(package, [Leaf(token.NAME, name_to_import, prefix=u" ")])
         if name_to_import == u'standard_library':
             # Add:
-            #     standard_library.install_hooks()
+            #     standard_library.install_aliases()
             # after:
             #     from future import standard_library
             install_hooks = Node(syms.simple_stmt,
                                  [Node(syms.power,
                                        [Leaf(token.NAME, u'standard_library'),
                                         Node(syms.trailer, [Leaf(token.DOT, u'.'),
-                                        Leaf(token.NAME, u'install_hooks')]),
+                                        Leaf(token.NAME, u'install_aliases')]),
                                         Node(syms.trailer, [Leaf(token.LPAR, u'('),
                                                             Leaf(token.RPAR, u')')])
                                        ])

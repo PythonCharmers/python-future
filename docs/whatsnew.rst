@@ -20,7 +20,7 @@ Instead of this interface::
     ...     import tkinter.dialog
     ...     # etc.
 
-Python 2/3 compatible code can now use the following interface::
+you can now use the following interface for Python 2/3 compatible code::
 
     >>> # Alias for future.builtins on Py2:
     >>> from builtins import str, open, range, dict
@@ -31,15 +31,18 @@ Python 2/3 compatible code can now use the following interface::
     >>> import tkinter.dialog
     >>> etc.
 
-Of the 44 modules that were refactored with PEP 3108 (standard library
-reorganization), 30 are supported with direct imports. (These are listed here:
-:ref:`_list-standard-library-renamed`.)
+Notice that much Py2/3 compatible code now runs on Python 3 without the
+presence of the ``future`` package. Of the 44 modules that were refactored with
+PEP 3108 (standard library reorganization), 30 are supported with direct
+imports in this manner. (These are listed here:
+:ref:`list-standard-library-renamed`.)
 
 The other 14 standard library modules that kept the same top-level names in
 Py3.x are not supported with this direct import interface on Py2. These include
 the 5 modules in the Py3 ``urllib`` package. (These are listed here:
-:ref:`_list-standard-library-refactored`.) These are accessible through the following
-interface (as well as the previous mechanisms)::
+:ref:`list-standard-library-refactored`.) These modules are accessible through
+the following interface (as well as the interfaces offered in previous versions
+of ``python-future``)::
 
     from future.standard_library import install_aliases
     install_aliases()
@@ -55,6 +58,8 @@ interface (as well as the previous mechanisms)::
     # etc.
     from collections import Counter, OrderedDict     # backported to Py2.6
 
+For more information on modules to import in Python 2/3 compatible code, see
+:ref:`standard-library-imports`.
 
 Internal cleanups
 -----------------

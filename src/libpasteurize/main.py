@@ -18,7 +18,7 @@ import lines:
     from __future__ import unicode_literals
     from future import standard_library
     standard_library.install_hooks()
-    from future.builtins import *
+    from builtins import *
 
 To write changes to the files, use the -w flag.
 
@@ -29,7 +29,7 @@ Python 3 with ``pasteurize`` as they are when converting from Python 2 with
 ``futurize``.
 
 The --all-imports option forces adding all ``__future__`` imports,
-``future.builtins`` imports, and standard library hooks, even if they don't
+``builtins`` imports, and standard library aliases, even if they don't
 seem necessary for the current state of each module. (This can simplify
 testing, and can reduce the need to think about Py2 compatibility when editing
 the code further.)

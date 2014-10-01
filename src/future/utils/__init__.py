@@ -571,7 +571,7 @@ def native(obj):
     On Py2, returns the corresponding native Py2 types that are
     superclasses for backported objects from Py3:
     
-    >>> from future.builtins import str, bytes, int
+    >>> from builtins import str, bytes, int
 
     >>> native(str(u'ABC'))
     u'ABC'

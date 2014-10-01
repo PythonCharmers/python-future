@@ -1,5 +1,5 @@
 """
-Fixer that adds ``from future.builtins import object`` if there is a line
+Fixer that adds ``from builtins import object`` if there is a line
 like this:
     class Foo(object):
 """
@@ -14,4 +14,4 @@ class FixObject(fixer_base.BaseFix):
     PATTERN = u"classdef< 'class' NAME '(' name='object' ')' colon=':' any >"
 
     def transform(self, node, results):
-        touch_import_top(u'future.builtins', 'object', node)
+        touch_import_top(u'builtins', 'object', node)

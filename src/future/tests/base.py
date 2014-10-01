@@ -133,8 +133,8 @@ class CodeHandler(unittest.TestCase):
         from __future__ import print_function
         from __future__ import unicode_literals
         from future import standard_library
-        standard_library.install_hooks()
-        from future.builtins import *
+        standard_library.install_aliases()
+        from builtins import *
         """)
         self.interpreters = [sys.executable]
         self.tempdir = tempfile.mkdtemp() + os.path.sep
@@ -199,9 +199,12 @@ class CodeHandler(unittest.TestCase):
             from __future__ import <anything>
             from future <anything>
             from future.<anything>
+            from builtins <anything>
 
         or any line containing:
             install_hooks()
+        or:
+            install_aliases()
 
         Limitation: doesn't handle imports split across multiple lines like
         this:
@@ -215,7 +218,9 @@ class CodeHandler(unittest.TestCase):
         for line in code.split('\n'):
             if not (line.startswith('from __future__ import ')
                     or line.startswith('from future ')
+                    or line.startswith('from builtins ')
                     or 'install_hooks()' in line
+                    or 'install_aliases()' in line
                     # but don't match "from future_builtins" :)
                     or line.startswith('from future.')):
                 output.append(line)

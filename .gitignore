@@ -22,6 +22,10 @@ develop-eggs
 lib
 lib64
 
+# Backup files
+*.bak
+*.backup
+
 # Installer logs
 pip-log.txt
 

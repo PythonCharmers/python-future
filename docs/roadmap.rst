@@ -37,7 +37,7 @@ Experimental:
     from future import new_metaclass_syntax
     from future import new_style_classes
 
-- Maybe::
+- [Done] Maybe::
 
     from future.builtins import str
 

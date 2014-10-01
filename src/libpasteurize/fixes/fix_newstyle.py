@@ -30,4 +30,4 @@ class FixNewstyle(fixer_base.BaseFix):
             del node.children[idx-2:idx]
             idx -= 2
         insert_object(node, idx)
-        touch_import_top(u'future.builtins', 'object', node)
+        touch_import_top(u'builtins', 'object', node)

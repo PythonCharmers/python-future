@@ -39,7 +39,7 @@ then the fifth test fails too::
 After importing the builtins from ``future``, all these tests pass on
 Python 2 as on Python 3::
 
-    >>> from future.builtins import bytes, int, str
+    >>> from builtins import bytes, int, str
 
     >>> assert isinstance(10, int)
     >>> assert isinstance(10**100, int)
@@ -69,7 +69,7 @@ the types from ``future`` to their native superclasses on Py2.
 The ``native`` function in ``future.utils`` is provided for this. Here is how
 to use it. (The output showing is from Py2)::
 
-    >>> from future.builtins import *
+    >>> from builtins import *
     >>> from future.utils import native
 
     >>> a = int(10**20)     # Py3-like long int

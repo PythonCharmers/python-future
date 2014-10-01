@@ -25,14 +25,15 @@ stick with standard Python 3 code in your Py2/3 compatible codebase::
 In this case there will be memory overhead of list creation for each call to
 ``items``, ``values`` or ``keys``.
 
-For improved efficiency, ``future.builtins`` provides a Python 2 ``dict``
-subclass whose :func:`keys`, :func:`values`, and :func:`items` methods return
-iterators on all versions of Python >= 2.6. On Python 2.7, these iterators also
-have the same set-like view behaviour as dictionaries in Python 3. This can
-streamline code that iterates over large dictionaries. For example::
+For improved efficiency, ``future.builtins`` (aliased to ``builtins``) provides
+a Python 2 ``dict`` subclass whose :func:`keys`, :func:`values`, and
+:func:`items` methods return iterators on all versions of Python >= 2.6. On
+Python 2.7, these iterators also have the same set-like view behaviour as
+dictionaries in Python 3. This can streamline code that iterates over large
+dictionaries. For example::
 
     from __future__ import print_function
-    from future.builtins import dict, range
+    from builtins import dict, range
     
     # Memory-efficient construction:
     d = dict((i, i**2) for i in range(10**7))
@@ -46,16 +47,16 @@ streamline code that iterates over large dictionaries. For example::
 On Python 2.6, these methods currently return iterators but do not support the
 new Py3 set-like behaviour.
 
-As usual, on Python 3 ``future.builtins.dict`` is just the built-in ``dict``
-class.
+As usual, on Python 3 ``dict`` imported from either ``builtins`` or
+``future.builtins`` is just the built-in ``dict`` class.
 
 
 Memory-efficiency and alternatives
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you already have large native dictionaries, the downside to wrapping them in
-a ``dict`` call is that memory is copied (on both Py3 and with
-``future.builtins.dict``). For example::
+a ``dict`` call is that memory is copied (on both Py3 and on Py2). For
+example::
 
     # This allocates and then frees a large amount of temporary memory:
     d = dict({i: i**2 for i in range(10**7)})
@@ -72,7 +73,7 @@ The memory-efficient (and CPU-efficient) alternatives are:
       d = dict((i, i**2) for i in range(10**7)
 
 - to construct an empty dictionary with a ``dict()`` call using
-  ``future.builtins.dict`` (rather than ``{}``) and then update it;
+  ``builtins.dict`` (rather than ``{}``) and then update it;
 
 - to use the ``viewitems`` etc. functions from :mod:`future.utils`, passing in
   regular dictionaries::

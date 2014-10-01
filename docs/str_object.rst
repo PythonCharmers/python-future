@@ -14,15 +14,20 @@ There are also other differences, such as the ``repr`` of unicode strings in
 Py2 having a ``u'...'`` prefix, versus simply ``'...'``, and the removal of
 the :func:`str.decode` method in Py3.
 
-:mod:`future` contains a backport of the :mod:`str` object from Python 3 which
-inherits from the Python 2 :class:`unicode` class but has customizations to
-improve compatibility with Python 3's :class:`str` object. You can use it as
-follows::
+:mod:`future` contains a :class:`newstr`` type that is a backport of the
+:mod:`str` object from Python 3. This inherits from the Python 2
+:class:`unicode` class but has customizations to improve compatibility with
+Python 3's :class:`str` object. You can use it as follows::
 
     >>> from __future__ import unicode_literals
-    >>> from future.builtins import str
+    >>> from builtins import str
 
-(On Py3, this simply imports the builtin :class:`str` object.)
+On Py2, this gives us::
+
+    >>> str
+    future.types.newstr.newstr
+
+(On Py3, it is simply the usual builtin :class:`str` object.)
 
 Then, for example, the following code has the same effect on Py2 as on Py3::
 
@@ -44,7 +49,7 @@ Then, for example, the following code has the same effect on Py2 as on Py3::
     TypeError: argument can't be <type 'str'>
 
 Various other operations that mix strings and bytes or other types are
-permitted on Py2 with the :class:`future.builtins.str` class even though they
+permitted on Py2 with the :class:`newstr` class even though they
 are illegal with Python 3. For example::
 
     >>> s2 = b'/' + str('ABCD')
@@ -71,7 +76,7 @@ they are unicode. (See ``posixpath.py``.) Another example is the
 .. 
 .. On Py3, these raise TypeErrors.
 
-In most other ways, these :class:`future.builtins.str` objects on Py2 have the
+In most other ways, these :class:`builtins.str` objects on Py2 have the
 same behaviours as Python 3's :class:`str`::
 
     >>> s = str('ABCD')

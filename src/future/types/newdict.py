@@ -3,7 +3,7 @@ A dict subclass for Python 2 that behaves like Python 3's dict
 
 Example use:
 
->>> from future.builtins import dict
+>>> from builtins import dict
 >>> d1 = dict()    # instead of {} for an empty dict
 >>> d2 = dict(key1='value1', key2='value2')
 

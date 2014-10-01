@@ -37,7 +37,7 @@ The easiest way is to start each new module with these lines::
 
     from __future__ import (absolute_import, division,
                             print_function, unicode_literals)
-    from future.builtins import *
+    from builtins import *
 
 Then write standard Python 3 code. The :mod:`future` package will
 provide support for running your code on Python 2.6 and 2.7 mostly unchanged.
@@ -60,12 +60,12 @@ module::
     from __future__ import print_function
     from __future__ import unicode_literals
 
-    from future.builtins import open
-    from future.builtins import str
+    from builtins import open
+    from builtins import str
     # etc., as needed
 
     from future import standard_library
-    standard_library.install_hooks()
+    standard_library.install_aliases()
     
 and converts several Python 3-only constructs (like keyword-only arguments) to a
 form compatible with both Py3 and Py2. Most remaining Python 3 code should
@@ -90,37 +90,39 @@ See :ref:`forwards-conversion-stage1` and :ref:`forwards-conversion-stage2` for 
 Standard library reorganization
 -------------------------------
 
-:mod:`future` supports the standard library reorganization (PEP 3108)
-via import hooks, allowing most moved standard library modules to
-be accessed under their Python 3 names and locations in Python 2::
+:mod:`future` supports the standard library reorganization (PEP 3108) via
+one of several mechanisms, allowing most moved standard library modules
+to be accessed under their Python 3 names and locations in Python 2::
     
     from future import standard_library
-    with standard_library.hooks():
-        import socketserver
-        import queue
-        import configparser
-        from collections import UserDict, UserList, UserString
-        from collections import Counter, OrderedDict   # even on Py2.6
-        from itertools import filterfalse, zip_longest
+    standard_library.aliases()
 
-        import html
-        import html.entities
-        import html.parser
+    # Then these Py3-style imports work on both Python 2 and Python 3:
+    import socketserver
+    import queue
+    import configparser
+    from collections import UserDict, UserList, UserString
+    from collections import Counter, OrderedDict   # even on Py2.6
+    from itertools import filterfalse, zip_longest
 
-        import http
-        import http.client
-        import http.server
-        import http.cookies
-        import http.cookiejar
+    import html
+    import html.entities
+    import html.parser
 
-        import urllib.request
-        import urllib.parse
-        import urllib.response
-        import urllib.error
-        import urllib.robotparser
+    import http
+    import http.client
+    import http.server
+    import http.cookies
+    import http.cookiejar
 
-        import xmlrpc.client
-        import xmlrpc.server
+    import urllib.request
+    import urllib.parse
+    import urllib.response
+    import urllib.error
+    import urllib.robotparser
+
+    import xmlrpc.client
+    import xmlrpc.server
 
 and others. For a complete list, see :ref:`list-standard-library-moves`.
 

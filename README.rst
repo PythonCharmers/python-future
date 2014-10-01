@@ -25,14 +25,12 @@ Features
 .. image:: https://travis-ci.org/PythonCharmers/python-future.svg?branch=master
        :target: https://travis-ci.org/PythonCharmers/python-future
 
--   ``future.builtins`` package provides backports and remappings for 20
-    builtins with different semantics on Py3 versus Py2
+-   ``future.builtins`` package (also available as ``builtins`` on Py2) provides
+    backports and remappings for 20 builtins with different semantics on Py3
+    versus Py2
 
 -   ``future.standard_library``, in conjunction with ``future.moves``, provides
     support for importing standard library modules under their Python 3 names
-
--   ``future.backports`` package provides backports from the Py3.3
-    standard library
 
 -   ``past.builtins`` package provides forward-ports of 19 Python 2 types and
     builtin functions. These can aid with per-module code migrations.
@@ -65,8 +63,8 @@ these imports as it does on Python 3.3+:
 .. code-block:: python
     
     from __future__ import absolute_import, division, print_function
-    from future.builtins import (bytes, str, open, super, range,
-                                 zip, round, input, int, pow, object)
+    from builtins import (bytes, str, open, super, range,
+                          zip, round, input, int, pow, object)
 
     # Backported Py3 bytes object
     b = bytes(b'ABCD')
@@ -120,7 +118,7 @@ these imports as it does on Python 3.3+:
     assert isinstance('blah', str)       # only if unicode_literals is in effect
 
     # Py3-style iterators written as new-style classes (subclasses of
-    # future.builtins.object) are automatically backward compatible with Py2:
+    # future.types.newobject) are automatically backward compatible with Py2:
     class Upper(object):
         def __init__(self, iterable):
             self._iter = iter(iterable)
@@ -131,19 +129,25 @@ these imports as it does on Python 3.3+:
     assert list(Upper('hello')) == list('HELLO')
 
 
-There is also support for renamed standard library modules in the form of import
-hooks. The context-manager form works like this:
+There is also support for renamed standard library modules. The recommended
+interface works like this:
 
 .. code-block:: python
 
-    from future import standard_library
+    # Many Py3 module names are supported directly on both Py2.x and 3.x:
+    from http.client import HttpConnection
+    import html.parser
+    import queue
+    import xmlrpc.client
 
-    with standard_library.hooks():
-        from http.client import HttpConnection
-        from itertools import filterfalse
-        import html.parser
-        import queue
-        from urllib.request import urlopen
+    # Refactored modules with clashing names on Py2 and Py3 are supported
+    # as follows:
+    from future import standard_library
+    standard_library.install_aliases()
+
+    # Then, as usual:
+    from itertools import filterfalse
+    from urllib.request import urlopen
 
 
 Automatic conversion to Py2/3-compatible code
@@ -190,9 +194,9 @@ into this code which runs on both Py2 and Py3:
 .. code-block:: python
     
     from __future__ import print_function
-    from future.builtins import input
     from future import standard_library
-    standard_library.install_hooks()
+    standard_library.install_aliases()
+    from builtins import input
     import queue
     from urllib.request import urlopen
     

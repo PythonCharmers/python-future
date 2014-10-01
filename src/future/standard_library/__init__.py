@@ -6,7 +6,7 @@ names.
 It is designed to be used as follows::
 
     from future import standard_library
-    standard_library.install_hooks()
+    standard_library.install_aliases()
 
 And then these normal Py3 imports work on both Py3 and Py2::
 
@@ -37,10 +37,6 @@ And then these normal Py3 imports work on both Py3 and Py2::
 
 (The renamed modules and functions are still available under their old
 names on Python 2.)
-
-To turn off the import hooks, use::
-
-    standard_library.remove_hooks()
 
 This is a cleaner alternative to this idiom (see
 http://docs.pythonsprints.com/python3_porting/py-porting.html)::

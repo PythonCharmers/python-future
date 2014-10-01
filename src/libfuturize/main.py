@@ -54,7 +54,7 @@ All imports
 -----------
 
 The --all-imports option forces adding all ``__future__`` imports,
-``future.builtins`` imports, and standard library hooks, even if they don't
+``builtins`` imports, and standard library aliases, even if they don't
 seem necessary for the current state of each module. (This can simplify
 testing, and can reduce the need to think about Py2 compatibility when editing
 the code further.)

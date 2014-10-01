@@ -27,22 +27,24 @@ standard feature of Python, see the following docs:
 These are all available in Python 2.6 and up, and enabled by default in Python 3.x.
 
 
-future.builtins imports
------------------------
+.. _builtins-imports:
+
+Imports of builtins
+-------------------
 
 .. _star-imports:
 
 Implicit imports
 ~~~~~~~~~~~~~~~~
 
-If you don't mind namespace pollution on Python 2, the easiest way to provide
-Py2/3 compatibility for new code using ``future`` is to include the following
-imports at the top of every module::
+If you don't mind namespace pollution, the easiest way to provide Py2/3
+compatibility for new code using ``future`` is to include the following imports
+at the top of every module::
 
-    from future.builtins import *
+    from builtins import *
 
-On Python 3, ``from future.builtins import *`` line has zero effect and zero
-namespace pollution.
+On Python 3, this merely shadows builtins with globals of the same names, with
+no effect on most code.
 
 On Python 2, this import line shadows 18 builtins (listed below) to
 provide their Python 3 semantics.
@@ -56,17 +58,22 @@ Explicit imports
 Explicit forms of the imports are often preferred and are necessary for using
 certain automated code-analysis tools.
 
-The complete set of imports from ``future`` is::
+The complete set of imports of builtins from ``future`` is::
     
-    from future import standard_library, utils
     from future.builtins import (ascii, bytes, chr, dict, filter, hex, input,
                                  int, map, next, oct, open, pow, range, round,
                                  str, super, zip)
 
+The contents of the ``future.builtins`` module are also accessible under the
+``builtins`` namespace on Python 2, as follows::
+
+    from builtins import (ascii, bytes, chr, dict, filter, hex, input,
+                          int, map, next, oct, open, pow, range, round,
+                          str, super, zip)
 
 The disadvantage of importing only some of the builtins is that it
 increases the risk of introducing Py2/3 portability bugs as your code
-evolves over time. Be especially aware of not importing ``input``, which could
+evolves over time. For example, be aware of not importing ``input``, which could
 expose a security vulnerability on Python 2 if Python 3's semantics are
 expected.
 

@@ -3,10 +3,9 @@ For the ``future`` package.
 
 Adds this import line::
 
-    from future.builtins import XYZ
+    from builtins import XYZ
 
-for each of the functions XYZ that is used in the module from those in
-future.builtins.
+for each of the functions XYZ that is used in the module.
 
 Adds these imports after any other imports (in an initial block of them).
 """
@@ -56,6 +55,6 @@ class FixFutureBuiltins(fixer_base.BaseFix):
 
     def transform(self, node, results):
         name = results["name"]
-        touch_import_top(u'future.builtins', name.value, node)
+        touch_import_top(u'builtins', name.value, node)
         # name.replace(Name(u"input", prefix=name.prefix))
 
