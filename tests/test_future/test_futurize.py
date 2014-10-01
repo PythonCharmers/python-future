@@ -980,18 +980,20 @@ class TestFuturizeStage1(CodeHandler):
 
     def test_order_future_lines(self):
         """
-        Tests the internal order_future_lines() method.
+        Tests the internal order_future_lines() function.
         """
         before = '''
                # comment here
                from __future__ import print_function
                from __future__ import absolute_import
                                  # blank line or comment here
+               from future.utils import with_metaclass
                from builtins import zzz
                from builtins import aaa
                from builtins import blah
                # another comment
 
+               import something_else
                code_here
                more_code_here
                '''
@@ -1000,11 +1002,13 @@ class TestFuturizeStage1(CodeHandler):
                from __future__ import absolute_import
                from __future__ import print_function
                                  # blank line or comment here
+               from future.utils import with_metaclass
                from builtins import aaa
                from builtins import blah
                from builtins import zzz
                # another comment
 
+               import something_else
                code_here
                more_code_here
                '''
