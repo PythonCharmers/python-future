@@ -18,6 +18,35 @@ from future.utils import text_to_native_str
 
 install_aliases()   # for base64.encodebytes on Py2
 
+# from future.tests.test_http_cookiejar import interact_netscape
+
+class FakeResponse(object):
+    def __init__(self, headers=[], url=None):
+        """
+        headers: list of RFC822-style 'Key: value' strings
+        """
+        import email
+        # The email.message_from_string is available on both Py2.7 and Py3.3
+        self._headers = email.message_from_string("\n".join(headers))
+        self._url = url
+    def info(self): return self._headers
+
+
+def interact_netscape(cookiejar, url, *set_cookie_hdrs):
+    return _interact(cookiejar, url, set_cookie_hdrs, "Set-Cookie")
+
+def _interact(cookiejar, url, set_cookie_hdrs, hdr_name):
+    """Perform a single request / response cycle, returning Cookie: header."""
+    req = urllib_request.Request(url)
+    cookiejar.add_cookie_header(req)
+    cookie_hdr = req.get_header("Cookie", "")
+    headers = []
+    for hdr in set_cookie_hdrs:
+        headers.append("%s: %s" % (hdr_name, hdr))
+    res = FakeResponse(headers, url)
+    cookiejar.extract_cookies(res, req)
+    return cookie_hdr
+
 
 # XXX
 # Request
@@ -1104,7 +1133,6 @@ class HandlerTests(unittest.TestCase):
     def test_cookie_redirect(self):
         # cookies shouldn't leak into redirected requests
         from future.backports.http.cookiejar import CookieJar
-        from future.tests.test_http_cookiejar import interact_netscape
 
         cj = CookieJar()
         interact_netscape(cj, "http://www.example.com/", "spam=eggs")
