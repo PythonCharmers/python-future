@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import tempfile
 import unittest
@@ -12,7 +13,7 @@ if not hasattr(unittest, 'skip'):
     import unittest2 as unittest
 
 from future.utils import bind_method, PY26, PY3, PY2
-from future.moves.subprocess import check_output, STDOUT
+from future.moves.subprocess import check_output, STDOUT, CalledProcessError
 
 
 def reformat_code(code):
@@ -75,6 +76,25 @@ def order_future_lines(code):
             new_lines.append(lines[i])
     return '\n'.join(new_lines)
 
+
+class FuturizeError(CalledProcessError):
+    """This exception is raised when a process run by check_call() or
+    check_output() returns a non-zero exit status.
+    The exit status will be stored in the returncode attribute;
+    check_output() will also store the output in the output attribute.
+    """
+    def __init__(self, msg, returncode, cmd, output=None):
+        self.msg = msg
+        self.returncode = returncode
+        self.cmd = cmd
+        self.output = output
+
+    def __str__(self):
+        return ("Command '%s' failed with exit status %d\nMessage: %s"
+                % (self.cmd, self.returncode, self.msg))
+
+class PasteurizeError(FuturizeError):
+    pass
 
 class CodeHandler(unittest.TestCase):
     """
@@ -276,9 +296,21 @@ class CodeHandler(unittest.TestCase):
                 params.append('--conservative')
             # No extra params needed
 
-        output = check_output([sys.executable, script] + params +
-                                         ['-w', self.tempdir + filename],
-                                         stderr=STDOUT)
+        # Absolute file path:
+        fn = self.tempdir + filename
+        call_args = [sys.executable, script] + params + ['-w', fn]
+        try:
+            output = check_output(call_args, stderr=STDOUT)
+        except CalledProcessError as e:
+            msg = ('Error running the command %s\n%s\nContents of file %s:\n\n%s' %
+                   (' '.join(call_args),
+                    'PYTHONPATH=%s' % os.environ.get('PYTHONPATH'),
+                    fn,
+                    '----\n%s\n----' % open(fn).read(),
+                   )
+                  )
+            ErrorClass = (FuturizeError if 'futurize' in script else PasteurizeError)
+            raise ErrorClass(msg, e.returncode, e.cmd)
         return output
 
     def _run_test_script(self, filename='mytestscript.py',
