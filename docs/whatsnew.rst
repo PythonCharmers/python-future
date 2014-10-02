@@ -1,3 +1,5 @@
+.. _whats-new:
+
 What's New
 **********
 
@@ -31,16 +33,14 @@ you can now use the following interface for Python 2/3 compatible code::
     >>> import tkinter.dialog
     >>> etc.
 
-Notice that much Py2/3 compatible code now runs on Python 3 without the
-presence of the ``future`` package. Of the 44 modules that were refactored with
-PEP 3108 (standard library reorganization), 30 are supported with direct
-imports in this manner. (These are listed here:
-:ref:`list-standard-library-renamed`.)
+Notice that the above code will run on Python 3 without the presence of the
+``future`` package. Of the 44 modules that were refactored with PEP 3108
+(standard library reorganization), 30 are supported with direct imports in this
+manner. (These are listed here: :ref:`list-standard-library-renamed`.)
 
 The other 14 standard library modules that kept the same top-level names in
 Py3.x are not supported with this direct import interface on Py2. These include
-the 5 modules in the Py3 ``urllib`` package. (These are listed here:
-:ref:`list-standard-library-refactored`.) These modules are accessible through
+the 5 modules in the Py3 ``urllib`` package. These modules are accessible through
 the following interface (as well as the interfaces offered in previous versions
 of ``python-future``)::
 
@@ -58,8 +58,21 @@ of ``python-future``)::
     # etc.
     from collections import Counter, OrderedDict     # backported to Py2.6
 
-For more information on modules to import in Python 2/3 compatible code, see
+The complete list of packages supported with this interface is here:
+:ref:`list-standard-library-refactored`.
+
+For more information on these and other interfaces to the standard library, see
 :ref:`standard-library-imports`.
+
+Bug fixes
+---------
+
+- This release expands the ``future.moves`` package to include most of the remaining
+  modules that were moved in the standard library reorganization (PEP 3108).
+  (Issue #104). See :ref:`list-standard-library-renamed` for an updated list.
+
+- This release also removes the broken ``--doctests_only`` option from the ``futurize``
+  and ``pasteurize`` scripts for now (issue #103).
 
 Internal cleanups
 -----------------
@@ -68,13 +81,9 @@ The project folder structure has changed. Top-level packages are now in a
 ``src`` folder and the tests have been moved into a project-level ``tests``
 folder.
 
-The following deprecated internal modules have been removed:
+The following deprecated internal modules have been removed (issue #80):
 
 - ``future.utils.encoding`` and ``future.utils.six``.
-
-(Issue #80). See `here <http://fedoraproject.org/wiki/Packaging:No_Bundled_Libraries>`_
-for the rationale for unbundling them.
-
 
 Deprecations
 ------------
@@ -86,17 +95,6 @@ The following internal functions have been deprecated and will be removed in a f
 
 
 .. _whats-new-0.13.x:
-
-What's new in version 0.13.2
-============================
-
-- This release expands the ``future.moves`` package to include most of the remaining
-  modules that were moved in the standard library reorganization (PEP 3108).
-  (Issue #104). See :ref:`list-standard-library-moves` for an updated list.
-
-- This release also removes the broken ``--doctests_only`` option from the ``futurize``
-  and ``pasteurize`` scripts for now (issue #103).
-
 
 What's new in version 0.13.1
 ============================
@@ -119,7 +117,7 @@ and fixes several bugs.
 Deprecations
 ------------
 
-The following internal modules are now deprecated. They will be removed in a
+The following unused internal modules are now deprecated. They will be removed in a
 future release:
 
 - ``future.utils.encoding`` and ``future.utils.six``.

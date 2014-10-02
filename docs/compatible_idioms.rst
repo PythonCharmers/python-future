@@ -1,5 +1,5 @@
 .. _compatible-idioms:
-
+ 
 Cheat Sheet: Writing Python 2-3 compatible code
 ===============================================
 
@@ -7,11 +7,12 @@ Cheat Sheet: Writing Python 2-3 compatible code
 -  **Author:** Ed Schofield.
 -  **Licence:** Creative Commons Attribution.
 
-This notebook shows you idioms for writing future-proof code that is
-compatible with both versions of Python: 2 and 3.
+A PDF version is here: http://python-future.org/compatible\_idioms.pdf
 
-It accompanies Ed Schofield's talk at PyCon AU 2014, "Writing 2/3
-compatible code". (The video is `here <http://www.youtube.com/watch?v=KOqk8j11aAI&t=10m14s>`_.) 
+This notebook shows you idioms for writing future-proof code that is
+compatible with both versions of Python: 2 and 3. It accompanies Ed
+Schofield's talk at PyCon AU 2014, "Writing 2/3 compatible code". (The
+video is here: http://www.youtube.com/watch?v=KOqk8j11aAI&t=10m14s.)
 
 Minimum versions:
 
@@ -21,11 +22,12 @@ Minimum versions:
 Setup
 -----
 
-Some imports below refer to these ``pip``-installable packages on PyPI:
+The imports below refer to these ``pip``-installable packages on PyPI:
 
 ::
 
     import future        # pip install future
+    import builtins      # pip install future
     import past          # pip install future
     import six           # pip install six
 
@@ -230,7 +232,7 @@ Short integers are gone in Python 3 and ``long`` has become ``int``
     bigint = 1L
     
     # Python 2 and 3
-    from future.builtins import int
+    from builtins import int
     bigint = int(1)
 To test whether a value is an integer (of any kind):
 
@@ -245,7 +247,7 @@ To test whether a value is an integer (of any kind):
         ...
     
     # Python 2 and 3: option 1
-    from future.builtins import int    # subclass of long on Py2
+    from builtins import int    # subclass of long on Py2
     
     if isinstance(x, int):             # matches both int and long on Py2
         ...
@@ -362,7 +364,7 @@ each character as a byte-string of length 1:
         bytechar = bytes([myint])
     
     # Python 2 and 3:
-    from future.builtins import bytes
+    from builtins import bytes
     for myint in bytes(b'byte-string with high-bit chars like \xf9'):
         bytechar = bytes([myint])
 As an alternative, ``chr()`` and ``.encode('latin-1')`` can be used to
@@ -376,7 +378,7 @@ convert an int into a 1-char byte string:
         bytechar = char.encode('latin-1')
     
     # Python 2 and 3:
-    from future.builtins import bytes, chr
+    from builtins import bytes, chr
     for myint in bytes(b'byte-string with high-bit chars like \xf9'):
         char = chr(myint)    # returns a unicode string
         bytechar = char.encode('latin-1')    # forces returning a byte str
@@ -401,7 +403,7 @@ basestring
     # Python 2 and 3: alternative 2: refactor the code to avoid considering
     # byte-strings as strings.
     
-    from future.builtins import str
+    from builtins import str
     a = u'abc'
     b = b'def'
     c = b.decode()
@@ -417,12 +419,12 @@ unicode
 .. code:: python
 
     # Python 2 and 3: alternative 1
-    from future.builtins import str
+    from builtins import str
     templates = [u"blog/blog_post_detail_%s.html" % str(slug)]
 .. code:: python
 
     # Python 2 and 3: alternative 2
-    from future.builtins import str as text
+    from builtins import str as text
     templates = [u"blog/blog_post_detail_%s.html" % text(slug)]
 StringIO
 ~~~~~~~~
@@ -502,7 +504,7 @@ Iterable dict values:
 .. code:: python
 
     # Python 2 and 3: option 1
-    from future.builtins import dict
+    from builtins import dict
     
     heights = dict(Fred=175, Anne=166, Joe=192)
     for key in heights.values():    # efficient on Py2 and Py3
@@ -510,7 +512,7 @@ Iterable dict values:
 .. code:: python
 
     # Python 2 and 3: option 2
-    from future.builtins import itervalues
+    from builtins import itervalues
     # or
     from six import itervalues
     
@@ -531,7 +533,7 @@ Iterable dict items:
 .. code:: python
 
     # Python 2 and 3: option 2
-    from future.builtins import iteritems
+    from builtins import iteritems
     # or
     from six import iteritems
     
@@ -567,7 +569,7 @@ dict values as a list:
 .. code:: python
 
     # Python 2 and 3: option 2
-    from future.builtins import dict
+    from builtins import dict
     
     heights = dict(Fred=175, Anne=166, Joe=192)
     valuelist = list(heights.values())
@@ -628,7 +630,7 @@ Custom iterators
 .. code:: python
 
     # Python 2 and 3: option 1
-    from future.builtins import object
+    from builtins import object
     
     class Upper(object):
         def __init__(self, iterable):
@@ -707,7 +709,7 @@ Custom ``__nonzero__`` vs ``__bool__`` method:
 .. code:: python
 
     # Python 2 and 3:
-    from future.builtins import object
+    from builtins import object
     
     class AllOrNothing(object):
         def __init__(self, l):
@@ -731,7 +733,7 @@ xrange
 .. code:: python
 
     # Python 2 and 3: forward-compatible
-    from future.builtins import range
+    from builtins import range
     for i in range(10**8):
         ...
 .. code:: python
@@ -756,7 +758,7 @@ range
 .. code:: python
 
     # Python 2 and 3: forward-compatible: option 2
-    from future.builtins import range
+    from builtins import range
     
     mylist = list(range(5))
     assert mylist == [0, 1, 2, 3, 4]
@@ -791,7 +793,7 @@ map
 .. code:: python
 
     # Python 2 and 3: option 2
-    from future.builtins import map
+    from builtins import map
     
     mynewlist = list(map(f, myoldlist))
     assert mynewlist == [f(x) for x in myoldlist]
@@ -837,7 +839,7 @@ imap
 .. code:: python
 
     # Python 2 and 3: option 1
-    from future.builtins import map
+    from builtins import map
     
     myiter = map(func, myoldlist)
     assert isinstance(myiter, iter)
@@ -908,7 +910,7 @@ raw\_input()
 .. code:: python
 
     # Python 2 and 3:
-    from future.builtins import input
+    from builtins import input
     
     name = input('What is your name? ')
     assert isinstance(name, str)    # native str on Py2 and Py3
@@ -922,7 +924,7 @@ input()
 .. code:: python
 
     # Python 2 and 3
-    from future.builtins import input
+    from builtins import input
     eval(input("Type something safe please: "))
 Warning: using either of these is **unsafe** with untrusted input.
 
@@ -978,7 +980,7 @@ unichr()
 .. code:: python
 
     # Python 2 and 3:
-    from future.builtins import chr
+    from builtins import chr
     assert chr(8364) == '€'
 intern()
 ~~~~~~~~
@@ -996,6 +998,18 @@ intern()
 
     # Python 2 and 3: alternative 1
     from past.builtins import intern
+    intern('mystring')
+.. code:: python
+
+    # Python 2 and 3: alternative 2
+    from six.moves import intern
+    intern('mystring')
+.. code:: python
+
+    # Python 2 and 3: alternative 3
+    from future.standard_library import install_aliases
+    install_aliases()
+    from sys import intern
     intern('mystring')
 .. code:: python
 
@@ -1041,7 +1055,7 @@ chr()
 .. code:: python
 
     # Python 2 and 3: option 1
-    from future.builtins import chr
+    from builtins import chr
     
     assert chr(64).encode('latin-1') == b'@'
     assert chr(0xc8).encode('latin-1') == b'\xc8'
@@ -1053,7 +1067,7 @@ chr()
 .. code:: python
 
     # Python 2 and 3: option 2
-    from future.builtins import bytes
+    from builtins import bytes
     
     assert bytes([64]) == b'@'
     assert bytes([0xc8]) == b'\xc8'
@@ -1089,6 +1103,81 @@ reload()
 Standard library
 ----------------
 
+dbm modules
+~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only
+    import anydbm
+    import whichdb
+    import dbm
+    import dumbdbm
+    import gdbm
+    
+    # Python 2 and 3: alternative 1
+    from future import standard_library
+    standard_library.install_aliases()
+    
+    import dbm
+    import dbm.ndbm
+    import dbm.dumb
+    import dbm.gnu
+    
+    # Python 2 and 3: alternative 2
+    from future.moves import dbm
+    from future.moves.dbm import dumb
+    from future.moves.dbm import ndbm
+    from future.moves.dbm import gnu
+    
+    # Python 2 and 3: alternative 3
+    from six.moves import dbm_gnu
+    # (others not supported)
+commands / subprocess modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only
+    from commands import getoutput, getstatusoutput
+    
+    # Python 2 and 3
+    from future import standard_library
+    standard_library.install_aliases()
+    
+    from subprocess import getoutput, getstatusoutput
+subprocess.check\_output()
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2.7 and above
+    from subprocess import check_output
+    
+    # Python 2.6 and above: alternative 1
+    from future.moves.subprocess import check_output
+    
+    # Python 2.6 and above: alternative 2
+    from future import standard_library
+    standard_library.install_aliases()
+    
+    from subprocess import check_output
+collections: Counter and OrderedDict
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2.7 and above
+    from collections import Counter, OrderedDict
+    
+    # Python 2.6 and above: alternative 1
+    from future.moves.collections import Counter, OrderedDict
+    
+    # Python 2.6 and above: alternative 2
+    from future import standard_library
+    standard_library.install_aliases()
+    
+    from collections import Counter, OrderedDict
 StringIO module
 ~~~~~~~~~~~~~~~
 
@@ -1115,48 +1204,242 @@ http module
     import SimpleHTTPServer
     import CGIHttpServer
     
+    # Python 2 and 3 (after ``pip install future``):
+    import http.client
+    import http.cookies
+    import http.cookiejar
+    import http.server
+xmlrpc module
+~~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    import DocXMLRPCServer
+    import SimpleXMLRPCServer
+    
+    # Python 2 and 3 (after ``pip install future``):
+    import xmlrpc.server
+.. code:: python
+
+    # Python 2 only:
+    import xmlrpclib
+    
+    # Python 2 and 3 (after ``pip install future``):
+    import xmlrpc.client
+html escaping and entities
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
     # Python 2 and 3:
-    from future.standard_library import hooks
-    with hooks():
-        import http.client
-        import http.cookies
-        import http.cookiejar
-        import http.server
+    from cgi import escape
+    
+    # Safer (Python 2 and 3, after ``pip install future``):
+    from html import escape
+    
+    # Python 2 only:
+    from htmlentitydefs import codepoint2name, entitydefs, name2codepoint
+    
+    # Python 2 and 3 (after ``pip install future``):
+    from html.entities import codepoint2name, entitydefs, name2codepoint
+html parsing
+~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    from HTMLParser import HTMLParser
+    
+    # Python 2 and 3 (after ``pip install future``)
+    from html.parser import HTMLParser
+    
+    # Python 2 and 3 (alternative 2):
+    from future.moves.html.parser import HTMLParser
 urllib module
 ~~~~~~~~~~~~~
 
-This uses ``urllib`` as an example. The same pattern applies to other
-moved modules too. (See
-http://python-future.org/standard\_library\_imports.html#list-of-standard-library-modules
-for a full list).
+``urllib`` is the hardest module to use from Python 2/3 compatible code.
+You may like to use Requests (http://python-requests.org) instead.
 
 .. code:: python
 
     # Python 2 only:
     from urlparse import urlparse
     from urllib import urlencode
+    from urllib2 import urlopen, Request, HTTPError
 .. code:: python
 
     # Python 3 only:
     from urllib.parse import urlparse, urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
 .. code:: python
 
-    # Python 2 and 3: alternative 1
+    # Python 2 and 3: easiest option
+    from future.standard_library import install_aliases
+    install_aliases()
+    
+    from urllib.parse import urlparse, urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError
+.. code:: python
+
+    # Python 2 and 3: alternative 2
     from future.standard_library import hooks
     
     with hooks():
         from urllib.parse import urlparse, urlencode
-.. code:: python
-
-    # Python 2 and 3: alternative 2
-    from future.moves.urllib.parse import urlparse, urlencode
-    # or
-    from six.moves.urllib.parse import urlparse, urlencode
+        from urllib.request import urlopen, Request
+        from urllib.error import HTTPError
 .. code:: python
 
     # Python 2 and 3: alternative 3
+    from future.moves.urllib.parse import urlparse, urlencode
+    from future.moves.urllib.request import urlopen, Request
+    from future.moves.urllib.error import HTTPError
+    # or
+    from six.moves.urllib.parse import urlparse, urlencode
+    from six.moves.urllib.request import urlopen
+    from six.moves.urllib.error import HTTPError
+.. code:: python
+
+    # Python 2 and 3: alternative 4
     try:
         from urllib.parse import urlparse, urlencode
+        from urllib.request import urlopen, Request
+        from urllib.error import HTTPError
     except ImportError:
         from urlparse import urlparse
         from urllib import urlencode
+        from urllib2 import urlopen, Request, HTTPError
+Tkinter
+~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    import Tkinter
+    import Dialog
+    import FileDialog
+    import ScrolledText
+    import SimpleDialog
+    import Tix  
+    import Tkconstants
+    import Tkdnd   
+    import tkColorChooser
+    import tkCommonDialog
+    import tkFileDialog
+    import tkFont
+    import tkMessageBox
+    import tkSimpleDialog
+    
+    # Python 2 and 3 (after ``pip install future``):
+    import tkinter
+    import tkinter.dialog
+    import tkinter.filedialog
+    import tkinter.scolledtext
+    import tkinter.simpledialog
+    import tkinter.tix
+    import tkinter.constants
+    import tkinter.dnd
+    import tkinter.colorchooser
+    import tkinter.commondialog
+    import tkinter.filedialog
+    import tkinter.font
+    import tkinter.messagebox
+    import tkinter.simpledialog
+socketserver
+~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    import SocketServer
+    
+    # Python 2 and 3 (after ``pip install future``):
+    import socketserver
+copy\_reg, copyreg
+~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    import copy_reg
+    
+    # Python 2 and 3 (after ``pip install future``):
+    import copyreg
+configparser
+~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    from ConfigParser import ConfigParser
+    
+    # Python 2 and 3 (after ``pip install future``):
+    from configparser import ConfigParser
+queue
+~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    from Queue import Queue, heapq, deque
+    
+    # Python 2 and 3 (after ``pip install future``):
+    from queue import Queue, heapq, deque
+repr, reprlib
+~~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    from repr import aRepr, repr
+    
+    # Python 2 and 3 (after ``pip install future``):
+    from reprlib import aRepr, repr
+UserDict, UserList, UserString
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    from UserDict import UserDict
+    from UserList import UserList
+    from UserString import UserString
+    
+    # Python 3 only:
+    from collections import UserDict, UserList, UserString
+    
+    # Python 2 and 3: alternative 1
+    from future.moves.collections import UserDict, UserList, UserString
+    
+    # Python 2 and 3: alternative 2
+    from six.moves import UserDict, UserList, UserString
+    
+    # Python 2 and 3: alternative 3
+    from future.standard_library import install_aliases
+    install_aliases()
+    from collections import UserDict, UserList, UserString
+itertools: filterfalse, zip\_longest
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    from itertools import ifilterfalse, izip_longest
+    
+    # Python 3 only:
+    from itertools import filterfalse, zip_longest
+    
+    # Python 2 and 3: alternative 1
+    from future.moves.itertools import filterfalse, zip_longest
+    
+    # Python 2 and 3: alternative 2
+    from six.moves import filterfalse, zip_longest
+    
+    # Python 2 and 3: alternative 3
+    from future.standard_library import install_aliases
+    install_aliases()
+    from itertools import filterfalse, zip_longest

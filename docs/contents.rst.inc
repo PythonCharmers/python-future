@@ -13,6 +13,7 @@ Contents:
    what_else
    automatic_conversion
    futurize_cheatsheet
+   translation
    stdlib_incompatibilities
    faq
    changelog

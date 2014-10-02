@@ -118,7 +118,7 @@ Python 3 semantics on Python 2, invoke it like this::
 
 **2d**. Now run your tests on Python 2 and notice the errors. Add wrappers from
 ``future`` to re-enable Python 2 compatibility. See the
-:ref:`compatible-idioms` cheat sheet or :ref:`what-else` for more info.
+:ref:`compatible-idioms` cheat sheet and :ref:`what-else` for more info.
 
 After each change, re-run the tests on Py3 and Py2 to ensure they pass on both.
 

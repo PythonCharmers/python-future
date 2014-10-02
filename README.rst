@@ -7,11 +7,11 @@ Overview: Easy, clean, reliable Python 2/3 compatibility
 Python 3. It allows you to use a single, clean Python 3.x-compatible
 codebase to support both Python 2 and Python 3 with minimal overhead.
 
-It provides ``future`` and ``past`` packages with backports and forward ports of
-features from Python 3 and 2. It also comes with ``futurize`` and
-``pasteurize``, customized 2to3-based scripts that helps you to convert either
-Py2 or Py3 code easily to support both Python 2 and 3 in a single clean
-Py3-style codebase, module by module.
+It provides ``future`` and ``past`` packages with backports and forward
+ports of features from Python 3 and 2. It also comes with ``futurize`` and
+``pasteurize``, customized 2to3-based scripts that helps you to convert
+either Py2 or Py3 code easily to support both Python 2 and 3 in a single
+clean Py3-style codebase, module by module.
 
 Notable projects that use ``python-future`` for Python 3/2 compatibility
 are `Mezzanine <http://mezzanine.jupo.org/>`_ and `ObsPy
@@ -29,14 +29,18 @@ Features
     backports and remappings for 20 builtins with different semantics on Py3
     versus Py2
 
--   ``future.standard_library``, in conjunction with ``future.moves``, provides
-    support for importing standard library modules under their Python 3 names
+-   support for directly importing 30 standard library modules under
+    their Python 3 names on Py2
+
+-   support for importing the other 14 refactored standard library modules
+    under their Py3 names relatively cleanly via
+    ``future.standard_library`` and ``future.moves``
 
 -   ``past.builtins`` package provides forward-ports of 19 Python 2 types and
     builtin functions. These can aid with per-module code migrations.
 
 -   ``past.translation`` package supports transparent translation of Python 2
-    modules to Python 3 upon import. [This feature is currently in alpha.] 
+    modules to Python 3 upon import. [This feature is currently in alpha.]
 
 -   920+ unit tests, including many from the Py3.3 source tree.
 
@@ -153,7 +157,7 @@ interface works like this:
 Automatic conversion to Py2/3-compatible code
 ---------------------------------------------
 
-``future`` comes with two scripts called ``futurize`` and
+``python-future`` comes with two scripts called ``futurize`` and
 ``pasteurize`` to aid in making Python 2 code or Python 3 code compatible with
 both platforms (Py2&3). It is based on 2to3 and uses fixers from ``lib2to3``,
 ``lib3to2``, and ``python-modernize``, as well as custom fixers.
@@ -250,6 +254,7 @@ properly to a Python 2/3 compatible codebase using a tool like
 Note: the translation feature is still in alpha and needs more testing and
 development.
 
+For more info, see :ref:`translation`.
 
 Licensing
 ---------
@@ -269,7 +274,7 @@ Licensing
 Next steps
 ----------
 
-If you are new to ``python-future``, check out the `Quickstart Guide
+If you are new to Python-Future, check out the `Quickstart Guide
 <http://python-future.org/quickstart.html>`_.
 
 For an update on changes in the latest version, see the `What's New

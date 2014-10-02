@@ -1,7 +1,7 @@
 .. _translation:
 
-Importing Python 2-only dependencies on Python 3
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using Python 2-only dependencies on Python 3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``past`` module provides an experimental ``translation`` package to help
 with importing and using old Python 2 modules in a Python 3 environment.
