@@ -152,7 +152,11 @@ class CodeHandler(unittest.TestCase):
         """)
         self.interpreters = [sys.executable]
         self.tempdir = tempfile.mkdtemp() + os.path.sep
-        self.env = {'PYTHONPATH': os.getcwd()}
+        pypath = os.getenv('PYTHONPATH')
+        if pypath:
+            self.env = {'PYTHONPATH': os.getcwd() + os.pathsep + pypath}
+        else:
+            self.env = {'PYTHONPATH': os.getcwd()}
 
     def convert(self, code, stages=(1, 2), all_imports=False, from3=False,
                 reformat=True, run=True, conservative=False):
