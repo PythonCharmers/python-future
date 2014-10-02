@@ -5,6 +5,17 @@ What's New
 
 .. _whats-new-0.14.x:
 
+What's new in version 0.14.1
+============================
+
+This is a minor bug-fix release:
+
+- Docs: add a missing template file for building docs (issue #108)
+- Tests: fix a bug in error handling while reporting failed script runs (issue #109)
+- install_aliases(): don't assume that the ``test.test_support`` module always
+  exists on Py2 (issue #109)
+
+
 What's new in version 0.14.0
 ============================
 
