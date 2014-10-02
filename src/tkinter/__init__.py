@@ -3,6 +3,6 @@ import sys
 __future_module__ = True
 
 if sys.version_info[0] < 3:
-    from Tk import *
+    from Tkinter import *
 else:
     raise ImportError('Cannot import module from python-future source folder')
