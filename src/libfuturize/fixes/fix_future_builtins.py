@@ -38,7 +38,7 @@ expression = '|'.join(["name='{0}'".format(name) for name in replaced_builtin_fn
 
 class FixFutureBuiltins(fixer_base.BaseFix):
     BM_compatible = True
-    run_order = 9
+    run_order = 7
 
     # Currently we only match uses as a function. This doesn't match e.g.:
     #     if isinstance(s, str):
