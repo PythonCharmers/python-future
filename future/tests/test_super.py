@@ -150,6 +150,26 @@ class TestSuper(unittest.TestCase):
         c = f().__closure__[0]
         self.assertRaises(TypeError, X.meth, c)
 
+    def test_properties(self):
+        class Harmless(object):
+            bomb = ''
+
+            def walk(self):
+                return self.bomb
+
+        class Dangerous(Harmless):
+            @property
+            def bomb(self):
+                raise Exception("Kaboom")
+
+            def walk(self):
+                return super().walk()
+
+        class Elite(Dangerous):
+            bomb = 'Defused'
+
+        self.assertEqual(Elite().walk(), 'Defused')
+
 
 class TestSuperFromTestDescrDotPy(unittest.TestCase):
     """
