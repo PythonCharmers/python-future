@@ -196,13 +196,13 @@ def future_import(feature, node):
     if does_tree_import(u"__future__", feature, node):
         return
 
-    # Look for a shebang line
-    shebang_idx = None
+    # Look for a shebang or encoding line
+    shebang_encoding_idx = None
 
     for idx, node in enumerate(root.children):
-        # If it's a shebang line, attach the prefix to
-        if is_shebang_comment(node):
-            shebang_idx = idx
+        # If it's a shebang or encoding line, attach the prefix to
+        if is_shebang_comment(node) or is_encoding_comment(node):
+            shebang_encoding_idx = idx
         if node.type == syms.simple_stmt and \
            len(node.children) > 0 and node.children[0].type == token.STRING:
             # skip over docstring
@@ -216,9 +216,9 @@ def future_import(feature, node):
             return
 
     import_ = FromImport(u'__future__', [Leaf(token.NAME, feature, prefix=" ")])
-    if shebang_idx == 0 and idx == 0:
+    if shebang_encoding_idx == 0 and idx == 0:
         # If this __future__ import would go on the first line,
-        # detach the shebang prefix from the current first line
+        # detach the shebang / encoding prefix from the current first line
         # and attach it to our new __future__ import node.
         import_.prefix = root.children[0].prefix
         root.children[0].prefix = u''
@@ -424,14 +424,32 @@ def check_future_import(node):
         assert False, "strange import: %s" % savenode
 
 
-SHEBANG_REGEX = r'^#!\s*.*python'
+SHEBANG_REGEX = r'^#!.*python'
+ENCODING_REGEX = r"^#.*coding[:=]\s*([-\w.]+)"
+
 
 def is_shebang_comment(node):
     """
     Comments are prefixes for Leaf nodes. Returns whether the given node has a
-    prefix that looks like a shebang line.
+    prefix that looks like a shebang line or an encoding line:
+
+        #!/usr/bin/env python
+        #!/usr/bin/python3
     """
     return bool(re.match(SHEBANG_REGEX, node.prefix))
+
+
+def is_encoding_comment(node):
+    """
+    Comments are prefixes for Leaf nodes. Returns whether the given node has a
+    prefix that looks like an encoding line:
+
+        # coding: utf-8
+        # encoding: utf-8
+        # -*- coding: <encoding name> -*-
+        # vim: set fileencoding=<encoding name> :
+    """
+    return bool(re.match(ENCODING_REGEX, node.prefix))
 
 
 def wrap_in_fn_call(fn_name, args, prefix=None):
