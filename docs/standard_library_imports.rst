@@ -26,8 +26,8 @@ modules in Python 2/3 compatible code. For example, the following clean Python
     >>> import tkinter.dialog
     >>> etc.
 
-Notice that much Py2/3 compatible code now runs on Python 3 without the
-presence of the ``future`` package. 
+Notice that this code actually runs on Python 3 without the presence of the ``future``
+package.
 
 
 .. _list-standard-library-renamed:

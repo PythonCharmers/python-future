@@ -655,8 +655,8 @@ To work around this, ``future`` now provides a context manager called
 
 .. _whats-new-0.8:
 
-Changes in version 0.8.x
-========================
+Changes in version 0.8
+======================
 
 Python 2.6 support
 ------------------
@@ -702,7 +702,7 @@ deprecated.
 .. _changelog:
 
 Summary of all changes
-**********************
+======================
 
 v0.14:
   * New top-level ``builtins`` package on Py2 for cleaner imports. Equivalent to

@@ -1,6 +1,6 @@
 .. _futurize_cheatsheet:
 
-``futurize`` cheat-sheet: automatic conversion from Py2 to Py2&3
+``futurize`` quick-start: automatic conversion from Py2 to Py2&3
 ================================================================
 
 Instructions and notes on converting code from supporting only Python 2 to
