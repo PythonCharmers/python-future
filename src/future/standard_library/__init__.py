@@ -482,8 +482,11 @@ def install_aliases():
         import test
     except ImportError:
         pass
-    else:
+    try:
         from future.moves.test import support
+    except ImportError:
+        pass
+    else:
         test.support = support
         sys.modules['test.support'] = support
 
