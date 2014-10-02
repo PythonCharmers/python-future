@@ -22,6 +22,6 @@ On the remote machine:
 cd /var/www/python-future/
 unzip -o ~/python-future-html-docs.zip
 chmod a+r * html/* html/_static/*
-cp ~/cheatsheet.pdf ./html/compatible-idioms.pdf
+cp ~/cheatsheet.pdf ./html/compatible_idioms.pdf
 cp ~/cheatsheet.pdf ./html/cheatsheet.pdf
 
