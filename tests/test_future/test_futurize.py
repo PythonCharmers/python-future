@@ -36,6 +36,39 @@ class TestFuturizeSimple(CodeHandler):
         self.tempdir = tempfile.mkdtemp() + os.path.sep
         super(TestFuturizeSimple, self).setUp()
 
+    def test_encoding_comments_kept_at_top(self):
+        """
+        Issues #10 and #97: If there is a source encoding comment line
+        (PEP 263), is it kept at the top of a module by ``futurize``?
+        """
+        before = """
+        # coding=utf-8
+
+        print 'Hello'
+        """
+        after = """
+        # coding=utf-8
+
+        from __future__ import print_function
+        print('Hello')
+        """
+        self.convert_check(before, after)
+
+        before = """
+        #!/usr/bin/env python
+        # -*- coding: latin-1 -*-"
+
+        print 'Hello'
+        """
+        after = """
+        #!/usr/bin/env python
+        # -*- coding: latin-1 -*-"
+
+        from __future__ import print_function
+        print('Hello')
+        """
+        self.convert_check(before, after)
+
     def test_shebang_blank_with_future_division_import(self):
         """
         Issue #43: Is shebang line preserved as the first
