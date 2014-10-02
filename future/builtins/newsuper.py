@@ -79,10 +79,16 @@ def newsuper(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
                 # This handles e.g. classmethod() and staticmethod().
                 try:
                     while not isinstance(meth,FunctionType):
-                        try:
-                            meth = meth.__func__
-                        except AttributeError:
-                            meth = meth.__get__(type_or_obj)
+                        if isinstance(meth, property):
+                            # Calling __get__ on the property will invoke
+                            # user code which might throw exceptions or have
+                            # side effects
+                            meth = meth.fget
+                        else:
+                            try:
+                                meth = meth.__func__
+                            except AttributeError:
+                                meth = meth.__get__(type_or_obj)
                 except (AttributeError, TypeError):
                     continue
                 if meth.func_code is f.f_code:
