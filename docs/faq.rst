@@ -28,7 +28,7 @@ Python 3.x is a better language and better set of standard libraries than
 Python 2.x in many ways. Python 3.x is cleaner, less warty, and easier to
 learn than Python 2. It has better memory efficiency, easier Unicode handling,
 and powerful new features like the `asyncio
-<https://pypi.python.org/pypi/asyncio>`_ module.
+<https://docs.python.org/3/library/asyncio.html>`_ module.
 
 .. Unicode handling is also much easier. For example, see `this page
 .. <http://pythonhosted.org/kitchen/unicode-frustrations.html>`_
@@ -115,8 +115,8 @@ community to remain united around a single version of the language.
 Maturity
 ========
 
-Is it tested?
--------------
+How well has it been tested?
+----------------------------
 
 ``future`` is used by several major projects, including `mezzanine
 <http://mezzanine.jupo.org>`_ and `ObsPy <http://www.obspy.org>`_. It is also
@@ -129,7 +129,7 @@ from the Python 3.3 test suite.
 In general, the ``future`` package itself is in good shape, whereas the
 ``futurize`` script for automatic porting is incomplete and imperfect.
 (Chances are it will require some manual cleanup afterwards.) The ``past``
-package also needs further work.
+package also needs to be expanded.
 
 
 Is the API stable?

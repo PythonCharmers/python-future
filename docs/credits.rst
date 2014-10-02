@@ -55,6 +55,7 @@ Patches
 - Nicolas Delaby
 - Corey Farwell
 - Eric Firing
+- Alexey Kotlyarov
 - Lion Krischer
 - Marcin Kuzminski
 - Joshua Landau
@@ -66,6 +67,7 @@ Patches
 - Jeff Tratner
 - Mystic-Mirage (GitHub)
 - str4d (GitHub)
+- 9seconds (GitHub)
 
 Suggestions and Feedback
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -94,8 +96,8 @@ Other Credits
 - The ``raise_`` and ``raise_with_traceback`` functions were contributed by
   Jeff Tratner.
 
-- Documentation is generated with ``sphinx`` using the ``sphinx-bootstrap``
-  theme.
+- Documentation is generated with `Sphinx <http://sphinx.pocoo.org>`_ using the
+  ``sphinx-bootstrap`` theme.
 
 - ``past.translation`` is inspired by and borrows some code from Sanjay Vinip's
   ``uprefix`` module.

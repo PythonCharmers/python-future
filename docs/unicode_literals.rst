@@ -7,28 +7,22 @@ Should I import unicode_literals?
 The ``future`` package can be used with or without ``unicode_literals``
 imports.
 
-There is some contention in the community about whether it is advisable
-to import ``unicode_literals`` from ``__future__`` in a Python 2/3
-compatible codebase.
-
-In general, it is more compelling to use ``unicode_literals`` when back-porting
-new or existing Python 3 code to Python 2/3 than when porting existing Python 2
-code to 2/3. In the latter case, explicitly marking up all unicode string
-literals with ``u''`` prefixes would help to avoid unintentionally
-changing the existing Python 2 API.
-
-If changing the existing Python 2 API is not a concern, using
-``unicode_literals`` may speed up the porting process. If you use
-``unicode_literals``, testing and debugging your code with *Python 3* first is
-probably the easiest way to fix your code. After this, fixing Python 2 support
-will be easier.
-
-To avoid confusion, we recommend using ``unicode_literals`` everywhere
-across a code-base or not at all, instead of turning on for only some
-modules.
+There is some disagreement in the community about whether it is advisable to
+import ``unicode_literals`` from ``__future__`` in a Python 2/3 compatible
+codebase. In general, it is more compelling to use ``unicode_literals`` when
+back-porting new or existing Python 3 code to Python 2/3 than when porting
+existing Python 2 code to 2/3. In the latter case, explicitly marking up all
+unicode string literals with ``u''`` prefixes would help to avoid
+unintentionally changing the existing Python 2 API. If changing the existing
+Python 2 API is not a concern, using ``unicode_literals`` may speed up the
+porting process.
 
 This section summarizes the benefits and drawbacks of using
-``unicode_literals``.
+``unicode_literals``. To avoid confusion, we recommend using
+``unicode_literals`` everywhere across a code-base or not at all, instead of
+turning on for only some modules.
+
+
 
 Benefits
 ~~~~~~~~

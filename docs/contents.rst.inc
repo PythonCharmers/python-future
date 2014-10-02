@@ -4,8 +4,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   overview
    whatsnew
+   overview
    quickstart
    compatible_idioms
    imports

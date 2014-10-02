@@ -1,7 +1,7 @@
 .. _forwards-conversion:
 
-Futurize: 2 to both
---------------------
+``futurize``: Py2 to Py2&3
+--------------------------
 
 .. include:: futurize_overview.rst
 
@@ -165,7 +165,7 @@ also reduce readability: see issue #58.)
 
 .. _forwards-conversion-stage2:
 
-Stage 2: Py3-style code with ``future`` wrappers for Py2
+Stage 2: Py3-style code with wrappers for Py2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Run stage 2 of the conversion process with::

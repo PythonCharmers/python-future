@@ -110,7 +110,7 @@ html_theme_options = {
     #'navbar_title': "Python-Future",
 
     # Tab name for entire site. (Default: "Site")
-    'navbar_site_name': "All pages",
+    'navbar_site_name': "Contents",
 
     # A list of tuples containing pages or urls to link to.
     # Valid tuples should be in the following forms:
@@ -121,19 +121,20 @@ html_theme_options = {
     # an arbitrary url.
     'navbar_links': [
         ("Overview", "overview"),
+        ("Cheat Sheet", "compatible_idioms.html", True),
         ("FAQ", "faq.html", True),
         # ("Link", "http://example.com", True),
     ],
 
     # Render the next and previous page links in navbar. (Default: true)
-    'navbar_sidebarrel': True,
+    'navbar_sidebarrel': False,
 
     # Render the current pages TOC in the navbar. (Default: true)
     'navbar_pagenav': True,
 
     # Global TOC depth for "site" navbar tab. (Default: 1)
     # Switching to -1 shows all levels.
-    'globaltoc_depth': 2,
+    'globaltoc_depth': 3,
 
     # Include hidden TOCs in Site navbar?
     #
@@ -224,10 +225,10 @@ html_sidebars = {
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-#html_show_sphinx = True
+html_show_sphinx = False
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 #html_show_copyright = True

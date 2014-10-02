@@ -1,7 +1,7 @@
 .. _automatic-conversion:
 
-Automatic conversion to Py2/3 with ``futurize`` and ``pasteurize``
-==================================================================
+Automatic conversion to Py2&3
+=============================
 
 The ``future`` source tree includes scripts called ``futurize`` and
 ``pasteurize`` to aid in making Python 2 code or Python 3 code compatible with
