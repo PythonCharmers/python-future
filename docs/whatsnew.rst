@@ -33,10 +33,10 @@ you can now use the following interface for Python 2/3 compatible code::
     >>> import tkinter.dialog
     >>> etc.
 
-Notice that the above code will run on Python 3 without the presence of the
-``future`` package. Of the 44 modules that were refactored with PEP 3108
-(standard library reorganization), 30 are supported with direct imports in this
-manner. (These are listed here: :ref:`list-standard-library-renamed`.)
+Notice that the above code will run on Python 3 even without the presence of the
+``future`` package. Of the 44 standard library modules that were refactored with
+PEP 3108, 30 are supported with direct imports in this manner. (These are listed
+here: :ref:`list-standard-library-renamed`.)
 
 The other 14 standard library modules that kept the same top-level names in
 Py3.x are not supported with this direct import interface on Py2. These include
