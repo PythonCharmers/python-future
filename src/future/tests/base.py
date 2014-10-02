@@ -88,11 +88,10 @@ def order_future_lines(code):
     return '\n'.join(new_lines)
 
 
-class FuturizeError(CalledProcessError):
-    """This exception is raised when a process run by check_call() or
-    check_output() returns a non-zero exit status.
-    The exit status will be stored in the returncode attribute;
-    check_output() will also store the output in the output attribute.
+class VerboseCalledProcessError(CalledProcessError):
+    """
+    Like CalledProcessError, but it displays more information (message and
+    script output) for diagnosing test failures etc.
     """
     def __init__(self, msg, returncode, cmd, output=None):
         self.msg = msg
@@ -104,8 +103,12 @@ class FuturizeError(CalledProcessError):
         return ("Command '%s' failed with exit status %d\nMessage: %s\nOutput: %s"
                 % (self.cmd, self.returncode, self.msg, self.output))
 
-class PasteurizeError(FuturizeError):
+class FuturizeError(VerboseCalledProcessError):
     pass
+
+class PasteurizeError(VerboseCalledProcessError):
+    pass
+
 
 class CodeHandler(unittest.TestCase):
     """
@@ -344,8 +347,7 @@ class CodeHandler(unittest.TestCase):
                     '----\n%s\n----' % open(fn).read(),
                    )
                   )
-            ErrorClass = (FuturizeError if 'futurize' in script else PasteurizeError)
-            raise ErrorClass(msg, e.returncode, e.cmd)
+            raise VerboseCalledProcessError(msg, e.returncode, e.cmd, output=e.output)
         return output
 
 
