@@ -1,8 +1,8 @@
 from __future__ import absolute_import
-from future.utils import PY3
+import sys
+__future_module__ = True
 
-if PY3:
-    from html.parser import *
+if sys.version_info[0] == 3:
+    raise ImportError('Cannot import module from python-future source folder')
 else:
-    __future_module__ = True
-    from HTMLParser import *
+    from future.moves.html.parser import *
