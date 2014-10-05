@@ -200,7 +200,7 @@ def future_import(feature, node):
     shebang_encoding_idx = None
 
     for idx, node in enumerate(root.children):
-        # If it's a shebang or encoding line, attach the prefix to
+        # Is it a shebang or encoding line?
         if is_shebang_comment(node) or is_encoding_comment(node):
             shebang_encoding_idx = idx
         if node.type == syms.simple_stmt and \
@@ -218,11 +218,13 @@ def future_import(feature, node):
     import_ = FromImport(u'__future__', [Leaf(token.NAME, feature, prefix=" ")])
     if shebang_encoding_idx == 0 and idx == 0:
         # If this __future__ import would go on the first line,
-        # detach the shebang / encoding prefix from the current first line
+        # detach the shebang / encoding prefix from the current first line.
         # and attach it to our new __future__ import node.
-        import_.prefix = root.children[0].prefix
-        root.children[0].prefix = u''
-    children = [import_, Newline()]
+        import_.set_prefix(root.children[0].get_prefix())
+        root.children[0].set_prefix(u'')
+        # End the __future__ import line with a newline and add a blank line
+        # afterwards:
+    children = [import_ , Newline()]
     root.insert_child(idx, Node(syms.simple_stmt, children))
 
 
