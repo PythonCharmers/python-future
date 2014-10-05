@@ -220,8 +220,8 @@ def future_import(feature, node):
         # If this __future__ import would go on the first line,
         # detach the shebang / encoding prefix from the current first line.
         # and attach it to our new __future__ import node.
-        import_.set_prefix(root.children[0].get_prefix())
-        root.children[0].set_prefix(u'')
+        import_.prefix = root.children[0].prefix
+        root.children[0].prefix = u''
         # End the __future__ import line with a newline and add a blank line
         # afterwards:
     children = [import_ , Newline()]
