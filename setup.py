@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import os
 import os.path
@@ -120,13 +120,42 @@ setup_kwds = {}
 # user's Py3 installation if they run "python2 setup.py
 # build" and then "python3 setup.py install".
 
-import distutils.dir_util
-print('removing old build dir')
 try:
-    distutils.dir_util.remove_tree('build')
+    # If the user happens to run:
+    #     python2 setup.py build
+    #     python3 setup.py install
+    # then folders like "configparser" will be in build/lib.
+    # If so, we CANNOT let the user install this, because
+    # this may break his/her Python 3 install, depending on the folder order in
+    # sys.path. (Running "import configparser" etc. may pick up our Py2
+    # substitute packages, instead of the intended system stdlib modules.)
+    SYSTEM_MODULES = set([
+                          '_dummy_thread',
+                          '_markupbase',
+                          '_thread',
+                          'builtins',
+                          'configparser',
+                          'copyreg',
+                          'html',
+                          'http',
+                          'queue',
+                          'reprlib',
+                          'socketserver',
+                          'tkinter',
+                          'winreg',
+                          'xmlrpc'
+                         ])
+
+    if sys.version_info[0] >= 3:
+        # Do any of the above folders exist in build/lib?
+        files = os.listdir(os.path.join('build', 'lib'))
+        if len(set(files) & set(SYSTEM_MODULES)) > 0:
+            print('ERROR: Your build folder is in an inconsistent state for '
+                  'a Python 3.x install. Please remove it manually and run '
+                  'setup.py again.', file=sys.stderr)
+            sys.exit(1)
 except OSError:
     pass
-
 
 setup(name=NAME,
       version=VERSION,
