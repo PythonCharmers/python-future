@@ -44,9 +44,7 @@ import optparse
 from lib2to3.main import main, warn, StdoutRefactoringTool
 from lib2to3 import refactor
 
-import future
 from future import __version__
-from future.builtins import *
 from libpasteurize.fixes import fix_names
 
 

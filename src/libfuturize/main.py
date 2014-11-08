@@ -62,8 +62,6 @@ the code further.)
 """
 
 from __future__ import (absolute_import, print_function, unicode_literals)
-from future.builtins import *
-import future
 import future.utils
 from future import __version__
 
