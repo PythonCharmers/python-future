@@ -129,6 +129,18 @@ class TestPasteurize(CodeHandler):
         filename = urllib_parse.urlparse(url)[2].split('/')[-1]
         """
 
+    def test_correct_exit_status(self):
+        """
+        Issue #119: futurize and pasteurize were not exiting with the correct
+        status code. This is because the status code returned from
+        libfuturize.main.main() etc. was a ``newint``, which sys.exit() always
+        translates into 1!
+        """
+        from libpasteurize.main import main
+        # Try pasteurizing this test script:
+        retcode = main([__file__])
+        self.assertTrue(isinstance(retcode, int))   # i.e. Py2 builtin int
+
  
 class TestFuturizeAnnotations(CodeHandler):
     @unittest.expectedFailure
