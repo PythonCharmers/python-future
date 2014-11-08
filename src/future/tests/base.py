@@ -44,7 +44,8 @@ def order_future_lines(code):
                                if line.startswith('from __future__ import ')]
 
     future_line_numbers = [i for i, line in enumerate(lines)
-                             if line.startswith('from future')]
+                             if line.startswith('from future')
+                             or line.startswith('from past')]
 
     builtins_line_numbers = [i for i, line in enumerate(lines)
                              if line.startswith('from builtins')]
@@ -56,7 +57,7 @@ def order_future_lines(code):
         return max(numbers) if len(numbers) > 0 else 0
 
     def mymin(numbers):
-        return min(numbers) if len(numbers) > 0 else 0
+        return min(numbers) if len(numbers) > 0 else float('inf')
 
     assert mymax(uufuture_line_numbers) <= mymin(future_line_numbers), \
             'the __future__ and future imports are out of order'

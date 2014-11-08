@@ -104,7 +104,22 @@ class TestFuturizeSimple(CodeHandler):
         from __future__ import print_function
         print('Hello')
         """
-        self.convert_check(before, after)
+        self.convert_check(before, after, ignore_imports=False)
+
+        # Issue #121. This fails as of v0.14.1:
+        before = u"""
+        # -*- coding: utf-8 -*-
+        # Author: etc. with some unicode ¿.
+        1 / 2
+        """
+        after = u"""
+        # -*- coding: utf-8 -*-
+        # Author: etc. with some unicode ¿.
+        from __future__ import division
+        from past.utils import old_div
+        old_div(1, 2)
+        """
+        self.convert_check(before, after, ignore_imports=False)
 
     def test_shebang_blank_with_future_division_import(self):
         """
@@ -435,7 +450,7 @@ class TestFuturizeSimple(CodeHandler):
         """
         code = """
         # -*- coding: utf-8 -*-
-        icons = [u"◐", u"◓", u"◑", u"◒"]
+        icons = [u"â", u"â", u"â", u"â"]
         """
         self.unchanged(code)
 
