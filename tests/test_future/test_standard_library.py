@@ -19,11 +19,12 @@ class TestStandardLibraryReorganization(CodeHandler):
 
     def setUp(self):
         self.interpreter = sys.executable
-        standard_library.install_hooks()
+        standard_library.install_aliases()
         super(TestStandardLibraryReorganization, self).setUp()
 
     def tearDown(self):
-        standard_library.remove_hooks()
+        # standard_library.remove_hooks()
+        pass
 
     def test_can_import_several(self):
         """
@@ -37,8 +38,7 @@ class TestStandardLibraryReorganization(CodeHandler):
         import future.moves.urllib.parse as urllib_parse
         import future.moves.urllib.request as urllib_request
 
-        with standard_library.hooks():
-            import http.server
+        import http.server
         for m in [urllib_parse, urllib_request, http.server]:
             self.assertTrue(m is not None)
 
@@ -368,6 +368,17 @@ class TestStandardLibraryReorganization(CodeHandler):
         import future.moves.urllib.error
         import future.moves.urllib.response
         self.assertTrue(True)
+
+    def test_urllib_imports_install_aliases(self):
+        with standard_library.suspend_hooks():
+            standard_library.install_aliases()
+            import urllib
+            import urllib.parse
+            import urllib.request
+            import urllib.robotparser
+            import urllib.error
+            import urllib.response
+            self.assertTrue(True)
 
     def test_urllib_imports_cm(self):
         with standard_library.hooks():

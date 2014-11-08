@@ -632,7 +632,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         """
         after = """
         from future import standard_library
-        standard_library.install_hooks()
+        standard_library.install_aliases()
         import urllib.request
         
         URL = 'http://pypi.python.org/pypi/future/json'
@@ -1263,7 +1263,7 @@ class TestFuturizeAllImports(CodeHandler):
         from __future__ import division
         from __future__ import absolute_import
         from future import standard_library
-        standard_library.install_hooks()
+        standard_library.install_aliases()
         from builtins import range
         from builtins import *
         import math
