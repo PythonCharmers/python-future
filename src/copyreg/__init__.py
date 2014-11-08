@@ -1,9 +1,9 @@
 from __future__ import absolute_import
-from future.utils import PY3
+import sys
 
-if PY3:
-    raise ImportError('Cannot import module from python-future source folder')
-    from copyreg import *
-else:
-    __future_module__ = True
+if sys.version_info[0] < 3:
     from copy_reg import *
+else:
+    raise ImportError('This package should not be accessible on Python 3. '
+                      'Either you are trying to run from the python-future src folder '
+                      'or your installation of python-future is corrupted.')

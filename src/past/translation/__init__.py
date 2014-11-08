@@ -43,7 +43,6 @@ from lib2to3.refactor import RefactoringTool
 
 from libfuturize import fixes
 
-__version__ = '0.1.0'
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -54,12 +53,6 @@ myfixes = (list(fixes.libfuturize_fix_names_stage1) +
            list(fixes.lib2to3_fix_names_stage2))
 
 
-# There are two possible grammars: with or without the print statement.
-# Hence we have two possible refactoring tool implementations.
-_rt = RefactoringTool(myfixes)
-_rtp = RefactoringTool(myfixes, {'print_function': True})
-
-# 
 # We detect whether the code is Py2 or Py3 by applying certain lib2to3 fixers
 # to it. If the diff is empty, it's Python 3 code.
 
@@ -122,12 +115,42 @@ py2_detect_fixers = [
 ]
 
 
-_rt_py2_detect = RefactoringTool(py2_detect_fixers)
-_rtp_py2_detect = RefactoringTool(py2_detect_fixers,
-                                  {'print_function': True})
+class RTs:
+    """
+    A namespace for the refactoring tools. This avoids creating these at
+    the module level, which slows down the module import. (See issue #117).
+
+    There are two possible grammars: with or without the print statement.
+    Hence we have two possible refactoring tool implementations.
+    """
+    _rt = None
+    _rtp = None
+    _rt_py2_detect = None
+    _rtp_py2_detect = None
+
+    @staticmethod
+    def setup():
+        """
+        Call this before using the refactoring tools to create them on demand
+        if needed.
+        """
+        if None in [RTs._rt, RTs._rtp]:
+            RTs._rt = RefactoringTool(myfixes)
+            RTs._rtp = RefactoringTool(myfixes, {'print_function': True})
 
 
-#
+    @staticmethod
+    def setup_detect_python2():
+        """
+        Call this before using the refactoring tools to create them on demand
+        if needed.
+        """
+        if None in [RTs._rt_py2_detect, RTs._rtp_py2_detect]:
+            RTs._rt_py2_detect = RefactoringTool(py2_detect_fixers)
+            RTs._rtp_py2_detect = RefactoringTool(py2_detect_fixers,
+                                                  {'print_function': True})
+
+
 # We need to find a prefix for the standard library, as we don't want to
 # process any files there (they will already be Python 3).
 #
@@ -145,7 +168,6 @@ _rtp_py2_detect = RefactoringTool(py2_detect_fixers,
 # Instead, we use the portion of the path common to both the stdlib modules
 # ``math`` and ``urllib``.
 
-import os, sys
 def splitall(path):
     """
     Split a path into all components. From Python Cookbook.
@@ -179,8 +201,6 @@ def common_substring(s1, s2):
         chunks.append(dir1)
     return os.path.join(*chunks)
 
-# import math
-# import urllib
 # _stdlibprefix = common_substring(math.__file__, urllib.__file__)
 
 
@@ -188,12 +208,13 @@ def detect_python2(source, pathname):
     """
     Returns a bool indicating whether we think the code is Py2
     """
+    RTs.setup_detect_python2()
     try:
-        tree = _rt_py2_detect.refactor_string(source, pathname)
+        tree = RTs._rt_py2_detect.refactor_string(source, pathname)
     except ParseError as e:
         if e.msg != 'bad input' or e.value != '=':
             raise
-        tree = _rtp.refactor_string(source, pathname)
+        tree = RTs._rtp.refactor_string(source, pathname)
 
     if source != str(tree)[:-1]:   # remove added newline
         # The above fixers made changes, so we conclude it's Python 2 code
@@ -282,13 +303,14 @@ class Py2Fixer(object):
         # if that's better for you
 
         # lib2to3 likes a newline at the end
+        RTs.setup()
         source += '\n'
         try:
-            tree = _rt.refactor_string(source, self.pathname)
+            tree = RTs._rt.refactor_string(source, self.pathname)
         except ParseError as e:
             if e.msg != 'bad input' or e.value != '=':
                 raise
-            tree = _rtp.refactor_string(source, self.pathname)
+            tree = RTs._rtp.refactor_string(source, self.pathname)
         # could optimise a bit for only doing str(tree) if
         # getattr(tree, 'was_changed', False) returns True
         return str(tree)[:-1] # remove added newline

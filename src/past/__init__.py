@@ -82,10 +82,8 @@ Licensing
 ---------
 Copyright 2013-2014 Python Charmers Pty Ltd, Australia.
 The software is distributed under an MIT licence. See LICENSE.txt.
-
 """
 
-# from past.builtins import *
 
 from past.translation import install_hooks as autotranslate
 from future import __version__, __copyright__, __license__

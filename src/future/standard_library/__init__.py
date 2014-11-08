@@ -267,7 +267,7 @@ class RenameImport(object):
             # New name. Look up the corresponding old (Py2) name:
             oldname = self.new_to_old[name]
             module = self._find_and_load_module(oldname)
-            module.__future_module__ = True
+            # module.__future_module__ = True
         else:
             module = self._find_and_load_module(name)
         # In any case, make it available under the requested (Py3) name
@@ -451,7 +451,7 @@ def install_aliases():
         # We look up the module in sys.modules because __import__ just returns the
         # top-level package:
         newmod = sys.modules[newmodname]
-        newmod.__future_module__ = True
+        # newmod.__future_module__ = True
 
         __import__(oldmodname)
         oldmod = sys.modules[oldmodname]
