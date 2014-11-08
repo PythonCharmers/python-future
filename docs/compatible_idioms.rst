@@ -533,7 +533,14 @@ Iterable dict items:
 .. code:: python
 
     # Python 2 and 3: option 2
-    from builtins import iteritems
+    from future.utils import viewitems
+    
+    for (key, value) in viewitems(heights):   # also behaves like a set
+        ...
+.. code:: python
+
+    # Python 2 and 3: option 3
+    from future.utils import iteritems
     # or
     from six import iteritems
     
