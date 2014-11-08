@@ -210,7 +210,7 @@ Stage 2 also renames standard-library imports to their Py3 names and adds these
 two lines::
 
     from future import standard_library
-    standard_library.install_hooks()
+    standard_library.install_aliases()
 
 For example::
 
@@ -219,7 +219,7 @@ For example::
 becomes::
 
     from future import standard_library
-    standard_library.install_hooks()
+    standard_library.install_aliases()
     import configparser
 
 The complete list of fixers applied in Stage 2 is::

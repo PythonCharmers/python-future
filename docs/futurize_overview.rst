@@ -27,7 +27,7 @@ into this code which runs on both Py2 and Py3:
 
     from __future__ import print_function
     from future import standard_library
-    standard_library.install_hooks()
+    standard_library.install_aliases()
     from future.builtins import next
     from future.builtins import object
     import configparser                 # Py3-style import
