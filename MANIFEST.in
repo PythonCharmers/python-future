@@ -9,6 +9,7 @@ recursive-include docs README
 recursive-include docs *.conf
 recursive-include docs *.css_t
 recursive-include docs *.html
+recursive-include docs *.ico
 recursive-include docs *.inc
 recursive-include docs *.ipynb
 recursive-include docs *.png
