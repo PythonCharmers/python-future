@@ -326,13 +326,18 @@ class CodeHandler(unittest.TestCase):
         try:
             output = check_output(call_args, stderr=STDOUT, env=self.env)
         except CalledProcessError as e:
-            msg = ('Error running the command %s\n%s\nContents of file %s:\n\n%s' %
-                   (' '.join(call_args),
-                    'env=%s' % self.env,
-                    fn,
-                    '----\n%s\n----' % open(fn).read(),
-                   )
-                  )
+            with open(fn) as f:
+                msg = (
+                    'Error running the command %s\n'
+                    '%s\n'
+                    'Contents of file %s:\n'
+                    '\n'
+                    '%s') % (
+                        ' '.join(call_args),
+                        'env=%s' % self.env,
+                        fn,
+                        '----\n%s\n----' % f.read(),
+                    )
             ErrorClass = (FuturizeError if 'futurize' in script else PasteurizeError)
             raise ErrorClass(msg, e.returncode, e.cmd, output=e.output)
         return output
@@ -345,13 +350,18 @@ class CodeHandler(unittest.TestCase):
             output = check_output([interpreter, fn],
                                   env=self.env, stderr=STDOUT)
         except CalledProcessError as e:
-            msg = ('Error running the command %s\n%s\nContents of file %s:\n\n%s' %
-                   (' '.join([interpreter, fn]),
-                    'env=%s' % self.env,
-                    fn,
-                    '----\n%s\n----' % open(fn).read(),
-                   )
-                  )
+            with open(fn) as f:
+                msg = (
+                    'Error running the command %s\n'
+                    '%s\n'
+                    'Contents of file %s:\n'
+                    '\n'
+                    '%s') % (
+                        ' '.join([interpreter, fn]),
+                        'env=%s' % self.env,
+                        fn,
+                        '----\n%s\n----' % f.read(),
+                    )
             raise VerboseCalledProcessError(msg, e.returncode, e.cmd, output=e.output)
         return output
 
