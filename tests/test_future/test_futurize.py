@@ -17,6 +17,7 @@ from future.utils import PY2
 
 
 class TestLibFuturize(unittest.TestCase):
+    @skip26    # mysterious sporadic UnicodeDecodeError raised by lib2to3 ...
     def test_correct_exit_status(self):
         """
         Issue #119: futurize and pasteurize were not exiting with the correct
@@ -437,7 +438,6 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after, ignore_imports=False)
     
-    @expectedFailurePY26
     def test_source_coding_utf8(self):
         """
         Tests to ensure that the source coding line is not corrupted or

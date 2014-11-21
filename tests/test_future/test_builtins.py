@@ -9,7 +9,8 @@ from future.builtins import (bytes, dict, int, range, round, str, super,
                              filter, map, zip)
 
 from future.utils import PY3, exec_, native_str, implements_iterator
-from future.tests.base import unittest, skip26, expectedFailurePY2
+from future.tests.base import (unittest, skip26, expectedFailurePY2,
+                               expectedFailurePY26)
 
 import sys
 import textwrap
@@ -1389,15 +1390,18 @@ class BuiltinTest(unittest.TestCase):
             expected = terminal_input.decode(sys.stdin.encoding)  # what else?
         self.assertEqual(input_result, expected)
 
+    @expectedFailurePY26
     def test_input_tty(self):
         # Test input() functionality when wired to a tty (the code path
         # is different and invokes GNU readline if available).
         self.check_input_tty("prompt", b"quux")
 
+    @expectedFailurePY26
     def test_input_tty_non_ascii(self):
         # Check stdin/stdout encoding is used when invoking GNU readline
         self.check_input_tty("prompté", b"quux\xe9", "utf-8")
 
+    @expectedFailurePY26
     def test_input_tty_non_ascii_unicode_errors(self):
         # Check stdin/stdout error handler is used when invoking GNU readline
         self.check_input_tty("prompté", b"quux\xe9", "ascii")

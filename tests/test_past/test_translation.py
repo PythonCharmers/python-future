@@ -90,27 +90,6 @@ class TestTranslate(unittest.TestCase):
         module = self.write_and_import(code, 'div')
         self.assertEqual(module.x, 1)
 
-    @expectedFailurePY26
-    @expectedFailurePY3
-    def test_stdlib(self):
-        """
-        Have the old stdlib names been mapped onto the new ones?
-        The translation code should do this on Py3:
-
-        >>> import configparser as ConfigParser
-        >>> import html.parser as HTMLParser
-
-        """
-        code = """
-        import ConfigParser
-        import HTMLParser
-        import collections    # check that normal ones succeed too
-        """
-        module = self.write_and_import(code, 'stdlib')
-        self.assertTrue('SafeConfigParser' in dir(module.ConfigParser))
-        self.assertTrue('endendtag' in dir(module.HTMLParser))
-        self.assertTrue(issubclass(module.collections.defaultdict, dict))
-
     def test_import_future_standard_library(self):
         """
         Does futurized Py3-like code like this work under autotranslation??
@@ -154,7 +133,6 @@ class TestTranslate(unittest.TestCase):
         self.assertEqual(module.d, [0, 4, 8, 12, 16])
         self.assertTrue(module.e)
 
-    @expectedFailurePY26
     @expectedFailurePY3
     def test_import_builtin_types(self):
         code = """

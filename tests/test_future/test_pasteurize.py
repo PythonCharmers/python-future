@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This module contains snippets of Python 3 code (invalid Python 2) and
 tests for whether they can be passed to ``pasteurize`` and
@@ -129,6 +130,7 @@ class TestPasteurize(CodeHandler):
         filename = urllib_parse.urlparse(url)[2].split('/')[-1]
         """
 
+    @skip26    # mysterious sporadic UnicodeDecodeError raised by lib2to3 ...
     def test_correct_exit_status(self):
         """
         Issue #119: futurize and pasteurize were not exiting with the correct
