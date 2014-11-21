@@ -9,9 +9,6 @@ from __future__ import (absolute_import, division,
 from future import utils
 from future.builtins import str, range, open, int, map, list
 
-# if __name__ != 'test.support':
-#     raise ImportError('support must be imported from the test package')
-
 import contextlib
 import errno
 import functools

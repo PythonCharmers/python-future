@@ -7,7 +7,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import os
 import sys
 
-from future.utils import implements_iterator, PY26, PY3
+from future.utils import implements_iterator, PY3
 from future.tests.base import unittest, skip26
 from past.builtins import dict
 
@@ -785,19 +785,7 @@ class Py2DictTest(unittest.TestCase):
     #     self._tracked(MyDict())
 
 
-def test_main():
-    if PY3:
-        from test import support as test_support
-    else:
-        from test import test_support
-
+if __name__ == '__main__':
     # Only run these tests on Python 3 ...
     if PY3:
-        test_support.run_unittest(
-            TestOldDict,
-            Py2DictTest,
-        )
-
-
-if __name__ == '__main__':
-    test_main()
+        unittest.main()

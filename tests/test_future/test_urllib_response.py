@@ -22,6 +22,7 @@ class TestFile(object):
     def close(self):
         self.closed = True
 
+
 class Testaddbase(unittest.TestCase):
 
     # TODO(jhylton): Write tests for other functionality of addbase()
@@ -39,8 +40,6 @@ class Testaddbase(unittest.TestCase):
         self.assertTrue(self.fp.closed)
         self.assertRaises(ValueError, f)
 
-def test_main():
-    test_support.run_unittest(Testaddbase)
 
 if __name__ == '__main__':
-    test_main()
+    unittest.main()
