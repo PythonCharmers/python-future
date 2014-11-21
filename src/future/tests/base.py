@@ -9,11 +9,11 @@ import io
 import functools
 from textwrap import dedent
 
-if not hasattr(unittest, 'skip'):
-    import unittest2 as unittest
-
 from future.utils import bind_method, PY26, PY3, PY2
 from future.moves.subprocess import check_output, STDOUT, CalledProcessError
+
+if PY26:
+    import unittest2 as unittest
 
 
 def reformat_code(code):
@@ -369,29 +369,13 @@ def expectedFailurePY3(func):
 def expectedFailurePY26(func):
     if not PY26:
         return func
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-        except Exception:
-            raise unittest.case._ExpectedFailure(sys.exc_info())
-        # The following contributes to a FAILURE on Py2.6 (with
-        # unittest2). Ignore it ...
-        # raise unittest.case._UnexpectedSuccess
-    return wrapper
+    return unittest.expectedFailure(func)
 
 
 def expectedFailurePY2(func):
     if not PY2:
         return func
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-        except Exception:
-            raise unittest.case._ExpectedFailure(sys.exc_info())
-        raise unittest.case._UnexpectedSuccess
-    return wrapper
+    return unittest.expectedFailure(func)
 
 
 # Renamed in Py3.3:

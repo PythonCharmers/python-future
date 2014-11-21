@@ -956,10 +956,12 @@ def _filterwarnings(filters, quiet=False):
     frame = sys._getframe(2)
     registry = frame.f_globals.get('__warningregistry__')
     if registry:
-        # Was: registry.clear()
-        # Py2-compatible:
-        for i in range(len(registry)):
-            registry.pop()
+        if utils.PY3:
+            registry.clear()
+        else:
+            # Py2-compatible:
+            for i in range(len(registry)):
+                registry.pop()
     with warnings.catch_warnings(record=True) as w:
         # Set filter "always" to record all warnings.  Because
         # test_warnings swap the module, we need to look up in
