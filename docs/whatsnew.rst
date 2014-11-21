@@ -5,6 +5,22 @@ What's New
 
 .. _whats-new-0.14.x:
 
+What's new in version 0.14.2
+============================
+
+This is a bug-fix release:
+
+- Speed up importing of ``past.translation`` (issue #117)
+- ``html.escape()``: replace function with the more robust one from Py3.4
+- futurize: avoid displacing encoding comments by __future__ imports (issues #97, #10, #121)
+- futurize: don't swallow exit code (issue #119)
+- Packaging: don't forcibly remove the old build dir in ``setup.py`` (issue #108)
+- Docs: update further docs and tests to refer to ``install_aliases()`` instead of
+  ``install_hooks()``
+- Docs: fix ``iteritems`` import error in cheat sheet (issue #120)
+- Tests: don't rely on presence of ``test.test_support`` on Py2 or ``test.support`` on Py3 (issue #109)
+- Tests: don't override existing ``PYTHONPATH`` for tests (PR #111)
+
 What's new in version 0.14.1
 ============================
 
