@@ -11,7 +11,7 @@ collections.Counter      (for Python 2.6)
 from math import ceil as oldceil
 import subprocess
 
-from future.utils import iteritems, PY26
+from future.utils import iteritems, itervalues, PY26
 
 
 def ceil(x):
