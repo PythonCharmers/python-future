@@ -306,6 +306,8 @@ class newint(with_metaclass(BaseNewInt, long)):
         if signed and self < 0:
             bits = length * 8
             num = (2**bits) + self
+            if num <= 0:
+                raise OverflowError("int too smal to convert")
         else:
             if self < 0:
                 raise OverflowError("can't convert negative int to unsigned")
@@ -314,6 +316,12 @@ class newint(with_metaclass(BaseNewInt, long)):
             raise ValueError("byteorder must be either 'little' or 'big'")
         h = b'%x' % num
         s = newbytes((b'0'*(len(h) % 2) + h).zfill(length*2).decode('hex'))
+        if signed:
+            high_set = s[0] & 0x80
+            if self > 0 and high_set:
+                raise OverflowError("int too big to convert")
+            if self < 0 and not high_set:
+                raise OverflowError("int too small to convert")
         if len(s) > length:
             raise OverflowError("int too big to convert")
         return s if byteorder == 'big' else s[::-1]
