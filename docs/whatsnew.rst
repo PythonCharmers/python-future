@@ -5,6 +5,16 @@ What's New
 
 .. _whats-new-0.14.x:
 
+What's new in version 0.14.3
+============================
+
+This is a bug-fix release:
+
+- Import ``thread`` contents as ``_thread`` on Py2, not ``dummy_thread`` (issue #124)
+- Add signed support for ``newint.to_bytes()`` (issue #128)
+- Fix ``OrderedDict.clear()`` on Py2.6 (issue #125)
+- Fix ``newrange`` equality and slicing (issue #129)
+
 What's new in version 0.14.2
 ============================
 
