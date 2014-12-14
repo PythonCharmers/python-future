@@ -132,7 +132,9 @@ class newrange(Sequence):
         of the sequence represented by this range.
         """
         start, stop, step = slce.indices(self._len)
-        return newrange(self[start], stop + self._start, step * self._step)
+        return newrange(self._start + self._step*start,
+                        self._start + stop,
+                        self._step * step)
 
     def __iter__(self):
         """Return an iterator which enumerates the elements of the

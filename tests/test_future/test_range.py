@@ -19,10 +19,14 @@ class RangeTests(unittest.TestCase):
         self.assertFalse(range(1, 1))
         self.assertFalse(range(5, 2))
 
-    def test_equality(self):
+    def test_equality_range(self):
         self.assertEqual(range(7), range(7))
         self.assertEqual(range(0), range(1, 1))
         self.assertEqual(range(0, 10, 3), range(0, 11, 3))
+
+    def test_slice_empty_range(self):
+        self.assertEqual(range(0)[:], range(0))
+        self.assertEqual(range(0)[::-1], range(-1, -1, -1))
 
     def test_slice_range(self):
         r = range(8)
