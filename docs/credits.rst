@@ -8,7 +8,7 @@ Licence
 The software is distributed under an MIT licence. The text is as follows
 (from ``LICENSE.txt``)::
 
-    Copyright (c) 2013-2014 Python Charmers Pty Ltd, Australia
+    Copyright (c) 2013-2015 Python Charmers Pty Ltd, Australia
     
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

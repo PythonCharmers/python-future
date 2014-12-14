@@ -42,7 +42,7 @@ The easiest way is to start each new module with these lines::
 Then write standard Python 3 code. The :mod:`future` package will
 provide support for running your code on Python 2.6 and 2.7 mostly unchanged.
 
-- For explicit import forms, see :ref:`imports`.
+- For explicit import forms, see :ref:`explicit-imports`.
 - For more details, see :ref:`what-else`.
 - For a cheat sheet, see :ref:`compatible-idioms`.
 

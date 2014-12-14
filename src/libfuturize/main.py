@@ -1,5 +1,5 @@
 """
-futurize: automatic conversion to clean 2&3 code using ``python-future``
+futurize: automatic conversion to clean 2/3 code using ``python-future``
 ======================================================================
 
 Like Armin Ronacher's modernize.py, ``futurize`` attempts to produce clean
@@ -14,7 +14,7 @@ Use it like this on Python 2 code:
 
 This will attempt to port the code to standard Py3 code that also
 provides Py2 compatibility with the help of the right imports from
-``future``. To write the changes to disk, use the -w flag.
+``future``.
 
 To write changes to the files, use the -w flag.
 

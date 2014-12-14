@@ -1,6 +1,6 @@
 .. _forwards-conversion:
 
-``futurize``: Py2 to Py2&3
+``futurize``: Py2 to Py2/3
 --------------------------
 
 .. include:: futurize_overview.rst

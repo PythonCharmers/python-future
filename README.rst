@@ -13,7 +13,7 @@ ports of features from Python 3 and 2. It also comes with ``futurize`` and
 either Py2 or Py3 code easily to support both Python 2 and 3 in a single
 clean Py3-style codebase, module by module.
 
-Notable projects that use ``python-future`` for Python 3/2 compatibility
+Notable projects that use ``python-future`` for Python 2/3 compatibility
 are `Mezzanine <http://mezzanine.jupo.org/>`_ and `ObsPy
 <http://obspy.org>`_.
 
@@ -149,9 +149,12 @@ interface works like this:
     from future import standard_library
     standard_library.install_aliases()
 
-    # Then, as usual:
-    from itertools import filterfalse
+    # Then, for example:
+    from itertools import filterfalse, zip_longest
     from urllib.request import urlopen
+    from collections import Counter, OrderedDict   # backported to Py2.6
+    from collections import UserDict, UserList, UserString
+    from subprocess import getoutput, getstatusoutput
 
 
 Automatic conversion to Py2/3-compatible code
@@ -159,7 +162,7 @@ Automatic conversion to Py2/3-compatible code
 
 ``python-future`` comes with two scripts called ``futurize`` and
 ``pasteurize`` to aid in making Python 2 code or Python 3 code compatible with
-both platforms (Py2&3). It is based on 2to3 and uses fixers from ``lib2to3``,
+both platforms (Py2/3). It is based on 2to3 and uses fixers from ``lib2to3``,
 ``lib3to2``, and ``python-modernize``, as well as custom fixers.
 
 ``futurize`` passes Python 2 code through all the appropriate fixers to turn it
@@ -261,7 +264,7 @@ Licensing
 
 :Author:  Ed Schofield
 
-:Copyright: 2013-2014 Python Charmers Pty Ltd, Australia.
+:Copyright: 2013-2015 Python Charmers Pty Ltd, Australia.
 
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com

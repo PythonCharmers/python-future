@@ -1,5 +1,5 @@
 """
-pasteurize: automatic conversion of Python 3 code to clean 2&3 code
+pasteurize: automatic conversion of Python 3 code to clean 2/3 code
 ===================================================================
 
 ``pasteurize`` attempts to convert existing Python 3 code into source-compatible

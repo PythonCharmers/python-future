@@ -1,6 +1,6 @@
 .. _backwards-conversion:
 
-``pasteurize``: Py3 to Py2&3
+``pasteurize``: Py3 to Py2/3
 ----------------------------
 
 Running ``pasteurize -w mypy3module.py`` turns this Python 3 code::

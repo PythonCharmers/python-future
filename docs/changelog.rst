@@ -5,6 +5,67 @@ Changes in previous versions
 
 Changes in the most recent two versions are here: :ref:`whats-new`.
 
+.. _whats-new-0.13.x:
+
+Changes in version 0.13.1
+=========================
+
+This is a bug-fix release:
+
+- Fix (multiple) inheritance of ``future.builtins.object`` with metaclasses (issues #91 and #96)
+- Fix ``futurize``'s refactoring of ``urllib`` imports (issue #94)
+- Fix ``futurize --all-imports`` (issue #101)
+- Fix ``futurize --output-dir`` logging (issue #102)
+- Doc formatting fix (issues #98, 100)
+
+
+Changes in version 0.13
+=======================
+
+This is mostly a clean-up release. It adds some small new compatibility features
+and fixes several bugs.
+
+Deprecations
+------------
+
+The following unused internal modules are now deprecated. They will be removed in a
+future release:
+
+- ``future.utils.encoding`` and ``future.utils.six``.
+
+(Issue #80). See `here <http://fedoraproject.org/wiki/Packaging:No_Bundled_Libraries>`_
+for the rationale for unbundling them.
+
+
+New features
+------------
+
+- Docs: Add :ref:`compatible-idioms` from Ed Schofield's PyConAU 2014 talk.
+- Add ``newint.to_bytes()`` and ``newint.from_bytes()`` (issue #85)
+- Add ``future.utils.raise_from`` as an equivalent to Py3's ``raise ... from
+  ...`` syntax (issue #86).
+- Add ``past.builtins.oct()`` function.
+- Add backports for Python 2.6 of ``subprocess.check_output()``,
+  ``itertools.combinations_with_replacement()``, and ``functools.cmp_to_key()``.
+
+Bug fixes
+---------
+
+- Use a private logger instead of the global logger in
+  ``future.standard_library`` (issue #82). This restores compatibility of the
+  standard library hooks with ``flask`` (issue #79).
+- Stage 1 of ``futurize`` no longer renames ``next`` methods to ``__next__``
+  (issue #81). It still converts ``obj.next()`` method calls to
+  ``next(obj)`` correctly.
+- Prevent introduction of a second set of parentheses in ``print()`` calls in
+  some further cases.
+- Fix isinstance checks for subclasses of future types (issue #89).
+- Be explicit about encoding file contents as UTF-8 in unit tests (issue #63).
+  Useful for building RPMs and in other environments where ``LANG=C``.
+- Fix for 3-argument ``pow(x, y, z)`` with ``newint`` arguments (issue #87).
+  (Thanks to @str4d).
+
+
 .. _whats-new-0.12.4:
 
 Changes in version 0.12.4
@@ -116,7 +177,7 @@ with tools like ``py2exe``.
 -------------------------------------------------------------------------
 
 There is a new ``future.types.newobject`` base class (available as
-``future.builtins.object``) that can streamline Py3/2 compatible code by
+``future.builtins.object``) that can streamline Py2/3 compatible code by
 providing fallback Py2-compatible special methods for its subclasses. It
 currently provides ``next()`` and ``__nonzero__()`` as fallback methods on Py2
 when its subclasses define the corresponding Py3-style ``__next__()`` and
@@ -703,6 +764,15 @@ deprecated.
 
 Summary of all changes
 ======================
+
+v0.14.3:
+  * Bug fixes
+
+v0.14.2:
+  * Bug fixes
+
+v0.14.1:
+  * Bug fixes
 
 v0.14:
   * New top-level ``builtins`` package on Py2 for cleaner imports. Equivalent to
