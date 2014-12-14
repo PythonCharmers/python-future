@@ -19,6 +19,7 @@ From Dan Crosta's README:
 """
 
 from collections import Sequence, Iterator
+from itertools import islice
 
 
 class newrange(Sequence):
@@ -54,6 +55,18 @@ class newrange(Sequence):
         self._stop = stop
         self._step = step
         self._len = (stop - start) // step + bool((stop - start) % step)
+
+    @property
+    def start(self):
+        return self._start
+
+    @property
+    def stop(self):
+        return self._stop
+
+    @property
+    def step(self):
+        return self._step
 
     def __repr__(self):
         if self._step == 1:
@@ -94,12 +107,7 @@ class newrange(Sequence):
             return False
 
     def __reversed__(self):
-        """Return a range which represents a sequence whose
-        contents are the same as the sequence this range
-        represents, but in the opposite order."""
-        sign = self._step / abs(self._step)
-        last = self._start + ((self._len - 1) * self._step)
-        return newrange(last, self._start - sign, -1 * self._step)
+        return iter(self[::-1])
 
     def __getitem__(self, index):
         """Return the element at position ``index`` in the sequence
@@ -119,40 +127,34 @@ class newrange(Sequence):
         of the sequence represented by this range.
         """
         start, stop, step = slce.indices(self._len)
-        return newrange(self[start], stop + self._start, step * self._step)
+        return newrange(self._start + self._step*start,
+                        self._start + stop,
+                        self._step * step)
 
     def __iter__(self):
         """Return an iterator which enumerates the elements of the
         sequence this range represents."""
-        return rangeiterator(self)
+        return range_iterator(self)
 
 
-class rangeiterator(Iterator):
+class range_iterator(Iterator):
     """An iterator for a :class:`range`.
     """
-
-    def __init__(self, rangeobj):
-        self._range = rangeobj
-
-        # Intialize the "last outputted value" to the value
-        # just before the first value; this simplifies next()
-        self._last = self._range._start - self._range._step
-        self._count = 0
+    def __init__(self, range_):
+        self._stepper = islice(_count(range_.start, range_.step), len(range_))
 
     def __iter__(self):
-        """An iterator is already an iterator, so return ``self``.
-        """
         return self
 
     def next(self):
-        """Return the next element in the sequence represented
-        by the range we are iterating, or raise StopIteration
-        if we have passed the end of the sequence."""
-        self._last += self._range._step
-        self._count += 1
-        if self._count > self._range._len:
-            raise StopIteration()
-        return self._last
+        return next(self._stepper)
+
+
+# itertools.count in Py 2.6 doesn't accept a step parameter
+def _count(start=0, step=1):
+    while True:
+        yield start
+        start += step
 
 
 __all__ = ['newrange']

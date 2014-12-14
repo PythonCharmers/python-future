@@ -6,12 +6,13 @@ Tests for the backported class:`range` class.
 from future.builtins import range
 from future.tests.base import unittest
 
-from collections import Sequence
+from collections import Iterator, Sequence
 
 
 class RangeTests(unittest.TestCase):
     def test_range(self):
         self.assertTrue(isinstance(range(0), Sequence))
+        self.assertTrue(isinstance(reversed(range(0)), Iterator))
 
     def test_bool_range(self):
         self.assertFalse(range(0))
@@ -19,10 +20,14 @@ class RangeTests(unittest.TestCase):
         self.assertFalse(range(1, 1))
         self.assertFalse(range(5, 2))
 
-    def test_equality(self):
+    def test_equality_range(self):
         self.assertEqual(range(7), range(7))
         self.assertEqual(range(0), range(1, 1))
         self.assertEqual(range(0, 10, 3), range(0, 11, 3))
+
+    def test_slice_empty_range(self):
+        self.assertEqual(range(0)[:], range(0))
+        self.assertEqual(range(0)[::-1], range(-1, -1, -1))
 
     def test_slice_range(self):
         r = range(8)
@@ -98,6 +103,16 @@ class RangeTests(unittest.TestCase):
         msg = '^slice step cannot be zero$'
         with self.assertRaisesRegexp(ValueError, msg):
             range(8)[::0]
+
+    def test_properties(self):
+        # Exception string differs between PY2/3
+        r = range(0)
+        with self.assertRaises(AttributeError):
+            r.start = 0
+        with self.assertRaises(AttributeError):
+            r.stop = 0
+        with self.assertRaises(AttributeError):
+            r.step = 0
 
 
 if __name__ == '__main__':
