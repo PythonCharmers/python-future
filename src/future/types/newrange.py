@@ -1,5 +1,5 @@
 """
-Nearly identical to xrange.py, by Dan Crosta, from 
+Nearly identical to xrange.py, by Dan Crosta, from
 
     https://github.com/dcrosta/xrange.git
 
@@ -18,10 +18,7 @@ From Dan Crosta's README:
         https://late.am/post/2012/06/18/what-the-heck-is-an-xrange
 """
 
-from math import ceil
 from collections import Sequence, Iterator
-
-from future.utils import PY3
 
 
 class newrange(Sequence):
@@ -64,10 +61,10 @@ class newrange(Sequence):
         return 'range(%d, %d, %d)' % (self._start, self._stop, self._step)
 
     def __eq__(self, other):
-        return isinstance(other, newrange) and \
-               self._start == other._start and \
-               self._stop == other._stop and \
-               self._step == other._step
+        return (isinstance(other, newrange) and
+                (self._len == 0 == other._len or
+                 (self._start, self._step, self._len) ==
+                 (other._start, other._step, self._len)))
 
     def __len__(self):
         return self._len
@@ -121,23 +118,8 @@ class newrange(Sequence):
         """Return a range which represents the requested slce
         of the sequence represented by this range.
         """
-        start, stop, step = slce.start, slce.stop, slce.step
-        if step == 0:
-            raise ValueError('slice step cannot be 0')
-
-        start = start or self._start
-        stop = stop or self._stop
-        if start < 0:
-            start = max(0, start + self._len)
-        if stop < 0:
-            stop = max(start, stop + self._len)
-
-        if step is None or step > 0:
-            return newrange(start, stop, step or 1)
-        else:
-            rv = reversed(self)
-            rv._step = step
-            return rv
+        start, stop, step = slce.indices(self._len)
+        return newrange(self[start], stop + self._start, step * self._step)
 
     def __iter__(self):
         """Return an iterator which enumerates the elements of the
