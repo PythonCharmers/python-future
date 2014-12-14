@@ -1,15 +1,14 @@
 .. _futurize_cheatsheet:
 
-``futurize`` quick-start: automatic conversion from Py2 to Py2/3
-================================================================
+``futurize`` quick-start guide
+------------------------------
 
-Instructions and notes on converting code from supporting only Python 2 to
-supporting both Python 3 and 2 with a single codebase using ``futurize``:
+How to convert Py2 code to Py2/3 code using ``futurize``:
 
 .. _porting-setup:
 
 Step 0: setup
--------------
+~~~~~~~~~~~~~
 
 Step 0 goal: set up and see the tests passing on Python 2 and failing on Python 3.
 
@@ -23,7 +22,7 @@ d. Install Python 3.3 with e.g. ``sudo apt-get install python3``. On other platf
 .. _porting-step1:
 
 Step 1: modern Py2 code
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The goal for this step is to modernize the Python 2 code without introducing any dependencies (on ``future`` or e.g. ``six``) at this stage.
 
@@ -45,7 +44,7 @@ See :ref:`forwards-conversion-stage1` for more info.
 
 
 Example error
-~~~~~~~~~~~~~
+*************
 
 One relatively common error after conversion is::
 
@@ -71,7 +70,7 @@ imports.)
 .. _porting-step2:
 
 Step 2: working Py3 code that still supports Py2
-------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The goal for this step is to get the tests passing first on Py3 and then on Py2
 again with the help of the ``future`` package.

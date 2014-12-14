@@ -1,26 +1,19 @@
-How well do ``futurize`` and ``pasteurize`` work?
--------------------------------------------------
-
-They are still incomplete and make some mistakes, like 2to3, on which they are
-based.
-
-Nevertheless, ``futurize`` and ``pasteurize`` are useful to automate much of the
-work of porting, particularly the boring repetitive text substitutions. They also
-help to flag which parts of the code require attention.
-
-Please report bugs on `GitHub
-<https://github.com/PythonCharmers/python-future/>`_.
-
-Contributions to the ``lib2to3``-based fixers for ``futurize`` and
-``pasteurize`` are particularly welcome! Please see :ref:`contributing`.
-
-
 .. _futurize-limitations:
 
 Known limitations
 -----------------
 
-``futurize`` doesn't currently make this change automatically:
+``futurize`` and ``pasteurize`` are useful to automate much of the
+work of porting, particularly the boring repetitive text substitutions. They also
+help to flag which parts of the code require attention.
+
+Nevertheless, ``futurize`` and ``pasteurize`` are still incomplete and make
+some mistakes, like 2to3, on which they are based. Please report bugs on
+`GitHub <https://github.com/PythonCharmers/python-future/>`_. Contributions to
+the ``lib2to3``-based fixers for ``futurize`` and ``pasteurize`` are
+particularly welcome! Please see :ref:`contributing`.
+
+``futurize`` doesn't currently make the following change automatically:
 
 1. Strings containing ``\U`` produce a ``SyntaxError`` on Python 3. An example is::
 

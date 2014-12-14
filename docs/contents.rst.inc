@@ -9,13 +9,11 @@ Contents:
    quickstart
    compatible_idioms
    imports
-   standard_library_imports
    what_else
    automatic_conversion
-   futurize_cheatsheet
-   translation
-   stdlib_incompatibilities
    faq
+   stdlib_incompatibilities
+   older_interfaces
    changelog
    credits
    reference

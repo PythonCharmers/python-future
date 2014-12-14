@@ -22,6 +22,8 @@ mostly unchanged on both Python 2 and Python 3.
 
 .. include:: futurize.rst
 
+.. include:: futurize_cheatsheet.rst
+
 .. include:: pasteurize.rst
 
 .. include:: conversion_limitations.rst

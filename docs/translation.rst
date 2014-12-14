@@ -1,7 +1,7 @@
 .. _translation:
 
 Using Python 2-only dependencies on Python 3
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------
 
 The ``past`` module provides an experimental ``translation`` package to help
 with importing and using old Python 2 modules in a Python 3 environment.
@@ -87,7 +87,7 @@ This is a standard Python 3 data type, so, when called from Python 3 code,
 .. _translation-limitations:
 
 Known limitations of ``past.translation``
-*******************************************
+*****************************************
 
 - It currently requires a newline at the end of the module or it throws a
   ``ParseError``.

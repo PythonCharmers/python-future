@@ -74,7 +74,7 @@ you can now use the following interface for much Python 2/3 compatible code::
 Notice that the above code will run on Python 3 even without the presence of the
 ``future`` package. Of the 44 standard library modules that were refactored with
 PEP 3108, 30 are supported with direct imports in this manner. (These are listed
-here: :ref:`list-standard-library-renamed`.)
+here: :ref:`direct-imports`.)
 
 The other 14 standard library modules that kept the same top-level names in
 Py3.x are not supported with this direct import interface on Py2. These include
@@ -107,7 +107,7 @@ Bug fixes
 
 - This release expands the ``future.moves`` package to include most of the remaining
   modules that were moved in the standard library reorganization (PEP 3108).
-  (Issue #104). See :ref:`list-standard-library-renamed` for an updated list.
+  (Issue #104).
 
 - This release also removes the broken ``--doctests_only`` option from the ``futurize``
   and ``pasteurize`` scripts for now (issue #103).

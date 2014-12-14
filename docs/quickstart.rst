@@ -123,7 +123,7 @@ to be accessed under their Python 3 names and locations in Python 2::
     import xmlrpc.client
     import xmlrpc.server
 
-and others. For a complete list, see :ref:`list-standard-library-renamed`.
+and others. For a complete list, see :ref:`direct-imports`.
 
 .. _py2-dependencies:
 

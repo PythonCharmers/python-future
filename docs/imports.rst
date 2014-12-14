@@ -60,16 +60,11 @@ certain automated code-analysis tools.
 
 The complete set of imports of builtins from ``future`` is::
     
-    from future.builtins import (ascii, bytes, chr, dict, filter, hex, input,
-                                 int, map, next, oct, open, pow, range, round,
-                                 str, super, zip)
-
-The contents of the ``future.builtins`` module are also accessible under the
-``builtins`` namespace as follows::
-
     from builtins import (ascii, bytes, chr, dict, filter, hex, input,
                           int, map, next, oct, open, pow, range, round,
                           str, super, zip)
+
+These are also available under the ``future.builtins`` namespace for backward compatibility.
 
 Importing only some of the builtins is cleaner but increases the risk of
 introducing Py2/3 portability bugs as your code evolves over time. For example,
@@ -84,12 +79,12 @@ The internal API is currently as follows::
 
     from future.types import bytes, dict, int, range, str
     from future.builtins.misc import (ascii, chr, hex, input, next,
-                                      oct, open, round, super)
+                                      oct, open, pow, round, super)
     from future.builtins.iterators import filter, map, zip
 
-To understand the details of the backported builtins on Python 2, see the
-docs for these modules. Please note that this internal API is evolving and may
-not be stable between different versions of ``future``.
+Please note that this internal API is evolving and may not be stable between
+different versions of ``future``. To understand the details of the backported
+builtins on Python 2, see the docs for these modules. 
 
 For more information on what the backported types provide, see :ref:`what-else`.
 
@@ -99,7 +94,7 @@ For more information on what the backported types provide, see :ref:`what-else`.
 .. _obsolete-builtins:
 
 Obsolete Python 2 builtins
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+__________________________
 
 Twelve Python 2 builtins have been removed from Python 3. To aid with
 porting code to Python 3 module by module, you can use the following
@@ -120,5 +115,12 @@ equivalent Python 3 forms and then adds ``future`` imports to resurrect
 Python 2 support, as described in :ref:`forwards-conversion-stage2`.
 
 
+.. include:: standard_library_imports.rst
+
+.. include:: translation.rst
+
 .. include:: unicode_literals.rst
 
+Next steps
+----------
+See :ref:`what-else`.
