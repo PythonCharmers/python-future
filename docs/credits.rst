@@ -51,6 +51,7 @@ Development Lead
 Patches
 ~~~~~~~
 
+- Jacob Beck
 - Denis Cornehl
 - Nicolas Delaby
 - Corey Farwell
@@ -65,6 +66,7 @@ Patches
 - Tim Shaffer
 - Daniel Szoska
 - Jeff Tratner
+- Brad Walker
 - Mystic-Mirage (GitHub)
 - str4d (GitHub)
 - 9seconds (GitHub)
@@ -75,6 +77,7 @@ Suggestions and Feedback
 - Chris Adams
 - Martijn Faassen
 - Lion Krischer
+- Danielle Madeley
 - wluebbe (GitHub)
 
 
