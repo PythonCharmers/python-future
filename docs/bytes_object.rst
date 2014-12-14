@@ -47,7 +47,7 @@ behaviours to Python 3's :class:`bytes`::
     b = bytes(b'ABCD')
     assert list(b) == [65, 66, 67, 68]
     assert repr(b) == "b'ABCD'"
-    assert b.split(b'b') == [b'A', b'CD']
+    assert b.split(b'B') == [b'A', b'CD']
 
 Currently the easiest way to ensure identical behaviour of byte-strings
 in a Py2/3 codebase is to wrap all byte-string literals ``b'...'`` in a
