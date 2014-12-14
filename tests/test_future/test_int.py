@@ -827,7 +827,7 @@ class IntTestCases(unittest.TestCase):
             -65536: bytes(b'\xff\x00\x00'),
             -8388608: bytes(b'\x80\x00\x00')
         }
-        # check(tests1, 'big', signed=True)
+        check(tests1, 'big', signed=True)
 
         # Convert integers to signed little-endian byte arrays.
         tests2 = {
@@ -849,7 +849,7 @@ class IntTestCases(unittest.TestCase):
             -65536: bytes(b'\x00\x00\xff'),
             -8388608: bytes(b'\x00\x00\x80')
         }
-        # check(tests2, 'little', signed=True)
+        check(tests2, 'little', signed=True)
 
         # Convert integers to unsigned big-endian byte arrays.
         tests3 = {
@@ -882,16 +882,16 @@ class IntTestCases(unittest.TestCase):
         check(tests4, 'little', signed=False)
 
         self.assertRaises(OverflowError, int(256).to_bytes, 1, 'big', signed=False)
-        # self.assertRaises(OverflowError, int(256).to_bytes, 1, 'big', signed=True)
+        self.assertRaises(OverflowError, int(256).to_bytes, 1, 'big', signed=True)
         self.assertRaises(OverflowError, int(256).to_bytes, 1, 'little', signed=False)
-        # self.assertRaises(OverflowError, int(256).to_bytes, 1, 'little', signed=True)
+        self.assertRaises(OverflowError, int(256).to_bytes, 1, 'little', signed=True)
         self.assertRaises(OverflowError, int(-1).to_bytes, 2, 'big', signed=False),
         self.assertRaises(OverflowError, int(-1).to_bytes, 2, 'little', signed=False)
         self.assertEqual(int(0).to_bytes(0, 'big'), b'')
         self.assertEqual(int(1).to_bytes(5, 'big'), b'\x00\x00\x00\x00\x01')
         self.assertEqual(int(0).to_bytes(5, 'big'), b'\x00\x00\x00\x00\x00')
-        # self.assertEqual(int(-1).to_bytes(5, 'big', signed=True),
-        #                  bytes(b'\xff\xff\xff\xff\xff'))
+        self.assertEqual(int(-1).to_bytes(5, 'big', signed=True),
+                         bytes(b'\xff\xff\xff\xff\xff'))
         self.assertRaises(OverflowError, int(1).to_bytes, 0, 'big')
 
     def test_from_bytes(self):
