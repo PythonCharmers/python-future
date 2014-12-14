@@ -6,12 +6,13 @@ Tests for the backported class:`range` class.
 from future.builtins import range
 from future.tests.base import unittest
 
-from collections import Sequence
+from collections import Iterator, Sequence
 
 
 class RangeTests(unittest.TestCase):
     def test_range(self):
         self.assertTrue(isinstance(range(0), Sequence))
+        self.assertTrue(isinstance(reversed(range(0)), Iterator))
 
     def test_bool_range(self):
         self.assertFalse(range(0))

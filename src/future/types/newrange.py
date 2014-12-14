@@ -107,12 +107,7 @@ class newrange(Sequence):
             return False
 
     def __reversed__(self):
-        """Return a range which represents a sequence whose
-        contents are the same as the sequence this range
-        represents, but in the opposite order."""
-        sign = self._step / abs(self._step)
-        last = self._start + ((self._len - 1) * self._step)
-        return newrange(last, self._start - sign, -1 * self._step)
+        return iter(self[::-1])
 
     def __getitem__(self, index):
         """Return the element at position ``index`` in the sequence
