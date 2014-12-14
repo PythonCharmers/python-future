@@ -299,20 +299,29 @@ class newint(with_metaclass(BaseNewInt, long)):
         used to represent the integer.  If signed is False and a negative integer
         is given, an OverflowError is raised.
         """
-        if signed:
-            raise NotImplementedError("Not yet implemented. Please contribute a patch at http://python-future.org")
+        if length < 0:
+            raise ValueError("length argument must be non-negative")
+        if length == 0 and self == 0:
+            return newbytes()
+        if signed and self < 0:
+            bits = length * 8
+            num = (2**bits) + self
+            if num <= 0:
+                raise OverflowError("int too smal to convert")
         else:
             if self < 0:
                 raise OverflowError("can't convert negative int to unsigned")
             num = self
         if byteorder not in ('little', 'big'):
             raise ValueError("byteorder must be either 'little' or 'big'")
-        if length < 0:
-            raise ValueError("length argument must be non-negative")
-        if length == 0 and num == 0:
-            return newbytes()
         h = b'%x' % num
         s = newbytes((b'0'*(len(h) % 2) + h).zfill(length*2).decode('hex'))
+        if signed:
+            high_set = s[0] & 0x80
+            if self > 0 and high_set:
+                raise OverflowError("int too big to convert")
+            if self < 0 and not high_set:
+                raise OverflowError("int too small to convert")
         if len(s) > length:
             raise OverflowError("int too big to convert")
         return s if byteorder == 'big' else s[::-1]
@@ -335,8 +344,6 @@ class newint(with_metaclass(BaseNewInt, long)):
         The signed keyword-only argument indicates whether two's complement is
         used to represent the integer.
         """
-        if signed:
-            raise NotImplementedError("Not yet implemented. Please contribute a patch at http://python-future.org")
         if byteorder not in ('little', 'big'):
             raise ValueError("byteorder must be either 'little' or 'big'")
         if isinstance(mybytes, unicode):
@@ -351,6 +358,8 @@ class newint(with_metaclass(BaseNewInt, long)):
         # The encode() method has been disabled by newbytes, but Py2's
         # str has it:
         num = int(native(b).encode('hex'), 16)
+        if signed and (b[0] & 0x80):
+            num = num - (2 ** (len(b)*8))
         return cls(num)
 
 
