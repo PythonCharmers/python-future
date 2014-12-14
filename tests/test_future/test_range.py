@@ -99,6 +99,16 @@ class RangeTests(unittest.TestCase):
         with self.assertRaisesRegexp(ValueError, msg):
             range(8)[::0]
 
+    def test_properties(self):
+        # Exception string differs between PY2/3
+        r = range(0)
+        with self.assertRaises(AttributeError):
+            r.start = 0
+        with self.assertRaises(AttributeError):
+            r.stop = 0
+        with self.assertRaises(AttributeError):
+            r.step = 0
+
 
 if __name__ == '__main__':
     unittest.main()
