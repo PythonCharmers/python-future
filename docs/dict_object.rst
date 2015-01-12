@@ -22,8 +22,8 @@ stick with standard Python 3 code in your Py2/3 compatible codebase::
     for value in d.values():
         # code here
 
-In this case there will be memory overhead of list creation for each call to
-``items``, ``values`` or ``keys``.
+In this case there will be memory overhead of list creation on Py2 for each
+call to ``items``, ``values`` or ``keys``.
 
 For improved efficiency, ``future.builtins`` (aliased to ``builtins``) provides
 a Python 2 ``dict`` subclass whose :func:`keys`, :func:`values`, and
@@ -70,7 +70,7 @@ The memory-efficient (and CPU-efficient) alternatives are:
 - to construct a dictionary from an iterator. The above line could use a
   generator like this::
 
-      d = dict((i, i**2) for i in range(10**7)
+      d = dict((i, i**2) for i in range(10**7))
 
 - to construct an empty dictionary with a ``dict()`` call using
   ``builtins.dict`` (rather than ``{}``) and then update it;

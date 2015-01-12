@@ -69,7 +69,7 @@ the types from ``future`` to their native superclasses on Py2.
 The ``native`` function in ``future.utils`` is provided for this. Here is how
 to use it. (The output showing is from Py2)::
 
-    >>> from builtins import *
+    >>> from builtins import int, bytes, str
     >>> from future.utils import native
 
     >>> a = int(10**20)     # Py3-like long int
