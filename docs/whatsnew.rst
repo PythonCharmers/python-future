@@ -5,8 +5,8 @@ What's New
 
 .. _whats-new-0.14.x:
 
-What's new in version 0.14.3
-============================
+What's new in version 0.14.3, Dec 14, 2014
+==========================================
 
 This is a bug-fix release:
 
