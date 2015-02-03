@@ -5,8 +5,8 @@ What's New
 
 .. _whats-new-0.14.x:
 
-What's new in version 0.14.3
-============================
+What's new in version 0.14.3 (2014-12-15)
+=========================================
 
 This is a bug-fix release:
 
@@ -16,8 +16,8 @@ This is a bug-fix release:
 - Improve ``newrange``: equality and slicing, start/stop/step properties, refactoring (issues #129, #130)
 - Minor doc updates
 
-What's new in version 0.14.2
-============================
+What's new in version 0.14.2 (2014-11-21)
+=========================================
 
 This is a bug-fix release:
 
@@ -32,8 +32,8 @@ This is a bug-fix release:
 - Tests: don't rely on presence of ``test.test_support`` on Py2 or ``test.support`` on Py3 (issue #109)
 - Tests: don't override existing ``PYTHONPATH`` for tests (PR #111)
 
-What's new in version 0.14.1
-============================
+What's new in version 0.14.1 (2014-10-02)
+=========================================
 
 This is a minor bug-fix release:
 
@@ -43,8 +43,8 @@ This is a minor bug-fix release:
   exists on Py2 (issue #109)
 
 
-What's new in version 0.14
-==========================
+What's new in version 0.14 (2014-10-02)
+=======================================
 
 This is a major new release that offers a cleaner interface for most imports in
 Python 2/3 compatible code.
