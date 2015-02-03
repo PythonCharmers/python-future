@@ -7,6 +7,7 @@ from future.builtins import range
 from future.tests.base import unittest
 
 from collections import Iterator, Sequence
+from operator import attrgetter
 
 
 class RangeTests(unittest.TestCase):
@@ -25,79 +26,163 @@ class RangeTests(unittest.TestCase):
         self.assertEqual(range(0), range(1, 1))
         self.assertEqual(range(0, 10, 3), range(0, 11, 3))
 
+    # Use strict equality of attributes when slicing to catch subtle differences
+    def assertRangesEqual(self, r1, r2):
+        by_attrs = attrgetter('start', 'stop', 'step')
+        self.assertEqual(by_attrs(r1), by_attrs(r2))
+
     def test_slice_empty_range(self):
-        self.assertEqual(range(0)[:], range(0))
-        self.assertEqual(range(0)[::-1], range(-1, -1, -1))
-
-    def test_slice_range(self):
-        r = range(8)
-        self.assertEqual(r[:], range(8))
-        self.assertEqual(r[:2], range(2))
-        self.assertEqual(r[:-2], range(6))
-        self.assertEqual(r[2:], range(2, 8))
-        self.assertEqual(r[-2:], range(6, 8))
-        self.assertEqual(r[2:-2], range(2, 6))
-        self.assertEqual(r[-2:2:-1], range(6, 2, -1))
-        r = r[::-1]
-        self.assertEqual(r, range(7, -1, -1))
-        self.assertEqual(r[:], range(7, -1, -1))
-        self.assertEqual(r[:2], range(7, 5, -1))
-        self.assertEqual(r[:-2], range(7, 1, -1))
-        self.assertEqual(r[2:], range(5, -1, -1))
-        self.assertEqual(r[-2:], range(1, -1, -1))
-        self.assertEqual(r[2:-2], range(5, 1, -1))
-        self.assertEqual(r[-2:2:-1], range(1, 5))
-
-    def test_slice_offsetted_range(self):
-        r = range(4, 16)
-        self.assertEqual(r[:], range(4, 16))
-        self.assertEqual(r[::-1], range(15, 3, -1))
-        self.assertEqual(r[:4], range(4, 8))
-        self.assertEqual(r[:-4], range(4, 12))
-        self.assertEqual(r[4:], range(8, 16))
-        self.assertEqual(r[-4:], range(12, 16))
-        self.assertEqual(r[4:-4], range(8, 12))
-        self.assertEqual(r[-4:4:-1], range(12, 8, -1))
+        self.assertRangesEqual(range(0)[:], range(0))
+        self.assertRangesEqual(range(0)[::-1], range(-1, -1, -1))
 
     def test_slice_overflow_range(self):
         r = range(8)
-        self.assertEqual(r[2:200], range(2, 8))
-        self.assertEqual(r[-200:-2], range(0, 6))
+        self.assertRangesEqual(r[2:200], range(2, 8))
+        self.assertRangesEqual(r[-200:-2], range(0, 6))
 
-    def test_stepped_slice_range(self):
-        r = range(8)
-        self.assertEqual(r[::2], range(0, 8, 2))
-        self.assertEqual(r[::-2], range(7, -1, -2))
-        self.assertEqual(r[:2:2], range(0, 2, 2))
-        self.assertEqual(r[:-2:2], range(0, 6, 2))
-        self.assertEqual(r[2::2], range(2, 8, 2))
-        self.assertEqual(r[-2::2], range(6, 8, 2))
-        self.assertEqual(r[2:-2:2], range(2, 6, 2))
-
-    def test_stepped_slice_stepped_range(self):
-        r = range(0, 16, 2)
-        self.assertEqual(r[::2], range(0, 16, 4))
-        self.assertEqual(r[:2:2], range(0, 4, 4))
-        self.assertEqual(r[:-2:2], range(0, 12, 4))
-        self.assertEqual(r[2::2], range(4, 16, 4))
-        self.assertEqual(r[-2::2], range(12, 16, 4))
-        self.assertEqual(r[2:-2:2], range(4, 12, 4))
+    def test_slice_range(self):
+        r = range(-8, 8)
+        self.assertRangesEqual(r[:], range(-8, 8))
+        self.assertRangesEqual(r[:2], range(-8, -6))
+        self.assertRangesEqual(r[:-2], range(-8, 6))
+        self.assertRangesEqual(r[2:], range(-6, 8))
+        self.assertRangesEqual(r[-2:], range(6, 8))
+        self.assertRangesEqual(r[2:-2], range(-6, 6))
 
     def test_rev_slice_range(self):
-        r = range(8)
-        self.assertEqual(r[::-1], range(7, -1, -1))
-        self.assertEqual(r[:2:-1], range(7, 2, -1))
-        self.assertEqual(r[:-2:-1], range(7, 6, -1))
-        self.assertEqual(r[2::-1], range(2, -1, -1))
-        self.assertEqual(r[-2::-1], range(6, -1, -1))
-        self.assertEqual(r[-2:2:-1], range(6, 2, -1))
-        r = range(0, 16, 2)
-        self.assertEqual(r[::-2], range(14, -2, -4))
-        self.assertEqual(r[:2:-2], range(14, 4, -4))
-        self.assertEqual(r[:-2:-2], range(14, 12, -4))
-        self.assertEqual(r[2::-2], range(4, -2, -4))
-        self.assertEqual(r[-2::-2], range(12, -2, -4))
-        self.assertEqual(r[-2:2:-2], range(12, 4, -4))
+        r = range(-8, 8)
+        self.assertRangesEqual(r[::-1], range(7, -9, -1))
+        self.assertRangesEqual(r[:2:-1], range(7, -6, -1))
+        self.assertRangesEqual(r[:-2:-1], range(7, 6, -1))
+        self.assertRangesEqual(r[2::-1], range(-6, -9, -1))
+        self.assertRangesEqual(r[-2::-1], range(6, -9, -1))
+        self.assertRangesEqual(r[-2:2:-1], range(6, -6, -1))
+
+    def test_slice_rev_range(self):
+        r = range(8, -8, -1)
+        self.assertRangesEqual(r[:], range(8, -8, -1))
+        self.assertRangesEqual(r[:2], range(8, 6, -1))
+        self.assertRangesEqual(r[:-2], range(8, -6, -1))
+        self.assertRangesEqual(r[2:], range(6, -8, -1))
+        self.assertRangesEqual(r[-2:], range(-6, -8, -1))
+        self.assertRangesEqual(r[2:-2], range(6, -6, -1))
+
+    def test_rev_slice_rev_range(self):
+        r = range(8, -8, -1)
+        self.assertRangesEqual(r[::-1], range(-7, 9))
+        self.assertRangesEqual(r[:2:-1], range(-7, 6))
+        self.assertRangesEqual(r[:-2:-1], range(-7, -6))
+        self.assertRangesEqual(r[2::-1], range(6, 9))
+        self.assertRangesEqual(r[-2::-1], range(-6, 9))
+        self.assertRangesEqual(r[-2:2:-1], range(-6, 6))
+
+    def test_stepped_slice_range(self):
+        r = range(-8, 8)
+        self.assertRangesEqual(r[::2], range(-8, 8, 2))
+        self.assertRangesEqual(r[:2:2], range(-8, -6, 2))
+        self.assertRangesEqual(r[:-2:2], range(-8, 6, 2))
+        self.assertRangesEqual(r[2::2], range(-6, 8, 2))
+        self.assertRangesEqual(r[-2::2], range(6, 8, 2))
+        self.assertRangesEqual(r[2:-2:2], range(-6, 6, 2))
+
+    def test_rev_stepped_slice_range(self):
+        r = range(-8, 8)
+        self.assertRangesEqual(r[::-2], range(7, -9, -2))
+        self.assertRangesEqual(r[:2:-2], range(7, -6, -2))
+        self.assertRangesEqual(r[:-2:-2], range(7, 6, -2))
+        self.assertRangesEqual(r[2::-2], range(-6, -9, -2))
+        self.assertRangesEqual(r[-2::-2], range(6, -9, -2))
+        self.assertRangesEqual(r[-2:2:-2], range(6, -6, -2))
+
+    def test_stepped_slice_rev_range(self):
+        r = range(8, -8, -1)
+        self.assertRangesEqual(r[::2], range(8, -8, -2))
+        self.assertRangesEqual(r[:2:2], range(8, 6, -2))
+        self.assertRangesEqual(r[:-2:2], range(8, -6, -2))
+        self.assertRangesEqual(r[2::2], range(6, -8, -2))
+        self.assertRangesEqual(r[-2::2], range(-6, -8, -2))
+        self.assertRangesEqual(r[2:-2:2], range(6, -6, -2))
+
+    def test_rev_stepped_slice_rev_range(self):
+        r = range(8, -8, -1)
+        self.assertRangesEqual(r[::-2], range(-7, 9, 2))
+        self.assertRangesEqual(r[:2:-2], range(-7, 6, 2))
+        self.assertRangesEqual(r[:-2:-2], range(-7, -6, 2))
+        self.assertRangesEqual(r[2::-2], range(6, 9, 2))
+        self.assertRangesEqual(r[-2::-2], range(-6, 9, 2))
+        self.assertRangesEqual(r[-2:2:-2], range(-6, 6, 2))
+
+    def test_slice_stepped_range(self):
+        r = range(-8, 8, 2)
+        self.assertRangesEqual(r[:], range(-8, 8, 2))
+        self.assertRangesEqual(r[:2], range(-8, -4, 2))
+        self.assertRangesEqual(r[:-2], range(-8, 4, 2))
+        self.assertRangesEqual(r[2:], range(-4, 8, 2))
+        self.assertRangesEqual(r[-2:], range(4, 8, 2))
+        self.assertRangesEqual(r[2:-2], range(-4, 4, 2))
+
+    def test_rev_slice_stepped_range(self):
+        r = range(-8, 8, 2)
+        self.assertRangesEqual(r[::-1], range(6, -10, -2))
+        self.assertRangesEqual(r[:2:-1], range(6, -4, -2))
+        self.assertRangesEqual(r[:-2:-1], range(6, 4, -2))
+        self.assertRangesEqual(r[2::-1], range(-4, -10, -2))
+        self.assertRangesEqual(r[-2::-1], range(4, -10, -2))
+        self.assertRangesEqual(r[-2:2:-1], range(4, -4, -2))
+
+    def test_slice_rev_stepped_range(self):
+        r = range(8, -8, -2)
+        self.assertRangesEqual(r[:], range(8, -8, -2))
+        self.assertRangesEqual(r[:2], range(8, 4, -2))
+        self.assertRangesEqual(r[:-2], range(8, -4, -2))
+        self.assertRangesEqual(r[2:], range(4, -8, -2))
+        self.assertRangesEqual(r[-2:], range(-4, -8, -2))
+        self.assertRangesEqual(r[2:-2], range(4, -4, -2))
+
+    def test_rev_slice_rev_stepped_range(self):
+        r = range(8, -8, -2)
+        self.assertRangesEqual(r[::-1], range(-6, 10, 2))
+        self.assertRangesEqual(r[:2:-1], range(-6, 4, 2))
+        self.assertRangesEqual(r[:-2:-1], range(-6, -4, 2))
+        self.assertRangesEqual(r[2::-1], range(4, 10, 2))
+        self.assertRangesEqual(r[-2::-1], range(-4, 10, 2))
+        self.assertRangesEqual(r[-2:2:-1], range(-4, 4, 2))
+
+    def test_stepped_slice_stepped_range(self):
+        r = range(-8, 8, 2)
+        self.assertRangesEqual(r[::2], range(-8, 8, 4))
+        self.assertRangesEqual(r[:2:2], range(-8, -4, 4))
+        self.assertRangesEqual(r[:-2:2], range(-8, 4, 4))
+        self.assertRangesEqual(r[2::2], range(-4, 8, 4))
+        self.assertRangesEqual(r[-2::2], range(4, 8, 4))
+        self.assertRangesEqual(r[2:-2:2], range(-4, 4, 4))
+
+    def test_rev_stepped_slice_stepped_range(self):
+        r = range(-8, 8, 2)
+        self.assertRangesEqual(r[::-2], range(6, -10, -4))
+        self.assertRangesEqual(r[:2:-2], range(6, -4, -4))
+        self.assertRangesEqual(r[:-2:-2], range(6, 4, -4))
+        self.assertRangesEqual(r[2::-2], range(-4, -10, -4))
+        self.assertRangesEqual(r[-2::-2], range(4, -10, -4))
+        self.assertRangesEqual(r[-2:2:-2], range(4, -4, -4))
+
+    def test_stepped_slice_rev_stepped_range(self):
+        r = range(8, -8, -2)
+        self.assertRangesEqual(r[::2], range(8, -8, -4))
+        self.assertRangesEqual(r[:2:2], range(8, 4, -4))
+        self.assertRangesEqual(r[:-2:2], range(8, -4, -4))
+        self.assertRangesEqual(r[2::2], range(4, -8, -4))
+        self.assertRangesEqual(r[-2::2], range(-4, -8, -4))
+        self.assertRangesEqual(r[2:-2:2], range(4, -4, -4))
+
+    def test_rev_stepped_slice_rev_stepped_range(self):
+        r = range(8, -8, -2)
+        self.assertRangesEqual(r[::-2], range(-6, 10, 4))
+        self.assertRangesEqual(r[:2:-2], range(-6, 4, 4))
+        self.assertRangesEqual(r[:-2:-2], range(-6, -4, 4))
+        self.assertRangesEqual(r[2::-2], range(4, 10, 4))
+        self.assertRangesEqual(r[-2::-2], range(-4, 10, 4))
+        self.assertRangesEqual(r[-2:2:-2], range(-4, 4, 4))
 
     def test_slice_zero_step(self):
         msg = '^slice step cannot be zero$'
