@@ -68,7 +68,7 @@ Implicit relative imports fixed, e.g.::
 .. (This last step can be prevented using --no-bytes-literals if you already have b'...' markup in your code, whose meaning would otherwise be lost.)
 
 Stage 1 does not add any imports from the ``future`` package. The output of
-stage 1 will probably not (yet) run on Python 3. 
+stage 1 will probably not (yet) run on Python 3.
 
 The goal for this stage is to create most of the ``diff`` for the entire
 porting process, but without introducing any bugs. It should be uncontroversial
@@ -297,9 +297,9 @@ example::
 Any unadorned string literals will then represent native platform strings
 (byte-strings on Py2, unicode strings on Py3).
 
-An alternative is to pass the ``--unicode_literals`` flag::
-  
-  $ futurize --unicode_literals mypython2script.py
+An alternative is to pass the ``--unicode-literals`` flag::
+
+  $ futurize --unicode-literals mypython2script.py
 
 After running this, all string literals that were not explicitly marked up as
 ``b''`` will mean text (Python 3 ``str`` or Python 2 ``unicode``).
@@ -311,7 +311,7 @@ After running this, all string literals that were not explicitly marked up as
 Post-conversion
 ~~~~~~~~~~~~~~~
 
-After running ``futurize``, we recommend first running your tests on Python 3 and making further code changes until they pass on Python 3. 
+After running ``futurize``, we recommend first running your tests on Python 3 and making further code changes until they pass on Python 3.
 
 The next step would be manually tweaking the code to re-enable Python 2
 compatibility with the help of the ``future`` package. For example, you can add
