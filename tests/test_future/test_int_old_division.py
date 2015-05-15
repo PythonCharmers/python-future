@@ -6,7 +6,7 @@ Py2 only. int tests involving division for the case that:
 is not in effect.
 """
 
-from __future__ import (absolute_import, 
+from __future__ import (absolute_import,
                         print_function, unicode_literals)
 from future import standard_library
 from future.builtins import *
@@ -20,6 +20,10 @@ import random
 @unittest.skipIf(not PY2, 'old division tests only for Py2')
 class IntTestCasesOldDivision(unittest.TestCase):
 
+    def setUp(self):
+        self.longMessage = True
+
+
     def test_div(self):
         """
         Issue #38
@@ -27,7 +31,7 @@ class IntTestCasesOldDivision(unittest.TestCase):
         a = int(3)
         self.assertEqual(a / 5., 0.6)
         self.assertEqual(a / 5, 0)
-                                  
+
 
     def test_idiv(self):
         a = int(3)
@@ -42,7 +46,7 @@ class IntTestCasesOldDivision(unittest.TestCase):
         c /= 2.0
         self.assertEqual(c, -1.5)
         self.assertTrue(isinstance(c, float))
-                                  
+
 
     def test_truediv(self):
         """
@@ -72,6 +76,25 @@ class IntTestCasesOldDivision(unittest.TestCase):
         e /= f
         self.assertEqual(e, 0)
         self.assertTrue(isinstance(e, int))
+
+
+    def test_divmod(self):
+        """
+        Test int.__divmod__
+        """
+        vals = [10**i for i in range(0, 20)]
+        for i in range(200):
+            x = random.choice(vals)
+            y = random.choice(vals)
+            self.assertEqual(int(y).__rdivmod__(int(x)), divmod(x, y), msg='x={0}; y={1}'.format(x, y))
+            self.assertEqual(int(-y).__rdivmod__(int(x)), divmod(x, -y), msg='x={0}; y={1}'.format(x, y))
+            self.assertEqual(int(y).__rdivmod__(int(-x)), divmod(-x, y), msg='x={0}; y={1}'.format(x, y))
+            self.assertEqual(int(-y).__rdivmod__(int(-x)), divmod(-x, -y), msg='x={0}; y={1}'.format(x, y))
+
+            self.assertEqual(int(x).__rdivmod__(int(y)), long(x).__rdivmod__(y), msg='x={0}; y={1}'.format(x, y))
+            self.assertEqual(int(-x).__rdivmod__(int(y)), long(-x).__rdivmod__(y), msg='x={0}; y={1}'.format(x, y))
+            self.assertEqual(int(x).__rdivmod__(int(-y)), long(x).__rdivmod__(-y), msg='x={0}; y={1}'.format(x, y))
+            self.assertEqual(int(-x).__rdivmod__(int(-y)), long(-x).__rdivmod__(-y), msg='x={0}; y={1}'.format(x, y))
 
 
 if __name__ == "__main__":
