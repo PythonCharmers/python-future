@@ -55,7 +55,6 @@ We don't currently support these modules, but would like to::
     import dbm.dumb
     import dbm.gnu
     import collections.abc  # on Py33
-    import tkinter
     import pickle     # should (optionally) bring in cPickle on Python 2
 
 """
