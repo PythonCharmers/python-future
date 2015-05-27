@@ -3,12 +3,12 @@
 Changes in previous versions
 ****************************
 
-Changes in the most recent two versions are here: :ref:`whats-new`.
+Changes in the most recent major version are here: :ref:`whats-new`.
 
 .. _whats-new-0.13.x:
 
-Changes in version 0.13.1
-=========================
+Changes in version 0.13.1 (2014-09-23)
+======================================
 
 This is a bug-fix release:
 
@@ -19,8 +19,8 @@ This is a bug-fix release:
 - Doc formatting fix (issues #98, 100)
 
 
-Changes in version 0.13
-=======================
+Changes in version 0.13 (2014-08-13)
+====================================
 
 This is mostly a clean-up release. It adds some small new compatibility features
 and fixes several bugs.
@@ -68,16 +68,16 @@ Bug fixes
 
 .. _whats-new-0.12.4:
 
-Changes in version 0.12.4
-=========================
+Changes in version 0.12.4 (2014-07-18)
+======================================
 
 - Fix upcasting behaviour of newint (issue #76).
 
 
 .. _whats-new-0.12.3:
 
-Changes in version 0.12.3
-=========================
+Changes in version 0.12.3 (2014-06-19)
+======================================
 
 - Add "official Python 3.4 support": Py3.4 is now listed among the PyPI Trove
   classifiers and the tests now run successfully on Py3.4 (issue #67).
@@ -107,8 +107,8 @@ Changes in version 0.12.3
 
 .. _whats-new-0.12.2:
 
-Changes in version 0.12.2
-=========================
+Changes in version 0.12.2 (2014-05-25)
+======================================
 
 - Add ``bytes.maketrans()`` method (issue #51).
 - Add support for Python versions between 2.7.0 and 2.7.3 (inclusive)
@@ -118,8 +118,8 @@ Changes in version 0.12.2
 
 .. _whats-new-0.12.1:
 
-Changes in version 0.12.1
-=========================
+Changes in version 0.12.1 (2014-05-14)
+======================================
 
 - Python 2.6 support: ``future.standard_library`` now isolates the ``importlib``
   dependency to one function (``import_``) so the ``importlib`` backport may
@@ -130,8 +130,8 @@ Changes in version 0.12.1
 
 .. _whats-new-0.12:
 
-Changes in version 0.12.0
-=========================
+Changes in version 0.12.0 (2014-05-06)
+======================================
 
 The major new feature in this version is improvements in the support for the
 reorganized standard library (PEP 3108) and compatibility of the import
@@ -348,8 +348,8 @@ Many small improvements and fixes have been made across the project. Some highli
 
 .. _whats-new-0.11.4:
 
-Changes in version 0.11.4
-=========================
+Changes in version 0.11.4 (2014-05-25)
+======================================
 
 This release contains various small improvements and fixes:
 
@@ -375,8 +375,8 @@ This release contains various small improvements and fixes:
 
 .. _whats-new-0.11.3:
 
-Changes in version 0.11.3
-=========================
+Changes in version 0.11.3 (2014-02-27)
+======================================
 
 This release has improvements in the standard library import hooks mechanism and
 its compatibility with 3rd-party modules:
@@ -443,8 +443,8 @@ The ``pasteurize`` script for converting from Py3 to Py2/3 still adds
 
 .. _whats-new-0.11:
 
-Changes in version 0.11
-=======================
+Changes in version 0.11 (2014-01-28)
+====================================
 
 There are several major new features in version 0.11. 
 
@@ -571,8 +571,8 @@ types but not their use.
 
 .. _whats-new-0.10.2:
 
-Changes in version 0.10.2
-=========================
+Changes in version 0.10.2 (2014-01-11)
+======================================
 
 New context-manager interface to standard_library hooks
 -------------------------------------------------------
@@ -611,8 +611,8 @@ As usual, this feature has no effect on Python 3.
 
 .. _whats-new-0.10:
 
-Changes in version 0.10.0
-=========================
+Changes in version 0.10.0 (2013-12-02)
+======================================
 
 Backported ``dict`` type
 ------------------------
@@ -656,8 +656,8 @@ Bugfixes
 
 .. _whats-new-0.9:
 
-Changes in version 0.9
-======================
+Changes in version 0.9 (2013-11-06)
+===================================
 
 
 ``isinstance`` checks are supported natively with backported types
@@ -716,8 +716,8 @@ To work around this, ``future`` now provides a context manager called
 
 .. _whats-new-0.8:
 
-Changes in version 0.8
-======================
+Changes in version 0.8 (2013-10-28)
+===================================
 
 Python 2.6 support
 ------------------

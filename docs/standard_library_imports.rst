@@ -68,6 +68,7 @@ complete list is here::
     from tkinter import scrolledtext
     from tkinter import simpledialog
     from tkinter import tix
+    from tkinter import ttk
 
     import winreg                    # Windows only
 
