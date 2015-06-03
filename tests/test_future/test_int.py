@@ -49,6 +49,9 @@ L = [
 
 class IntTestCases(unittest.TestCase):
 
+    def setUp(self):
+        self.longMessage = True
+
     def test_isinstance_int_subclass(self):
         """
         Issue #89
@@ -453,6 +456,24 @@ class IntTestCases(unittest.TestCase):
             assert divmod(int(-x), int(y)) == divmod(-x, y)
             assert divmod(int(x), int(-y)) == divmod(x, -y)
             assert divmod(int(-x), int(-y)) == divmod(-x, -y)
+
+            assert divmod(int(x), float(y)) == divmod(x, float(y))
+            assert divmod(int(-x), float(y)) == divmod(-x, float(y))
+            assert divmod(int(x), float(-y)) == divmod(x, float(-y))
+            assert divmod(int(-x), float(-y)) == divmod(-x, float(-y))
+
+        def _frange(x, y, step):
+            _x = x ; i = 0
+            while _x < y:
+                yield _x
+                i += 1 ; _x = x + i * step
+
+        for i in range(20):
+            for d in _frange(0.005, 5.0, 0.005):
+                self.assertEqual(divmod(int(i), d), divmod(i, d), msg='i={0}; d={1}'.format(i, d))
+                self.assertEqual(divmod(int(-i), d), divmod(-i, d), msg='i={0}; d={1}'.format(i, d))
+                self.assertEqual(divmod(int(i), -d), divmod(i, -d), msg='i={0}; d={1}'.format(i, d))
+                self.assertEqual(divmod(int(-i), -d), divmod(-i, -d), msg='i={0}; d={1}'.format(i, d))
 
     def test_div(self):
         """
