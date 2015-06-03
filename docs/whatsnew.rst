@@ -5,6 +5,24 @@ What's New
 
 .. _whats-new-0.14.x:
 
+What's new in version 0.14.4 (2015-06-03)
+=========================================
+
+This release adds two new minor features and fixes some small bugs.
+
+Minor features:
+
+- ``tkinter.ttk`` support (issue #151)
+- ``collections.ChainMap`` backport (issue #150)
+
+Bug fixes:
+
+- Expand newint.__divmod__ and newint.__rdivmod__ to fall back to <type 'long'>
+  implementations where appropriate (issue #146 - thanks to Matt Bogosian)
+- Fixed newrange slicing for some slice/range combos (issue #132, thanks to Brad Walker)
+- Small doc fixes
+
+
 What's new in version 0.14.3 (2014-12-15)
 =========================================
 
