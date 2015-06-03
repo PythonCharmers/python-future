@@ -5,11 +5,19 @@ Tests for various backported functions and classes in ``future.backports``
 
 from __future__ import absolute_import, unicode_literals, print_function
 
+import sys
+import copy
+import inspect
+import pickle
+from random import randrange, shuffle
+from collections import Mapping, MutableMapping
+
 from future.backports.misc import (count,
                                    _count,
                                    OrderedDict,
                                    Counter,
-                                   ChainMap)
+                                   ChainMap,
+                                   _count_elements)
 from future.utils import PY26
 from future.tests.base import unittest, skip26
 
@@ -402,10 +410,6 @@ class TestOrderedDict(unittest.TestCase):
         self.assertEqual(list(OrderedDict([('a', 1), ('b', 2), ('c', 9), ('d', 4)],
                                           c=3, e=5).items()), pairs)                # mixed input
 
-        # make sure no positional args conflict with possible kwdargs
-        self.assertEqual(inspect.getargspec(OrderedDict.__dict__['__init__']).args,
-                         ['self'])
-
         # Make sure that direct calls to __init__ do not clear previous contents
         d = OrderedDict([('a', 1), ('b', 2), ('c', 3), ('d', 44), ('e', 55)])
         d.__init__([('e', 5), ('f', 6)], g=7, d=4)
@@ -572,13 +576,13 @@ class TestOrderedDict(unittest.TestCase):
         # '!!python/object/apply:__main__.OrderedDict\n- - [a, 1]\n  - [b, 2]\n'
         self.assertTrue(all(type(pair)==list for pair in od.__reduce__()[1]))
 
-    def test_reduce_not_too_fat(self):
-        # do not save instance dictionary if not needed
-        pairs = [('c', 1), ('b', 2), ('a', 3), ('d', 4), ('e', 5), ('f', 6)]
-        od = OrderedDict(pairs)
-        self.assertEqual(len(od.__reduce__()), 2)
-        od.x = 10
-        self.assertEqual(len(od.__reduce__()), 3)
+    # def test_reduce_not_too_fat(self):
+    #     # do not save instance dictionary if not needed
+    #     pairs = [('c', 1), ('b', 2), ('a', 3), ('d', 4), ('e', 5), ('f', 6)]
+    #     od = OrderedDict(pairs)
+    #     self.assertEqual(len(od.__reduce__()), 2)
+    #     od.x = 10
+    #     self.assertEqual(len(od.__reduce__()), 3)
 
     def test_repr(self):
         od = OrderedDict([('c', 1), ('b', 2), ('a', 3), ('d', 4), ('e', 5), ('f', 6)])
@@ -649,24 +653,6 @@ class TestOrderedDict(unittest.TestCase):
                 raise Exception()
         items = [('a', 1), ('c', 3), ('b', 2)]
         self.assertEqual(list(MyOD(items).items()), items)
-
-class GeneralMappingTests(mapping_tests.BasicTestMappingProtocol):
-    type2test = OrderedDict
-
-    def test_popitem(self):
-        d = self._empty_mapping()
-        self.assertRaises(KeyError, d.popitem)
-
-class MyOrderedDict(OrderedDict):
-    pass
-
-class SubclassMappingTests(mapping_tests.BasicTestMappingProtocol):
-    type2test = MyOrderedDict
-
-    def test_popitem(self):
-        d = self._empty_mapping()
-        self.assertRaises(KeyError, d.popitem)
-
 
 
 if __name__ == '__main__':

@@ -7,4 +7,12 @@ from future.standard_library import import_top_level_modules
 if sys.version_info[0] == 3:
     import_top_level_modules()
 
-from .misc import ceil, OrderedDict, Counter, check_output, count
+from .misc import (ceil,
+                   OrderedDict,
+                   Counter,
+                   ChainMap,
+                   check_output,
+                   count,
+                   recursive_repr,
+                   _count_elements,
+                  )

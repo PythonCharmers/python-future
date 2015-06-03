@@ -5,13 +5,17 @@ for Python 2.6/2.7.
 - math.ceil                (for Python 2.7)
 - collections.OrderedDict  (for Python 2.6)
 - collections.Counter      (for Python 2.6)
+- collections.ChainMap     (for all versions prior to Python 3.3)
 - itertools.count          (for Python 2.6, with step parameter)
+- subprocess.check_output  (for Python 2.6)
 """
 
-from math import ceil
+import sys
 import subprocess
+from math import ceil
+from collections import MutableMapping
 
-from future.utils import iteritems, itervalues, PY26
+from future.utils import iteritems, itervalues, PY26, PY3
 
 
 def _ceil(x):
@@ -297,6 +301,15 @@ try:
 except ImportError:
     pass
 
+########################################################################
+###  Counter
+########################################################################
+
+def __count_elements(mapping, iterable):
+    'Tally elements from the iterable.'
+    mapping_get = mapping.get
+    for elem in iterable:
+        mapping[elem] = mapping_get(elem, 0) + 1
 
 class _Counter(dict):
 
@@ -513,14 +526,176 @@ def _count(start=0, step=1):
         start += step
 
 
-if not PY26:
-    from math import ceil
-    from collections import OrderedDict, Counter
-    from subprocess import check_output
-    from itertools import count
-else:
-    ceil = _ceil
+########################################################################
+###  reprlib.recursive_repr decorator from Py3.4
+########################################################################
+
+from itertools import islice
+try:
+    from _thread import get_ident
+except ImportError:
+    from _dummy_thread import get_ident
+
+def _recursive_repr(fillvalue='...'):
+    'Decorator to make a repr function return fillvalue for a recursive call'
+
+    def decorating_function(user_function):
+        repr_running = set()
+
+        def wrapper(self):
+            key = id(self), get_ident()
+            if key in repr_running:
+                return fillvalue
+            repr_running.add(key)
+            try:
+                result = user_function(self)
+            finally:
+                repr_running.discard(key)
+            return result
+
+        # Can't use functools.wraps() here because of bootstrap issues
+        wrapper.__module__ = getattr(user_function, '__module__')
+        wrapper.__doc__ = getattr(user_function, '__doc__')
+        wrapper.__name__ = getattr(user_function, '__name__')
+        wrapper.__annotations__ = getattr(user_function, '__annotations__', {})
+        return wrapper
+
+    return decorating_function
+
+
+########################################################################
+###  ChainMap (helper for configparser and string.Template)
+###  From the Py3.4 source code. See also:
+###    https://github.com/kkxue/Py2ChainMap/blob/master/py2chainmap.py
+########################################################################
+
+class _ChainMap(MutableMapping):
+    ''' A ChainMap groups multiple dicts (or other mappings) together
+    to create a single, updateable view.
+
+    The underlying mappings are stored in a list.  That list is public and can
+    accessed or updated using the *maps* attribute.  There is no other state.
+
+    Lookups search the underlying mappings successively until a key is found.
+    In contrast, writes, updates, and deletions only operate on the first
+    mapping.
+
+    '''
+
+    def __init__(self, *maps):
+        '''Initialize a ChainMap by setting *maps* to the given mappings.
+        If no mappings are provided, a single empty dictionary is used.
+
+        '''
+        self.maps = list(maps) or [{}]          # always at least one map
+
+    def __missing__(self, key):
+        raise KeyError(key)
+
+    def __getitem__(self, key):
+        for mapping in self.maps:
+            try:
+                return mapping[key]             # can't use 'key in mapping' with defaultdict
+            except KeyError:
+                pass
+        return self.__missing__(key)            # support subclasses that define __missing__
+
+    def get(self, key, default=None):
+        return self[key] if key in self else default
+
+    def __len__(self):
+        return len(set().union(*self.maps))     # reuses stored hash values if possible
+
+    def __iter__(self):
+        return iter(set().union(*self.maps))
+
+    def __contains__(self, key):
+        return any(key in m for m in self.maps)
+
+    def __bool__(self):
+        return any(self.maps)
+
+    # Py2 compatibility:
+    __nonzero__ = __bool__
+        
+    @_recursive_repr()
+    def __repr__(self):
+        return '{0.__class__.__name__}({1})'.format(
+            self, ', '.join(map(repr, self.maps)))
+
+    @classmethod
+    def fromkeys(cls, iterable, *args):
+        'Create a ChainMap with a single dict created from the iterable.'
+        return cls(dict.fromkeys(iterable, *args))
+
+    def copy(self):
+        'New ChainMap or subclass with a new copy of maps[0] and refs to maps[1:]'
+        return self.__class__(self.maps[0].copy(), *self.maps[1:])
+
+    __copy__ = copy
+
+    def new_child(self, m=None):                # like Django's Context.push()
+        '''
+        New ChainMap with a new map followed by all previous maps. If no
+        map is provided, an empty dict is used.
+        '''
+        if m is None:
+            m = {}
+        return self.__class__(m, *self.maps)
+
+    @property
+    def parents(self):                          # like Django's Context.pop()
+        'New ChainMap from maps[1:].'
+        return self.__class__(*self.maps[1:])
+
+    def __setitem__(self, key, value):
+        self.maps[0][key] = value
+
+    def __delitem__(self, key):
+        try:
+            del self.maps[0][key]
+        except KeyError:
+            raise KeyError('Key not found in the first mapping: {!r}'.format(key))
+
+    def popitem(self):
+        'Remove and return an item pair from maps[0]. Raise KeyError is maps[0] is empty.'
+        try:
+            return self.maps[0].popitem()
+        except KeyError:
+            raise KeyError('No keys found in the first mapping.')
+
+    def pop(self, key, *args):
+        'Remove *key* from maps[0] and return its value. Raise KeyError if *key* not in maps[0].'
+        try:
+            return self.maps[0].pop(key, *args)
+        except KeyError:
+            raise KeyError('Key not found in the first mapping: {!r}'.format(key))
+
+    def clear(self):
+        'Clear maps[0], leaving maps[1:] intact.'
+        self.maps[0].clear()
+
+
+if sys.version_info <= (2, 6):
     OrderedDict = _OrderedDict
     Counter = _Counter
     check_output = _check_output
     count = _count
+else:
+    from collections import OrderedDict, Counter
+    from subprocess import check_output
+    from itertools import count
+
+if sys.version_info < (3, 0):
+    ceil = _ceil
+    _count_elements = __count_elements
+else:
+    from math import ceil
+    from collections import _count_elements
+
+if sys.version_info < (3, 3):
+    recursive_repr = _recursive_repr
+    ChainMap = _ChainMap
+else:
+    from reprlib import recursive_repr
+    from collections import ChainMap
