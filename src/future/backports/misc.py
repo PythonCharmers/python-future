@@ -22,6 +22,16 @@ def ceil(x):
     return int(oldceil(x))
 
 
+if PY26:
+    # itertools.count in Py 2.6 doesn't accept a step parameter
+    def count(start=0, step=1):
+        while True:
+            yield start
+            start += step
+else:
+    from itertools import count
+
+
 # OrderedDict Shim from  Raymond Hettinger, python core dev
 # http://code.activestate.com/recipes/576693-ordered-dictionary-for-py24/
 # here to support version 2.6.

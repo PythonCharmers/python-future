@@ -21,6 +21,7 @@ From Dan Crosta's README:
 from collections import Sequence, Iterator
 from itertools import islice
 
+from future.backports.misc import count
 
 class newrange(Sequence):
     """
@@ -141,20 +142,13 @@ class range_iterator(Iterator):
     """An iterator for a :class:`range`.
     """
     def __init__(self, range_):
-        self._stepper = islice(_count(range_.start, range_.step), len(range_))
+        self._stepper = islice(count(range_.start, range_.step), len(range_))
 
     def __iter__(self):
         return self
 
     def next(self):
         return next(self._stepper)
-
-
-# itertools.count in Py 2.6 doesn't accept a step parameter
-def _count(start=0, step=1):
-    while True:
-        yield start
-        start += step
 
 
 __all__ = ['newrange']
