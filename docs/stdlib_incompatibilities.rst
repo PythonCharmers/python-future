@@ -88,14 +88,17 @@ This enables 'ASCII mode' for regular expressions (see the docs `here
 struct.pack()
 -------------
 
-The :func:`struct.pack` function must take a native string as its format argument. For example::
+Before Python version 2.7.7, the :func:`struct.pack` function
+required a native string as its format argument. For example::
 
     >>> from __future__ import unicode_literals
     >>> from struct import pack
     >>> pack('<4H2I', version, rec_type, build, year, file_hist_flags, ver_can_read) 
 
-raises ``TypeError: Struct() argument 1 must be string, not unicode`` on Python
-2. To work around this, pass the format string argument as e.g. 
-``future.utils.native('<4H2I')``.
+raised ``TypeError: Struct() argument 1 must be string, not unicode``.
 
+This was `fixed in Python 2.7.7
+<https://hg.python.org/cpython/raw-file/f89216059edf/Misc/NEWS>`_.
+Since then, ``struct.pack()`` now also accepts unicode format
+strings.
 
