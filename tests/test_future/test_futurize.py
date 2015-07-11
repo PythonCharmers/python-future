@@ -17,7 +17,15 @@ from future.utils import PY2
 
 
 class TestLibFuturize(unittest.TestCase):
-    @skip26    # mysterious sporadic UnicodeDecodeError raised by lib2to3 ...
+
+    def setUp(self):
+        # For tests that need a text file:
+        _, self.textfilename = tempfile.mkstemp(text=True)
+        super(TestLibFuturize, self).setUp()
+
+    def tearDown(self):
+        os.unlink(self.textfilename)
+
     def test_correct_exit_status(self):
         """
         Issue #119: futurize and pasteurize were not exiting with the correct
@@ -26,8 +34,7 @@ class TestLibFuturize(unittest.TestCase):
         translates into 1!
         """
         from libfuturize.main import main
-        # Try futurizing this test script:
-        retcode = main([__file__])
+        retcode = main([self.textfilename])
         self.assertTrue(isinstance(retcode, int))   # i.e. Py2 builtin int
 
     def test_is_shebang_comment(self):
@@ -82,9 +89,6 @@ class TestFuturizeSimple(CodeHandler):
     tests for whether they can be passed to ``futurize`` and immediately
     run under both Python 2 again and Python 3.
     """
-    def setUp(self):
-        self.tempdir = tempfile.mkdtemp() + os.path.sep
-        super(TestFuturizeSimple, self).setUp()
 
     def test_encoding_comments_kept_at_top(self):
         """
@@ -449,7 +453,6 @@ class TestFuturizeSimple(CodeHandler):
         # -*- coding: utf-8 -*-
         icons = [u"◐", u"◓", u"◑", u"◒"]
         """
-        self.unchanged(code)
 
     def test_exception_syntax(self):
         """
@@ -488,7 +491,7 @@ class TestFuturizeSimple(CodeHandler):
         file() as a synonym for open() is obsolete and invalid on Python 3.
         """
         before = '''
-        f = file(__file__)
+        f = file(self.textfilename)
         data = f.read()
         f.close()
         '''
@@ -851,7 +854,7 @@ class TestFuturizeStage1(CodeHandler):
 
         Issue #16 (with porting bokeh/bbmodel.py)
         """
-        with open(tempdir + 'specialmodels.py', 'w') as f:
+        with open(self.tempdir + 'specialmodels.py', 'w') as f:
             f.write('pass')
 
         before = """

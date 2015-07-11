@@ -21,6 +21,14 @@ class TestPasteurize(CodeHandler):
     on both Py3 and Py2.
     """
 
+    def setUp(self):
+        # For tests that need a text file:
+        _, self.textfilename = tempfile.mkstemp(text=True)
+        super(TestPasteurize, self).setUp()
+
+    def tearDown(self):
+        os.unlink(self.textfilename)
+
     @skip26    # Python 2.6's lib2to3 causes the "from builtins import
                # range" line to be stuck at the bottom of the module!
     def test_range_slice(self):
@@ -130,7 +138,6 @@ class TestPasteurize(CodeHandler):
         filename = urllib_parse.urlparse(url)[2].split('/')[-1]
         """
 
-    @skip26    # mysterious sporadic UnicodeDecodeError raised by lib2to3 ...
     def test_correct_exit_status(self):
         """
         Issue #119: futurize and pasteurize were not exiting with the correct
@@ -140,7 +147,7 @@ class TestPasteurize(CodeHandler):
         """
         from libpasteurize.main import main
         # Try pasteurizing this test script:
-        retcode = main([__file__])
+        retcode = main([self.textfilename])
         self.assertTrue(isinstance(retcode, int))   # i.e. Py2 builtin int
 
  

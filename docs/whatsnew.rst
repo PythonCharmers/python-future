@@ -8,7 +8,7 @@ What's New
 What's new in version 0.14.4 (2015-06-03)
 =========================================
 
-This release adds two new minor features and fixes some small bugs.
+This is primarily a bug-fix release. It adds two new minor features and fixes several small bugs.
 
 Minor features:
 
@@ -21,6 +21,7 @@ Bug fixes:
   implementations where appropriate (issue #146 - thanks to Matt Bogosian)
 - Fixed newrange slicing for some slice/range combos (issue #132, thanks to Brad Walker)
 - Small doc fixes
+- Improve robustness of test suite with .pyc files on Py2
 
 
 What's new in version 0.14.3 (2014-12-15)
