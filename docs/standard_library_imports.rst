@@ -15,9 +15,9 @@ As of version 0.14, the ``future`` package comes with top-level packages for
 Python 2.x that provide access to the reorganized standard library modules
 under their Python 3.x names.
 
-Direct imports are the preferred mechanism for accesing the renamed standard library
-modules in Python 2/3 compatible code. For example, the following clean Python
-3 code runs unchanged on Python 2 after installing ``future``::
+Direct imports are the preferred mechanism for accesing the renamed standard
+library modules in Python 2/3 compatible code. For example, the following clean
+Python 3 code runs unchanged on Python 2 after installing ``future``::
 
     >>> # Alias for future.builtins on Py2:
     >>> from builtins import str, open, range, dict
@@ -28,8 +28,8 @@ modules in Python 2/3 compatible code. For example, the following clean Python
     >>> import tkinter.dialog
     >>> etc.
 
-Notice that this code actually runs on Python 3 without the presence of the ``future``
-package.
+Notice that this code actually runs on Python 3 without the presence of the
+``future`` package.
 
 Of the 44 modules that were refactored with PEP 3108 (standard library
 reorganization), 30 are supported with direct imports in the above manner. The
@@ -92,20 +92,20 @@ package makes the Python 3.x APIs available on Python 2.x as follows::
     from future.standard_library import install_aliases
     install_aliases()
 
-    from collections import Counter, OrderedDict   # backported to Py2.6
     from collections import UserDict, UserList, UserString
 
     import dbm
     import dbm.dumb
-    import dbm.gnu                         # requires Python dbm support
-    import dbm.ndbm                        # requires Python dbm support
+    import dbm.gnu                # requires Python dbm support
+    import dbm.ndbm               # requires Python dbm support
 
     from itertools import filterfalse, zip_longest
 
-    from subprocess import check_output    # backported to Py2.6
     from subprocess import getoutput, getstatusoutput
 
     from sys import intern
+
+    from math import ceil         # now returns an int
 
     import test.support
 
@@ -114,6 +114,22 @@ package makes the Python 3.x APIs available on Python 2.x as follows::
     import urllib.request
     import urllib.response
     import urllib.robotparser
+
+
+Backports also exist of the following features from Python 2.7+ for Python 2.6:
+
+- collections.Counter
+- collections.OrderedDict
+- itertools.count (with an optional step parameter)
+
+These can be imported on Python 2.6 as follows::
+
+    from future.standard_library import install_aliases
+    install_aliases()
+
+    from collections import Counter, OrderedDict
+    from itertools import count
+    from subprocess import check_output
 
 
 External standard-library backports

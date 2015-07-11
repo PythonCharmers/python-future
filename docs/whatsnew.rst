@@ -8,12 +8,14 @@ What's New
 What's new in version 0.14.4 (2015-06-03)
 =========================================
 
-This is primarily a bug-fix release. It adds two new minor features and fixes several small bugs.
+This is primarily a bug-fix release. It adds some minor new features and
+fixes several small bugs.
 
 Minor features:
 
 - ``tkinter.ttk`` support (issue #151)
 - ``collections.ChainMap`` backport (issue #150)
+- ``itertools.count`` backport for Py2.6 (issue #152)
 
 Bug fixes:
 

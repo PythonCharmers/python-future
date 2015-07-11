@@ -1,25 +1,25 @@
 """
-Miscellaneous function (re)definitions from the Py3.3 standard library for
-Python 2.6/2.7.
+Miscellaneous function (re)definitions from the Py3.3+ standard library
+for Python 2.6/2.7.
 
-math.ceil
-
-collections.OrderedDict  (for Python 2.6)
-collections.Counter      (for Python 2.6)
+- math.ceil                (for Python 2.7)
+- collections.OrderedDict  (for Python 2.6)
+- collections.Counter      (for Python 2.6)
+- itertools.count          (for Python 2.6, with step parameter)
 """
 
-from math import ceil as oldceil
+from math import ceil
 import subprocess
 
 from future.utils import iteritems, itervalues, PY26
 
 
-def ceil(x):
+def _ceil(x):
     """
     Return the ceiling of x as an int.
     This is the smallest integral value >= x.
     """
-    return int(oldceil(x))
+    return int(ceil(x))
 
 
 # OrderedDict Shim from  Raymond Hettinger, python core dev
@@ -482,16 +482,13 @@ class _Counter(dict):
                 result[elem] = newcount
         return result
 
-try:
-    from collections import OrderedDict, Counter
-except ImportError:
-    # Python 2.6 doesn't have these:
-    OrderedDict = _OrderedDict
-    Counter = _Counter
 
+def _check_output(*popenargs, **kwargs):
+    """
+    For Python 2.6 compatibility: see
+    http://stackoverflow.com/questions/4814970/
+    """
 
-# For Python 2.6 compatibility: see http://stackoverflow.com/questions/4814970/
-def check_output(*popenargs, **kwargs):
     if 'stdout' in kwargs:
         raise ValueError('stdout argument not allowed, it will be overridden.')
     process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
@@ -503,3 +500,27 @@ def check_output(*popenargs, **kwargs):
             cmd = popenargs[0]
         raise subprocess.CalledProcessError(retcode, cmd)
     return output
+
+
+def _count(start=0, step=1):
+    """
+    ``itertools.count`` in Py 2.6 doesn't accept a step
+    parameter. This is an enhanced version of ``itertools.count``
+    for Py2.6 equivalent to ``itertools.count`` in Python 2.7+.
+    """
+    while True:
+        yield start
+        start += step
+
+
+if not PY26:
+    from math import ceil
+    from collections import OrderedDict, Counter
+    from subprocess import check_output
+    from itertools import count
+else:
+    ceil = _ceil
+    OrderedDict = _OrderedDict
+    Counter = _Counter
+    check_output = _check_output
+    count = _count
