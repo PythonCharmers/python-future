@@ -16,12 +16,13 @@ Minor features:
 - ``tkinter.ttk`` support (issue #151)
 - ``collections.ChainMap`` backport (issue #150)
 - ``itertools.count`` backport for Py2.6 (issue #152)
+- Add constants to ``http.client`` such as ``HTTP_PORT`` and ``BAD_REQUEST`` (issue #137)
 
 Bug fixes:
 
 - Expand newint.__divmod__ and newint.__rdivmod__ to fall back to <type 'long'>
   implementations where appropriate (issue #146 - thanks to Matt Bogosian)
-- Fixed newrange slicing for some slice/range combos (issue #132, thanks to Brad Walker)
+- Fix newrange slicing for some slice/range combos (issue #132, thanks to Brad Walker)
 - Small doc fixes
 - Improve robustness of test suite with .pyc files on Py2
 
