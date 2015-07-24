@@ -676,7 +676,7 @@ class _ChainMap(MutableMapping):
         self.maps[0].clear()
 
 
-if sys.version_info <= (2, 6):
+if sys.version_info < (2, 7):
     OrderedDict = _OrderedDict
     Counter = _Counter
     check_output = _check_output
