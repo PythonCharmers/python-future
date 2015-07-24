@@ -5,11 +5,11 @@ What's New
 
 .. _whats-new-0.14.x:
 
-What's new in version 0.14.4 (2015-06-03)
+What's new in version 0.14.4 (2015-07-25)
 =========================================
 
-This is primarily a bug-fix release. It adds some minor new features and
-fixes several small bugs.
+This is primarily a bug-fix release. It adds some minor new backward-compatible features and
+fixes several bugs.
 
 Minor features:
 
@@ -20,6 +20,7 @@ Minor features:
 
 Bug fixes:
 
+- Add ``HTTPMessage`` to ``http.client``, which is missing from ``httplib.__all__`` on Python <= 2.7.10. This fixes compatibility with the latest ``urllib3`` package (issue #159, thanks to Waldemar Kornewald)
 - Expand newint.__divmod__ and newint.__rdivmod__ to fall back to <type 'long'>
   implementations where appropriate (issue #146 - thanks to Matt Bogosian)
 - Fix newrange slicing for some slice/range combos (issue #132, thanks to Brad Walker)
