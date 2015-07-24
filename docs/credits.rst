@@ -56,6 +56,8 @@ Patches
 - Nicolas Delaby
 - Corey Farwell
 - Eric Firing
+- Michael Joseph
+- Waldemar Kornewald
 - Alexey Kotlyarov
 - Lion Krischer
 - Marcin Kuzminski
@@ -66,6 +68,7 @@ Patches
 - Tim Shaffer
 - Daniel Szoska
 - Jeff Tratner
+- Tim Tröndle
 - Brad Walker
 - Mystic-Mirage (GitHub)
 - str4d (GitHub)
