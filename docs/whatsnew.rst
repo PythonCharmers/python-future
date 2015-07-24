@@ -17,6 +17,8 @@ Minor features:
 - ``collections.ChainMap`` backport (issue #150)
 - ``itertools.count`` backport for Py2.6 (issue #152)
 - Add constants to ``http.client`` such as ``HTTP_PORT`` and ``BAD_REQUEST`` (issue #137)
+- ``reprlib.recursive_repr`` backport for Py2
+- Update backports of ``Counter`` and ``OrderedDict`` to use Py3.4 implementations. This fixes ``.copy()`` for subclasses etc.
 
 Bug fixes:
 

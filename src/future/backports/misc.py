@@ -1,5 +1,5 @@
 """
-Miscellaneous function (re)definitions from the Py3.3+ standard library
+Miscellaneous function (re)definitions from the Py3.4+ standard library
 for Python 2.6/2.7.
 
 - math.ceil                (for Python 2.7)
@@ -8,6 +8,7 @@ for Python 2.6/2.7.
 - collections.ChainMap     (for all versions prior to Python 3.3)
 - itertools.count          (for Python 2.6, with step parameter)
 - subprocess.check_output  (for Python 2.6)
+- reprlib.recursive_repr   (for Python 2.6+)
 """
 
 import subprocess

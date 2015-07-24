@@ -102,7 +102,7 @@ to be accessed under their Python 3 names and locations in Python 2::
     import queue
     import configparser
     from collections import UserDict, UserList, UserString
-    from collections import Counter, OrderedDict   # even on Py2.6
+    from collections import Counter, OrderedDict, ChainMap   # even on Py2.6
     from itertools import filterfalse, zip_longest
 
     import html

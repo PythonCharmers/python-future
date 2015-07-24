@@ -105,8 +105,6 @@ package makes the Python 3.x APIs available on Python 2.x as follows::
 
     from sys import intern
 
-    from math import ceil         # now returns an int
-
     import test.support
 
     import urllib.error
@@ -116,20 +114,26 @@ package makes the Python 3.x APIs available on Python 2.x as follows::
     import urllib.robotparser
 
 
-Backports also exist of the following features from Python 2.7+ for Python 2.6:
+Backports also exist of the following features from Python 3.4:
 
-- collections.Counter
-- collections.OrderedDict
-- itertools.count (with an optional step parameter)
+- ``math.ceil`` returns an int on Py3
+- ``collections.OrderedDict``  (for Python 2.6)
+- ``collections.Counter``      (for Python 2.6)
+- ``collections.ChainMap``     (for all versions prior to Python 3.3)
+- ``itertools.count``          (for Python 2.6, with step parameter)
+- ``subprocess.check_output``  (for Python 2.6)
+- ``reprlib.recursive_repr``
 
-These can be imported on Python 2.6 as follows::
+These can then be imported on Python 2.6+ as follows::
 
     from future.standard_library import install_aliases
     install_aliases()
 
-    from collections import Counter, OrderedDict
+    from math import ceil      # now returns an int
+    from collections import Counter, OrderedDict, ChainMap
     from itertools import count
     from subprocess import check_output
+    from reprlib import recursive_repr
 
 
 External standard-library backports

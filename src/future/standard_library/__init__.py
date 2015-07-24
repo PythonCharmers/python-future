@@ -197,6 +197,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('collections', 'OrderedDict', 'future.backports.misc', 'OrderedDict'),
          ('collections', 'Counter', 'future.backports.misc', 'Counter'),
          ('itertools', 'count', 'future.backports.misc', 'count'),
+         ('reprlib', 'recursive_repr', 'future.backports.misc', 'recursive_repr'),
 
 # This is no use, since "import urllib.request" etc. still fails:
 #          ('urllib', 'error', 'future.moves.urllib', 'error'),
