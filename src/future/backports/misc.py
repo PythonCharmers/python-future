@@ -43,8 +43,11 @@ except ImportError:
     pass
 
 
-class OrderedDict(dict):
+################################################################################
+### OrderedDict
+################################################################################
 
+class OrderedDict(dict):
     'Dictionary that remembers insertion order'
     # An inherited dict maps keys to values.
     # The inherited dict provides __getitem__, __len__, __contains__, and get.
@@ -403,7 +406,7 @@ class Counter(dict):
 
     def copy(self):
         'Like dict.copy() but returns a Counter instance instead of a dict.'
-        return Counter(self)
+        return self.__class__(self)
 
     def __delitem__(self, elem):
         '''Like dict.__delitem__() but does not raise KeyError for missing
