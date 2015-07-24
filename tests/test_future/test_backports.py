@@ -19,7 +19,7 @@ from future.backports.misc import (count,
                                    ChainMap,
                                    _count_elements)
 from future.utils import PY26
-from future.tests.base import unittest, skip26, expectedFailurePY2
+from future.tests.base import unittest, skip26, expectedFailurePY27
 
 
 class CountTest(unittest.TestCase):
@@ -333,7 +333,7 @@ class TestCounter(unittest.TestCase):
                 set_result = setop(set(p.elements()), set(q.elements()))
                 self.assertEqual(counter_result, dict.fromkeys(set_result, 1))
 
-    @expectedFailurePY2
+    @expectedFailurePY27
     def test_inplace_operations(self):
         elements = 'abcd'
         for i in range(1000):
@@ -366,7 +366,7 @@ class TestCounter(unittest.TestCase):
         c.subtract('aaaabbcce')
         self.assertEqual(c, Counter(a=-1, b=0, c=-1, d=1, e=-1))
 
-    @expectedFailurePY2
+    @expectedFailurePY27
     def test_unary(self):
         c = Counter(a=-5, b=0, c=5, d=10, e=15,g=40)
         self.assertEqual(dict(+c), dict(c=5, d=10, e=15, g=40))
@@ -630,7 +630,7 @@ class TestOrderedDict(unittest.TestCase):
         od['a'] = 1
         self.assertEqual(list(od.items()), [('b', 2), ('a', 1)])
 
-    @expectedFailurePY2
+    @expectedFailurePY27
     def test_move_to_end(self):
         od = OrderedDict.fromkeys('abcde')
         self.assertEqual(list(od), list('abcde'))

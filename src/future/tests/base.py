@@ -9,7 +9,7 @@ import io
 import functools
 from textwrap import dedent
 
-from future.utils import bind_method, PY26, PY3, PY2
+from future.utils import bind_method, PY26, PY3, PY2, PY27
 from future.moves.subprocess import check_output, STDOUT, CalledProcessError
 
 if PY26:
@@ -378,6 +378,12 @@ def expectedFailurePY3(func):
 
 def expectedFailurePY26(func):
     if not PY26:
+        return func
+    return unittest.expectedFailure(func)
+
+
+def expectedFailurePY27(func):
+    if not PY27:
         return func
     return unittest.expectedFailure(func)
 

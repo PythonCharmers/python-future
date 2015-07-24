@@ -80,6 +80,7 @@ import inspect
 PY3 = sys.version_info[0] == 3
 PY2 = sys.version_info[0] == 2
 PY26 = sys.version_info[0:2] == (2, 6)
+PY27 = sys.version_info[0:2] == (2, 7)
 PYPY = hasattr(sys, 'pypy_translation_info')
 
 
