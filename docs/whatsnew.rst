@@ -20,12 +20,12 @@ Minor features:
 
 Bug fixes:
 
-- Add ``HTTPMessage`` to ``http.client``, which is missing from ``httplib.__all__`` on Python <= 2.7.10. This fixes compatibility with the latest ``urllib3`` package (issue #159, thanks to Waldemar Kornewald)
+- Add ``HTTPMessage`` to ``http.client``, which is missing from ``httplib.__all__`` on Python <= 2.7.10. This restores compatibility with the latest ``urllib3`` package (issue #159, thanks to Waldemar Kornewald)
 - Expand newint.__divmod__ and newint.__rdivmod__ to fall back to <type 'long'>
   implementations where appropriate (issue #146 - thanks to Matt Bogosian)
 - Fix newrange slicing for some slice/range combos (issue #132, thanks to Brad Walker)
-- Small doc fixes
-- Improve robustness of test suite with .pyc files on Py2
+- Small doc fixes (thanks to Michael Joseph and Tim Tröndle)
+- Improve robustness of test suite against opening .pyc files as text on Py2
 
 
 What's new in version 0.14.3 (2014-12-15)
