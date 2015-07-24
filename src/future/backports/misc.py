@@ -14,6 +14,8 @@ import sys
 import subprocess
 from math import ceil as oldceil
 from collections import MutableMapping
+from operator import eq as _eq
+from _weakref import proxy as _proxy
 
 from future.utils import iteritems, itervalues, PY26, PY3
 
@@ -26,195 +28,206 @@ def ceil(x):
     return int(oldceil(x))
 
 
-# OrderedDict Shim from  Raymond Hettinger, python core dev
-# http://code.activestate.com/recipes/576693-ordered-dictionary-for-py24/
-# here to support version 2.6.
+########################################################################
+###  reprlib.recursive_repr decorator from Py3.4
+########################################################################
 
-if PY26:
-    # don't need this except in 2.6
-    try:
-        from thread import get_ident
-    except ImportError:
-        from dummy_thread import get_ident
-
+from itertools import islice
 try:
-    from _abcoll import KeysView, ValuesView, ItemsView
+    from _thread import get_ident
 except ImportError:
-    pass
+    from _dummy_thread import get_ident
+
+def recursive_repr(fillvalue='...'):
+    'Decorator to make a repr function return fillvalue for a recursive call'
+
+    def decorating_function(user_function):
+        repr_running = set()
+
+        def wrapper(self):
+            key = id(self), get_ident()
+            if key in repr_running:
+                return fillvalue
+            repr_running.add(key)
+            try:
+                result = user_function(self)
+            finally:
+                repr_running.discard(key)
+            return result
+
+        # Can't use functools.wraps() here because of bootstrap issues
+        wrapper.__module__ = getattr(user_function, '__module__')
+        wrapper.__doc__ = getattr(user_function, '__doc__')
+        wrapper.__name__ = getattr(user_function, '__name__')
+        wrapper.__annotations__ = getattr(user_function, '__annotations__', {})
+        return wrapper
+
+    return decorating_function
 
 
 ################################################################################
 ### OrderedDict
 ################################################################################
 
+class _Link(object):
+    __slots__ = 'prev', 'next', 'key', '__weakref__'
+
 class OrderedDict(dict):
     'Dictionary that remembers insertion order'
     # An inherited dict maps keys to values.
     # The inherited dict provides __getitem__, __len__, __contains__, and get.
     # The remaining methods are order-aware.
-    # Big-O running times for all methods are the same as for regular
-    # dictionaries.
+    # Big-O running times for all methods are the same as regular dictionaries.
 
-    # The internal self.__map dictionary maps keys to links in a doubly linked
-    # list.  The circular doubly linked list starts and ends with a sentinel
-    # element.  The sentinel element never gets deleted (this simplifies the
-    # algorithm).  Each link is stored as a list of length three:  [PREV, NEXT,
-    # KEY].
+    # The internal self.__map dict maps keys to links in a doubly linked list.
+    # The circular doubly linked list starts and ends with a sentinel element.
+    # The sentinel element never gets deleted (this simplifies the algorithm).
+    # The sentinel is in self.__hardroot with a weakref proxy in self.__root.
+    # The prev links are weakref proxies (to prevent circular references).
+    # Individual links are kept alive by the hard reference in self.__map.
+    # Those hard references disappear when a key is deleted from an OrderedDict.
 
-    def __init__(self, *args, **kwds):
-        '''Initialize an ordered dictionary.  Signature is the same as for
-        regular dictionaries, but keyword arguments are not recommended
-        because their insertion order is arbitrary.
+    def __init__(*args, **kwds):
+        '''Initialize an ordered dictionary.  The signature is the same as
+        regular dictionaries, but keyword arguments are not recommended because
+        their insertion order is arbitrary.
 
         '''
+        if not args:
+            raise TypeError("descriptor '__init__' of 'OrderedDict' object "
+                            "needs an argument")
+        self = args[0]
+        args = args[1:]
         if len(args) > 1:
             raise TypeError('expected at most 1 arguments, got %d' % len(args))
         try:
             self.__root
         except AttributeError:
-            self.__root = root = []                     # sentinel node
-            root[:] = [root, root, None]
+            self.__hardroot = _Link()
+            self.__root = root = _proxy(self.__hardroot)
+            root.prev = root.next = root
             self.__map = {}
         self.__update(*args, **kwds)
 
-    def __setitem__(self, key, value, dict_setitem=dict.__setitem__):
+    def __setitem__(self, key, value,
+                    dict_setitem=dict.__setitem__, proxy=_proxy, Link=_Link):
         'od.__setitem__(i, y) <==> od[i]=y'
-        # Setting a new item creates a new link which goes at the end of the
-        # linked list, and the inherited dictionary is updated with the new
-        # key/value pair.
+        # Setting a new item creates a new link at the end of the linked list,
+        # and the inherited dictionary is updated with the new key/value pair.
         if key not in self:
+            self.__map[key] = link = Link()
             root = self.__root
-            last = root[0]
-            last[1] = root[0] = self.__map[key] = [last, root, key]
+            last = root.prev
+            link.prev, link.next, link.key = last, root, key
+            last.next = link
+            root.prev = proxy(link)
         dict_setitem(self, key, value)
 
     def __delitem__(self, key, dict_delitem=dict.__delitem__):
         'od.__delitem__(y) <==> del od[y]'
-        # Deleting an existing item uses self.__map to find the link which is
-        # then removed by updating the links in the predecessor and successor
-        # nodes.
+        # Deleting an existing item uses self.__map to find the link which gets
+        # removed by updating the links in the predecessor and successor nodes.
         dict_delitem(self, key)
-        link_prev, link_next, key = self.__map.pop(key)
-        link_prev[1] = link_next
-        link_next[0] = link_prev
+        link = self.__map.pop(key)
+        link_prev = link.prev
+        link_next = link.next
+        link_prev.next = link_next
+        link_next.prev = link_prev
 
     def __iter__(self):
         'od.__iter__() <==> iter(od)'
+        # Traverse the linked list in order.
         root = self.__root
-        curr = root[1]
+        curr = root.next
         while curr is not root:
-            yield curr[2]
-            curr = curr[1]
+            yield curr.key
+            curr = curr.next
 
     def __reversed__(self):
         'od.__reversed__() <==> reversed(od)'
+        # Traverse the linked list in reverse order.
         root = self.__root
-        curr = root[0]
+        curr = root.prev
         while curr is not root:
-            yield curr[2]
-            curr = curr[0]
+            yield curr.key
+            curr = curr.prev
 
     def clear(self):
         'od.clear() -> None.  Remove all items from od.'
-        try:
-            for node in itervalues(self.__map):
-                del node[:]
-            root = self.__root
-            root[:] = [root, root, None]
-            self.__map.clear()
-        except AttributeError:
-            pass
+        root = self.__root
+        root.prev = root.next = root
+        self.__map.clear()
         dict.clear(self)
 
     def popitem(self, last=True):
         '''od.popitem() -> (k, v), return and remove a (key, value) pair.
-        Pairs are returned in LIFO order if last is true or FIFO order if
-        false.
+        Pairs are returned in LIFO order if last is true or FIFO order if false.
+
         '''
         if not self:
             raise KeyError('dictionary is empty')
         root = self.__root
         if last:
-            link = root[0]
-            link_prev = link[0]
-            link_prev[1] = root
-            root[0] = link_prev
+            link = root.prev
+            link_prev = link.prev
+            link_prev.next = root
+            root.prev = link_prev
         else:
-            link = root[1]
-            link_next = link[1]
-            root[1] = link_next
-            link_next[0] = root
-        key = link[2]
+            link = root.next
+            link_next = link.next
+            root.next = link_next
+            link_next.prev = root
+        key = link.key
         del self.__map[key]
         value = dict.pop(self, key)
         return key, value
 
-    # -- the following methods do not depend on the internal structure --
+    def move_to_end(self, key, last=True):
+        '''Move an existing element to the end (or beginning if last==False).
 
-    def keys(self):
-        'od.keys() -> list of keys in od'
-        return list(self)
+        Raises KeyError if the element does not exist.
+        When last=True, acts like a fast version of self[key]=self.pop(key).
 
-    def values(self):
-        'od.values() -> list of values in od'
-        return [self[key] for key in self]
-
-    def items(self):
-        'od.items() -> list of (key, value) pairs in od'
-        return [(key, self[key]) for key in self]
-
-    def iterkeys(self):
-        'od.iterkeys() -> an iterator over the keys in od'
-        return iter(self)
-
-    def itervalues(self):
-        'od.itervalues -> an iterator over the values in od'
-        for k in self:
-            yield self[k]
-
-    def iteritems(self):
-        'od.iteritems -> an iterator over the (key, value) items in od'
-        for k in self:
-            yield (k, self[k])
-
-    def update(*args, **kwds):
-        '''od.update(E, **F) -> None.  Update od from dict/iterable E and F.
-
-        If E is a dict instance, does:        for k in E: od[k] = E[k]
-        If E has a .keys() method, does:      for k in E.keys(): od[k] = E[k]
-        Or if E is an iterable of items, does:for k, v in E: od[k] = v
-        In either case, this is followed by:  for k, v in F.items(): od[k] = v
         '''
-        if len(args) > 2:
-            raise TypeError('update() takes at most 2 positional '
-                            'arguments (%d given)' % (len(args),))
-        elif not args:
-            raise TypeError('update() takes at least 1 argument (0 given)')
-        self = args[0]
-        # Make progressively weaker assumptions about "other"
-        other = ()
-        if len(args) == 2:
-            other = args[1]
-        if isinstance(other, dict):
-            for key in other:
-                self[key] = other[key]
-        elif hasattr(other, 'keys'):
-            for key in other.keys():
-                self[key] = other[key]
+        link = self.__map[key]
+        link_prev = link.prev
+        link_next = link.next
+        link_prev.next = link_next
+        link_next.prev = link_prev
+        root = self.__root
+        if last:
+            last = root.prev
+            link.prev = last
+            link.next = root
+            last.next = root.prev = link
         else:
-            for key, value in other:
-                self[key] = value
-        for key, value in kwds.items():
-            self[key] = value
-    # let subclasses override update without breaking __init__
-    __update = update
+            first = root.next
+            link.prev = root
+            link.next = first
+            root.next = first.prev = link
+
+    def __sizeof__(self):
+        sizeof = _sys.getsizeof
+        n = len(self) + 1                       # number of links including root
+        size = sizeof(self.__dict__)            # instance dictionary
+        size += sizeof(self.__map) * 2          # internal dict and inherited dict
+        size += sizeof(self.__hardroot) * n     # link objects
+        size += sizeof(self.__root) * n         # proxy objects
+        return size
+
+    update = __update = MutableMapping.update
+    keys = MutableMapping.keys
+    values = MutableMapping.values
+    items = MutableMapping.items
+    __ne__ = MutableMapping.__ne__
 
     __marker = object()
 
     def pop(self, key, default=__marker):
-        '''od.pop(k[,d]) -> v, remove specified key and return the\
-        corresponding value.  If key is not found, d is returned if given,
-        otherwise KeyError is raised.
+        '''od.pop(k[,d]) -> v, remove specified key and return the corresponding
+        value.  If key is not found, d is returned if given, otherwise KeyError
+        is raised.
+
         '''
         if key in self:
             result = self[key]
@@ -231,28 +244,19 @@ class OrderedDict(dict):
         self[key] = default
         return default
 
-    def __repr__(self, _repr_running={}):
+    @recursive_repr()
+    def __repr__(self):
         'od.__repr__() <==> repr(od)'
-        call_key = id(self), get_ident()
-        if call_key in _repr_running:
-            return '...'
-        _repr_running[call_key] = 1
-        try:
-            if not self:
-                return '%s()' % (self.__class__.__name__,)
-            return '%s(%r)' % (self.__class__.__name__, list(self.items()))
-        finally:
-            del _repr_running[call_key]
+        if not self:
+            return '%s()' % (self.__class__.__name__,)
+        return '%s(%r)' % (self.__class__.__name__, list(self.items()))
 
     def __reduce__(self):
         'Return state information for pickling'
-        items = [[k, self[k]] for k in self]
         inst_dict = vars(self).copy()
         for k in vars(OrderedDict()):
             inst_dict.pop(k, None)
-        if inst_dict:
-            return (self.__class__, (items,), inst_dict)
-        return self.__class__, (items,)
+        return self.__class__, (), inst_dict or None, None, iter(self.items())
 
     def copy(self):
         'od.copy() -> a shallow copy of od'
@@ -260,40 +264,23 @@ class OrderedDict(dict):
 
     @classmethod
     def fromkeys(cls, iterable, value=None):
-        '''OD.fromkeys(S[, v]) -> New ordered dictionary with keys from S and
-        values equal to v (which defaults to None).
+        '''OD.fromkeys(S[, v]) -> New ordered dictionary with keys from S.
+        If not specified, the value defaults to None.
+
         '''
-        d = cls()
+        self = cls()
         for key in iterable:
-            d[key] = value
-        return d
+            self[key] = value
+        return self
 
     def __eq__(self, other):
-        '''od.__eq__(y) <==> od==y.  Comparison to another OD is
-        order-sensitive while comparison to a regular mapping is
-        order-insensitive.
+        '''od.__eq__(y) <==> od==y.  Comparison to another OD is order-sensitive
+        while comparison to a regular mapping is order-insensitive.
+
         '''
         if isinstance(other, OrderedDict):
-            return (len(self) == len(other) and
-                    list(self.items()) == list(other.items()))
+            return dict.__eq__(self, other) and all(map(_eq, self, other))
         return dict.__eq__(self, other)
-
-    def __ne__(self, other):
-        return not self == other
-
-    # -- the following methods are only used in Python 2.7 --
-
-    def viewkeys(self):
-        "od.viewkeys() -> a set-like object providing a view on od's keys"
-        return KeysView(self)
-
-    def viewvalues(self):
-        "od.viewvalues() -> an object providing a view on od's values"
-        return ValuesView(self)
-
-    def viewitems(self):
-        "od.viewitems() -> a set-like object providing a view on od's items"
-        return ItemsView(self)
 
 
 # {{{ http://code.activestate.com/recipes/576611/ (r11)
@@ -527,43 +514,6 @@ def count(start=0, step=1):
     while True:
         yield start
         start += step
-
-
-########################################################################
-###  reprlib.recursive_repr decorator from Py3.4
-########################################################################
-
-from itertools import islice
-try:
-    from _thread import get_ident
-except ImportError:
-    from _dummy_thread import get_ident
-
-def recursive_repr(fillvalue='...'):
-    'Decorator to make a repr function return fillvalue for a recursive call'
-
-    def decorating_function(user_function):
-        repr_running = set()
-
-        def wrapper(self):
-            key = id(self), get_ident()
-            if key in repr_running:
-                return fillvalue
-            repr_running.add(key)
-            try:
-                result = user_function(self)
-            finally:
-                repr_running.discard(key)
-            return result
-
-        # Can't use functools.wraps() here because of bootstrap issues
-        wrapper.__module__ = getattr(user_function, '__module__')
-        wrapper.__doc__ = getattr(user_function, '__doc__')
-        wrapper.__name__ = getattr(user_function, '__name__')
-        wrapper.__annotations__ = getattr(user_function, '__annotations__', {})
-        return wrapper
-
-    return decorating_function
 
 
 ########################################################################
