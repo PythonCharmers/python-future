@@ -86,13 +86,21 @@ Aliased imports
 ~~~~~~~~~~~~~~~
 
 The following 14 modules were refactored or extended from Python 2.6/2.7 to 3.x
-but were neither renamed nor were the new APIs backported. The ``future``
-package makes the Python 3.x APIs available on Python 2.x as follows::
+but were neither renamed in Py3.x nor were the new APIs backported to Py2.x.
+This precludes compatibility interfaces that work out-of-the-box. Instead, the
+``future`` package makes the Python 3.x APIs available on Python 2.x as
+follows::
 
     from future.standard_library import install_aliases
     install_aliases()
 
     from collections import UserDict, UserList, UserString
+
+    import urllib.parse
+    import urllib.request
+    import urllib.response
+    import urllib.robotparser
+    import urllib.error
 
     import dbm
     import dbm.dumb
@@ -107,12 +115,10 @@ package makes the Python 3.x APIs available on Python 2.x as follows::
 
     import test.support
 
-    import urllib.error
-    import urllib.parse
-    import urllib.request
-    import urllib.response
-    import urllib.robotparser
 
+The newly exposed ``urllib`` submodules are full backports of those from Py3.x.
+This means, for example, that ``urllib.parse.unquote()`` now exists and takes
+an optional ``encoding`` argument on Py2.x as it does on Py3.x.
 
 Backports also exist of the following features from Python 3.4:
 
@@ -122,7 +128,7 @@ Backports also exist of the following features from Python 3.4:
 - ``collections.ChainMap``     (for all versions prior to Python 3.3)
 - ``itertools.count``          (for Python 2.6, with step parameter)
 - ``subprocess.check_output``  (for Python 2.6)
-- ``reprlib.recursive_repr``
+- ``reprlib.recursive_repr``   (for Python 2.6 and 2.7)
 
 These can then be imported on Python 2.6+ as follows::
 
