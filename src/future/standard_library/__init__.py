@@ -462,11 +462,11 @@ def install_aliases():
 
     # Hack for urllib so it appears to have the same structure on Py2 as on Py3
     import urllib
-    from future.moves.urllib import request
-    from future.moves.urllib import response
-    from future.moves.urllib import parse
-    from future.moves.urllib import error
-    from future.moves.urllib import robotparser
+    from future.backports.urllib import request
+    from future.backports.urllib import response
+    from future.backports.urllib import parse
+    from future.backports.urllib import error
+    from future.backports.urllib import robotparser
     urllib.request = request
     urllib.response = response
     urllib.parse = parse
