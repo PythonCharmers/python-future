@@ -1005,10 +1005,11 @@ class urlencode_Tests(unittest.TestCase):
         self.assertEqual("a=None", urllib_parse.urlencode({"a": None}))
 
     def test_nonstring_seq_values(self):
+        from future.backports import OrderedDict
         self.assertEqual("a=1&a=2", urllib_parse.urlencode({"a": [1, 2]}, True))
         self.assertEqual("a=None&a=a",
                          urllib_parse.urlencode({"a": [None, "a"]}, True))
-        data = collections.OrderedDict([("a", 1), ("b", 1)])
+        data = OrderedDict([("a", 1), ("b", 1)])
         self.assertEqual("a=a&a=b",
                          urllib_parse.urlencode({"a": data}, True))
 

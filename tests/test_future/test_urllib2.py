@@ -5,7 +5,8 @@ import socket
 import array
 import sys
 
-from future.standard_library import import_, install_aliases
+import http.client
+from future.standard_library import install_aliases
 from future.backports.test import support
 import future.backports.urllib.request as urllib_request
 # The proxy bypass method imported below has logic specific to the OSX
@@ -448,8 +449,6 @@ class MockHTTPHandler(urllib_request.BaseHandler):
         self.requests = []
     def http_open(self, req):
         import future.backports.email as email
-        from future import standard_library
-        http = import_('http.client', backport=True)
         import copy
         self.requests.append(copy.deepcopy(req))
         if self._count == 0:
