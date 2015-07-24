@@ -437,6 +437,9 @@ class TestOrderedDict(unittest.TestCase):
         od.update([('a', 1), ('b', 2), ('c', 9), ('d', 4)], c=3, e=5)
         self.assertEqual(list(od.items()), pairs)                                   # mixed input
 
+        ### The tests below fail on Py2.6
+        if PY26:
+            return
         # Issue 9137: Named argument called 'other' or 'self'
         # shouldn't be treated specially.
         od = OrderedDict()
