@@ -355,7 +355,6 @@ class TestCounter(unittest.TestCase):
                 self.assertEqual(inplace_result, regular_result)
                 self.assertEqual(id(inplace_result), c_id)
 
-    @expectedFailurePY2
     def test_subtract(self):
         c = Counter(a=-5, b=0, c=5, d=10, e=15,g=40)
         c.subtract(a=1, b=2, c=-3, d=10, e=20, f=30, h=-50)
