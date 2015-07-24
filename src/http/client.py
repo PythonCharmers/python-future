@@ -4,6 +4,7 @@ import sys
 assert sys.version_info[0] < 3
 
 from httplib import *
+from httplib import HTTPMessage
 
 # These constants aren't included in __all__ in httplib.py:
 

@@ -95,7 +95,7 @@ one of several mechanisms, allowing most moved standard library modules
 to be accessed under their Python 3 names and locations in Python 2::
     
     from future import standard_library
-    standard_library.aliases()
+    standard_library.install_aliases()
 
     # Then these Py3-style imports work on both Python 2 and Python 3:
     import socketserver
