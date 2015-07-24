@@ -70,12 +70,22 @@ from httplib import (HTTP_PORT,
                      NOT_EXTENDED,
 
                      MAXAMOUNT,
-                     _MAXLINE,
-                     _MAXHEADERS,
-                     _is_legal_header_name,
-                     _is_illegal_header_value,
-                     _METHODS_EXPECTING_BODY,
-
-                     LineTooLong,
-                     LineAndFileWrapper,
                     )
+
+# These are not available on Python 2.6.x:
+try:
+    from httplib import LineTooLong, LineAndFileWrapper
+except ImportError:
+    pass
+
+# These may not be available on all versions of Python 2.6.x or 2.7.x
+try:
+    from httplib import (
+                         _MAXLINE,
+                         _MAXHEADERS,
+                         _is_legal_header_name,
+                         _is_illegal_header_value,
+                         _METHODS_EXPECTING_BODY
+                        )
+except ImportError:
+    pass
