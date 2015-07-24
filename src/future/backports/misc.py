@@ -12,18 +12,18 @@ for Python 2.6/2.7.
 
 import sys
 import subprocess
-from math import ceil
+from math import ceil as oldceil
 from collections import MutableMapping
 
 from future.utils import iteritems, itervalues, PY26, PY3
 
 
-def _ceil(x):
+def ceil(x):
     """
     Return the ceiling of x as an int.
     This is the smallest integral value >= x.
     """
-    return int(ceil(x))
+    return int(oldceil(x))
 
 
 # OrderedDict Shim from  Raymond Hettinger, python core dev
@@ -43,7 +43,7 @@ except ImportError:
     pass
 
 
-class _OrderedDict(dict):
+class OrderedDict(dict):
 
     'Dictionary that remembers insertion order'
     # An inherited dict maps keys to values.
@@ -305,13 +305,13 @@ except ImportError:
 ###  Counter
 ########################################################################
 
-def __count_elements(mapping, iterable):
+def _count_elements(mapping, iterable):
     'Tally elements from the iterable.'
     mapping_get = mapping.get
     for elem in iterable:
         mapping[elem] = mapping_get(elem, 0) + 1
 
-class _Counter(dict):
+class Counter(dict):
 
     '''Dict subclass for counting hashable objects.  Sometimes called a bag
     or multiset.  Elements are stored as dictionary keys and their counts
@@ -496,7 +496,7 @@ class _Counter(dict):
         return result
 
 
-def _check_output(*popenargs, **kwargs):
+def check_output(*popenargs, **kwargs):
     """
     For Python 2.6 compatibility: see
     http://stackoverflow.com/questions/4814970/
@@ -515,7 +515,7 @@ def _check_output(*popenargs, **kwargs):
     return output
 
 
-def _count(start=0, step=1):
+def count(start=0, step=1):
     """
     ``itertools.count`` in Py 2.6 doesn't accept a step
     parameter. This is an enhanced version of ``itertools.count``
@@ -536,7 +536,7 @@ try:
 except ImportError:
     from _dummy_thread import get_ident
 
-def _recursive_repr(fillvalue='...'):
+def recursive_repr(fillvalue='...'):
     'Decorator to make a repr function return fillvalue for a recursive call'
 
     def decorating_function(user_function):
@@ -569,7 +569,7 @@ def _recursive_repr(fillvalue='...'):
 ###    https://github.com/kkxue/Py2ChainMap/blob/master/py2chainmap.py
 ########################################################################
 
-class _ChainMap(MutableMapping):
+class ChainMap(MutableMapping):
     ''' A ChainMap groups multiple dicts (or other mappings) together
     to create a single, updateable view.
 
@@ -618,7 +618,7 @@ class _ChainMap(MutableMapping):
     # Py2 compatibility:
     __nonzero__ = __bool__
         
-    @_recursive_repr()
+    @recursive_repr()
     def __repr__(self):
         return '{0.__class__.__name__}({1})'.format(
             self, ', '.join(map(repr, self.maps)))
@@ -676,26 +676,27 @@ class _ChainMap(MutableMapping):
         self.maps[0].clear()
 
 
-if sys.version_info < (2, 7):
-    OrderedDict = _OrderedDict
-    Counter = _Counter
-    check_output = _check_output
-    count = _count
-else:
+# Back up our definitions above in case they're useful
+_OrderedDict = OrderedDict
+_Counter = Counter
+_check_output = check_output
+_count = count
+_ceil = ceil
+__count_elements = _count_elements
+_recursive_repr = recursive_repr
+_ChainMap = ChainMap
+
+# Overwrite the definitions above with the usual ones
+# from the standard library:
+if sys.version_info >= (2, 7):
     from collections import OrderedDict, Counter
     from subprocess import check_output
     from itertools import count
 
-if sys.version_info < (3, 0):
-    ceil = _ceil
-    _count_elements = __count_elements
-else:
+if sys.version_info >= (3, 0):
     from math import ceil
     from collections import _count_elements
 
-if sys.version_info < (3, 3):
-    recursive_repr = _recursive_repr
-    ChainMap = _ChainMap
-else:
+if sys.version_info >= (3, 3):
     from reprlib import recursive_repr
     from collections import ChainMap
