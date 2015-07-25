@@ -201,6 +201,11 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         # not keyword arguments as in Python 3 str.
 
         from future.types.newstr import newstr
+
+        if errors == 'surrogateescape':
+            from future.utils.surrogateescape import register_surrogateescape
+            register_surrogateescape()
+
         return newstr(super(newbytes, self).decode(encoding, errors))
 
         # This is currently broken:

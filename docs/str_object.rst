@@ -84,21 +84,19 @@ same behaviours as Python 3's :class:`str`::
     >>> assert list(s) == ['A', 'B', 'C', 'D']
     >>> assert s.split('B') == ['A', 'CD']
 
-.. If you must ensure identical use of (unicode) strings across Py3 and Py2 in a
-.. single-source codebase, you can wrap string literals in a :func:`~str` call,
-.. as follows::
-..     
-..     from __future__ import unicode_literals
-..     from future.builtins import *
-..     
-..     # ...
-.. 
-..     s = str('This absolutely must behave like a Py3 string')
-.. 
-..     # ...
-.. 
-.. Most of the time this is unnecessary, but the stricter type-checking of the
-.. ``future.builtins.str`` object is useful for ensuring the same consistent
-.. separation between unicode and byte strings on Py2 as on Py3. This is
-.. important when writing protocol handlers, for example.
+surrogateescape
+~~~~~~~~~~~~~~~
+
+The :class:`str` type from :mod:`builtins` also provides support for the
+``surrogateescape`` error handler on Python 2.x. Here is an example that works
+identically on Python 2.x and 3.x::
+
+    >>> from builtins import str
+    >>> s = str(u'\udcff')
+    >>> s.encode('utf-8', 'surrogateescape')
+    b'\xff'
+
+This feature is in alpha. Please leave feedback `here
+<https://github.com/PythonCharmers/python-future/issues>`_ about whether this
+works for you.
 

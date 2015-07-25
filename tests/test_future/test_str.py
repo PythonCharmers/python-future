@@ -551,6 +551,19 @@ class TestStr(unittest.TestCase):
         class TestClass(with_metaclass(MetaClass, str)):
             pass
 
+    def test_surrogateescape_encoding(self):
+        """
+        Tests whether surrogateescape encoding works correctly.
+        """
+        pairs = [(u'\udcc3', b'\xc3'),
+                 (u'\udcff', b'\xff')]
+
+        for (s, b) in pairs:
+            encoded = str(s).encode('utf-8', 'surrogateescape')
+            self.assertEqual(b, encoded)
+            self.assertTrue(isinstance(encoded, bytes))
+            self.assertEqual(s, encoded.decode('utf-8', 'surrogateescape'))
+
 
 if __name__ == '__main__':
     unittest.main()
