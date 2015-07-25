@@ -84,8 +84,6 @@ same behaviours as Python 3's :class:`str`::
     >>> assert list(s) == ['A', 'B', 'C', 'D']
     >>> assert s.split('B') == ['A', 'CD']
 
-surrogateescape
-~~~~~~~~~~~~~~~
 
 The :class:`str` type from :mod:`builtins` also provides support for the
 ``surrogateescape`` error handler on Python 2.x. Here is an example that works

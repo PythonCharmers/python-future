@@ -41,7 +41,8 @@ http://pythoncharmers.com
 Authors
 -------
 
-Python-Future is written and maintained by Ed Schofield and various contributors:
+Python-Future is written and maintained by Ed Schofield with the help of
+various contributors:
 
 Development Lead
 ~~~~~~~~~~~~~~~~

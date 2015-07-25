@@ -53,9 +53,9 @@ Features
     ``past.utils`` selected from Py2/3 compatibility interfaces from projects
     like ``six``, ``IPython``, ``Jinja2``, ``Django``, and ``Pandas``.
 
--   partial support for the ``surrogateescape`` error handler when encoding and
-    decoding the backported ``str`` and ``bytes`` objects. (This is currently
-    in alpha.)
+-   support for the ``surrogateescape`` error handler when encoding and
+    decoding the backported ``str`` and ``bytes`` objects. [This feature is
+    currently in alpha.]
 
 .. _code-examples:
 
@@ -94,7 +94,7 @@ these imports as it does on Python 3.3+:
     # Extra arguments for the open() function
     f = open('japanese.txt', encoding='utf-8', errors='replace')
     
-    # New simpler super() function:
+    # New zero-argument super() function:
     class VerboseList(list):
         def append(self, item):
             print('Adding an item')
@@ -155,9 +155,10 @@ interface works like this:
     # Then, for example:
     from itertools import filterfalse, zip_longest
     from urllib.request import urlopen
-    from collections import Counter, OrderedDict, ChainMap   # backported to Py2.6
+    from collections import ChainMap
     from collections import UserDict, UserList, UserString
     from subprocess import getoutput, getstatusoutput
+    from collections import Counter, OrderedDict   # backported to Py2.6
 
 
 Automatic conversion to Py2/3-compatible code
@@ -190,7 +191,6 @@ For example, running ``futurize -w mymodule.py`` turns this Python 2 code:
     import Queue
     from urllib2 import urlopen
 
-
     def greet(name):
         print 'Hello',
         print name
@@ -210,7 +210,6 @@ into this code which runs on both Py2 and Py3:
     import queue
     from urllib.request import urlopen
     
-
     def greet(name):
         print('Hello', end=' ')
         print(name)
@@ -225,7 +224,7 @@ See :ref:`forwards-conversion` and :ref:`backwards-conversion` for more details.
 Automatic translation
 ---------------------
 
-The ``past`` package can now automatically translate some simple Python 2
+The ``past`` package can automatically translate some simple Python 2
 modules to Python 3 upon import. The goal is to support the "long tail" of
 real-world Python 2 modules (e.g. on PyPI) that have not been ported yet. For
 example, here is how to use a Python 2-only package called ``plotrique`` on
@@ -257,8 +256,8 @@ last resort; ideally Python 2-only dependencies should be ported
 properly to a Python 2/3 compatible codebase using a tool like
 ``futurize`` and the changes should be pushed to the upstream project.
 
-Note: the translation feature is still in alpha and needs more testing and
-development.
+Note: the auto-translation feature is still in alpha; it needs more testing and
+development, and will likely never be perfect.
 
 For more info, see :ref:`translation`.
 

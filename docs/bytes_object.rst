@@ -66,9 +66,6 @@ code incompatibilities caused by the many differences between Py3 bytes
 and Py2 strings.
 
 
-surrogateescape
-~~~~~~~~~~~~~~~
-
 The :class:`bytes` type from :mod:`builtins` also provides support for the
 ``surrogateescape`` error handler on Python 2.x. Here is an example that works
 identically on Python 2.x and 3.x::
