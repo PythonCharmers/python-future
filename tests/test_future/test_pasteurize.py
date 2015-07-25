@@ -37,7 +37,7 @@ class TestPasteurize(CodeHandler):
         quickly on both Py3 and Py2 without a MemoryError
         """
         code = '''
-        for i in range(10**15)[:10]:
+        for i in range(10**8)[:10]:
             pass
         '''
         self.unchanged(code, from3=True)
