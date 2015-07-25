@@ -40,6 +40,7 @@ Bug fixes:
 - ``futurize`` no longer breaks working Py2 code by changing ``basestring`` to
   ``str``. Instead it imports the ``basestring`` forward-port from
   ``past.builtins`` (issues #127 and #156)
+- ``future.utils``: add ``string_types`` etc. and update docs (issue #126)
 
 
 What's new in version 0.14.3 (2014-12-15)

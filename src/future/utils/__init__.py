@@ -1,17 +1,19 @@
 """
 A selection of cross-compatible functions for Python 2 and 3.
 
-This exports useful functions for 2/3 compatible code that are not
-builtins on Python 3:
+This module exports useful functions for 2/3 compatible code:
 
     * bind_method: binds functions to classes
     * ``native_str_to_bytes`` and ``bytes_to_native_str``
     * ``native_str``: always equal to the native platform string object (because
       this may be shadowed by imports from future.builtins)
     * lists: lrange(), lmap(), lzip(), lfilter()
-    * iterable method compatibility: iteritems, iterkeys, itervalues
+    * iterable method compatibility:
+        - iteritems, iterkeys, itervalues
+        - viewitems, viewkeys, viewvalues
 
-        * Uses the original method if available, otherwise uses items, keys, values.
+        These use the original method if available, otherwise they use items,
+        keys, values.
 
     * types:
 
@@ -26,39 +28,15 @@ builtins on Python 3:
     * tobytes(s)
         Take a text string, a byte string, or a sequence of characters taken
         from a byte string, and make a byte string.
+    
+    * raise_from()
+    * raise_with_traceback()
 
-This module also defines a simple decorator called
-``python_2_unicode_compatible`` (from django.utils.encoding) which
-defines ``__unicode__`` and ``__str__`` methods consistently under Python
-3 and 2. To support Python 3 and 2 with a single code base, simply define
-a ``__str__`` method returning unicode text and apply the
-python_2_unicode_compatible decorator to the class like this::
-    
-    >>> from future.utils import python_2_unicode_compatible
-    
-    >>> @python_2_unicode_compatible
-    ... class MyClass(object):
-    ...     def __str__(self):
-    ...         return u'Unicode string: \u5b54\u5b50'
-    
-    >>> a = MyClass()
+This module also defines these decorators:
 
-Then, after this import:
-
-    >>> from future.builtins import str
-    
-the following is ``True`` on both Python 3 and 2::
-    
-    >>> str(a) == a.encode('utf-8').decode('utf-8')
-    True
-
-and, on a Unicode-enabled terminal with the right fonts, these both print the
-Chinese characters for Confucius::
-    
-    print(a)
-    print(str(a))
-
-On Python 3, this decorator is a no-op.
+    * ``python_2_unicode_compatible``
+    * ``with_metaclass``
+    * ``implements_iterator``
 
 Some of the functions in this module come from the following sources:
 
@@ -87,10 +65,35 @@ PYPY = hasattr(sys, 'pypy_translation_info')
 def python_2_unicode_compatible(cls):
     """
     A decorator that defines __unicode__ and __str__ methods under Python
-    2. Under Python 3 it does nothing.
+    2. Under Python 3, this decorator is a no-op.
     
     To support Python 2 and 3 with a single code base, define a __str__
-    method returning unicode text and apply this decorator to the class.
+    method returning unicode text and apply this decorator to the class, like
+    this::
+
+    >>> from future.utils import python_2_unicode_compatible
+    
+    >>> @python_2_unicode_compatible
+    ... class MyClass(object):
+    ...     def __str__(self):
+    ...         return u'Unicode string: \u5b54\u5b50'
+    
+    >>> a = MyClass()
+
+    Then, after this import:
+
+    >>> from future.builtins import str
+    
+    the following is ``True`` on both Python 3 and 2::
+    
+    >>> str(a) == a.encode('utf-8').decode('utf-8')
+    True
+
+    and, on a Unicode-enabled terminal with the right fonts, these both print the
+    Chinese characters for Confucius::
+    
+    >>> print(a)
+    >>> print(str(a))
 
     The implementation comes from django.utils.encoding.
     """
@@ -135,7 +138,7 @@ def with_metaclass(meta, *bases):
     return metaclass('temporary_class', None, {})
 
 
-# Definitions from pandas.compat follow:
+# Definitions from pandas.compat and six.py follow:
 if PY3:
     def bchr(s):
         return bytes([s])
@@ -146,6 +149,13 @@ if PY3:
             return bytes(s)
     def bord(s):
         return s
+
+    string_types = str,
+    integer_types = int,
+    class_types = type,
+    text_type = str
+    binary_type = bytes
+
 else:
     # Python 2
     def bchr(s):
@@ -154,6 +164,12 @@ else:
         return str(s)
     def bord(s):
         return ord(s)
+
+    string_types = basestring,
+    integer_types = (int, long)
+    class_types = (type, types.ClassType)
+    text_type = unicode
+    binary_type = str
 
 ###
 
