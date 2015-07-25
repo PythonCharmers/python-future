@@ -40,7 +40,6 @@ lib2to3_fix_names_stage1 = set([
 # The following fixers add a dependency on the ``future`` package on order to
 # support Python 2:
 lib2to3_fix_names_stage2 = set([
-    'lib2to3.fixes.fix_basestring',
     # 'lib2to3.fixes.fix_buffer',    # perhaps not safe. Test this.
     # 'lib2to3.fixes.fix_callable',  # not needed in Py3.2+
     'lib2to3.fixes.fix_dict',        # TODO: add support for utils.viewitems() etc. and move to stage2
@@ -79,6 +78,7 @@ libfuturize_fix_names_stage1 = set([
 ])
 
 libfuturize_fix_names_stage2 = set([
+    'libfuturize.fixes.fix_basestring',
     # 'libfuturize.fixes.fix_add__future__imports_except_unicode_literals',  # just in case
     'libfuturize.fixes.fix_cmp',
     'libfuturize.fixes.fix_division_safe',

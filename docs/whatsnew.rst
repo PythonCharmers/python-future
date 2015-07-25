@@ -37,6 +37,9 @@ Bug fixes:
 - Improve robustness of test suite against opening .pyc files as text on Py2
 - Update backports of ``Counter`` and ``OrderedDict`` to use the newer
   implementations from Py3.4. This fixes ``.copy()`` preserving subclasses etc.
+- ``futurize`` no longer breaks working Py2 code by changing ``basestring`` to
+  ``str``. Instead it imports the ``basestring`` forward-port from
+  ``past.builtins`` (issues #127 and #156)
 
 
 What's new in version 0.14.3 (2014-12-15)
