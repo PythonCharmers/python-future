@@ -66,26 +66,19 @@ code incompatibilities caused by the many differences between Py3 bytes
 and Py2 strings.
 
 
-..
-    .. _bytes-test-results:
-    
-    bytes test results
-    ~~~~~~~~~~~~~~~~~~
-    
-    For reference, when using Py2's default :class:`bytes` (i.e.
-    :class:`str`), running the ``bytes`` unit tests from Python 3.3's
-    ``test_bytes.py`` on Py2 (after fixing imports) gives this::
-    
-        --------------------------------------------------------------
-        Ran 203 tests in 0.209s
-        
-        FAILED (failures=31, errors=55, skipped=1)
-        --------------------------------------------------------------
-    
-    Using :mod:`future`'s backported :class:`bytes` object passes most of
-    the same Python 3.3 tests on Py2, except those requiring specific
-    wording in exception messages.
-    
-    See ``future/tests/test_bytes.py`` in the source for the actual set
-    of unit tests that are actually run.
+surrogateescape
+~~~~~~~~~~~~~~~
 
+The :class:`bytes` type from :mod:`builtins` also provides support for the
+``surrogateescape`` error handler on Python 2.x. Here is an example that works
+identically on Python 2.x and 3.x::
+
+    >>> from builtins import bytes
+    >>> b = bytes(b'\xff')
+    >>> b.decode('utf-8', 'surrogateescape')
+    '\udcc3'
+
+This feature is in alpha. Please leave feedback `here
+<https://github.com/PythonCharmers/python-future/issues>`_ about whether this
+works for you.
+ 

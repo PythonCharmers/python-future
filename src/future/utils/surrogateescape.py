@@ -186,14 +186,15 @@ def register_surrogateescape():
         codecs.register_error(FS_ERRORS, surrogateescape_handler)
 
 
-if True:
-    # Tests:
-    register_surrogateescape()
+if __name__ == '__main__':
+    pass
+    # # Tests:
+    # register_surrogateescape()
 
-    b = decodefilename(fn)
-    assert b == encoded, "%r != %r" % (b, encoded)
-    c = encodefilename(b)
-    assert c == fn, '%r != %r' % (c, fn)
-    # print("ok")
+    # b = decodefilename(fn)
+    # assert b == encoded, "%r != %r" % (b, encoded)
+    # c = encodefilename(b)
+    # assert c == fn, '%r != %r' % (c, fn)
+    # # print("ok")
 
 

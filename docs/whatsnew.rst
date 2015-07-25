@@ -25,6 +25,7 @@ New features:
 - Backport of ``itertools.count`` for Py2.6 (issue #152)
 - Add constants to ``http.client`` such as ``HTTP_PORT`` and ``BAD_REQUEST`` (issue #137)
 - Backport of ``reprlib.recursive_repr`` to Py2
+- Enable support for the ``surrogateescape`` error handler for ``newstr`` and ``newbytes`` objects on Py2.x (issue #116). This feature is currently in alpha.
 
 Bug fixes:
 

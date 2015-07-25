@@ -53,6 +53,9 @@ Features
     ``past.utils`` selected from Py2/3 compatibility interfaces from projects
     like ``six``, ``IPython``, ``Jinja2``, ``Django``, and ``Pandas``.
 
+-   partial support for the ``surrogateescape`` error handler when encoding and
+    decoding the backported ``str`` and ``bytes`` objects. (This is currently
+    in alpha.)
 
 .. _code-examples:
 
@@ -152,7 +155,7 @@ interface works like this:
     # Then, for example:
     from itertools import filterfalse, zip_longest
     from urllib.request import urlopen
-    from collections import Counter, OrderedDict   # backported to Py2.6
+    from collections import Counter, OrderedDict, ChainMap   # backported to Py2.6
     from collections import UserDict, UserList, UserString
     from subprocess import getoutput, getstatusoutput
 
