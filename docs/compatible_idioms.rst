@@ -1367,6 +1367,7 @@ Tkinter
     import tkFont
     import tkMessageBox
     import tkSimpleDialog
+    import ttk
     
     # Python 2 and 3 (after ``pip install future``):
     import tkinter
@@ -1383,6 +1384,7 @@ Tkinter
     import tkinter.font
     import tkinter.messagebox
     import tkinter.simpledialog
+    import tkinter.ttk
 socketserver
 ~~~~~~~~~~~~
 
