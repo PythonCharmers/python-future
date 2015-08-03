@@ -952,6 +952,33 @@ file()
     f = open(pathname, 'rb')   # if f.read() should return bytes
     # or
     f = open(pathname, 'rt')   # if f.read() should return unicode text
+exec
+~~~~
+
+.. code:: python
+
+    # Python 2 only:
+    exec 'x = 10'
+
+    # Python 2 and 3:
+    exec('x = 10')
+.. code:: python
+
+    # Python 2 only:
+    g = globals()
+    exec 'x = 10' in g
+
+    # Python 2 and 3:
+    g = globals()
+    exec('x = 10', g)
+.. code:: python
+
+    # Python 2 only:
+    l = locals()
+    exec 'x = 10' in g, l
+
+    # Python 2 and 3:
+    exec('x = 10', g, l)
 execfile()
 ~~~~~~~~~~
 
