@@ -8,6 +8,7 @@ from lib2to3 import refactor
 lib2to3_fix_names_stage1 = set([
     'lib2to3.fixes.fix_apply',
     'lib2to3.fixes.fix_except',
+    'lib2to3.fixes.fix_exec',
     'lib2to3.fixes.fix_exitfunc',
     'lib2to3.fixes.fix_funcattrs',
     'lib2to3.fixes.fix_has_key',
@@ -43,7 +44,6 @@ lib2to3_fix_names_stage2 = set([
     # 'lib2to3.fixes.fix_buffer',    # perhaps not safe. Test this.
     # 'lib2to3.fixes.fix_callable',  # not needed in Py3.2+
     'lib2to3.fixes.fix_dict',        # TODO: add support for utils.viewitems() etc. and move to stage2
-    'lib2to3.fixes.fix_exec',
     # 'lib2to3.fixes.fix_execfile',  # some problems: see issue #37.
                                      # We use a custom fixer instead (see below)
     # 'lib2to3.fixes.fix_future',    # we don't want to remove __future__ imports

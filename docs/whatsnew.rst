@@ -5,6 +5,12 @@ What's New
 
 .. _whats-new-0.15.x:
 
+What's new in version 0.15.1 (in development)
+=============================================
+
+- ``futurize``: Moved exec fixer to stage1. The forward-compatible ``exec(a, b)`` idiom is supported in Python 2.6 and 2.7. See https://docs.python.org/2/reference/simple_stmts.html#exec.
+
+
 What's new in version 0.15.0 (2015-07-25)
 =========================================
 
