@@ -1345,7 +1345,7 @@ Tkinter
     import tkinter
     import tkinter.dialog
     import tkinter.filedialog
-    import tkinter.scolledtext
+    import tkinter.scrolledtext
     import tkinter.simpledialog
     import tkinter.tix
     import tkinter.constants
