@@ -23,7 +23,7 @@ from itertools import islice
 
 from future.backports.misc import count   # with step parameter on Py2.6
 # For backward compatibility with python-future versions < 0.14.4:
-from future.backports.misc import _count
+_count = count
 
 
 class newrange(Sequence):
