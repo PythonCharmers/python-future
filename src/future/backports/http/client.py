@@ -75,6 +75,7 @@ from future.utils import PY2
 
 from future.backports.email import parser as email_parser
 from future.backports.email import message as email_message
+from future.backports.socket import create_connection as socket_create_connection
 import io
 import os
 import socket
@@ -843,7 +844,7 @@ class HTTPConnection(object):
 
     def connect(self):
         """Connect to the host and port specified in __init__."""
-        self.sock = socket.create_connection((self.host,self.port),
+        self.sock = socket_create_connection((self.host,self.port),
                                              self.timeout, self.source_address)
         if self._tunnel_host:
             self._tunnel()
@@ -1226,7 +1227,7 @@ else:
         def connect(self):
             "Connect to a host on a given (SSL) port."
 
-            sock = socket.create_connection((self.host, self.port),
+            sock = socket_create_connection((self.host, self.port),
                                             self.timeout, self.source_address)
 
             if self._tunnel_host:
@@ -1266,7 +1267,7 @@ else:
     #     def connect(self):
     #         "Connect to a host on a given (SSL) port."
 
-    #         sock = socket.create_connection((self.host, self.port),
+    #         sock = socket_create_connection((self.host, self.port),
     #                                         self.timeout, self.source_address)
     #         if self._tunnel_host:
     #             self.sock = sock

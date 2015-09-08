@@ -17,6 +17,7 @@ From Dan Crosta's README:
     Read more at
         https://late.am/post/2012/06/18/what-the-heck-is-an-xrange
 """
+from __future__ import absolute_import
 
 from collections import Sequence, Iterator
 from itertools import islice

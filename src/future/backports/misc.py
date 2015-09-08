@@ -10,6 +10,7 @@ for Python 2.6/2.7.
 - subprocess.check_output  (for Python 2.6)
 - reprlib.recursive_repr   (for Python 2.6+)
 """
+from __future__ import absolute_import
 
 import subprocess
 from math import ceil as oldceil

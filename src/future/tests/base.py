@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import os
 import tempfile
 import unittest
@@ -362,6 +362,9 @@ class CodeHandler(unittest.TestCase):
                         fn,
                         '----\n%s\n----' % f.read(),
                     )
+            if not hasattr(e, 'output'):
+                # The attribute CalledProcessError.output doesn't exist on Py2.6
+                e.output = None
             raise VerboseCalledProcessError(msg, e.returncode, e.cmd, output=e.output)
         return output
 
