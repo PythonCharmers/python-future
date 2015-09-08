@@ -534,6 +534,7 @@ class TestBytes(unittest.TestCase):
         self.assertRaises(ValueError, bytes.maketrans, b'abc', b'xyzq')
         self.assertRaises(TypeError, bytes.maketrans, 'abc', 'def')
 
+    @unittest.expectedFailure
     def test_mod(self):
         """
         From Py3.5 test suite (post-PEP 461).
@@ -550,17 +551,20 @@ class TestBytes(unittest.TestCase):
         a = b % (b'seventy-nine', 79)
         self.assertEqual(a, b'seventy-nine / 100 = 79%')
 
+    @unittest.expectedFailure
     def test_imod(self):
         """
         From Py3.5 test suite (post-PEP 461)
         """
-        b = b'hello, %b!'
+        # if (3, 0) <= sys.version_info[:2] < (3, 5):
+        #     raise unittest.SkipTest('bytes % not yet implemented on Py3.0-3.4')
+        b = bytes(b'hello, %b!')
         orig = b
         b %= b'world'
         self.assertEqual(b, b'hello, world!')
         self.assertEqual(orig, b'hello, %b!')
         self.assertFalse(b is orig)
-        b = b'%s / 100 = %d%%'
+        b = bytes(b'%s / 100 = %d%%')
         b %= (b'seventy-nine', 79)
         self.assertEqual(b, b'seventy-nine / 100 = 79%')
 
