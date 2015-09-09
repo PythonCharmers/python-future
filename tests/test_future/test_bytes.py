@@ -537,6 +537,40 @@ class TestBytes(unittest.TestCase):
     @unittest.expectedFailure
     def test_mod(self):
         """
+        From Py3.5 test suite (post-PEP 461).
+
+        The bytes mod code is in _PyBytes_Format() in bytesobject.c in Py3.5.
+        """
+        b = b'hello, %b!'
+        orig = b
+        b = b % b'world'
+        self.assertEqual(b, b'hello, world!')
+        self.assertEqual(orig, b'hello, %b!')
+        self.assertFalse(b is orig)
+        b = b'%s / 100 = %d%%'
+        a = b % (b'seventy-nine', 79)
+        self.assertEqual(a, b'seventy-nine / 100 = 79%')
+
+    @unittest.expectedFailure
+    def test_imod(self):
+        """
+        From Py3.5 test suite (post-PEP 461)
+        """
+        # if (3, 0) <= sys.version_info[:2] < (3, 5):
+        #     raise unittest.SkipTest('bytes % not yet implemented on Py3.0-3.4')
+        b = bytes(b'hello, %b!')
+        orig = b
+        b %= b'world'
+        self.assertEqual(b, b'hello, world!')
+        self.assertEqual(orig, b'hello, %b!')
+        self.assertFalse(b is orig)
+        b = bytes(b'%s / 100 = %d%%')
+        b %= (b'seventy-nine', 79)
+        self.assertEqual(b, b'seventy-nine / 100 = 79%')
+
+    @unittest.expectedFailure
+    def test_mod_pep_461(self):
+        """
         Test for the PEP 461 functionality (resurrection of %s formatting for
         bytes).
         """

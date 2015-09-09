@@ -27,8 +27,6 @@ class FixOldstrWrap(fixer_base.BaseFix):
     PATTERN = "STRING"
 
     def transform(self, node, results):
-        import pdb
-        pdb.set_trace()
         if node.type == token.STRING:
             touch_import_top(u'past.types', u'oldstr', node)
             if _literal_re.match(node.value):

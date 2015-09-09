@@ -10,9 +10,8 @@ touch /shared/python-future-html-docs.zip
 rm /shared/python-future-html-docs.zip
 zip -r /shared/python-future-html-docs.zip *
 
-cd /shared
-scp python-future-html-docs.zip python-future.org:
-scp cheatsheet.pdf python-future.org:
+scp -i ~/.ssh/pythoncharmers_2015.pem /shared/python-future-html-docs.zip python-future.org:
+scp -i ~/.ssh/pythoncharmers_2015.pem /shared/cheatsheet.pdf python-future.org:
 ssh python-future.org
 
 
