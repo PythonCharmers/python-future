@@ -5,16 +5,18 @@ What's New
 
 .. _whats-new-0.15.x:
 
-What's new in version 0.15.1 (in development)
-=============================================
+What's new in version 0.15.1 (2015-09-09)
+=========================================
 
-- ``futurize``: Moved exec fixer to stage1. The forward-compatible ``exec(a,
-  b)`` idiom is supported in Python 2.6 and 2.7. See
-  https://docs.python.org/2/reference/simple_stmts.html#exec.
+This is a minor bug-fix release:
+
 - Use 3-argument socket.create_connection() backport to restore Py2.6
   compatibility in ``urllib.request.urlopen()`` (issue #162)
 - Remove breakpoint in ``future.backports.http.client`` triggered on certain
   data (issue #164)
+- Move ``exec`` fixer to stage 1 of ``futurize`` because the forward-compatible ``exec(a, b)``
+  idiom is supported in Python 2.6 and 2.7. See
+  https://docs.python.org/2/reference/simple_stmts.html#exec.
 
 
 What's new in version 0.15.0 (2015-07-25)
