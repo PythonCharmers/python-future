@@ -75,7 +75,7 @@ from future.utils import PY2
 
 from future.backports.email import parser as email_parser
 from future.backports.email import message as email_message
-from future.backports.socket import create_connection as socket_create_connection
+from future.backports.misc import create_connection as socket_create_connection
 import io
 import os
 import socket
