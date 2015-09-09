@@ -554,19 +554,9 @@ class HTTPResponse(io.RawIOBase):
         # (for example, reading in 1k chunks)
 
         if PY2:
-            ### Python-Future:
-            # TODO: debug and fix me!
             data = self.fp.read(len(b))
-            if data[:2] == b"b'":
-                # Something has gone wrong
-                import pdb
-                pdb.set_trace()
-            #if len(b) != len(data):
-            #    import pdb
-            #    pdb.set_trace()
             n = len(data)
             b[:n] = data
-            ###
         else:
             n = self.fp.readinto(b)
 
