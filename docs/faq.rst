@@ -123,13 +123,13 @@ How well has it been tested?
 currently being used to help with porting 800,000 lines of Python 2 code in
 `Sage <http://sagemath.org>`_ to Python 2/3.
 
-Currently ``python-future`` has 990+ unit tests. Many of these are straight
+Currently ``python-future`` has over 1000 unit tests. Many of these are straight
 from the Python 3.3 and 3.4 test suites.
 
 In general, the ``future`` package itself is in good shape, whereas the
-``futurize`` script for automatic porting is incomplete and imperfect.
-(Chances are it will require some manual cleanup afterwards.) The ``past``
-package also needs to be expanded.
+``futurize`` script for automatic porting is imperfect; chances are it will
+require some manual cleanup afterwards. The ``past`` package also needs to be
+expanded.
 
 
 Is the API stable?
