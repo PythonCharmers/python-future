@@ -116,9 +116,15 @@ follows::
     import test.support
 
 
-The newly exposed ``urllib`` submodules are full backports of those from Py3.x.
+The newly exposed ``urllib`` submodules are backports of those from Py3.x.
 This means, for example, that ``urllib.parse.unquote()`` now exists and takes
 an optional ``encoding`` argument on Py2.x as it does on Py3.x.
+
+**Limitation:** Note that the ``http``-based backports do not currently support
+HTTPS (as of 2015-09-11) because the SSL support changed considerably in Python
+3.x. If you need HTTPS support, please use this idiom for now::
+
+    from future.moves.urllib.request import urlopen
 
 Backports also exist of the following features from Python 3.4:
 
