@@ -21,7 +21,7 @@ import sys
 import heapq as _heapq
 from _weakref import proxy as _proxy
 from itertools import repeat as _repeat, chain as _chain, starmap as _starmap
-
+from socket import getaddrinfo, SOCK_STREAM, error, socket
 
 from future.utils import iteritems, itervalues, PY26, PY3
 
@@ -39,10 +39,18 @@ def ceil(x):
 ########################################################################
 
 from itertools import islice
-try:
-    from _thread import get_ident
-except ImportError:
-    from _dummy_thread import get_ident
+
+if PY3:
+    try:
+        from _thread import get_ident
+    except ImportError:
+        from _dummy_thread import get_ident
+else:
+    try:
+        from thread import get_ident
+    except ImportError:
+        from dummy_thread import get_ident
+
 
 def recursive_repr(fillvalue='...'):
     'Decorator to make a repr function return fillvalue for a recursive call'

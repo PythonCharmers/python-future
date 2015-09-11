@@ -62,7 +62,7 @@ def newsuper(typ=_SENTINEL, type_or_obj=_SENTINEL, framedepth=1):
         try:
             # Get the MRO so we can crawl it.
             mro = type_or_obj.__mro__
-        except AttributeError:
+        except (AttributeError, RuntimeError):  # see issue #160
             try:
                 mro = type_or_obj.__class__.__mro__
             except AttributeError:
