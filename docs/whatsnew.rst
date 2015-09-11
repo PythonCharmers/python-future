@@ -10,7 +10,7 @@ What's new in version 0.15.2 (2015-09-11)
 
 This is a minor bug-fix release:
 
-- Fix ``socket.create_connection()`` backport on Py2.6
+- Fix ``socket.create_connection()`` backport on Py2.6 (issue #162)
 - Add more tests of ``urllib.request`` etc.
 
 What's new in version 0.15.1 (2015-09-09)
