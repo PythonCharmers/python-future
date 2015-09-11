@@ -5,12 +5,20 @@ What's New
 
 .. _whats-new-0.15.x:
 
+What's new in version 0.15.2 (2015-09-11)
+=========================================
+
+This is a minor bug-fix release:
+
+- Fix ``socket.create_connection()`` backport on Py2.6
+- Add more tests of ``urllib.request`` etc.
+
 What's new in version 0.15.1 (2015-09-09)
 =========================================
 
 This is a minor bug-fix release:
 
-- Use 3-argument socket.create_connection() backport to restore Py2.6
+- Use 3-argument ``socket.create_connection()`` backport to restore Py2.6
   compatibility in ``urllib.request.urlopen()`` (issue #162)
 - Remove breakpoint in ``future.backports.http.client`` triggered on certain
   data (issue #164)
