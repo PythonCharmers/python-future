@@ -12,6 +12,8 @@ This is a minor bug-fix release:
 
 - Fix ``socket.create_connection()`` backport on Py2.6 (issue #162)
 - Add more tests of ``urllib.request`` etc.
+- Fix ``newsuper()`` calls from the ``__init__`` method of PyQt subclassses
+  (issue #160, thanks to Christopher Arndt)
 
 What's new in version 0.15.1 (2015-09-09)
 =========================================
