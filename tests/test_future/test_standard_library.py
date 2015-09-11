@@ -332,11 +332,22 @@ class TestStandardLibraryReorganization(CodeHandler):
         # pprint(r.read().decode('utf-8'))
         self.assertTrue(True)
 
-    def test_urllib_request_http(self):
+    def test_moves_urllib_request_http(self):
         """
         This site (python-future.org) uses plain http (as of 2014-09-23).
         """
         import future.moves.urllib.request as urllib_request
+        from pprint import pprint
+        URL = 'http://python-future.org'
+        r = urllib_request.urlopen(URL)
+        data = r.read()
+        self.assertTrue(b'</html>' in data)
+
+    def test_urllib_request_http(self):
+        """
+        This site (python-future.org) uses plain http (as of 2014-09-23).
+        """
+        import urllib.request as urllib_request
         from pprint import pprint
         URL = 'http://python-future.org'
         r = urllib_request.urlopen(URL)
