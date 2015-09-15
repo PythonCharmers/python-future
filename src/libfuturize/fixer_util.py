@@ -293,7 +293,8 @@ def is_import_stmt(node):
 
 def touch_import_top(package, name_to_import, node):
     """Works like `does_tree_import` but adds an import statement at the
-    top if it was not imported (but below any __future__ imports).
+    top if it was not imported (but below any __future__ imports) and below any
+    comments such as shebang lines).
 
     Based on lib2to3.fixer_util.touch_import()
 
@@ -376,10 +377,12 @@ def touch_import_top(package, name_to_import, node):
         else:
             children_hooks = []
         
-        FromImport(package, [Leaf(token.NAME, name_to_import, prefix=u" ")])
+        # FromImport(package, [Leaf(token.NAME, name_to_import, prefix=u" ")])
 
     children_import = [import_, Newline()]
-    root.insert_child(insert_pos, Node(syms.simple_stmt, children_import))
+    old_prefix = root.children[insert_pos].prefix
+    root.children[insert_pos].prefix = u''
+    root.insert_child(insert_pos, Node(syms.simple_stmt, children_import, prefix=old_prefix))
     if len(children_hooks) > 0:
         root.insert_child(insert_pos + 1, Node(syms.simple_stmt, children_hooks))
 
