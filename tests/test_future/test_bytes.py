@@ -29,12 +29,20 @@ class TestBytes(unittest.TestCase):
         b = bytes(u, encoding='utf-8')
         self.assertEqual(b, u.encode('utf-8'))
 
+        nu = str(u)
+        b = bytes(nu, encoding='utf-8')
+        self.assertEqual(b, u.encode('utf-8'))
+
     def test_bytes_encoding_arg_non_kwarg(self):
         """
         As above, but with a positional argument
         """
         u = u'Unicode string: \u5b54\u5b50'
         b = bytes(u, 'utf-8')
+        self.assertEqual(b, u.encode('utf-8'))
+
+        nu = str(u)
+        b = bytes(nu, 'utf-8')
         self.assertEqual(b, u.encode('utf-8'))
 
     def test_bytes_string_no_encoding(self):
@@ -290,7 +298,7 @@ class TestBytes(unittest.TestCase):
         exc = str(cm.exception)
         # self.assertIn('bytes', exc)
         # self.assertIn('tuple', exc)
-        
+
     def test_decode(self):
         b = bytes(b'abcd')
         s = b.decode('utf-8')
@@ -357,7 +365,7 @@ class TestBytes(unittest.TestCase):
         d[s] = s
         self.assertEqual(len(d), 2)
         self.assertEqual(set(d.keys()), set([s, b]))
-    
+
     @unittest.expectedFailure
     def test_hash_with_native_types(self):
         # Warning: initializing the dict with native Py2 types throws the
@@ -478,7 +486,7 @@ class TestBytes(unittest.TestCase):
         ValueError
           ...
         ValueError: bytes must be in range(0, 256)
-        
+
         Ensure our bytes() constructor has the same behaviour
         """
         b1 = bytes([254, 255])
