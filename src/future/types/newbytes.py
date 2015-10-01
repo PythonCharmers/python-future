@@ -9,7 +9,7 @@ from collections import Iterable
 from numbers import Integral
 import string
 
-from future.utils import istext, isbytes, PY3, with_metaclass
+from future.utils import istext, isbytes, native, PY3, with_metaclass
 from future.types import no, issubset
 from future.types.newobject import newobject
 
@@ -42,14 +42,14 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer
         bytes(int) -> bytes object of size given by the parameter initialized with null bytes
         bytes() -> empty bytes object
-        
+
         Construct an immutable array of bytes from:
           - an iterable yielding integers in range(256)
           - a text string encoded using the specified encoding
           - any object implementing the buffer API.
           - an integer
         """
-        
+
         encoding = None
         errors = None
 
@@ -64,7 +64,7 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         # We use type() instead of the above because we're redefining
         # this to be True for all unicode string subclasses. Warning:
         # This may render newstr un-subclassable.
-        if type(args[0]) == newbytes:
+        if type(args[0]) is newbytes:
             # Special-case: for consistency with Py3.3, we return the same object
             # (with the same id) if a newbytes object is passed into the
             # newbytes constructor.
@@ -90,8 +90,8 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
             newargs = [encoding]
             if errors is not None:
                 newargs.append(errors)
-            value = args[0].encode(*newargs)
-            ### 
+            value = native(args[0].encode(*newargs))
+            ###
         elif isinstance(args[0], Iterable):
             if len(args[0]) == 0:
                 # This could be an empty list or tuple. Return b'' as on Py3.
@@ -113,7 +113,7 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         else:
             value = args[0]
         return super(newbytes, cls).__new__(cls, value)
-        
+
     def __repr__(self):
         return 'b' + super(newbytes, self).__repr__()
 
@@ -140,7 +140,7 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         else:
             newbyteskey = newbytes(key)
         return issubset(list(newbyteskey), list(self))
-    
+
     @no(unicode)
     def __add__(self, other):
         return newbytes(super(newbytes, self).__add__(other))
@@ -148,7 +148,7 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
     @no(unicode)
     def __radd__(self, left):
         return newbytes(left) + self
-            
+
     @no(unicode)
     def __mul__(self, other):
         return newbytes(super(newbytes, self).__mul__(other))
@@ -371,7 +371,7 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         """
         Strip trailing bytes contained in the argument.
         If the argument is omitted, strip trailing ASCII whitespace.
-        """        
+        """
         return newbytes(super(newbytes, self).rstrip(bytes_to_strip))
 
     @no(unicode)
@@ -379,24 +379,24 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
         """
         Strip leading and trailing bytes contained in the argument.
         If the argument is omitted, strip trailing ASCII whitespace.
-        """        
+        """
         return newbytes(super(newbytes, self).strip(bytes_to_strip))
 
     def lower(self):
         """
         b.lower() -> copy of b
-        
+
         Return a copy of b with all ASCII characters converted to lowercase.
-        """        
+        """
         return newbytes(super(newbytes, self).lower())
 
     @no(unicode)
     def upper(self):
         """
         b.upper() -> copy of b
-        
+
         Return a copy of b with all ASCII characters converted to uppercase.
-        """        
+        """
         return newbytes(super(newbytes, self).upper())
 
     @classmethod
