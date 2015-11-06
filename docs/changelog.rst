@@ -12,10 +12,10 @@ Changes in version 0.14.3 (2014-12-15)
 
 This is a bug-fix release:
 
-- Expose contents of ``thread`` (not ``dummy_thread``) as ``_thread`` on Py2 (issue #124)
-- Add signed support for ``newint.to_bytes()`` (issue #128)
-- Fix ``OrderedDict.clear()`` on Py2.6 (issue #125)
-- Improve ``newrange``: equality and slicing, start/stop/step properties, refactoring (issues #129, #130)
+- Expose contents of ``thread`` (not ``dummy_thread``) as ``_thread`` on Py2 (Issue #124)
+- Add signed support for ``newint.to_bytes()`` (Issue #128)
+- Fix ``OrderedDict.clear()`` on Py2.6 (Issue #125)
+- Improve ``newrange``: equality and slicing, start/stop/step properties, refactoring (Issues #129, #130)
 - Minor doc updates
 
 Changes in version 0.14.2 (2014-11-21)
@@ -23,15 +23,15 @@ Changes in version 0.14.2 (2014-11-21)
 
 This is a bug-fix release:
 
-- Speed up importing of ``past.translation`` (issue #117)
+- Speed up importing of ``past.translation`` (Issue #117)
 - ``html.escape()``: replace function with the more robust one from Py3.4
-- futurize: avoid displacing encoding comments by __future__ imports (issues #97, #10, #121)
-- futurize: don't swallow exit code (issue #119)
-- Packaging: don't forcibly remove the old build dir in ``setup.py`` (issue #108)
+- ``futurize``: avoid displacing encoding comments by ``__future__`` imports (Issues #97, #10, #121)
+- ``futurize``: don't swallow exit code (Issue #119)
+- Packaging: don't forcibly remove the old build dir in ``setup.py`` (Issue #108)
 - Docs: update further docs and tests to refer to ``install_aliases()`` instead of
   ``install_hooks()``
-- Docs: fix ``iteritems`` import error in cheat sheet (issue #120)
-- Tests: don't rely on presence of ``test.test_support`` on Py2 or ``test.support`` on Py3 (issue #109)
+- Docs: fix ``iteritems`` import error in cheat sheet (Issue #120)
+- Tests: don't rely on presence of ``test.test_support`` on Py2 or ``test.support`` on Py3 (Issue #109)
 - Tests: don't override existing ``PYTHONPATH`` for tests (PR #111)
 
 Changes in version 0.14.1 (2014-10-02)
@@ -39,10 +39,10 @@ Changes in version 0.14.1 (2014-10-02)
 
 This is a minor bug-fix release:
 
-- Docs: add a missing template file for building docs (issue #108)
-- Tests: fix a bug in error handling while reporting failed script runs (issue #109)
-- install_aliases(): don't assume that the ``test.test_support`` module always
-  exists on Py2 (issue #109)
+- Docs: add a missing template file for building docs (Issue #108)
+- Tests: fix a bug in error handling while reporting failed script runs (Issue #109)
+- ``install_aliases()``: don't assume that the ``test.test_support`` module always
+  exists on Py2 (Issue #109)
 
 
 Changes in version 0.14.0 (2014-10-02)
@@ -62,7 +62,7 @@ Instead of this interface::
     ...     import tkinter.dialog
     ...     # etc.
 
-you can now use the following interface for much Python 2/3 compatible code::
+You can now use the following interface for much Python 2/3 compatible code::
 
     >>> # Alias for future.builtins on Py2:
     >>> from builtins import str, open, range, dict
@@ -109,10 +109,10 @@ Bug fixes
 
 - This release expands the ``future.moves`` package to include most of the remaining
   modules that were moved in the standard library reorganization (PEP 3108).
-  (Issue #104).
+  (Issue #104)
 
 - This release also removes the broken ``--doctests_only`` option from the ``futurize``
-  and ``pasteurize`` scripts for now (issue #103).
+  and ``pasteurize`` scripts for now. (Issue #103)
 
 Internal cleanups
 -----------------
@@ -121,7 +121,7 @@ The project folder structure has changed. Top-level packages are now in a
 ``src`` folder and the tests have been moved into a project-level ``tests``
 folder.
 
-The following deprecated internal modules have been removed (issue #80):
+The following deprecated internal modules have been removed (Issue #80):
 
 - ``future.utils.encoding`` and ``future.utils.six``.
 
@@ -141,11 +141,11 @@ Changes in version 0.13.1 (2014-09-23)
 
 This is a bug-fix release:
 
-- Fix (multiple) inheritance of ``future.builtins.object`` with metaclasses (issues #91 and #96)
-- Fix ``futurize``'s refactoring of ``urllib`` imports (issue #94)
-- Fix ``futurize --all-imports`` (issue #101)
-- Fix ``futurize --output-dir`` logging (issue #102)
-- Doc formatting fix (issues #98, 100)
+- Fix (multiple) inheritance of ``future.builtins.object`` with metaclasses (Issues #91, #96)
+- Fix ``futurize``'s refactoring of ``urllib`` imports (Issue #94)
+- Fix ``futurize --all-imports`` (Issue #101)
+- Fix ``futurize --output-dir`` logging (Issue #102)
+- Doc formatting fix (Issues #98, #100)
 
 
 Changes in version 0.13.0 (2014-08-13)
@@ -170,9 +170,9 @@ New features
 ------------
 
 - Docs: Add :ref:`compatible-idioms` from Ed Schofield's PyConAU 2014 talk.
-- Add ``newint.to_bytes()`` and ``newint.from_bytes()`` (issue #85)
+- Add ``newint.to_bytes()`` and ``newint.from_bytes()``. (Issue #85)
 - Add ``future.utils.raise_from`` as an equivalent to Py3's ``raise ... from
-  ...`` syntax (issue #86).
+  ...`` syntax. (Issue #86)
 - Add ``past.builtins.oct()`` function.
 - Add backports for Python 2.6 of ``subprocess.check_output()``,
   ``itertools.combinations_with_replacement()``, and ``functools.cmp_to_key()``.
@@ -181,18 +181,18 @@ Bug fixes
 ---------
 
 - Use a private logger instead of the global logger in
-  ``future.standard_library`` (issue #82). This restores compatibility of the
-  standard library hooks with ``flask`` (issue #79).
+  ``future.standard_library`` (Issue #82). This restores compatibility of the
+  standard library hooks with ``flask``. (Issue #79)
 - Stage 1 of ``futurize`` no longer renames ``next`` methods to ``__next__``
-  (issue #81). It still converts ``obj.next()`` method calls to
+  (Issue #81). It still converts ``obj.next()`` method calls to
   ``next(obj)`` correctly.
 - Prevent introduction of a second set of parentheses in ``print()`` calls in
   some further cases.
-- Fix isinstance checks for subclasses of future types (issue #89).
-- Be explicit about encoding file contents as UTF-8 in unit tests (issue #63).
+- Fix ``isinstance`` checks for subclasses of future types. (Issue #89)
+- Be explicit about encoding file contents as UTF-8 in unit tests. (Issue #63)
   Useful for building RPMs and in other environments where ``LANG=C``.
-- Fix for 3-argument ``pow(x, y, z)`` with ``newint`` arguments (issue #87).
-  (Thanks to @str4d).
+- Fix for 3-argument ``pow(x, y, z)`` with ``newint`` arguments. (Thanks to @str4d.)
+  (Issue #87)
 
 
 .. _whats-new-0.12.4:
@@ -200,7 +200,7 @@ Bug fixes
 Changes in version 0.12.4 (2014-07-18)
 ======================================
 
-- Fix upcasting behaviour of newint (issue #76).
+- Fix upcasting behaviour of ``newint``. (Issue #76)
 
 
 .. _whats-new-0.12.3:
@@ -209,29 +209,29 @@ Changes in version 0.12.3 (2014-06-19)
 ======================================
 
 - Add "official Python 3.4 support": Py3.4 is now listed among the PyPI Trove
-  classifiers and the tests now run successfully on Py3.4 (issue #67).
+  classifiers and the tests now run successfully on Py3.4. (Issue #67)
 
 - Add backports of ``collections.OrderedDict`` and
-  ``collections.Counter`` for Python 2.6 (issue #52).
+  ``collections.Counter`` for Python 2.6. (Issue #52)
 
-- Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts
-  (issue #57).
+- Add ``--version`` option for ``futurize`` and ``pasteurize`` scripts.
+  (Issue #57)
 
-- Fix ``future.utils.ensure_new_type`` with ``long`` input (issue #65).
+- Fix ``future.utils.ensure_new_type`` with ``long`` input. (Issue #65)
 
 - Remove some false alarms on checks for ambiguous fixer names with
   ``futurize -f ...``.
 
 - Testing fixes:
-    - Don't hard-code Python interpreter command in tests (issue #62).
-    - Fix deprecated ``unittest`` usage in Py3 (also issue #62).
+    - Don't hard-code Python interpreter command in tests. (Issue #62)
+    - Fix deprecated ``unittest`` usage in Py3. (Issue #62)
     - Be explicit about encoding temporary file contents as UTF-8 for
-      when LANG=C (e.g. when building an RPM) (issue #63).
+      when ``LANG=C`` (e.g., when building an RPM). (Issue #63)
     - All undecorated tests are now passing again on Python 2.6, 2.7, 3.3,
       and 3.4 (thanks to Elliott Sales de Andrade).
 
 - Docs:
-    - Add list of fixers used by ``futurize`` (issue #58).
+    - Add list of fixers used by ``futurize``. (Issue #58)
     - Add list of contributors to the Credits page.
 
 .. _whats-new-0.12.2:
@@ -239,10 +239,10 @@ Changes in version 0.12.3 (2014-06-19)
 Changes in version 0.12.2 (2014-05-25)
 ======================================
 
-- Add ``bytes.maketrans()`` method (issue #51).
-- Add support for Python versions between 2.7.0 and 2.7.3 (inclusive)
-  (issue #53).
-- Bug fix for ``newlist(newlist([1, 2, 3]))`` (issue #50).
+- Add ``bytes.maketrans()`` method. (Issue #51)
+- Add support for Python versions between 2.7.0 and 2.7.3 (inclusive).
+  (Issue #53)
+- Bug fix for ``newlist(newlist([1, 2, 3]))``. (Issue #50)
 
 
 .. _whats-new-0.12.1:
@@ -353,7 +353,7 @@ functions like ``map()`` and ``filter()`` now behave as they do on Py2 with with
 
 The ``past.builtins`` module has also been extended to add Py3 support for
 additional Py2 constructs that are not adequately handled by ``lib2to3`` (see
-issue #37). This includes new ``execfile()`` and ``cmp()`` functions.
+Issue #37). This includes new ``execfile()`` and ``cmp()`` functions.
 ``futurize`` now invokes imports of these functions from ``past.builtins``.
 
 
@@ -381,7 +381,7 @@ dictionaries in both Python 2 and Python 3.
 
 These came out of the discussion around Nick Coghlan's now-withdrawn PEP 469.
 
-There is no corresponding ``listkeys(d)`` function. Use ``list(d)`` for this case.
+There is no corresponding ``listkeys(d)`` function; use ``list(d)`` instead.
 
 
 Tests
@@ -410,7 +410,7 @@ Use them like this::
     from future.backports.urllib.request import Request    # etc.
     from future.backports.http import server as http_server
 
-or with this new interface::
+Or with this new interface::
 
     from future.standard_library import import_, from_import
 
@@ -434,7 +434,7 @@ of these types. For example::
     >>> type(b)
     future.types.newbytes.newbytes
 
-instead of::
+Instead of::
 
     >>> type(b)           # prior to v0.12
     future.builtins.types.newbytes.newbytes
@@ -462,9 +462,9 @@ Many small improvements and fixes have been made across the project. Some highli
 
 - ``futurize``: Shebang lines such as ``#!/usr/bin/env python`` and source code
   file encoding declarations like ``# -*- coding=utf-8 -*-`` are no longer occasionally
-  displaced by ``from __future__ import ...`` statements. (Issue #10.)
+  displaced by ``from __future__ import ...`` statements. (Issue #10)
 
-- Improved compatibility with py2exe (`issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`_).
+- Improved compatibility with ``py2exe`` (`Issue #31 <https://github.com/PythonCharmers/python-future/issues/31>`_).
 
 - The ``future.utils.bytes_to_native_str`` function now returns a platform-native string
   object and ``future.utils.native_str_to_bytes`` returns a ``newbytes`` object on Py2.
@@ -482,12 +482,12 @@ Changes in version 0.11.4 (2014-05-25)
 
 This release contains various small improvements and fixes:
 
-- This release restores Python 2.6 compatibility. (Issue #42).
+- This release restores Python 2.6 compatibility. (Issue #42)
 
 - The ``fix_absolute_import`` fixer now supports Cython ``.pyx`` modules. (Issue
-  #35).
+  #35)
 
-- Right-division with ``newint`` objects is fixed. (Issue #38).
+- Right-division with ``newint`` objects is fixed. (Issue #38)
 
 - The ``fix_dict`` fixer has been moved to stage2 of ``futurize``.
 
@@ -497,7 +497,7 @@ This release contains various small improvements and fixes:
 
 
 - The 0-argument ``super()`` function now works from inside static methods such
-  as ``__new__``. (Issue #36).
+  as ``__new__``. (Issue #36)
 
 - ``future.utils.native(d)`` calls now work for ``future.builtins.dict`` objects.
 
@@ -529,7 +529,7 @@ is now possible on Python 2 and 3::
 
 
 Previously, this required manually removing ``http`` and ``http.client`` from
-``sys.modules`` before importing ``requests`` on Python 2.x. (Issue #19).
+``sys.modules`` before importing ``requests`` on Python 2.x. (Issue #19)
    
 This change should also improve the compatibility of the standard library hooks
 with any other module that provides its own Python 2/3 compatibility code.
@@ -564,10 +564,10 @@ import::
     from __future__ import unicode_literals
 
 to the top of each converted module. Without this flag, ``futurize`` now no
-longer adds this import. (Issue #22).
+longer adds this import. (Issue #22)
 
 The ``pasteurize`` script for converting from Py3 to Py2/3 still adds
-``unicode_literals``. (See the comments in issue #22 for an explanation.)
+``unicode_literals``. (See the comments in Issue #22 for an explanation.)
 
 
 .. _whats-new-0.11:
@@ -641,16 +641,16 @@ The functionality from ``futurize --from3`` is now in a separate script called
 2/3 compatible source. For more information, see :ref:`backwards-conversion`.
 
 
-pow()
------
+``pow()``
+---------
 
 There is now a ``pow()`` function in ``future.builtins.misc`` that behaves like
 the Python 3 ``pow()`` function when raising a negative number to a fractional
 power (returning a complex number).
 
 
-input() no longer disabled globally on Py2
-------------------------------------------
+``input()`` no longer disabled globally on Py2
+----------------------------------------------
 
 Previous versions of ``future`` deleted the ``input()`` function from
 ``__builtin__`` on Python 2 as a security measure. This was because
@@ -675,18 +675,18 @@ deprecated in order to improve robustness and compatibility with modules like
 ``requests`` that already perform their own single-source Python 2/3
 compatibility.
 
-As of v0.12 of ``python-future``, importing ``future.standard_library``
+As of v0.12, importing ``future.standard_library``
 will no longer install import hooks by default. Instead, please install the
 import hooks explicitly as follows::
     
     from future import standard_library
     standard_library.install_hooks()
 
-and uninstall them after your import statements using::
+And uninstall them after your import statements using::
 
     standard_library.remove_hooks()
 
-*Note*: this will be a backward-incompatible change.
+*Note*: This is a backward-incompatible change.
 
 
 
@@ -703,8 +703,8 @@ types but not their use.
 Changes in version 0.10.2 (2014-01-11)
 ======================================
 
-New context-manager interface to standard_library hooks
--------------------------------------------------------
+New context-manager interface to ``standard_library.hooks``
+-----------------------------------------------------------
 
 There is a new context manager ``future.standard_library.hooks``. Use it like
 this::
@@ -727,13 +727,13 @@ If not using this context manager, it is now encouraged to add an explicit call 
     import http.client
     # etc.
 
-and to remove the hooks afterwards with::
+And to remove the hooks afterwards with::
 
     standard_library.remove_hooks()
 
 The functions ``install_hooks()`` and ``remove_hooks()`` were previously
 called ``enable_hooks()`` and ``disable_hooks()``. The old names are
-still available as aliases, but are deprecated.
+deprecated (but are still available as aliases).
 
 As usual, this feature has no effect on Python 3.
 
@@ -778,7 +778,7 @@ A portable ``exec_()`` function has been added to ``future.utils`` from
 
 Bugfixes
 --------
-- Fixed newint.__divmod__
+- Fixed ``newint.__divmod__``
 - Improved robustness of installing and removing import hooks in :mod:`future.standard_library`
 - v0.10.1: Fixed broken ``pip install future`` on Py3
 
@@ -825,8 +825,8 @@ byte-strings and unicode strings, such as ``os.path.join`` in ``posixpath.py``.
 Python 3 when attempting to mix it with ``future.builtins.bytes``.
 
 
-suspend_hooks() context manager added to ``future.standard_library``
---------------------------------------------------------------------
+``suspend_hooks()`` context manager added to ``future.standard_library``
+------------------------------------------------------------------------
 
 Pychecker (as of v0.6.1)'s ``checker.py`` attempts to import the ``builtins``
 module as a way of determining whether Python 3 is running. Since this
@@ -873,13 +873,13 @@ alongside each other easily if needed.
 The unused ``hacks`` module has also been removed from the source tree.
 
 
-isinstance() added to :mod:`future.builtins` (v0.8.2)
------------------------------------------------------
+``isinstance()`` added to :mod:`future.builtins` (v0.8.2)
+---------------------------------------------------------
 
 It is now possible to use ``isinstance()`` calls normally after importing ``isinstance`` from 
 ``future.builtins``. On Python 2, this is specially defined to be compatible with
 ``future``'s backported ``int``, ``str``, and ``bytes`` types, as well as
-handling Python 2's int/long distinction.
+handling Python 2's ``int``/``long`` distinction.
 
 The result is that code that uses ``isinstance`` to perform type-checking of
 ints, strings, and bytes should now work identically on Python 2 as on Python 3.
@@ -926,7 +926,7 @@ v0.13.0:
 
 v0.12.0:
   * Add ``newobject`` and ``newlist`` types
-  * Improve compatibility of import hooks with Requests, py2exe
+  * Improve compatibility of import hooks with ``Requests``, ``py2exe``
   * No more auto-installation of import hooks by ``future.standard_library``
   * New ``future.moves`` package
   * ``past.builtins`` improved
@@ -1001,12 +1001,12 @@ v0.8:
   * Removed undocumented functions from :mod:`future.utils`
 
 v0.7:
-  * Added a backported Py3-like ``int`` object (inherits from long).
+  * Added a backported Py3-like ``int`` object (inherits from ``long``).
 
   * Added utility functions for type-checking and docs about
     ``isinstance`` uses/alternatives.
 
-  * Fixes and stricter type-checking for bytes and str objects
+  * Fixes and stricter type-checking for ``bytes`` and ``str`` objects
 
   * Added many more tests for the ``futurize`` script
 
@@ -1017,7 +1017,7 @@ v0.7:
 v0.6:
   * Added a backported Py3-like ``str`` object (inherits from Py2's ``unicode``)
 
-  * Removed support for the form ``from future import *``: use ``from future.builtins import *`` instead
+  * Removed support for the form ``from future import *``; use ``from future.builtins import *`` instead
 
 v0.5.3:
   * Doc improvements
@@ -1030,7 +1030,7 @@ v0.5.1:
 
   * :mod:`http.server` module backported
 
-  * bytes.split() and .rsplit() bugfixes
+  * ``bytes.split()`` and ``.rsplit()`` bugfixes
 
 v0.5.0:
   * Added backported Py3-like ``bytes`` object
@@ -1061,23 +1061,23 @@ v0.3.5:
 v0.3.4:
   * Added ``itertools.zip_longest``
 
-  * Updated 2to3_backcompat tests to use futurize.py
+  * Updated ``2to3_backcompat`` tests to use ``futurize.py``
 
-  * Improved libfuturize fixers: correct order of imports; add imports only when necessary (except absolute_import currently)
+  * Improved ``libfuturize`` fixers: correct order of imports; add imports only when necessary (except ``absolute_import`` currently)
 
 v0.3.3:
   * Added ``python-futurize`` console script
 
   * Added ``itertools.filterfalse``
 
-  * Removed docs about unfinished backports (urllib etc.)
+  * Removed docs about unfinished backports (``urllib`` etc.)
 
-  * Removed old Py2 syntax in some files that breaks py3 setup.py install
+  * Removed old Py2 syntax in some files that breaks py3 ``setup.py install``
 
 v0.3.2:
-  * Added test.support module
+  * Added ``test.support`` module
 
-  * Added UserList, UserString, UserDict classes to collections module
+  * Added ``UserList``, ``UserString``, ``UserDict`` classes to ``collections`` module
 
   * Removed ``int`` -> ``long`` mapping
   
@@ -1102,7 +1102,7 @@ v0.2.1:
   * Small bug fixes
 
 v0.2.0:
-  * Features module renamed to modified_builtins
+  * ``Features`` module renamed to ``modified_builtins``
 
   * New functions added: :func:`round`, :func:`input`
 
@@ -1113,7 +1113,7 @@ v0.2.0:
     should have no effect on Python 3. On Python 2, it only shadows the
     builtins; it doesn't introduce any new names.
 
-  * End-to-end tests with Python 2 code and 2to3 now work
+  * End-to-end tests with Python 2 code and ``2to3`` now work
 
 v0.1.0:
   * first version with tests!
