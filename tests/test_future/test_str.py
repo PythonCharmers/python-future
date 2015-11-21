@@ -18,6 +18,7 @@ class TestStr(unittest.TestCase):
         self.assertFalse(str is bytes)
         self.assertEqual(str('blah'), u'blah')  # u'' prefix: Py3.3 and Py2 only
         self.assertEqual(str(b'1234'), "b'1234'")
+        self.assertEqual(str(bytes(b'1234')), "b'1234'")
 
     def test_bool_str(self):
         s1 = str(u'abc')
@@ -258,7 +259,7 @@ class TestStr(unittest.TestCase):
         if utils.PY2:
             self.assertTrue(b'A' in s)
         with self.assertRaises(TypeError):
-            bytes(b'A') in s                  
+            bytes(b'A') in s
         with self.assertRaises(TypeError):
             65 in s                                 # unlike bytes
 
