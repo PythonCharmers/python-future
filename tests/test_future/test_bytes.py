@@ -29,6 +29,16 @@ class TestBytes(unittest.TestCase):
         b = bytes(u, encoding='utf-8')
         self.assertEqual(b, u.encode('utf-8'))
 
+    def test_bytes_encoding_arg_issue_193(self):
+        """
+        This used to be True: bytes(str(u'abc'), 'utf8') == b"b'abc'"
+        """
+        u = u'abc'
+        b = bytes(str(u), 'utf8')
+        self.assertNotEqual(b, b"b'abc'")
+        self.assertEqual(b, b'abc')
+        self.assertEqual(b, bytes(b'abc'))
+
     def test_bytes_encoding_arg_non_kwarg(self):
         """
         As above, but with a positional argument
