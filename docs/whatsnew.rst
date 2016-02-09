@@ -5,6 +5,14 @@ What's New
 
 .. _whats-new-0.15.x:
 
+What's new in version 0.15.3 (2015-02-...)
+==========================================
+
+This is a minor bug-fix release:
+
+- Fix ``newbytes`` constructor bug (issue #163)
+
+
 What's new in version 0.15.2 (2015-09-11)
 =========================================
 
