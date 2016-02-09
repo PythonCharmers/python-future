@@ -82,6 +82,7 @@ Suggestions and Feedback
 - Martijn Faassen
 - Lion Krischer
 - Danielle Madeley
+- Val Markovic
 - wluebbe (GitHub)
 
 
