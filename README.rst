@@ -266,7 +266,7 @@ Licensing
 
 :Author:  Ed Schofield
 
-:Copyright: 2013-2015 Python Charmers Pty Ltd, Australia.
+:Copyright: 2013-2016 Python Charmers Pty Ltd, Australia.
 
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
