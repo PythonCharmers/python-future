@@ -8,6 +8,7 @@ different beast to the Python 3 bytes object.
 from collections import Iterable
 from numbers import Integral
 import string
+import copy
 
 from future.utils import istext, isbytes, PY3, with_metaclass
 from future.types import no, issubset
@@ -49,7 +50,6 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
           - any object implementing the buffer API.
           - an integer
         """
-        
         encoding = None
         errors = None
 
@@ -112,7 +112,15 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
             value = b'\x00' * args[0]
         else:
             value = args[0]
-        return super(newbytes, cls).__new__(cls, value)
+        if type(value) == newbytes:
+            # Above we use type(...) rather than isinstance(...) because the
+            # newbytes metaclass overrides __instancecheck__.
+            # oldbytes(value) gives the wrong thing on Py2: the same
+            # result as str(value) on Py3, e.g. "b'abc'". (Issue #193).
+            # So we handle this case separately:
+            return copy.copy(value)
+        else:
+            return super(newbytes, cls).__new__(cls, value)
         
     def __repr__(self):
         return 'b' + super(newbytes, self).__repr__()
