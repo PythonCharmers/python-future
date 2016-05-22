@@ -29,6 +29,10 @@ class TestBytes(unittest.TestCase):
         b = bytes(u, encoding='utf-8')
         self.assertEqual(b, u.encode('utf-8'))
 
+        nu = str(u)
+        b = bytes(nu, encoding='utf-8')
+        self.assertEqual(b, u.encode('utf-8'))
+
     def test_bytes_encoding_arg_issue_193(self):
         """
         This used to be True: bytes(str(u'abc'), 'utf8') == b"b'abc'"
@@ -45,6 +49,10 @@ class TestBytes(unittest.TestCase):
         """
         u = u'Unicode string: \u5b54\u5b50'
         b = bytes(u, 'utf-8')
+        self.assertEqual(b, u.encode('utf-8'))
+
+        nu = str(u)
+        b = bytes(nu, 'utf-8')
         self.assertEqual(b, u.encode('utf-8'))
 
     def test_bytes_string_no_encoding(self):
@@ -300,7 +308,7 @@ class TestBytes(unittest.TestCase):
         exc = str(cm.exception)
         # self.assertIn('bytes', exc)
         # self.assertIn('tuple', exc)
-        
+
     def test_decode(self):
         b = bytes(b'abcd')
         s = b.decode('utf-8')
@@ -367,7 +375,7 @@ class TestBytes(unittest.TestCase):
         d[s] = s
         self.assertEqual(len(d), 2)
         self.assertEqual(set(d.keys()), set([s, b]))
-    
+
     @unittest.expectedFailure
     def test_hash_with_native_types(self):
         # Warning: initializing the dict with native Py2 types throws the
@@ -488,7 +496,7 @@ class TestBytes(unittest.TestCase):
         ValueError
           ...
         ValueError: bytes must be in range(0, 256)
-        
+
         Ensure our bytes() constructor has the same behaviour
         """
         b1 = bytes([254, 255])
@@ -683,6 +691,23 @@ class TestBytes(unittest.TestCase):
             self.assertEqual(s, decoded)
             self.assertTrue(isinstance(decoded, str))
             self.assertEqual(b, decoded.encode('utf-8', 'surrogateescape'))
+
+    def test_issue_171_part_a(self):
+        b1 = str(u'abc \u0123 do re mi').encode(u'utf_8')
+        b2 = bytes(u'abc \u0123 do re mi', u'utf_8')
+        b3 = bytes(str(u'abc \u0123 do re mi'), u'utf_8')
+
+    @expectedFailurePY2
+    def test_issue_171_part_b(self):
+        """
+        Tests whether:
+        >>> nativebytes = bytes ; nativestr = str ; from builtins import *
+        >>> nativebytes(bytes(b'asdf'))[0] == b'a' == b'asdf'
+        """
+        nativebytes = type(b'')
+        nativestr = type('')
+        b = nativebytes(bytes(b'asdf'))
+        self.assertEqual(b, b'asdf')
 
 
 if __name__ == '__main__':
