@@ -62,8 +62,8 @@ class TestUtils(unittest.TestCase):
         for s in inputs:
             self.assertEqual(native_str(s), builtin_str(s))
             self.assertTrue(isinstance(native_str(s), builtin_str))
-        
-    def test_native(self):   
+
+    def test_native(self):
         a = int(10**20)     # long int
         b = native(a)
         self.assertEqual(a, b)
@@ -71,7 +71,7 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(type(b), long)
         else:
             self.assertEqual(type(b), int)
-    
+
         c = bytes(b'ABC')
         d = native(c)
         self.assertEqual(c, d)
@@ -79,7 +79,7 @@ class TestUtils(unittest.TestCase):
             self.assertEqual(type(d), type(b'Py2 byte-string'))
         else:
             self.assertEqual(type(d), bytes)
-    
+
         s = str(u'ABC')
         t = native(s)
         self.assertEqual(s, t)
@@ -151,7 +151,7 @@ class TestUtils(unittest.TestCase):
         except ValueError as e:
             self.assertTrue(isinstance(e.__context__, TypeError))
             self.assertIsNone(e.__cause__)
-    
+
     @skip26
     def test_as_native_str(self):
         """
@@ -161,9 +161,9 @@ class TestUtils(unittest.TestCase):
             @as_native_str()
             def __repr__(self):
                 return u'abc'
-            
+
         obj = MyClass()
-       
+
         self.assertEqual(repr(obj), 'abc')
         if PY2:
             self.assertEqual(repr(obj), b'abc')
@@ -185,6 +185,9 @@ class TestUtils(unittest.TestCase):
         i2 = int(i)
         self.assertEqual(ensure_new_type(i), i2)
         self.assertEqual(type(ensure_new_type(i)), int)
+
+        l = []
+        self.assertIs(ensure_new_type(l), l)
 
     def test_bytes_to_native_str(self):
         """
@@ -215,7 +218,7 @@ class TestCause(unittest.TestCase):
 
         # Python 2 and 3:
         from future.utils import raise_from
-        
+
         class FileDatabase:
             def __init__(self, filename):
                 try:
@@ -228,7 +231,7 @@ class TestCause(unittest.TestCase):
             fd = FileDatabase('non_existent_file.txt')
         except Exception as e:
             assert isinstance(e.__cause__, IOError)   # FileNotFoundError on
-                                                      # Py3.3+ inherits from IOError        
+                                                      # Py3.3+ inherits from IOError
 
     def testCauseSyntax(self):
         try:

@@ -28,7 +28,7 @@ This module exports useful functions for 2/3 compatible code:
     * tobytes(s)
         Take a text string, a byte string, or a sequence of characters taken
         from a byte string, and make a byte string.
-    
+
     * raise_from()
     * raise_with_traceback()
 
@@ -66,32 +66,32 @@ def python_2_unicode_compatible(cls):
     """
     A decorator that defines __unicode__ and __str__ methods under Python
     2. Under Python 3, this decorator is a no-op.
-    
+
     To support Python 2 and 3 with a single code base, define a __str__
     method returning unicode text and apply this decorator to the class, like
     this::
 
     >>> from future.utils import python_2_unicode_compatible
-    
+
     >>> @python_2_unicode_compatible
     ... class MyClass(object):
     ...     def __str__(self):
     ...         return u'Unicode string: \u5b54\u5b50'
-    
+
     >>> a = MyClass()
 
     Then, after this import:
 
     >>> from future.builtins import str
-    
+
     the following is ``True`` on both Python 3 and 2::
-    
+
     >>> str(a) == a.encode('utf-8').decode('utf-8')
     True
 
     and, on a Unicode-enabled terminal with the right fonts, these both print the
     Chinese characters for Confucius::
-    
+
     >>> print(a)
     >>> print(str(a))
 
@@ -108,13 +108,13 @@ def with_metaclass(meta, *bases):
     Function from jinja2/_compat.py. License: BSD.
 
     Use it like this::
-        
+
         class BaseForm(object):
             pass
-        
+
         class FormType(type):
             pass
-        
+
         class Form(with_metaclass(FormType, BaseForm)):
             pass
 
@@ -124,7 +124,7 @@ def with_metaclass(meta, *bases):
     we also need to make sure that we downgrade the custom metaclass
     for one level to something closer to type (that's why __call__ and
     __init__ comes back from type etc.).
-    
+
     This has the advantage over six.with_metaclass of not introducing
     dummy classes into the final MRO.
     """
@@ -480,7 +480,7 @@ def implements_iterator(cls):
     From jinja2/_compat.py. License: BSD.
 
     Use as a decorator like this::
-        
+
         @implements_iterator
         class UppercasingIterator(object):
             def __init__(self, iterable):
@@ -489,7 +489,7 @@ def implements_iterator(cls):
                 return self
             def __next__(self):
                 return next(self._iter).upper()
-    
+
     '''
     if PY3:
         return cls
@@ -520,7 +520,7 @@ def is_new_style(cls):
     function to test for whether a class is new-style. (Python 3 only has
     new-style classes.)
     """
-    return hasattr(cls, '__class__') and ('__dict__' in dir(cls) 
+    return hasattr(cls, '__class__') and ('__dict__' in dir(cls)
                                           or hasattr(cls, '__slots__'))
 
 # The native platform string and bytes types. Useful because ``str`` and
@@ -587,7 +587,7 @@ def native(obj):
 
     On Py2, returns the corresponding native Py2 types that are
     superclasses for backported objects from Py3:
-    
+
     >>> from builtins import str, bytes, int
 
     >>> native(str(u'ABC'))
@@ -656,7 +656,7 @@ def as_native_str(encoding='utf-8'):
     unicode, into one that returns a native platform str.
 
     Use it as a decorator like this::
-        
+
         from __future__ import unicode_literals
 
         class MyClass(object):
@@ -717,7 +717,7 @@ else:
             elif native_type == dict:
                 return newdict(obj)
             else:
-                return NotImplementedError('type %s not supported' % type(obj))
+                return obj
         else:
             # Already a new type
             assert type(obj) in [newbytes, newstr]
@@ -738,4 +738,3 @@ __all__ = ['PY2', 'PY26', 'PY3', 'PYPY',
            'tobytes', 'viewitems', 'viewkeys', 'viewvalues',
            'with_metaclass'
           ]
-

@@ -525,11 +525,10 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'badmode')
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'single', 0xff)
         # Raises TypeError in Python < v3.5, ValueError in v3.5:
-        # self.assertRaises(TypeError, compile, chr(0), 'f', 'exec')
+        self.assertRaises((TypeError, ValueError), compile, chr(0), 'f', 'exec')
         self.assertRaises(TypeError, compile, 'pass', '?', 'exec',
                           mode='eval', source='0', filename='tmp')
         compile('print("\xe5")\n', '', 'exec')
-        self.assertRaises(TypeError, compile, chr(0), 'f', 'exec')
         self.assertRaises(ValueError, compile, str('a = 1'), 'f', 'bad')
 
         # test the optimize argument
@@ -1287,7 +1286,7 @@ class BuiltinTest(unittest.TestCase):
         self.assertAlmostEqual(pow(-1, 1/3), 0.5 + 0.8660254037844386j)
 
         # Raises TypeError in Python < v3.5, ValueError in v3.5:
-        # self.assertRaises(TypeError, pow, -1, -2, 3)
+        self.assertRaises((TypeError, ValueError), pow, -1, -2, 3)
         self.assertRaises(ValueError, pow, 1, 2, 0)
 
         self.assertRaises(TypeError, pow)
