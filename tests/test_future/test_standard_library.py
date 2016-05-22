@@ -271,7 +271,7 @@ class TestStandardLibraryReorganization(CodeHandler):
         with self.assertRaises(CalledProcessError):
             output = self._run_test_script('importme1.py')
 
-    # Disabled since v0.18.0:
+    # Disabled since v0.16.0:
     # def test_configparser(self):
     #     import configparser
     

@@ -31,7 +31,7 @@ refer to stdlib modules (as well as builtins) under their Py3 names.
 
 Note also that the ``configparser`` module is a special case; there is a full
 backport available on PyPI (https://pypi.python.org/pypi/configparser), so, as
-of v0.18.0, ``python-future`` no longer provides a ``configparser`` package
+of v0.16.0, ``python-future`` no longer provides a ``configparser`` package
 alias. To use the resulting code on Py2, install the ``configparser`` backport
 with ``pip install configparser`` or by adding it to your ``requirements.txt``
 file.

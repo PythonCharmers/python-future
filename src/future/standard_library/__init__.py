@@ -738,7 +738,7 @@ class exclude_local_folder_imports(object):
     A context-manager that prevents standard library modules like configparser
     from being imported from the local python-future source folder on Py3.
 
-    (This was need prior to v0.18.0 because the presence of a configparser
+    (This was need prior to v0.16.0 because the presence of a configparser
     folder would otherwise have prevented setuptools from running on Py3. Maybe
     it's not needed any more?)
     """

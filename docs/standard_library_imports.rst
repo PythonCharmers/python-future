@@ -77,7 +77,7 @@ complete list is here::
     import _markupbase
     import _thread
 
-Note that, as of v0.18.0, ``python-future`` no longer includes an alias for the
+Note that, as of v0.16.0, ``python-future`` no longer includes an alias for the
 ``configparser`` module because a full backport exists (see https://pypi.python.org/pypi/configparser). 
 
 .. _list-standard-library-refactored:

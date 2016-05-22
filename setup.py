@@ -58,7 +58,7 @@ PACKAGES = ["future",
 if sys.version_info[:2] < (3, 0):
     PACKAGES += [
             "builtins",
-            # "configparser",  # removed in v0.18.0
+            # "configparser",  # removed in v0.16.0
             "copyreg",
             "html",
             "http",
