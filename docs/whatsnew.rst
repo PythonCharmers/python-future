@@ -19,7 +19,12 @@ code that uses `configparser` will no longer run on Py2 systems without the
 `configparser` backport installed. As an upgrade path, run ``pip install
 configparser`` or add ``configparser`` to your ``requirements.txt`` file.
 
-This releases fixes these bugs:
+Note that, if you are upgrading ``future`` with ``pip``, you will need to
+uninstall the old version of future or manually remove the
+``site-packages/future-0.15.3.dev0-py2.7.egg/configparser/`` folder for this
+change to take effect on your system.
+
+This releases fixes also these bugs:
 
 - Fix ``newbytes`` constructor bug. (Issue #163)
 - Fix semantics of `bool()` with `newobject`. (Issue #211)
