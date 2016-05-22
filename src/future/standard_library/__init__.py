@@ -11,7 +11,6 @@ It is designed to be used as follows::
 And then these normal Py3 imports work on both Py3 and Py2::
 
     import builtins
-    import configparser
     import copyreg
     import queue
     import reprlib
@@ -739,8 +738,9 @@ class exclude_local_folder_imports(object):
     A context-manager that prevents standard library modules like configparser
     from being imported from the local python-future source folder on Py3.
 
-    (The presence of a configparser folder would otherwise prevent setuptools
-    from running on Py3.)
+    (This was need prior to v0.18.0 because the presence of a configparser
+    folder would otherwise have prevented setuptools from running on Py3. Maybe
+    it's not needed any more?)
     """
     def __init__(self, *args):
         assert len(args) > 0

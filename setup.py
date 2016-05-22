@@ -58,7 +58,7 @@ PACKAGES = ["future",
 if sys.version_info[:2] < (3, 0):
     PACKAGES += [
             "builtins",
-            "configparser",
+            # "configparser",  # removed in v0.18.0
             "copyreg",
             "html",
             "http",
@@ -125,7 +125,7 @@ try:
     # If the user happens to run:
     #     python2 setup.py build
     #     python3 setup.py install
-    # then folders like "configparser" will be in build/lib.
+    # then folders like "copyreg" will be in build/lib.
     # If so, we CANNOT let the user install this, because
     # this may break his/her Python 3 install, depending on the folder order in
     # sys.path. (Running "import configparser" etc. may pick up our Py2
@@ -135,7 +135,7 @@ try:
                           '_markupbase',
                           '_thread',
                           'builtins',
-                          'configparser',
+                          # 'configparser',
                           'copyreg',
                           'html',
                           'http',

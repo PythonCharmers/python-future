@@ -31,7 +31,6 @@ Standard library reorganization
 following Py3 interfaces:
 
     >>> # Top-level packages with Py3 names provided on Py2:
-    >>> import configparser
     >>> import html.parser
     >>> import queue
     >>> import tkinter.dialog

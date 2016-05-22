@@ -24,7 +24,6 @@ Python 3 code runs unchanged on Python 2 after installing ``future``::
 
     >>> # Top-level packages with Py3 names provided on Py2:
     >>> import queue
-    >>> import configparser
     >>> import tkinter.dialog
     >>> etc.
 
@@ -32,14 +31,13 @@ Notice that this code actually runs on Python 3 without the presence of the
 ``future`` package.
 
 Of the 44 modules that were refactored with PEP 3108 (standard library
-reorganization), 30 are supported with direct imports in the above manner. The
+reorganization), 29 are supported with direct imports in the above manner. The
 complete list is here::
 
     ### Renamed modules:
 
     import builtins
 
-    import configparser
     import copyreg
 
     import html
@@ -79,6 +77,8 @@ complete list is here::
     import _markupbase
     import _thread
 
+Note that, as of v0.18.0, ``python-future`` no longer includes an alias for the
+``configparser`` module because a full backport exists (see https://pypi.python.org/pypi/configparser). 
 
 .. _list-standard-library-refactored:
 

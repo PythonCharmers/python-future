@@ -100,7 +100,6 @@ to be accessed under their Python 3 names and locations in Python 2::
     # Then these Py3-style imports work on both Python 2 and Python 3:
     import socketserver
     import queue
-    import configparser
     from collections import UserDict, UserList, UserString
     from collections import Counter, OrderedDict, ChainMap   # even on Py2.6
     from itertools import filterfalse, zip_longest

@@ -3,15 +3,30 @@
 What's New
 **********
 
-.. _whats-new-0.15.x:
+.. _whats-new-0.16.x:
 
-What's new in version 0.15.3 (2015-02-...)
+What's new in version 0.16.0 (2016-05-...)
 ==========================================
 
-This is a minor bug-fix release:
+This release removes the ``configparser`` package as an alias for
+``ConfigParser`` on Py2 to improve compatibility with the backported
+`configparser package <https://pypi.python.org/pypi/configparser>`. Previously
+``python-future`` and the PyPI ``configparser`` backport clashed, causing
+confusion and various compatibility issues. (Issue #118)
 
-- Fix ``newbytes`` constructor bug (issue #163)
+This warrants a new major version number for ``python-future`` because Py2/3
+code that uses `configparser` will no longer run on Py2 systems without the
+`configparser` backport installed. As an upgrade path, run ``pip install
+configparser`` or add ``configparser`` to your ``requirements.txt`` file.
 
+This releases fixes these bugs:
+
+- Fix ``newbytes`` constructor bug. (Issue #163)
+- Fix semantics of `bool()` with `newobject`. (Issue #211)
+- Fix `standard_library.install_aliases()` on PyPy. (Issue #205)
+- Fix assertRaises for `pow` and `compile` on Python 3.5. (Issue #183)
+- Fix return argument of `future.utils.ensure_new_type` if conversion to new type does not exist. (Issue #185)
+- Allow the `old_div` fixer to be disabled. (Issue #190)
 
 What's new in version 0.15.2 (2015-09-11)
 =========================================

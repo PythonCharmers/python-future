@@ -1413,7 +1413,7 @@ configparser
     # Python 2 only:
     from ConfigParser import ConfigParser
     
-    # Python 2 and 3 (after ``pip install future``):
+    # Python 2 and 3 (after ``pip install configparser``):
     from configparser import ConfigParser
 queue
 ~~~~~
