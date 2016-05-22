@@ -230,6 +230,47 @@ class TestNewObject(unittest.TestCase):
         class TestClass(with_metaclass(MetaClass, object)):
             pass
 
+    def test_bool(self):
+        """
+        Issue #211
+        """
+        from builtins import object
+
+        class ResultSet(object):
+            def __len__(self):
+                return 0
+
+        self.assertTrue(bool(ResultSet()) is False)
+
+        class ResultSet(object):
+            def __len__(self):
+                return 2
+
+        self.assertTrue(bool(ResultSet()) is True)
+
+    def test_bool2(self):
+        """
+        If __bool__ is defined, the presence or absence of __len__ should
+        be irrelevant.
+        """
+        from builtins import object
+
+        class TrueThing(object):
+            def __bool__(self):
+                return True
+            def __len__(self):
+                raise RuntimeError('__len__ should not be called')
+
+        self.assertTrue(bool(TrueThing()))
+
+        class FalseThing(object):
+            def __bool__(self):
+                return False
+            def __len__(self):
+                raise RuntimeError('__len__ should not be called')
+
+        self.assertFalse(bool(FalseThing()))
+
 
 if __name__ == '__main__':
     unittest.main()
