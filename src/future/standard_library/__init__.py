@@ -31,7 +31,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
     from itertools import filterfalse, zip_longest
     from sys import intern
     from collections import UserDict, UserList, UserString
-    from collections import OrderedDict, Counter     # even on Py2.6
+    from collections import OrderedDict, Counter, ChainMap     # even on Py2.6
     from subprocess import getoutput, getstatusoutput
     from subprocess import check_output              # even on Py2.6
 
@@ -196,6 +196,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('math', 'ceil', 'future.backports.misc', 'ceil'),
          ('collections', 'OrderedDict', 'future.backports.misc', 'OrderedDict'),
          ('collections', 'Counter', 'future.backports.misc', 'Counter'),
+         ('collections', 'ChainMap', 'future.backports.misc', 'ChainMap'),
          ('itertools', 'count', 'future.backports.misc', 'count'),
          ('reprlib', 'recursive_repr', 'future.backports.misc', 'recursive_repr'),
 
