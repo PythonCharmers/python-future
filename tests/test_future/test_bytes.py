@@ -7,6 +7,8 @@ from __future__ import absolute_import, unicode_literals, print_function
 from future.builtins import *
 from future import utils
 
+import sys
+
 from numbers import Integral
 from future.tests.base import unittest, expectedFailurePY2
 
@@ -534,13 +536,14 @@ class TestBytes(unittest.TestCase):
         self.assertRaises(ValueError, bytes.maketrans, b'abc', b'xyzq')
         self.assertRaises(TypeError, bytes.maketrans, 'abc', 'def')
 
-    @unittest.expectedFailure
     def test_mod(self):
         """
         From Py3.5 test suite (post-PEP 461).
 
         The bytes mod code is in _PyBytes_Format() in bytesobject.c in Py3.5.
         """
+        if sys.version_info[:2] < (3, 5):
+            return
         b = b'hello, %b!'
         orig = b
         b = b % b'world'
@@ -551,13 +554,12 @@ class TestBytes(unittest.TestCase):
         a = b % (b'seventy-nine', 79)
         self.assertEqual(a, b'seventy-nine / 100 = 79%')
 
-    @unittest.expectedFailure
     def test_imod(self):
         """
         From Py3.5 test suite (post-PEP 461)
         """
-        # if (3, 0) <= sys.version_info[:2] < (3, 5):
-        #     raise unittest.SkipTest('bytes % not yet implemented on Py3.0-3.4')
+        if sys.version_info[:2] < (3, 5):
+            return
         b = bytes(b'hello, %b!')
         orig = b
         b %= b'world'
