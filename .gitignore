@@ -42,3 +42,5 @@ nosetests.xml
 .project
 .pydevproject
 
+# IntelliJ
+.idea
