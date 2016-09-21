@@ -12,19 +12,18 @@ This release removes the ``configparser`` package as an alias for
 ``ConfigParser`` on Py2 to improve compatibility with the backported
 `configparser package <https://pypi.python.org/pypi/configparser>`. Previously
 ``python-future`` and the PyPI ``configparser`` backport clashed, causing
-confusion and various compatibility issues. (Issue #118)
+various compatibility issues. (Issue #118)
 
-This warrants a new major version number for ``python-future`` because Py2/3
-code that uses `configparser` will no longer run on Py2 systems without the
-`configparser` backport installed. As an upgrade path, run ``pip install
+If your code previously relied on ``configparser`` being supplied by
+``python-future``, the recommended upgrade path is to run ``pip install
 configparser`` or add ``configparser`` to your ``requirements.txt`` file.
 
-Note that, if you are upgrading ``future`` with ``pip``, you will need to
+Note that, if you are upgrading ``future`` with ``pip``, you may need to
 uninstall the old version of future or manually remove the
-``site-packages/future-0.15.3.dev0-py2.7.egg/configparser/`` folder for this
-change to take effect on your system.
+``site-packages/future-0.15.2-py2.7.egg`` folder for this change to take
+effect on your system.
 
-This releases fixes also these bugs:
+This releases also fixes these bugs:
 
 - Fix ``newbytes`` constructor bug. (Issue #163)
 - Fix semantics of `bool()` with `newobject`. (Issue #211)
