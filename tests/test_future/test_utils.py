@@ -152,6 +152,26 @@ class TestUtils(unittest.TestCase):
             self.assertTrue(isinstance(e.__context__, TypeError))
             self.assertIsNone(e.__cause__)
 
+    def test_issue_235(self):
+        class MyException(Exception):
+            def __init__(self, a, b):
+                super(MyException, self).__init__('{0}: {1}'.format(a, 7))
+
+        def foo():
+            raise MyException(3, 7)
+
+        def bar():
+            try:
+                foo()
+            except Exception as err:
+                raise_from(ValueError('blue'), err)
+
+        try:
+            bar()
+        except ValueError as e:
+            pass
+        # incorrectly raises a TypeError on Py3 as of v0.15.2.
+
     @skip26
     def test_as_native_str(self):
         """
