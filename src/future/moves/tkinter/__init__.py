@@ -4,5 +4,6 @@ __future_module__ = True
 
 if not PY3:
     from Tkinter import *
+    from Tkinter import _flatten, _cnfmerge
 else:
     from tkinter import *
