@@ -787,7 +787,6 @@ class exclude_local_folder_imports(object):
             sys.modules[m] = self.old_sys_modules[m]
 
 TOP_LEVEL_MODULES = ['builtins',
-                     'configparser',
                      'copyreg',
                      'html',
                      'http',
