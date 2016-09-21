@@ -22,4 +22,5 @@ from .misc import (ceil,
                    count,
                    recursive_repr,
                    _count_elements,
+                   cmp_to_key
                   )

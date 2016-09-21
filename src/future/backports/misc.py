@@ -9,7 +9,9 @@ for Python 2.6/2.7.
 - itertools.count          (for Python 2.6, with step parameter)
 - subprocess.check_output  (for Python 2.6)
 - reprlib.recursive_repr   (for Python 2.6+)
+- functools.cmp_to_key     (for Python 2.6)
 """
+
 from __future__ import absolute_import
 
 import subprocess
@@ -881,6 +883,28 @@ def create_connection(address, timeout=_GLOBAL_DEFAULT_TIMEOUT,
     else:
         raise error("getaddrinfo returns an empty list")
 
+# Backport from Py2.7 for Py2.6:
+def cmp_to_key(mycmp):
+    """Convert a cmp= function into a key= function"""
+    class K(object):
+        __slots__ = ['obj']
+        def __init__(self, obj, *args):
+            self.obj = obj
+        def __lt__(self, other):
+            return mycmp(self.obj, other.obj) < 0
+        def __gt__(self, other):
+            return mycmp(self.obj, other.obj) > 0
+        def __eq__(self, other):
+            return mycmp(self.obj, other.obj) == 0
+        def __le__(self, other):
+            return mycmp(self.obj, other.obj) <= 0
+        def __ge__(self, other):
+            return mycmp(self.obj, other.obj) >= 0
+        def __ne__(self, other):
+            return mycmp(self.obj, other.obj) != 0
+        def __hash__(self):
+            raise TypeError('hash not implemented')
+    return K
 
 # Back up our definitions above in case they're useful
 _OrderedDict = OrderedDict
@@ -892,6 +916,7 @@ __count_elements = _count_elements
 _recursive_repr = recursive_repr
 _ChainMap = ChainMap
 _create_connection = create_connection
+_cmp_to_key = cmp_to_key
 
 # Overwrite the definitions above with the usual ones
 # from the standard library:
@@ -900,6 +925,7 @@ if sys.version_info >= (2, 7):
     from subprocess import check_output
     from itertools import count
     from socket import create_connection
+    from functools import cmp_to_key
 
 if sys.version_info >= (3, 0):
     from math import ceil

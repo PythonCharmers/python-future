@@ -31,6 +31,7 @@ This releases fixes also these bugs:
 - Fix `standard_library.install_aliases()` on PyPy. (Issue #205)
 - Fix assertRaises for `pow` and `compile` on Python 3.5. (Issue #183)
 - Fix return argument of `future.utils.ensure_new_type` if conversion to new type does not exist. (Issue #185)
+- Add missing `cmp_to_key` for Py2.6. (Issue #189)
 - Allow the `old_div` fixer to be disabled. (Issue #190)
 
 What's new in version 0.15.2 (2015-09-11)
