@@ -9,28 +9,6 @@ the reorganized standard library. This is largely for historical reasons (for
 versions prior to 0.14).
 
 
-Context-manager for import hooks
-________________________________
-
-The context-manager interface is via a context-manager called ``hooks``::
-
-    from future.standard_library import hooks
-    with hooks():
-        import socketserver
-        import queue
-        import configparser
-        import test.support
-        import html.parser
-        from collections import UserList
-        from itertools import filterfalse, zip_longest
-        from http.client import HttpConnection
-        import urllib.request
-        # and other moved modules and definitions
-
-This interface is straightforward and effective, using PEP 302 import
-hooks.
-
-
 ``future.moves`` interface
 __________________________
 
@@ -92,8 +70,32 @@ functions from ``future.standard_library`` as follows::
 This interface also works with two-level imports.
 
 
-install_hooks() call
-____________________
+Context-manager for import hooks
+________________________________
+
+The context-manager interface is via a context-manager called ``hooks``::
+
+    from future.standard_library import hooks
+    with hooks():
+        import socketserver
+        import queue
+        import configparser
+        import test.support
+        import html.parser
+        from collections import UserList
+        from itertools import filterfalse, zip_longest
+        from http.client import HttpConnection
+        import urllib.request
+        # and other moved modules and definitions
+
+This interface is straightforward and effective, using PEP 302 import
+hooks. However, there are reports that this sometimes leads to problems
+(see issue #238). Until this is resolved, it is probably safer to use direct
+imports or one of the other import mechanisms listed above.
+
+
+install_hooks() call (deprecated)
+_________________________________
 
 The last interface to the reorganized standard library is via a call to
 ``install_hooks()``::
