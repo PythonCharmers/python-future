@@ -128,7 +128,7 @@ try:
     # then folders like "copyreg" will be in build/lib.
     # If so, we CANNOT let the user install this, because
     # this may break his/her Python 3 install, depending on the folder order in
-    # sys.path. (Running "import configparser" etc. may pick up our Py2
+    # sys.path. (Running "import html" etc. may pick up our Py2
     # substitute packages, instead of the intended system stdlib modules.)
     SYSTEM_MODULES = set([
                           '_dummy_thread',

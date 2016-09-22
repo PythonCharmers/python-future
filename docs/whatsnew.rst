@@ -5,14 +5,14 @@ What's New
 
 .. _whats-new-0.16.x:
 
-What's new in version 0.16.0 (2016-05-...)
+What's new in version 0.16.0 (2016-09-22)
 ==========================================
 
 This release removes the ``configparser`` package as an alias for
 ``ConfigParser`` on Py2 to improve compatibility with the backported
 `configparser package <https://pypi.python.org/pypi/configparser>`. Previously
 ``python-future`` and the PyPI ``configparser`` backport clashed, causing
-various compatibility issues. (Issue #118)
+various compatibility issues. (Issues #118, #181)
 
 If your code previously relied on ``configparser`` being supplied by
 ``python-future``, the recommended upgrade path is to run ``pip install
@@ -32,6 +32,8 @@ This releases also fixes these bugs:
 - Fix return argument of `future.utils.ensure_new_type` if conversion to new type does not exist. (Issue #185)
 - Add missing `cmp_to_key` for Py2.6. (Issue #189)
 - Allow the `old_div` fixer to be disabled. (Issue #190)
+- Improve compatibility with Google App Engine. (Issue #231)
+- Add some missing imports to the `tkinter` and `tkinter.filedialog` package namespaces. (Issues #212 and #233)
 
 What's new in version 0.15.2 (2015-09-11)
 =========================================
