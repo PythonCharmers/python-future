@@ -922,10 +922,14 @@ _cmp_to_key = cmp_to_key
 # from the standard library:
 if sys.version_info >= (2, 7):
     from collections import OrderedDict, Counter
-    from subprocess import check_output
     from itertools import count
-    from socket import create_connection
     from functools import cmp_to_key
+    try:
+        from subprocess import check_output
+    except ImportError:
+        # Not available. This happens with Google App Engine: see issue #231
+        pass
+    from socket import create_connection
 
 if sys.version_info >= (3, 0):
     from math import ceil
