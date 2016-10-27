@@ -5,7 +5,7 @@ What's New
 
 .. _whats-new-0.16.x:
 
-What's new in version 0.16.0 (2016-09-22)
+What's new in version 0.16.0 (2016-10-27)
 ==========================================
 
 This release removes the ``configparser`` package as an alias for
