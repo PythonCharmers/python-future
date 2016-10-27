@@ -377,11 +377,6 @@ def expectedFailurePY3(func):
         return func
     return unittest.expectedFailure(func)
 
-def expectedFailurePY33_and_PY34(func):
-    if sys.version_info[:2] not in {(3, 3), (3, 4)}:
-        return func
-    return unittest.expectedFailure(func)
-
 def expectedFailurePY26(func):
     if not PY26:
         return func
