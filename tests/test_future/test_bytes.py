@@ -8,7 +8,7 @@ from future.builtins import *
 from future import utils
 
 from numbers import Integral
-from future.tests.base import unittest, expectedFailurePY2
+from future.tests.base import unittest, expectedFailurePY2, expectedFailurePY33_and_PY34
 
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'
@@ -552,7 +552,7 @@ class TestBytes(unittest.TestCase):
         self.assertRaises(ValueError, bytes.maketrans, b'abc', b'xyzq')
         self.assertRaises(TypeError, bytes.maketrans, 'abc', 'def')
 
-    @unittest.expectedFailure
+    @expectedFailurePY33_and_PY34
     def test_mod(self):
         """
         From Py3.5 test suite (post-PEP 461).
@@ -569,7 +569,7 @@ class TestBytes(unittest.TestCase):
         a = b % (b'seventy-nine', 79)
         self.assertEqual(a, b'seventy-nine / 100 = 79%')
 
-    @unittest.expectedFailure
+    @expectedFailurePY33_and_PY34
     def test_imod(self):
         """
         From Py3.5 test suite (post-PEP 461)
@@ -586,7 +586,7 @@ class TestBytes(unittest.TestCase):
         b %= (b'seventy-nine', 79)
         self.assertEqual(b, b'seventy-nine / 100 = 79%')
 
-    @unittest.expectedFailure
+    @expectedFailurePY33_and_PY34
     def test_mod_pep_461(self):
         """
         Test for the PEP 461 functionality (resurrection of %s formatting for
@@ -621,9 +621,10 @@ class TestBytes(unittest.TestCase):
         # is supposed to be equivalent to
         #     ("%x" % val).encode("ascii")
         for code in b'xdiouxXeEfFgG':
-            pct_str = u"%" + code.decode('ascii')
+            bytechar = bytes([code])
+            pct_str = u"%" + bytechar.decode('ascii')
             for val in range(300):
-                self.assertEqual(bytes(b"%" + code) % val,
+                self.assertEqual(bytes(b"%" + bytechar) % val,
                                  (pct_str % val).encode("ascii"))
 
         with self.assertRaises(TypeError):
@@ -645,12 +646,12 @@ class TestBytes(unittest.TestCase):
 
         self.assertEqual(bytes(b'%a') % 'def', b"'def'")
 
-        # PEP 461 specifes that %r is not supported.
-        with self.assertRaises(TypeError):
-            bytes(b'%r' % b'abc')
+        # PEP 461 was updated after an Py3.5 alpha release to specify that %r is now supported
+        # for compatibility: http://legacy.python.org/dev/peps/pep-0461/#id16
+        assert bytes(b'%r' % b'abc') == bytes(b'%a' % b'abc')
 
-        with self.assertRaises(TypeError):
-            bytes(b'%r' % 'abc')
+        # with self.assertRaises(TypeError):
+        #     bytes(b'%r' % 'abc')
 
     @expectedFailurePY2
     def test_multiple_inheritance(self):
