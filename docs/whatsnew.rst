@@ -29,11 +29,16 @@ This releases also fixes these bugs:
 - Fix semantics of `bool()` with `newobject`. (Issue #211)
 - Fix `standard_library.install_aliases()` on PyPy. (Issue #205)
 - Fix assertRaises for `pow` and `compile` on Python 3.5. (Issue #183)
-- Fix return argument of `future.utils.ensure_new_type` if conversion to new type does not exist. (Issue #185)
+- Fix return argument of `future.utils.ensure_new_type` if conversion to
+  new type does not exist. (Issue #185)
 - Add missing `cmp_to_key` for Py2.6. (Issue #189)
 - Allow the `old_div` fixer to be disabled. (Issue #190)
 - Improve compatibility with Google App Engine. (Issue #231)
-- Add some missing imports to the `tkinter` and `tkinter.filedialog` package namespaces. (Issues #212 and #233)
+- Add some missing imports to the `tkinter` and `tkinter.filedialog`
+  package namespaces. (Issues #212 and #233)
+- Fix ``raise_from`` on PY3 when the exception cannot be recreated from
+  its repr. (Issues #213 and #235, fix provided by Varriount)
+
 
 What's new in version 0.15.2 (2015-09-11)
 =========================================

@@ -74,6 +74,7 @@ Patches
 - Mystic-Mirage (GitHub)
 - str4d (GitHub)
 - 9seconds (GitHub)
+- Varriount (GitHub)
 
 Suggestions and Feedback
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,6 +104,8 @@ Other Credits
 
 - The ``raise_`` and ``raise_with_traceback`` functions were contributed by
   Jeff Tratner.
+
+- A working version of ``raise_from`` was contributed by Varriount (GitHub).
 
 - Documentation is generated with `Sphinx <http://sphinx.pocoo.org>`_ using the
   ``sphinx-bootstrap`` theme.
