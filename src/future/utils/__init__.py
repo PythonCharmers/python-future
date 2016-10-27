@@ -387,15 +387,14 @@ if PY3:
 
         on Python 3. (See PEP 3134).
         """
-        # Is either arg an exception class (e.g. IndexError) rather than
-        # instance (e.g. IndexError('my message here')? If so, pass the
-        # name of the class undisturbed through to "raise ... from ...".
-        if isinstance(exc, type) and issubclass(exc, Exception):
-            exc = exc.__name__
-        if isinstance(cause, type) and issubclass(cause, Exception):
-            cause = cause.__name__
-        execstr = "raise " + _repr_strip(exc) + " from " + _repr_strip(cause)
         myglobals, mylocals = _get_caller_globals_and_locals()
+
+        # We pass the exception and cause along with other globals
+        # when we exec():
+        myglobals = myglobals.copy()
+        myglobals['__python_future_raise_from_exc'] = exc
+        myglobals['__python_future_raise_from_cause'] = cause
+        execstr = "raise __python_future_raise_from_exc from __python_future_raise_from_cause"
         exec(execstr, myglobals, mylocals)
 
     def raise_(tp, value=None, tb=None):
