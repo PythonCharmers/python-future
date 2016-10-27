@@ -36,8 +36,8 @@ This releases also fixes these bugs:
 - Improve compatibility with Google App Engine. (Issue #231)
 - Add some missing imports to the ``tkinter`` and ``tkinter.filedialog``
   package namespaces. (Issues #212 and #233)
-- Fix ``raise_from`` on PY3 when the exception cannot be recreated from
-  its repr. (Issues #213 and #235, fix provided by Varriount)
+- More complete implementation of ``raise_from`` on PY3. (Issues #141,
+  #213 and #235, fix provided by Varriount)
 
 
 What's new in version 0.15.2 (2015-09-11)
