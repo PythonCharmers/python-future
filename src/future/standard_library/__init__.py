@@ -755,7 +755,9 @@ class exclude_local_folder_imports(object):
         self.old_sys_modules = copy.copy(sys.modules)
         if sys.version_info[0] < 3:
             return
-        FUTURE_SOURCE_SUBFOLDERS = ['future', 'past', 'libfuturize', 'configparser']
+        # The presence of all these indicates we've found our source folder,
+        # because `builtins` won't have been installed in site-packages by setup.py:
+        FUTURE_SOURCE_SUBFOLDERS = ['future', 'past', 'libfuturize', 'libpasteurize', 'builtins']
 
         # Look for the future source folder:
         for folder in self.old_sys_path:

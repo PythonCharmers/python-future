@@ -135,7 +135,9 @@ try:
                           '_markupbase',
                           '_thread',
                           'builtins',
-                          # 'configparser',
+                          # Catch the case that configparser is in the build folder
+                          # from a previous version of `future`:
+                          'configparser',
                           'copyreg',
                           'html',
                           'http',
