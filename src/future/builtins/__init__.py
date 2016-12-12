@@ -34,7 +34,6 @@ else:
                               newstr as str)
 from future import utils
 
-
 if not utils.PY3:
     # We only import names that shadow the builtins on Py2. No other namespace
     # pollution on Py2.
@@ -47,5 +46,15 @@ if not utils.PY3:
               ]
 
 else:
-    # No namespace pollution on Py3
+    # No namespace pollution on Py3.3+
     __all__ = []
+
+
+# Exceptions
+try:
+    FileNotFoundError = FileNotFoundError
+except NameError:
+    from ..types.exceptions import NewFileNotFoundError as FileNotFoundError
+    __all__ += ['FileNotFoundError']
+
+
