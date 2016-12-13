@@ -52,7 +52,21 @@ else:
 
 # Exceptions
 try:
+    BlockingOSError = builtins.BlockingOSError
+    BrokenPipeError = builtins.BrokenPipeError
+    ChildProcessError = builtins.ChildProcessError
+    ConnectionError = builtins.ConnectionError
+    ConnectionAbortedError = builtins.ConnectionAbortedError
+    ConnectionRefusedError = builtins.ConnectionRefusedError
+    ConnectionResetError = builtins.ConnectionResetError
+    FileExistsError = builtins.FileExistsError
     FileNotFoundError = builtins.FileNotFoundError
+    InterruptedError = builtins.InterruptedError
+    IsADirectoryError = builtins.IsADirectoryError
+    NotADirectoryError = builtins.NotADirectoryError
+    PermissionError = builtins.PermissionError
+    ProcessLookupError = builtins.ProcessLookupError
+    TimeoutError = builtins.TimeoutError
 except NameError:
     from future.types.exceptions import *
     import future.types.exceptions as fte
