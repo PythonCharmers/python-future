@@ -5,6 +5,14 @@ What's New
 
 .. _whats-new-0.16.x:
 
+What's new in version 0.16.1 (unreleased)
+=========================================
+
+This is a minor bug-fix release:
+
+- Fix `from collections import ChainMap` after install_aliases() (issue #226)
+
+
 What's new in version 0.16.0 (2016-10-27)
 ==========================================
 
