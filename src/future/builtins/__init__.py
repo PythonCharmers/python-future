@@ -52,9 +52,9 @@ else:
 
 # Exceptions
 try:
-    FileNotFoundError = FileNotFoundError
+    FileNotFoundError = builtins.FileNotFoundError
 except NameError:
-    from ..types.exceptions import NewFileNotFoundError as FileNotFoundError
+    from future.types.exceptions import FileNotFoundError
     __all__ += ['FileNotFoundError']
 
 
