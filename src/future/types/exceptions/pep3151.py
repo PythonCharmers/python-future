@@ -13,15 +13,15 @@ from .base import instance_checking_exception
 @instance_checking_exception(OSError)
 def BlockingOSError(inst):
     """I/O operation would block."""
-    errnos = {errno.EAGAIN, errno.EALREADY, errno.EWOULDBLOCK,
-              errno.EINPROGRESS}
+    errnos = [errno.EAGAIN, errno.EALREADY, errno.EWOULDBLOCK,
+              errno.EINPROGRESS]
     return hasattr(inst, 'errno') and inst.errno in errnos
 
 
 @instance_checking_exception(OSError)
 def BrokenPipeError(inst):
     """Broken pipe."""
-    errnos = {errno.EPIPE, errno.ESHUTDOWN}
+    errnos = [errno.EPIPE, errno.ESHUTDOWN]
     return hasattr(inst, 'errno') and inst.errno in errnos
 
 
@@ -34,8 +34,8 @@ def ChildProcessError(inst):
 @instance_checking_exception(OSError)
 def ConnectionError(inst):
     """Connection error."""
-    errnos = {errno.EPIPE, errno.ESHUTDOWN, errno.ECONNABORTED,
-              errno.ECONNREFUSED, errno.ECONNRESET}
+    errnos = [errno.EPIPE, errno.ESHUTDOWN, errno.ECONNABORTED,
+              errno.ECONNREFUSED, errno.ECONNRESET]
     return hasattr(inst, 'errno') and inst.errno in errnos
 
 
