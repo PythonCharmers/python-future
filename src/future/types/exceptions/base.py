@@ -92,34 +92,3 @@ def instance_checking_exception(base_exception=Exception):
     return wrapped
 
 
-def message_checking_exception(regex, classname=None):
-    """
-    Create exception class which matches message against regular expression.
-
-    >>> Foo = message_checking_exception("Fooish", "Foo")
-    >>> Foo.__class__.__name__
-    'Foo'
-    >>> try:
-    ...     raise Exception("Something Fooish")
-    ... except Foo:
-    ...     print "True"
-    ... except Exception:
-    ...     print "False"
-    True
-
-    Arguments:
-        regex (string|RE): A regular expression which will be matched against
-            the `.message` attribute of the exception raised. Note that it uses
-            `re.search`, so if you want to match the beginning you have to
-            explicitly anchor the string (using `\A` or `^`).
-
-    Returns:
-        Exception: (Actually: a new subclass of it), which checks the message
-            of the exception against the supplied regex.
-    """
-    @instance_checking_exception
-    def check_message(inst):
-        return re.search(regex, inst.message)
-    if classname is not None:
-        check_message.__class__.__name__ = classname
-    return check_message
