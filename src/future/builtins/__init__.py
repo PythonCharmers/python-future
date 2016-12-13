@@ -54,7 +54,22 @@ else:
 try:
     FileNotFoundError = builtins.FileNotFoundError
 except NameError:
-    from future.types.exceptions import FileNotFoundError
-    __all__ += ['FileNotFoundError']
-
-
+    from future.types.exceptions import *
+    import future.types.exceptions as fte
+    __all__ += [
+        'BlockingOSError',
+        'BrokenPipeError',
+        'ChildProcessError',
+        'ConnectionError',
+        'ConnectionAbortedError',
+        'ConnectionRefusedError',
+        'ConnectionResetError',
+        'FileExistsError',
+        'FileNotFoundError',
+        'InterruptedError',
+        'IsADirectoryError',
+        'NotADirectoryError',
+        'PermissionErrror',
+        'ProcessLookupError',
+        'TimeoutError',
+    ]
