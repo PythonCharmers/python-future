@@ -69,7 +69,7 @@ except NameError:
         'InterruptedError',
         'IsADirectoryError',
         'NotADirectoryError',
-        'PermissionErrror',
+        'PermissionError',
         'ProcessLookupError',
         'TimeoutError',
     ]
