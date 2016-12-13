@@ -247,6 +247,13 @@ class TestStandardLibraryReorganization(CodeHandler):
         self.assertEqual(list(zip_longest(a, b)),
                          [(1, 2), (2, 4), (None, 6)])
 
+    def test_ChainMap(self):
+        """
+        Tests whether collections.ChainMap is available.
+        """
+        from collections import ChainMap
+        cm = ChainMap()
+
     @unittest.expectedFailure
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_import_failure_from_module(self):
