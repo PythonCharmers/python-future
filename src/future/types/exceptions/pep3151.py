@@ -88,7 +88,7 @@ def NotADirectoryError(inst):
 
 
 @instance_checking_exception(OSError)
-def PermissionErrror(inst):
+def PermissionError(inst):
     """Not enough permissions."""
     errnos = {errno.EACCES, errno.EPERM}
     return hasattr(inst, 'errno') and inst.errno in errnos
@@ -118,7 +118,7 @@ __all__ = [
     'InterruptedError',
     'IsADirectoryError',
     'NotADirectoryError',
-    'PermissionErrror',
+    'PermissionError',
     'ProcessLookupError',
     'TimeoutError',
 ]
