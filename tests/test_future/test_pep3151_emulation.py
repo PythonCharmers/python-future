@@ -18,6 +18,17 @@ class TestPEP3151LikeSuperClassing(unittest.TestCase):
         except Exception as e:
             raise AssertionError("Could not create proper exception:" + str(e))
 
+    def test_does_not_catch_incorrect_exception(self):
+        """
+        If PermissionError were just an alias for OSError, this would fail.
+        """
+        try:
+            open(MISSING_FILE)
+        except PermissionError as e:
+            raise AssertionError('Wrong exception caught: PermissionError vs FileNotFoundError')
+        except FileNotFoundError as e:
+            pass
+
     def test_catching_enoent_from_remove(self):
         try:
             os.remove(MISSING_FILE)
