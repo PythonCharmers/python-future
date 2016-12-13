@@ -3,6 +3,8 @@ Contains Python3-like EnvironmentError 'subclasses', except that it performs
 a lot of under-the-hood magic to make it look like the standard library is
 actually throwing these more specific versions instead of just OSError, OSError
 and such.
+
+Based on https://github.com/sjoerdjob/exhacktion.
 """
 
 import errno
@@ -11,7 +13,7 @@ from .base import instance_checking_exception
 
 
 @instance_checking_exception(OSError)
-def BlockingOSError(inst):
+def BlockingIOError(inst):
     """I/O operation would block."""
     errnos = [errno.EAGAIN, errno.EALREADY, errno.EWOULDBLOCK,
               errno.EINPROGRESS]
@@ -106,7 +108,7 @@ def TimeoutError(inst):
     return hasattr(inst, 'errno') and inst.errno == errno.ETIMEDOUT
 
 __all__ = [
-    'BlockingOSError',
+    'BlockingIOError',
     'BrokenPipeError',
     'ChildProcessError',
     'ConnectionError',

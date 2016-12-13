@@ -1,4 +1,10 @@
 """
+Libraries are not as fine-grained with exception classes as one would like. By
+using this hack, you can make create your own exceptions which behave as if
+they are superclasses of the ones raised by the standard library.
+
+Tread with caution.
+
 Defines the base `instance_checking_exception` creator.
 """
 
@@ -37,19 +43,7 @@ def instance_checking_exception(base_exception=Exception):
                 handling logic.
         """
         class TemporaryClass(base_exception):
-            # def __new__(cls, *args):
-            #     print('TemporaryClass.__new__: args are: {0}'.format(args))
-            #     if len(args) == 1 and isinstance(args[0], TemporaryClass):
-            #         unwrap_me = args[0]
-            #         err = super(TemporaryClass, cls).__new__(cls)
-            #         for attr in dir(unwrap_me):
-            #             if not attr.startswith('__'):
-            #                 setattr(err, attr, getattr(unwrap_me, attr))
-            #     else:
-            #         return super(base_exception, cls).__new__(cls, *args) 
-        
             def __init__(self, *args, **kwargs):
-                # print('TemporaryClass.__init__: args are: {0}'.format(args))
                 if len(args) == 1 and isinstance(args[0], TemporaryClass):
                     unwrap_me = args[0]
                     for attr in dir(unwrap_me):
@@ -60,35 +54,13 @@ def instance_checking_exception(base_exception=Exception):
 
             class __metaclass__(type):
                 def __instancecheck__(cls, inst):
-                    # print('FileNotFoundError.__isinstance__: type(inst) = {0}\ninst = {1}'.format(type(inst), inst))
                     return instance_checker(inst)
 
                 def __subclasscheck__(cls, classinfo):
-                    # print('In __subclasscheck__:\n\tcls = {0}\n\tclassinfo = {1}'.format(cls, classinfo))
-                    # return instance_checker(classinfo)
-                    # This hook is called during the exception handling.
-                    # Unfortunately, we would rather have exception handling call
-                    # __instancecheck__, so we have to do that ourselves. But,
-                    # that's not how it currently is.  If you feel like proposing a
-                    # patch for Python, check the function
-                    # `PyErr_GivenExceptionMatches` in `Python/error.c`.
                     value = sys.exc_info()[1]
-                    # if value is None:
-                    #     print('Exception value is None!!')
-
-                    # Double-check that the exception given actually somewhat
-                    # matches the classinfo we received. If not, people may be using
-                    # `issubclass` directly, which is of course prone to errors,
-                    # or they are raising the exception with `raise ...`
-                    # if value.__class__ != classinfo:
-                    #     print('Mismatch!\nvalue: {0}\nvalue.__class__: {1}\nclassinfo: {2}'.format(
-                    #         value, value.__class__, classinfo)
-                    #     )
                     return isinstance(value, cls)
 
         TemporaryClass.__name__ = instance_checker.__name__
         TemporaryClass.__doc__ = instance_checker.__doc__
         return TemporaryClass
     return wrapped
-
-

@@ -52,7 +52,7 @@ else:
 
 # Exceptions
 try:
-    BlockingOSError = builtins.BlockingOSError
+    BlockingIOError = builtins.BlockingIOError
     BrokenPipeError = builtins.BrokenPipeError
     ChildProcessError = builtins.ChildProcessError
     ConnectionError = builtins.ConnectionError
@@ -68,10 +68,10 @@ try:
     ProcessLookupError = builtins.ProcessLookupError
     TimeoutError = builtins.TimeoutError
 except NameError:
-    from future.types.exceptions import *
+    from future.types.exceptions.pep3151 import *
     import future.types.exceptions as fte
     __all__ += [
-        'BlockingOSError',
+        'BlockingIOError',
         'BrokenPipeError',
         'ChildProcessError',
         'ConnectionError',
