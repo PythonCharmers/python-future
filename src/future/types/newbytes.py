@@ -100,6 +100,8 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
                 newargs.append(errors)
             value = args[0].encode(*newargs)
             ###
+        elif hasattr(args[0], '__bytes__'):
+            value = args[0].__bytes__()
         elif isinstance(args[0], Iterable):
             if len(args[0]) == 0:
                 # This could be an empty list or tuple. Return b'' as on Py3.
