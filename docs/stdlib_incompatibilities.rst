@@ -57,6 +57,9 @@ You can use the following code on both Python 3 and Python 2::
     
     a = array.array(bytes_to_native_str(b'b'))
 
+This was `fixed in Python 2.7.11
+<https://hg.python.org/cpython/file/6d1b6a68f775/Misc/NEWS#l233>`_.
+Since then, ``array.array()`` now also accepts unicode format typecode.
 
 .. _stdlib-array-read:
 
