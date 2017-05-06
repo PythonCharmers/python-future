@@ -220,7 +220,7 @@ to Python 2's ``str`` object) and several standard library modules.
 ``python-future`` supports only Python 2.6+ and Python 3.3+, whereas ``six``
 supports all versions of Python from 2.4 onwards. (See
 :ref:`supported-versions`.) If you must support older Python versions,
-``six`` will be esssential for you. However, beware that maintaining
+``six`` will be essential for you. However, beware that maintaining
 single-source compatibility with older Python versions is ugly and `not
 fun <http://lucumr.pocoo.org/2013/5/21/porting-to-python-3-redux/>`_.
 
