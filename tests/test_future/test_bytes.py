@@ -707,6 +707,31 @@ class TestBytes(unittest.TestCase):
         b = nativebytes(bytes(b'asdf'))
         self.assertEqual(b, b'asdf')
 
+    def test_cast_to_bytes(self):
+        """
+        Tests whether __bytes__ method is called
+        """
+
+        class TestObject:
+            def __bytes__(self):
+                return b'asdf'
+
+        self.assertEqual(bytes(TestObject()), b'asdf')
+
+    def test_cast_to_bytes_iter_precedence(self):
+        """
+        Tests that call to __bytes__ is preferred to iteration
+        """
+
+        class TestObject:
+            def __bytes__(self):
+                return b'asdf'
+
+            def __iter__(self):
+                return iter(b'hjkl')
+
+        self.assertEqual(bytes(TestObject()), b'asdf')
+
 
 if __name__ == '__main__':
     unittest.main()
