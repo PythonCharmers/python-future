@@ -860,6 +860,14 @@ imap
     
     myiter = map(func, myoldlist)
     assert isinstance(myiter, iter)
+.. code:: python
+
+    # Python 2 and 3: option 3
+    from six.moves import map
+    
+    myiter = map(func, myoldlist)
+    assert isinstance(myiter, iter)
+
 zip, izip
 ~~~~~~~~~
 
