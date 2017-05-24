@@ -446,8 +446,8 @@ def install_aliases():
     """
     if PY3:
         return
-    # if hasattr(install_aliases, 'run_already'):
-    #     return
+    if hasattr(install_aliases, 'run_already'):
+        return
     for (newmodname, newobjname, oldmodname, oldobjname) in MOVES:
         __import__(newmodname)
         # We look up the module in sys.modules because __import__ just returns the
@@ -516,7 +516,7 @@ def install_aliases():
             dbm.ndbm = ndbm
             sys.modules['dbm.ndbm'] = ndbm
 
-    # install_aliases.run_already = True
+    install_aliases.run_already = True
 
 
 def install_hooks():
