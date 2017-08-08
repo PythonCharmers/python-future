@@ -208,7 +208,7 @@ def detect_python2(source, pathname):
     """
     Returns a bool indicating whether we think the code is Py2
     """
-    temppath=os.environ["TMP"] if os.environ["TMP"] else '/tmp'
+    temppath=os.environ["TMP"] if os.environ["TMP"] is not None else '/tmp'
     RTs.setup_detect_python2()
     try:
         tree = RTs._rt_py2_detect.refactor_string(source, pathname)
@@ -396,7 +396,7 @@ class Py2Fixer(object):
 
                         if detect_python2(source, self.pathname):
                             source = self.transform(source)
-                            temppath = os.environ["TMP"] if os.environ["TMP"] else '/tmp'
+                            temppath = os.environ["TMP"] if os.environ["TMP"] is not None else '/tmp'
                             with open(os.path.join(temppath,'futurized_code.py'), 'w') as f:
                                 f.write('### Futurized code (from %s)\n%s' % 
                                         (self.pathname, source))
