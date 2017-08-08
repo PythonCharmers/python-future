@@ -38,6 +38,7 @@ import marshal
 import os
 import sys
 import copy
+import tempfile
 from lib2to3.pgen2.parse import ParseError
 from lib2to3.refactor import RefactoringTool
 
@@ -208,7 +209,6 @@ def detect_python2(source, pathname):
     """
     Returns a bool indicating whether we think the code is Py2
     """
-    temppath=os.environ["TMP"] if os.environ["TMP"] is not None else '/tmp'
     RTs.setup_detect_python2()
     try:
         tree = RTs._rt_py2_detect.refactor_string(source, pathname)
@@ -220,20 +220,20 @@ def detect_python2(source, pathname):
     if source != str(tree)[:-1]:   # remove added newline
         # The above fixers made changes, so we conclude it's Python 2 code
         logger.debug('Detected Python 2 code: {0}'.format(pathname))
-        with open(os.path.join(temppath,'original_code.py'), 'w') as f:
+        with open(os.path.join(tempfile.mkdtemp(),'original_code.py'), 'w') as f:
             f.write('### Original code (detected as py2): %s\n%s' % 
                     (pathname, source))
-        with open(os.path.join(temppath,'py2_detection_code.py'), 'w') as f:
+        with open(os.path.join(tempfile.mkdtemp(),'py2_detection_code.py'), 'w') as f:
             f.write('### Code after running py3 detection (from %s)\n%s' % 
                     (pathname, str(tree)[:-1]))
         return True
     else:
         logger.debug('Detected Python 3 code: {0}'.format(pathname))
-        with open(os.path.join(temppath,'original_code.py'), 'w') as f:
+        with open(os.path.join(tempfile.mkdtemp(),'original_code.py'), 'w') as f:
             f.write('### Original code (detected as py3): %s\n%s' % 
                     (pathname, source))
         try:
-            os.remove(os.path.join(temppath,'futurize_code.py'))
+            os.remove(os.path.join(tempfile.mkdtemp(),'futurize_code.py'))
         except OSError:
             pass
         return False
@@ -396,8 +396,7 @@ class Py2Fixer(object):
 
                         if detect_python2(source, self.pathname):
                             source = self.transform(source)
-                            temppath = os.environ["TMP"] if os.environ["TMP"] is not None else '/tmp'
-                            with open(os.path.join(temppath,'futurized_code.py'), 'w') as f:
+                            with open(os.path.join(tempfile.mkdtemp(),'futurized_code.py'), 'w') as f:
                                 f.write('### Futurized code (from %s)\n%s' % 
                                         (self.pathname, source))
 
