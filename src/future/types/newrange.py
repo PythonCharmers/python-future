@@ -152,6 +152,9 @@ class range_iterator(Iterator):
     def __iter__(self):
         return self
 
+    def __next__(self):
+        return next(self._stepper)
+
     def next(self):
         return next(self._stepper)
 
