@@ -145,7 +145,7 @@ Others' perspectives
 In favour of ``unicode_literals``
 *********************************
 
-Django recommends importing ``unicode_literals`` as its top `porting tip <https://docs.djangoproject.com/en/dev/topics/python3/#unicode-literals>`_ for
+Django recommends importing ``unicode_literals`` as its top `porting tip <https://docs.djangoproject.com/en/1.11/topics/python3/#unicode-literals>`_ for
 migrating Django extension modules to Python 3.  The following `quote
 <https://groups.google.com/forum/#!topic/django-developers/2ddIWdicbNY>`_ is
 from Aymeric Augustin on 23 August 2012 regarding why he chose
