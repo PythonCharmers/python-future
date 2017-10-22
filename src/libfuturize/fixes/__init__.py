@@ -1,5 +1,6 @@
 import sys
-from lib2to3 import refactor
+if sys.hexversion >= 0x3000000:
+    from lib2to3 import refactor
 
 # The following fixers are "safe": they convert Python 2 code to more
 # modern Python 2 code. They should be uncontroversial to apply to most
