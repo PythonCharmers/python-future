@@ -1,5 +1,6 @@
 import sys
-if sys.hexversion >= 0x3000000:
+from future.utils import PY3
+if PY3:
     from lib2to3 import refactor
 
 # The following fixers are "safe": they convert Python 2 code to more
