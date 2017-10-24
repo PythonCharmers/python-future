@@ -38,7 +38,8 @@ import marshal
 import os
 import sys
 import copy
-if sys.hexversion >= 0x3000000:
+from future.utils import PY3
+if PY3:
     from lib2to3.pgen2.parse import ParseError
     from lib2to3.refactor import RefactoringTool
 
