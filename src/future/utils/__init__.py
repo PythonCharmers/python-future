@@ -18,8 +18,10 @@ This module exports useful functions for 2/3 compatible code:
     * types:
 
         * text_type: unicode in Python 2, str in Python 3
-        * binary_type: str in Python 2, bythes in Python 3
         * string_types: basestring in Python 2, str in Python 3
+        * binary_type: str in Python 2, bytes in Python 3
+        * integer_types: (int, long) in Python 2, int in Python 3
+        * class_types: (type, types.ClassType) in Python 2, type in Python 3
 
     * bchr(c):
         Take an integer and make a 1-character byte string
@@ -724,16 +726,16 @@ else:
 
 
 __all__ = ['PY2', 'PY26', 'PY3', 'PYPY',
-           'as_native_str', 'bind_method', 'bord', 'bstr',
-           'bytes_to_native_str', 'encode_filename', 'ensure_new_type',
-           'exec_', 'get_next', 'getexception', 'implements_iterator',
-           'is_new_style', 'isbytes', 'isidentifier', 'isint',
-           'isnewbytes', 'istext', 'iteritems', 'iterkeys', 'itervalues',
-           'lfilter', 'listitems', 'listvalues', 'lmap', 'lrange',
-           'lzip', 'native', 'native_bytes', 'native_str',
+           'as_native_str', 'binary_type', 'bind_method', 'bord', 'bstr',
+           'bytes_to_native_str', 'class_types', 'encode_filename',
+           'ensure_new_type', 'exec_', 'get_next', 'getexception',
+           'implements_iterator', 'integer_types', 'is_new_style', 'isbytes',
+           'isidentifier', 'isint', 'isnewbytes', 'istext', 'iteritems',
+           'iterkeys', 'itervalues', 'lfilter', 'listitems', 'listvalues',
+           'lmap', 'lrange', 'lzip', 'native', 'native_bytes', 'native_str',
            'native_str_to_bytes', 'old_div',
            'python_2_unicode_compatible', 'raise_',
-           'raise_with_traceback', 'reraise', 'text_to_native_str',
-           'tobytes', 'viewitems', 'viewkeys', 'viewvalues',
-           'with_metaclass'
-          ]
+           'raise_with_traceback', 'reraise', 'string_types',
+           'text_to_native_str', 'text_type', 'tobytes', 'viewitems',
+           'viewkeys', 'viewvalues', 'with_metaclass'
+           ]
