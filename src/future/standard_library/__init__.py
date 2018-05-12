@@ -538,6 +538,8 @@ def install_hooks():
         sys.meta_path.append(newhook)
     flog.debug('sys.meta_path is now: {0}'.format(sys.meta_path))
 
+    fix_sys_argv()
+
 
 def enable_hooks():
     """
@@ -812,3 +814,10 @@ def import_top_level_modules():
                 __import__(m)
             except ImportError:     # e.g. winreg
                 pass
+
+
+def fix_sys_argv():
+    if PY3:
+        return
+
+    sys.argv = [arg.decode(sys.stdin.encoding) for arg in sys.argv]
