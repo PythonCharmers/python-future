@@ -479,6 +479,16 @@ class TestStandardLibraryReorganization(CodeHandler):
 
         self.assertTrue('urlopen' in dir(urllib.request))
 
+    @unittest.skipIf(utils.PY3, 'fix_sys_argv test is for Py2 only')
+    def test_fix_sys_argv(self):
+        sample = u'\u042f'
+        sys.argv.append(sample.encode(sys.stdin.encoding))
+
+        standard_library.fix_sys_argv()
+        self.assertEqual(sys.argv[-1], sample)
+
+        del sys.argv[-1]
+
 
 class TestFutureMoves(CodeHandler):
     def test_future_moves_urllib_request(self):
