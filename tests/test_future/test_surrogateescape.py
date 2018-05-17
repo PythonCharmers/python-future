@@ -33,6 +33,12 @@ class TestSurrogateEscape(unittest.TestCase):
         b = payload.encode('ascii', 'surrogateescape')
         self.assertEqual(b, b'cMO2c3RhbA\xc3\xa1=\n')
 
+    def test_encode_ascii_unicode(self):
+        """
+        Verify that exceptions are raised properly.
+        """
+        self.assertRaises(UnicodeEncodeError, u'\N{SNOWMAN}'.encode, 'US-ASCII', 'surrogateescape')
+
     @expectedFailurePY2
     def test_encode_ascii_surrogateescape_non_newstr(self):
         """
