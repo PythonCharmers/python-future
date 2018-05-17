@@ -512,7 +512,7 @@ Iterable dict values:
 .. code:: python
 
     # Python 2 and 3: option 2
-    from builtins import itervalues
+    from future.utils import itervalues
     # or
     from six import itervalues
     
