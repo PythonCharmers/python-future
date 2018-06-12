@@ -7,3 +7,11 @@ The test suite can be run either with:
 which uses the unittest module's test discovery mechanism, or with:
 
     $ py.test
+
+To execute a single test:
+
+    $ python setup.py test -s tests.test_future.test_utils.TestCause.test_chained_exceptions_stacktrace
+
+or with:
+
+    $ pytest -k test_chained_exceptions_stacktrace
