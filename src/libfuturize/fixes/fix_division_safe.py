@@ -31,7 +31,7 @@ def match_division(node):
     return node.type == slash and not node.next_sibling.type == slash and \
                                   not node.prev_sibling.type == slash
 
-const_re = re.compile('^[0-9.]+$')
+const_re = re.compile('^[0-9]*[.][0-9]*$')
 
 
 def _is_floaty(expr):
