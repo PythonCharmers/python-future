@@ -40,7 +40,8 @@ def _is_floaty(expr):
         return const_re.match(expr.value)
     elif isinstance(expr, Node):
         # If the expression is a node, let's see if it's a direct cast to float
-        return expr.children[0].value == u'float'
+        if isinstance(expr.children[0], Leaf):
+            return expr.children[0].value == u'float'
     return False
 
 
@@ -79,7 +80,6 @@ class FixDivisionSafe(fixer_base.BaseFix):
             return
         future_import(u"division", node)
 
-        touch_import_top(u'past.utils', u'old_div', node)
         expr1, expr2 = results[0].clone(), results[1].clone()
         # Strip any leading space for the first number:
         expr1.prefix = u''
@@ -88,5 +88,6 @@ class FixDivisionSafe(fixer_base.BaseFix):
         # should be the same in 2 or 3
         if _is_floaty(expr1) or _is_floaty(expr2):
             return
+        touch_import_top(u'past.utils', u'old_div', node)
         return wrap_in_fn_call("old_div", (expr1, expr2), prefix=node.prefix)
 
