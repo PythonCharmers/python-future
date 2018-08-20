@@ -197,7 +197,7 @@ class BasicTest(TestCase):
         if not utils.PY3:
             self.assertEqual(repr(exc), '''BadStatusLine("u\'\'",)''')
         else:
-            self.assertEqual(repr(exc), '''BadStatusLine("\'\'",)''')
+            self.assertIn(repr(exc), ('''BadStatusLine("''",)''', '''BadStatusLine("''")'''))
 
     def test_partial_reads(self):
         # if we have a length, the system knows when to close itself
