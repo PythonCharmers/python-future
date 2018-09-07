@@ -552,21 +552,38 @@ class TestBytes(unittest.TestCase):
         self.assertRaises(ValueError, bytes.maketrans, b'abc', b'xyzq')
         self.assertRaises(TypeError, bytes.maketrans, 'abc', 'def')
 
-    # def test_mod(self):
-    #     """
-    #     From Py3.5 test suite (post-PEP 461).
-    #
-    #     The bytes mod code is in _PyBytes_Format() in bytesobject.c in Py3.5.
-    #     """
-    #     b = b'hello, %b!'
-    #     orig = b
-    #     b = b % b'world'
-    #     self.assertEqual(b, b'hello, world!')
-    #     self.assertEqual(orig, b'hello, %b!')
-    #     self.assertFalse(b is orig)
-    #     b = b'%s / 100 = %d%%'
-    #     a = b % (b'seventy-nine', 79)
-    #     self.assertEqual(a, b'seventy-nine / 100 = 79%')
+    def test_mod_more(self):
+        self.assertEqual(b'%s' % b'aaa', b'aaa')
+        self.assertEqual(bytes(b'%s') % b'aaa', b'aaa')
+        self.assertEqual(bytes(b'%s') % bytes(b'aaa'), b'aaa')
+
+        self.assertEqual(b'%s' % (b'aaa',), b'aaa')
+        self.assertEqual(bytes(b'%s') % (b'aaa',), b'aaa')
+        self.assertEqual(bytes(b'%s') % (bytes(b'aaa'),), b'aaa')
+
+        self.assertEqual(bytes(b'%(x)s') % {'x': b'aaa'}, b'aaa')
+        self.assertEqual(bytes(b'%(x)s') % {'x': bytes(b'aaa')}, b'aaa')
+
+    def test_mod(self):
+        """
+        From Py3.5 test suite (post-PEP 461).
+
+        The bytes mod code is in _PyBytes_Format() in bytesobject.c in Py3.5.
+        """
+        # b = bytes(b'hello, %b!')
+        # orig = b
+        # b = b % b'world'
+        # self.assertEqual(b, b'hello, world!')
+        # self.assertEqual(orig, b'hello, %b!')
+        # self.assertFalse(b is orig)
+
+        b = bytes(b'%s / 100 = %d%%')
+        a = b % (b'seventy-nine', 79)
+        self.assertEqual(a, b'seventy-nine / 100 = 79%')
+
+        b = bytes(b'%s / 100 = %d%%')
+        a = b % (bytes(b'seventy-nine'), 79)
+        self.assertEqual(a, b'seventy-nine / 100 = 79%')
 
     # def test_imod(self):
     #     """

@@ -174,6 +174,22 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
     def __rmul__(self, other):
         return newbytes(super(newbytes, self).__rmul__(other))
 
+    def __mod__(self, vals):
+        if isinstance(vals, newbytes):
+            vals = _builtin_bytes.__str__(vals)
+        elif isinstance(vals, dict):
+            for k, v in vals.items():
+                if isinstance(v, newbytes):
+                    vals[k] = _builtin_bytes.__str__(v)
+        elif isinstance(vals, tuple):
+            newvals = []
+            for v in vals:
+                if isinstance(v, newbytes):
+                    v = _builtin_bytes.__str__(v)
+                newvals.append(v)
+            vals = tuple(newvals)
+        return _builtin_bytes.__mod__(self, vals)
+
     def join(self, iterable_of_bytes):
         errmsg = 'sequence item {0}: expected bytes, {1} found'
         if isbytes(iterable_of_bytes) or istext(iterable_of_bytes):
