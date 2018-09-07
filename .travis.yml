@@ -8,12 +8,12 @@ python:
 
 sudo: false
 
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+# command to install dependencies, e.g. pip install -r requirements.txt
 # These packages only exist on Ubuntu 13.04 and newer:
 # No dependencies currently unless using Python 2.6.
 
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then pip install -r requirements_py26.txt --use-mirrors; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then pip install -r requirements_py26.txt; fi
   - python setup.py install
 
 # command to run tests, e.g. python setup.py test
