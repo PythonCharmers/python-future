@@ -552,6 +552,20 @@ class TestBytes(unittest.TestCase):
         self.assertRaises(ValueError, bytes.maketrans, b'abc', b'xyzq')
         self.assertRaises(TypeError, bytes.maketrans, 'abc', 'def')
 
+    @unittest.skipUnless(utils.PY2, 'test requires Python 2')
+    def test_mod_custom_dict(self):
+        import UserDict
+
+        class MyDict(UserDict.UserDict):
+            pass
+
+        d = MyDict()
+        d['foo'] = bytes(b'bar')
+        self.assertFalse(isinstance(d, dict))
+        self.assertTrue(isinstance(d, UserDict.UserDict))
+
+        self.assertEqual(bytes(b'%(foo)s') % d, b'bar')
+
     @unittest.skipUnless(utils.PY35 or utils.PY2,
                          'test requires Python 2 or 3.5+')
     def test_mod_more(self):
