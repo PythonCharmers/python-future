@@ -552,6 +552,8 @@ class TestBytes(unittest.TestCase):
         self.assertRaises(ValueError, bytes.maketrans, b'abc', b'xyzq')
         self.assertRaises(TypeError, bytes.maketrans, 'abc', 'def')
 
+    @unittest.skipUnless(utils.PY35 or utils.PY2,
+                         'test requires Python 2 or 3.5+')
     def test_mod_more(self):
         self.assertEqual(b'%s' % b'aaa', b'aaa')
         self.assertEqual(bytes(b'%s') % b'aaa', b'aaa')
@@ -564,6 +566,8 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(bytes(b'%(x)s') % {'x': b'aaa'}, b'aaa')
         self.assertEqual(bytes(b'%(x)s') % {'x': bytes(b'aaa')}, b'aaa')
 
+    @unittest.skipUnless(utils.PY35 or utils.PY2,
+                         'test requires Python 2 or 3.5+')
     def test_mod(self):
         """
         From Py3.5 test suite (post-PEP 461).
