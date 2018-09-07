@@ -588,6 +588,9 @@ class TestBytes(unittest.TestCase):
 
         The bytes mod code is in _PyBytes_Format() in bytesobject.c in Py3.5.
         """
+
+        # XXX Add support for %b!
+        #
         # b = bytes(b'hello, %b!')
         # orig = b
         # b = b % b'world'
