@@ -606,21 +606,29 @@ class TestBytes(unittest.TestCase):
         a = b % (bytes(b'seventy-nine'), 79)
         self.assertEqual(a, b'seventy-nine / 100 = 79%')
 
-    # def test_imod(self):
-    #     """
-    #     From Py3.5 test suite (post-PEP 461)
-    #     """
-    #     # if (3, 0) <= sys.version_info[:2] < (3, 5):
-    #     #     raise unittest.SkipTest('bytes % not yet implemented on Py3.0-3.4')
-    #     b = bytes(b'hello, %b!')
-    #     orig = b
-    #     b %= b'world'
-    #     self.assertEqual(b, b'hello, world!')
-    #     self.assertEqual(orig, b'hello, %b!')
-    #     self.assertFalse(b is orig)
-    #     b = bytes(b'%s / 100 = %d%%')
-    #     b %= (b'seventy-nine', 79)
-    #     self.assertEqual(b, b'seventy-nine / 100 = 79%')
+    @unittest.skipUnless(utils.PY35 or utils.PY2,
+                         'test requires Python 2 or 3.5+')
+    def test_imod(self):
+        """
+        From Py3.5 test suite (post-PEP 461)
+        """
+        # if (3, 0) <= sys.version_info[:2] < (3, 5):
+        #     raise unittest.SkipTest('bytes % not yet implemented on Py3.0-3.4')
+
+        # b = bytes(b'hello, %b!')
+        # orig = b
+        # b %= b'world'
+        # self.assertEqual(b, b'hello, world!')
+        # self.assertEqual(orig, b'hello, %b!')
+        # self.assertFalse(b is orig)
+
+        b = bytes(b'%s / 100 = %d%%')
+        b %= (b'seventy-nine', 79)
+        self.assertEqual(b, b'seventy-nine / 100 = 79%')
+
+        b = bytes(b'%s / 100 = %d%%')
+        b %= (bytes(b'seventy-nine'), 79)
+        self.assertEqual(b, b'seventy-nine / 100 = 79%')
 
     # def test_mod_pep_461(self):
     #     """
