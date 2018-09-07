@@ -194,6 +194,9 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
 
         return _builtin_bytes.__mod__(self, vals)
 
+    def __imod__(self, other):
+        return self.__mod__(other)
+
     def join(self, iterable_of_bytes):
         errmsg = 'sequence item {0}: expected bytes, {1} found'
         if isbytes(iterable_of_bytes) or istext(iterable_of_bytes):
