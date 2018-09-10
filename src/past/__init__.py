@@ -67,7 +67,7 @@ this::
 
 until the authors of the Python 2 modules have upgraded their code. Then, for
 example::
-    
+
     >>> mypy2module.func_taking_py2_string(oldstr(b'abcd'))
 
 
@@ -90,4 +90,3 @@ from future import __version__, __copyright__, __license__
 
 __title__ = 'past'
 __author__ = 'Ed Schofield'
-

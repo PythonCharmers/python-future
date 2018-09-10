@@ -66,7 +66,7 @@ module::
 
     from future import standard_library
     standard_library.install_aliases()
-    
+
 and converts several Python 3-only constructs (like keyword-only arguments) to a
 form compatible with both Py3 and Py2. Most remaining Python 3 code should
 simply work on Python 2.
@@ -93,7 +93,7 @@ Standard library reorganization
 :mod:`future` supports the standard library reorganization (PEP 3108) via
 one of several mechanisms, allowing most moved standard library modules
 to be accessed under their Python 3 names and locations in Python 2::
-    
+
     from future import standard_library
     standard_library.install_aliases()
 
@@ -136,7 +136,7 @@ upon import. First, install the Python 2-only package into your Python 3
 environment::
 
     $ pip3 install mypackagename --no-compile   # to ignore SyntaxErrors
-    
+
 (or use ``pip`` if this points to your Py3 environment.)
 
 Then add the following code at the top of your (Py3 or Py2/3-compatible)

@@ -5,7 +5,7 @@ open()
 
 The Python 3 builtin :func:`open` function for opening files returns file
 contents as (unicode) strings unless the binary (``b``) flag is passed, as in::
-    
+
     open(filename, 'rb')
 
 in which case its methods like :func:`read` return Py3 :class:`bytes` objects.
@@ -37,4 +37,3 @@ cast it explicitly as follows::
     assert data[4] == 13     # integer
     # Raises TypeError:
     # data + u''
-

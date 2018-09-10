@@ -91,7 +91,7 @@ def main(args=None):
 
     Returns a suggested exit status (0, 1, 2).
     """
-    
+
     # Set up option parser
     parser = optparse.OptionParser(usage="futurize [options] file|dir ...")
     parser.add_option("-V", "--version", action="store_true",

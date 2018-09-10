@@ -1,4 +1,3 @@
-
 limitations of the ``future`` module and differences between Py2 and Py3 that are not (yet) handled
 ===================================================================================================
 
@@ -39,7 +38,7 @@ Also:
 
       b'\x00'[0] != 0
       b'\x01'[0] != 1
-  
+
   ``futurize`` does not yet wrap all byte-string literals in a ``bytes()``
   call. This is on the to-do list. See :ref:`bytes-object` for more information.
 
@@ -51,5 +50,3 @@ Notes
   adds this back in automatically, but ensure you do this too
   when writing your classes, otherwise weird breakage when e.g. calling
   ``super()`` may occur.
-
-

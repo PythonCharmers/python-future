@@ -66,4 +66,3 @@ Without ``future`` (or with ``future`` < 0.7), this might be::
             return list(map(int, data))   # same as returning data, but with up-front typechecking
         else:
             return list(map(long, data))
-

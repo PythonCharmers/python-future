@@ -33,14 +33,14 @@ class SkipCase(unittest.TestCase):
 def exclude_tests(suite, blacklist):
     """
     Example:
-    
+
     blacklist = [
         'test_some_test_that_should_be_skipped',
         'test_another_test_that_should_be_skipped'
     ]
     """
     new_suite = unittest.TestSuite()
-    
+
     for test_group in suite._tests:
         for test in test_group:
             if not hasattr(test, '_tests'):
@@ -55,4 +55,3 @@ def exclude_tests(suite, blacklist):
                             getattr(SkipCase(), 'skeleton_run_test'))
             new_suite.addTest(test)
     return new_suite
-

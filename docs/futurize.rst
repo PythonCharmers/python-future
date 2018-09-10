@@ -317,5 +317,3 @@ The next step would be manually tweaking the code to re-enable Python 2
 compatibility with the help of the ``future`` package. For example, you can add
 the ``@python_2_unicode_compatible`` decorator to any classes that define custom
 ``__str__`` methods. See :ref:`what-else` for more info.
-
-
