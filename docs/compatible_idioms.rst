@@ -1120,7 +1120,7 @@ cmp()
 .. code:: python
 
     # Python 2 and 3: alternative 2
-    cmp = lambda x, y: (x > y) - (x < y)
+    cmp = lambda(x, y): (x > y) - (x < y)
     assert cmp('a', 'b') < 0 and cmp('b', 'a') > 0 and cmp('c', 'c') == 0
 reload()
 ~~~~~~~~
