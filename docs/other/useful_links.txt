@@ -86,7 +86,7 @@ Buffer protocol (which bytes and bytes-like objects obey): http://docs.python.or
 
 Python's future
 ----------------
-https://ncoghlan_devs-python-notes.readthedocs.org/en/latest/python3/questions_and_answers.html
+https://ncoghlan-devs-python-notes.readthedocs.io/en/latest/python3/questions_and_answers.html
 
 http://www.ironfroggy.com/software/i-am-worried-about-the-future-of-python
 
@@ -108,4 +108,3 @@ https://pypi.python.org/pypi/awkwardduet/1.1a4
 https://github.com/campadrenalin/persei/blob/master/persei.py
 http://slideshare.net/dabeaz/mastering-python-3-io
 http://rmi.net/~lutz/strings30.html
-

@@ -33,7 +33,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
               'sphinx.ext.ifconfig',
               'sphinx.ext.viewcode',
-              # 'sphinxcontrib.napoleon'    # see https://readthedocs.org/projects/sphinxcontrib-napoleon/
+              # 'sphinxcontrib.napoleon'    # see https://sphinxcontrib-napoleon.readthedocs.io/
               # 'sphinx.ext.napoleon'       # use this in Sphinx 1.3+
              ]
 
