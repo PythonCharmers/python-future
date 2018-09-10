@@ -243,6 +243,7 @@ def future_import(feature, node):
         # Is it a shebang or encoding line?
         if is_shebang_comment(node) or is_encoding_comment(node):
             shebang_encoding_idx = idx
+            continue
         if is_docstring(node):
             # skip over docstring
             continue
@@ -443,7 +444,10 @@ def check_future_import(node):
             hasattr(node.children[1], 'value') and
             node.children[1].value == u'__future__'):
         return set()
-    node = node.children[3]
+    if node.children[3].type == token.LPAR:
+        node = node.children[4]
+    else:
+        node = node.children[3]
     # now node is the import_as_name[s]
     # print(python_grammar.number2symbol[node.type])  # breaks sometimes
     if node.type == syms.import_as_names:

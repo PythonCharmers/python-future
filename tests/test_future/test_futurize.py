@@ -123,6 +123,17 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after)
 
+    def test_multiline_future_import(self):
+        """
+        Issue #113: don't crash if a future import has multiple lines
+        """
+        text = """
+        from __future__ import (
+            division
+        )
+        """
+        self.convert(text)
+
     def test_shebang_blank_with_future_division_import(self):
         """
         Issue #43: Is shebang line preserved as the first
