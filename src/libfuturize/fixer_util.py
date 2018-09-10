@@ -243,7 +243,6 @@ def future_import(feature, node):
         # Is it a shebang or encoding line?
         if is_shebang_comment(node) or is_encoding_comment(node):
             shebang_encoding_idx = idx
-            continue
         if is_docstring(node):
             # skip over docstring
             continue
