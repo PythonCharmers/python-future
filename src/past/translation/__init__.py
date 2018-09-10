@@ -402,9 +402,9 @@ class Py2Fixer(object):
                         code = compile(source, self.pathname, 'exec')
 
                         dirname = os.path.dirname(cachename)
-                        if not os.path.exists(dirname):
-                            os.makedirs(dirname)
                         try:
+                            if not os.path.exists(dirname):
+                                os.makedirs(dirname)
                             with open(cachename, 'wb') as f:
                                 data = marshal.dumps(code)
                                 f.write(data)
