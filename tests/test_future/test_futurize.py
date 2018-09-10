@@ -1190,7 +1190,7 @@ class TestFuturizeStage1(CodeHandler):
         from __future__ import division
         from past.utils import old_div
         x = old_div(3, 2)
-        y = old_div(3., 2)
+        y = 3. / 2
         assert x == 1 and isinstance(x, int)
         assert y == 1.5 and isinstance(y, float)
         """

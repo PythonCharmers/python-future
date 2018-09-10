@@ -13,6 +13,9 @@ If "from __future__ import division" is already in effect, this fixer does
 nothing.
 """
 
+import re
+import lib2to3.pytree as pytree
+from lib2to3.fixer_util import Leaf, Node
 from lib2to3 import fixer_base
 from lib2to3.fixer_util import syms, does_tree_import
 from libfuturize.fixer_util import (token, future_import, touch_import_top,
@@ -27,6 +30,19 @@ def match_division(node):
     slash = token.SLASH
     return node.type == slash and not node.next_sibling.type == slash and \
                                   not node.prev_sibling.type == slash
+
+const_re = re.compile('^[0-9]*[.][0-9]*$')
+
+
+def _is_floaty(expr):
+    if isinstance(expr, Leaf):
+        # If it's a leaf, let's see if it's a numeric constant containing a '.'
+        return const_re.match(expr.value)
+    elif isinstance(expr, Node):
+        # If the expression is a node, let's see if it's a direct cast to float
+        if isinstance(expr.children[0], Leaf):
+            return expr.children[0].value == u'float'
+    return False
 
 
 class FixDivisionSafe(fixer_base.BaseFix):
@@ -64,9 +80,14 @@ class FixDivisionSafe(fixer_base.BaseFix):
             return
         future_import(u"division", node)
 
-        touch_import_top(u'past.utils', u'old_div', node)
         expr1, expr2 = results[0].clone(), results[1].clone()
         # Strip any leading space for the first number:
         expr1.prefix = u''
+        # if expr1 or expr2 are obviously floats, we don't need to wrap in
+        # old_div, as the behavior of division between any number and a float
+        # should be the same in 2 or 3
+        if _is_floaty(expr1) or _is_floaty(expr2):
+            return
+        touch_import_top(u'past.utils', u'old_div', node)
         return wrap_in_fn_call("old_div", (expr1, expr2), prefix=node.prefix)
 
