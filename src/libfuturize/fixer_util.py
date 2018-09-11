@@ -507,13 +507,14 @@ def wrap_in_fn_call(fn_name, args, prefix=None):
 
     >>> wrap_in_fn_call("olddiv", (arg1, arg2))
     olddiv(arg1, arg2)
+
+    >>> wrap_in_fn_call("olddiv", [arg1, comma, arg2, comma, arg3])
+    olddiv(arg1, arg2, arg3)
     """
     assert len(args) > 0
-    if len(args) == 1:
-        newargs = args
-    elif len(args) == 2:
+    if len(args) == 2:
         expr1, expr2 = args
         newargs = [expr1, Comma(), expr2]
     else:
-        assert NotImplementedError('write me')
+        newargs = args
     return Call(Name(fn_name), newargs, prefix=prefix)

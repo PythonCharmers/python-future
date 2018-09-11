@@ -1181,18 +1181,50 @@ class TestFuturizeStage1(CodeHandler):
         after futurization.
         """
         before = """
+        import random
         x = 3 / 2
         y = 3. / 2
+        foo = range(100)
         assert x == 1 and isinstance(x, int)
         assert y == 1.5 and isinstance(y, float)
+        a = 1 + foo[len(foo) / 2]
+        b = 1 + foo[len(foo) * 3 / 4]
+        assert a == 50
+        assert b == 75
+        r = random.randint(0, 1000) * 1.0 / 1000
+        output = { "SUCCESS": 5, "TOTAL": 10 }
+        output["SUCCESS"] * 100 / output["TOTAL"]
+        obj = foo
+        val = float(obj.numer) / obj.denom * 1e-9
+        mount.bytes_free * mount.free_size / bytes_in_gb
+        obj.total_count() * threshold / 100
+        100 * abs(obj.width - original_width) / float(max(obj.width, original_width))
+        100 * abs(obj.width - original_width) / max(obj.width, original_width)
+        float(target_width) * float(original_height) / float(original_width)
         """
         after = """
         from __future__ import division
         from past.utils import old_div
+        import random
         x = old_div(3, 2)
         y = 3. / 2
+        foo = range(100)
         assert x == 1 and isinstance(x, int)
         assert y == 1.5 and isinstance(y, float)
+        a = 1 + foo[old_div(len(foo), 2)]
+        b = 1 + foo[old_div(len(foo) * 3, 4)]
+        assert a == 50
+        assert b == 75
+        r = old_div(random.randint(0, 1000) * 1.0, 1000)
+        output = { "SUCCESS": 5, "TOTAL": 10 }
+        output["SUCCESS"] * 100 / output["TOTAL"]
+        obj = foo
+        val = float(obj.numer) / obj.denom * 1e-9
+        old_div(mount.bytes_free * mount.free_size, bytes_in_gb)
+        old_div(obj.total_count() * threshold, 100)
+        100 * abs(obj.width - original_width) / float(max(obj.width, original_width))
+        100 * abs(obj.width - original_width), max(obj.width, original_width))
+        float(target_width) * float(original_height) / float(original_width)
         """
         self.convert_check(before, after)
 
