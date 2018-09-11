@@ -100,6 +100,7 @@ URL="https://python-future.org"
 LICENSE = "MIT"
 KEYWORDS = "future past python3 migration futurize backport six 2to3 modernize pasteurize 3to2"
 CLASSIFIERS = [
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 2.6",
     "Programming Language :: Python :: 2.7",
@@ -109,7 +110,6 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.5",
     "License :: OSI Approved",
     "License :: OSI Approved :: MIT License",
-    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
 ]
 
