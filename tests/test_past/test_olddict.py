@@ -622,7 +622,7 @@ class Py2DictTest(unittest.TestCase):
     #                  'd.update({x2: 2})']:
     #         with self.assertRaises(CustomException):
     #             utils.exec_(stmt, locals())
-    # 
+    #
     # def test_resize1(self):
     #     # Dict resizing bug, found by Jack Jansen in 2.2 CVS development.
     #     # This version got an assert failure in debug build, infinite loop in

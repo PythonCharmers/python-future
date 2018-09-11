@@ -78,7 +78,7 @@ complete list is here::
     import _thread
 
 Note that, as of v0.16.0, ``python-future`` no longer includes an alias for the
-``configparser`` module because a full backport exists (see https://pypi.python.org/pypi/configparser). 
+``configparser`` module because a full backport exists (see https://pypi.python.org/pypi/configparser).
 
 .. _list-standard-library-refactored:
 
@@ -187,11 +187,10 @@ standard library to Python 2.x are also available in ``future.backports``::
     urllib
     xmlrpc.client
     xmlrpc.server
- 
+
 The goal for these modules, unlike the modules in the ``future.moves`` package
 or top-level namespace, is to backport new functionality introduced in Python
 3.3.
 
 If you need the full backport of one of these packages, please open an issue `here
 <https://github.com/PythonCharmers/python-future>`_.
-

@@ -16,7 +16,7 @@ a. Clone the package from github/bitbucket. Optionally rename your repo to ``pac
 b. Create and activate a Python 2 conda environment or virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test`` or ``nosetests``)
 c. Optionally: if there is a ``.travis.yml`` file, add Python version 3.6 and remove any versions < 2.6.
 d. Install Python 3 with e.g. ``sudo apt-get install python3``. On other platforms, an easy way is to use `Miniconda <http://repo.continuum.io/miniconda/index.html>`_. Then e.g.::
-    
+
     conda create -n py36 python=3.6 pip
 
 .. _porting-step1:
@@ -27,9 +27,9 @@ Step 1: modern Py2 code
 The goal for this step is to modernize the Python 2 code without introducing any dependencies (on ``future`` or e.g. ``six``) at this stage.
 
 **1a**. Install ``future`` into the virtualenv using::
-      
+
           pip install future
-  
+
 **1b**. Run ``futurize --stage1 -w *.py subdir1/*.py subdir2/*.py``. Note that with
 recursive globbing in ``bash`` or ``zsh``, you can apply stage 1 to all Python
 source files recursively with::
@@ -49,7 +49,7 @@ Example error
 One relatively common error after conversion is::
 
     Traceback (most recent call last):
-      ... 
+      ...
       File "/home/user/Install/BleedingEdge/reportlab/tests/test_encrypt.py", line 19, in <module>
         from .test_pdfencryption import parsedoc
     ValueError: Attempted relative import in non-package
@@ -110,7 +110,7 @@ Python 3 semantics on Python 2, invoke it like this::
 
     futurize --stage2 --all-imports myfolder/*.py
 
-   
+
 **2b**. Re-run your tests on Py3 now. Make changes until your tests pass on Python 3.
 
 **2c**. Commit your changes! :)

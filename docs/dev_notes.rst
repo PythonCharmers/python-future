@@ -19,5 +19,3 @@ TODO: Check out these:
 Not available on Py2.6:
   unittest2 -> unittest?
   buffer -> memoryview?
-
-

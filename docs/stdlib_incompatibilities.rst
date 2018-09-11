@@ -33,14 +33,14 @@ platform string: unicode string on Python 3, byte string on Python 2.
 Python 2::
     >>> array.array(b'b')
     array.array(b'b')
-    
+
     >>> array.array(u'u')
     TypeError: must be char, not unicode
 
 Python 3::
     >>> array.array(b'b')
     TypeError: must be a unicode character, not bytes
-    
+
     >>> array.array(u'b')
     array('b')
 
@@ -54,7 +54,7 @@ You can use the following code on both Python 3 and Python 2::
     import array
 
     # ...
-    
+
     a = array.array(bytes_to_native_str(b'b'))
 
 This was `fixed in Python 2.7.11
@@ -96,7 +96,7 @@ required a native string as its format argument. For example::
 
     >>> from __future__ import unicode_literals
     >>> from struct import pack
-    >>> pack('<4H2I', version, rec_type, build, year, file_hist_flags, ver_can_read) 
+    >>> pack('<4H2I', version, rec_type, build, year, file_hist_flags, ver_can_read)
 
 raised ``TypeError: Struct() argument 1 must be string, not unicode``.
 
@@ -104,4 +104,3 @@ This was `fixed in Python 2.7.7
 <https://hg.python.org/cpython/raw-file/f89216059edf/Misc/NEWS>`_.
 Since then, ``struct.pack()`` now also accepts unicode format
 strings.
-

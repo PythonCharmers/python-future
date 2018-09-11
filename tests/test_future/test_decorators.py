@@ -36,14 +36,14 @@ class TestDecorators(unittest.TestCase):
             assert str(a) == str(b)
 
     def test_implements_iterator(self):
-        
+
         @implements_iterator
         class MyIter(object):
             def __next__(self):
                 return 'Next!'
             def __iter__(self):
                 return self
-        
+
         itr = MyIter()
         self.assertEqual(next(itr), 'Next!')
 

@@ -67,7 +67,7 @@ class FixDivisionSafe(fixer_base.BaseFix):
         Since the tree needs to be fixed once and only once if and only if it
         matches, we can start discarding matches after the first.
         """
-        if (node.type == self.syms.term and 
+        if (node.type == self.syms.term and
                     len(node.children) == 3 and
                     match_division(node.children[1])):
             expr1, expr2 = node.children[0], node.children[2]
@@ -90,4 +90,3 @@ class FixDivisionSafe(fixer_base.BaseFix):
             return
         touch_import_top(u'past.utils', u'old_div', node)
         return wrap_in_fn_call("old_div", (expr1, expr2), prefix=node.prefix)
-

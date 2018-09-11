@@ -452,7 +452,7 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         self.convert_check(before, after, ignore_imports=False)
-    
+
     def test_source_coding_utf8(self):
         """
         Tests to ensure that the source coding line is not corrupted or
@@ -517,13 +517,13 @@ class TestFuturizeSimple(CodeHandler):
         before = '''
         def addup(*x):
             return sum(x)
-        
+
         assert apply(addup, (10,20)) == 30
         '''
         after = """
         def addup(*x):
             return sum(x)
-        
+
         assert addup(*(10,20)) == 30
         """
         self.convert_check(before, after)
@@ -662,7 +662,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         from future import standard_library
         standard_library.install_aliases()
         import urllib.request
-        
+
         URL = 'http://pypi.python.org/pypi/future/json'
         package = 'future'
         r = urllib.request.urlopen(URL.format(package))
@@ -1045,13 +1045,13 @@ class TestFuturizeStage1(CodeHandler):
         #
         # another comment
         #
-        
+
         CONSTANTS = [ 0, 01, 011, 0111, 012, 02, 021, 0211, 02111, 013 ]
         _RN_LETTERS = "IVXLCDM"
-        
+
         def my_func(value):
             pass
-        
+
         ''' Docstring-like comment here '''
         """
         self.convert(code)

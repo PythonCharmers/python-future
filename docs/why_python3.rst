@@ -56,11 +56,11 @@ Standard library:
 ~~~~~~~~~~~~~~~~~
 
 - SSL contexts in http.client
-- 
+-
 
 
 
 Non-arguments for Python 3
 ==========================
 
-- 
+-

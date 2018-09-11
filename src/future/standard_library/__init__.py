@@ -397,7 +397,7 @@ def scrub_future_sys_modules():
     """
     Deprecated.
     """
-    return {}    
+    return {}
 
 class suspend_hooks(object):
     """
