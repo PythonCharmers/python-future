@@ -27,7 +27,7 @@ call to ``items``, ``values`` or ``keys``.
 
 For improved efficiency, ``future.builtins`` (aliased to ``builtins``) provides
 a Python 2 ``dict`` subclass whose :func:`keys`, :func:`values`, and
-:func:`items` methods return iterators on all versions of Python >= 2.6. On
+:func:`items` methods return iterators on all versions of Python >= 2.7. On
 Python 2.7, these iterators also have the same set-like view behaviour as
 dictionaries in Python 3. This can streamline code that iterates over large
 dictionaries. For example::
@@ -42,10 +42,6 @@ dictionaries. For example::
 
     # Because items() is memory-efficient, so is this:
     d2 = dict((v, k) for (k, v) in d.items())
-
-
-On Python 2.6, these methods currently return iterators but do not support the
-new Py3 set-like behaviour.
 
 As usual, on Python 3 ``dict`` imported from either ``builtins`` or
 ``future.builtins`` is just the built-in ``dict`` class.
@@ -90,7 +86,7 @@ The memory-efficient (and CPU-efficient) alternatives are:
     # Set union:
     both = viewvalues(d1) | viewvalues(d2)
 
-For Python 2.6 compatibility, the functions ``iteritems`` etc. are also
-available in :mod:`future.utils`. These are equivalent to the functions of the
-same names in ``six``, which is equivalent to calling the ``iteritems`` etc.
-methods on Python 2, or to calling ``items`` etc. on Python 3.
+For compatibility, the functions ``iteritems`` etc. are also available in
+:mod:`future.utils`. These are equivalent to the functions of the same names in
+``six``, which is equivalent to calling the ``iteritems`` etc. methods on
+Python 2, or to calling ``items`` etc. on Python 3.

@@ -85,7 +85,7 @@ Note that, as of v0.16.0, ``python-future`` no longer includes an alias for the
 Aliased imports
 ~~~~~~~~~~~~~~~
 
-The following 14 modules were refactored or extended from Python 2.6/2.7 to 3.x
+The following 14 modules were refactored or extended from Python 2.7 to 3.x
 but were neither renamed in Py3.x nor were the new APIs backported to Py2.x.
 This precludes compatibility interfaces that work out-of-the-box. Instead, the
 ``future`` package makes the Python 3.x APIs available on Python 2.x as
@@ -129,22 +129,16 @@ HTTPS (as of 2015-09-11) because the SSL support changed considerably in Python
 Backports also exist of the following features from Python 3.4:
 
 - ``math.ceil`` returns an int on Py3
-- ``collections.OrderedDict``  (for Python 2.6)
-- ``collections.Counter``      (for Python 2.6)
-- ``collections.ChainMap``     (for all versions prior to Python 3.3)
-- ``itertools.count``          (for Python 2.6, with step parameter)
-- ``subprocess.check_output``  (for Python 2.6)
-- ``reprlib.recursive_repr``   (for Python 2.6 and 2.7)
+- ``collections.ChainMap``     (for 2.7)
+- ``reprlib.recursive_repr``   (for 2.7)
 
-These can then be imported on Python 2.6+ as follows::
+These can then be imported on Python 2.7+ as follows::
 
     from future.standard_library import install_aliases
     install_aliases()
 
     from math import ceil      # now returns an int
-    from collections import Counter, OrderedDict, ChainMap
-    from itertools import count
-    from subprocess import check_output
+    from collections import ChainMap
     from reprlib import recursive_repr
 
 
@@ -158,20 +152,11 @@ available independently of the python-future project::
     import singledispatch             # pip install singledispatch
     import pathlib                    # pip install pathlib
 
-A few modules from Python 3.4 and 3.3 are also available in the ``backports``
+A few modules from Python 3.4 are also available in the ``backports``
 package namespace after ``pip install backports.lzma`` etc.::
 
     from backports import lzma
     from backports import functools_lru_cache as lru_cache
-
-The following Python 2.6 backports of standard library packages from Python 2.7+
-are also available::
-
-    import argparse                   # pip install argparse
-    import importlib                  # pip install importlib
-    import unittest2 as unittest      # pip install unittest2
-
-These are included in Python 2.7 and Python 3.x.
 
 
 Included full backports

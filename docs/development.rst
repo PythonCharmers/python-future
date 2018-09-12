@@ -10,7 +10,7 @@ The easiest way to start developing ``python-future`` is as follows:
 2. Run::
 
     conda install -n future2 python=2.7 pip
-    conda install -n future3 python=3.3 pip
+    conda install -n future3 python=3.4 pip
 
     git clone https://github.com/PythonCharmers/python-future
 

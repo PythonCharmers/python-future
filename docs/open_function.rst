@@ -13,7 +13,7 @@ in which case its methods like :func:`read` return Py3 :class:`bytes` objects.
 On Py2 with ``future`` installed, the :mod:`builtins` module provides an
 ``open`` function that is mostly compatible with that on Python 3 (e.g. it
 offers keyword arguments like ``encoding``). This maps to the ``open`` backport
-available in the standard library :mod:`io` module on Py2.6 and Py2.7.
+available in the standard library :mod:`io` module on Py2.7.
 
 One difference to be aware of between the Python 3 ``open`` and
 ``future.builtins.open`` on Python 2 is that the return types of methods such
