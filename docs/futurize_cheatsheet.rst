@@ -13,7 +13,7 @@ Step 0: setup
 Step 0 goal: set up and see the tests passing on Python 2 and failing on Python 3.
 
 a. Clone the package from github/bitbucket. Optionally rename your repo to ``package-future``. Examples: ``reportlab-future``, ``paramiko-future``, ``mezzanine-future``.
-b. Create and activate a Python 2 conda environment or virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test`` or ``nosetests``)
+b. Create and activate a Python 2 conda environment or virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test``)
 c. Optionally: if there is a ``.travis.yml`` file, add Python version 3.6 and remove any versions < 2.6.
 d. Install Python 3 with e.g. ``sudo apt-get install python3``. On other platforms, an easy way is to use `Miniconda <http://repo.continuum.io/miniconda/index.html>`_. Then e.g.::
 
