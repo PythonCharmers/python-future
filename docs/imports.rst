@@ -24,7 +24,7 @@ standard feature of Python, see the following docs:
 - print_function: `PEP 3105: Make print a function <http://www.python.org/dev/peps/pep-3105>`_
 - unicode_literals: `PEP 3112: Bytes literals in Python 3000 <http://www.python.org/dev/peps/pep-3112>`_
 
-These are all available in Python 2.6 and up, and enabled by default in Python 3.x.
+These are all available in Python 2.7 and up, and enabled by default in Python 3.x.
 
 
 .. _builtins-imports:

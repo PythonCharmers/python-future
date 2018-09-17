@@ -16,8 +16,8 @@ video is here: http://www.youtube.com/watch?v=KOqk8j11aAI&t=10m14s.)
 
 Minimum versions:
 
--  Python 2: 2.6+
--  Python 3: 3.3+
+-  Python 2: 2.7+
+-  Python 3: 3.4+
 
 Setup
 -----
@@ -1188,38 +1188,6 @@ commands / subprocess modules
     standard_library.install_aliases()
 
     from subprocess import getoutput, getstatusoutput
-subprocess.check\_output()
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    # Python 2.7 and above
-    from subprocess import check_output
-
-    # Python 2.6 and above: alternative 1
-    from future.moves.subprocess import check_output
-
-    # Python 2.6 and above: alternative 2
-    from future import standard_library
-    standard_library.install_aliases()
-
-    from subprocess import check_output
-collections: Counter and OrderedDict
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    # Python 2.7 and above
-    from collections import Counter, OrderedDict
-
-    # Python 2.6 and above: alternative 1
-    from future.moves.collections import Counter, OrderedDict
-
-    # Python 2.6 and above: alternative 2
-    from future import standard_library
-    standard_library.install_aliases()
-
-    from collections import Counter, OrderedDict
 StringIO module
 ~~~~~~~~~~~~~~~
 
