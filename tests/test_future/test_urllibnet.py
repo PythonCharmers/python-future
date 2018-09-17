@@ -6,6 +6,7 @@ import socket
 import sys
 import os
 import time
+import unittest
 
 from future import utils
 from future.backports.test import support
@@ -16,7 +17,7 @@ import future.moves.urllib.request as urllib_request
 import email.message as email_message
 from email.message import Message
 
-from future.tests.base import unittest, skip26
+from future.tests.base import skip26
 from future.builtins import int, open
 
 

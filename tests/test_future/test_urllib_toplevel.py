@@ -8,6 +8,7 @@ import tempfile
 from nturl2path import url2pathname, pathname2url
 from base64 import b64encode
 import collections
+import unittest
 
 PY2 = sys.version_info[0] == 2
 
@@ -27,7 +28,7 @@ if PY2:
 else:
     from email import message as email_message
 # from future.backports.email import message as email_message
-from future.tests.base import unittest, skip26, expectedFailurePY26, expectedFailurePY2
+from future.tests.base import skip26, expectedFailurePY26, expectedFailurePY2
 
 
 def hexescape(char):

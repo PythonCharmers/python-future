@@ -9,6 +9,7 @@ import sys
 import copy
 import inspect
 import pickle
+import unittest
 from random import randrange, shuffle
 from collections import Mapping, MutableMapping
 
@@ -19,7 +20,7 @@ from future.backports.misc import (count,
                                    ChainMap,
                                    _count_elements)
 from future.utils import PY26
-from future.tests.base import unittest, skip26, expectedFailurePY27
+from future.tests.base import skip26, expectedFailurePY27
 
 
 class CountTest(unittest.TestCase):

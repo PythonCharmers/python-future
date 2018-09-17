@@ -4,6 +4,7 @@ import io
 import socket
 import array
 import sys
+import unittest
 
 import http.client
 from future.standard_library import install_aliases
@@ -13,7 +14,7 @@ import future.backports.urllib.request as urllib_request
 # proxy config data structure but is testable on all platforms.
 from future.backports.urllib.request import Request, OpenerDirector, _proxy_bypass_macosx_sysconf
 import future.backports.urllib.error as urllib_error
-from future.tests.base import unittest, skip26
+from future.tests.base import skip26
 from future.builtins import bytes, dict, int, open, str, zip
 from future.utils import text_to_native_str
 

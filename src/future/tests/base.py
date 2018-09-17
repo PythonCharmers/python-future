@@ -11,9 +11,6 @@ from textwrap import dedent
 from future.utils import bind_method, PY26, PY3, PY2, PY27
 from future.moves.subprocess import check_output, STDOUT, CalledProcessError
 
-if PY26:
-    import unittest2 as unittest
-
 
 def reformat_code(code):
     """

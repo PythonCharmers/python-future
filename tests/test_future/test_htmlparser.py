@@ -14,8 +14,8 @@ from future.backports.test import support
 import future.backports.html.parser as html_parser
 
 import pprint
-from future.tests.base import unittest
 import sys
+import unittest
 
 # print(html_parser.__doc__, file=sys.stderr)
 

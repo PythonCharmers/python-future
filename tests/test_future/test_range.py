@@ -4,10 +4,11 @@ Tests for the backported class:`range` class.
 """
 
 from future.builtins import range
-from future.tests.base import unittest
 
+import unittest
 from collections import Iterator, Sequence
 from operator import attrgetter
+
 
 
 class RangeTests(unittest.TestCase):

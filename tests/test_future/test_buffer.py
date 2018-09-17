@@ -3,8 +3,9 @@
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
+import unittest
 from future.builtins import *
-from future.tests.base import unittest, expectedFailurePY26
+from future.tests.base import expectedFailurePY26
 
 import struct
 import sys

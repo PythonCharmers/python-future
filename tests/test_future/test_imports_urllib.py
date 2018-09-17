@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function
 
 import sys
-from future.tests.base import unittest
+import unittest
 from future.standard_library import install_aliases
 
 

@@ -4,9 +4,12 @@ Tests for the backported class:`list` class.
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
+
+import unittest
+
 from future.builtins import *
 from future import utils
-from future.tests.base import unittest, expectedFailurePY2
+from future.tests.base import expectedFailurePY2
 
 
 class TestList(unittest.TestCase):

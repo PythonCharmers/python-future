@@ -1,7 +1,7 @@
 from __future__ import absolute_import
+import unittest
 
 from future.builtins.iterators import *
-from future.tests.base import unittest
 
 
 class TestIterators(unittest.TestCase):

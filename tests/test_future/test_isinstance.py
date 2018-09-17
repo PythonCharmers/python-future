@@ -10,7 +10,7 @@ from future.builtins import *
 # testing of error conditions uncovered when using extension types.
 
 import sys
-from future.tests.base import unittest
+import unittest
 
 
 class TestIsInstanceExceptions(unittest.TestCase):

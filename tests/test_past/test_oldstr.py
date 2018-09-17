@@ -5,8 +5,9 @@ Tests for the resurrected Py2-like 8-bit string type.
 
 from __future__ import absolute_import, unicode_literals, print_function
 
+import unittest
+
 from numbers import Integral
-from future.tests.base import unittest
 from past.builtins import str as oldstr
 from past.types.oldstr import unescape
 

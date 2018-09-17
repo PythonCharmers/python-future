@@ -13,9 +13,10 @@ works as expected:
 from __future__ import absolute_import, print_function, unicode_literals
 
 import copy
+import unittest
 
 from future import utils
-from future.tests.base import unittest, skip26
+from future.tests.base import skip26
 
 
 original_locals = set(copy.copy(locals()))

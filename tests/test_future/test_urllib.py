@@ -8,6 +8,7 @@ import tempfile
 from nturl2path import url2pathname, pathname2url
 from base64 import b64encode
 import collections
+import unittest
 
 from future.builtins import bytes, chr, hex, open, range, str, int
 from future.backports.urllib import parse as urllib_parse
@@ -16,7 +17,7 @@ from future.backports.urllib import error as urllib_error
 from future.backports.http import client as http_client
 from future.backports.test import support
 from future.backports.email import message as email_message
-from future.tests.base import unittest, skip26, expectedFailurePY26
+from future.tests.base import skip26, expectedFailurePY26
 
 
 def hexescape(char):

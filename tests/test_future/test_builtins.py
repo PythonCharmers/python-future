@@ -9,7 +9,7 @@ from future.builtins import (bytes, dict, int, range, round, str, super,
                              filter, map, zip)
 
 from future.utils import PY3, exec_, native_str, implements_iterator
-from future.tests.base import (unittest, skip26, expectedFailurePY2,
+from future.tests.base import (skip26, expectedFailurePY2,
                                expectedFailurePY26)
 
 import sys
@@ -19,6 +19,7 @@ import os
 from subprocess import Popen, PIPE
 from numbers import Integral
 from decimal import Decimal
+import unittest
 
 
 class TestBuiltins(unittest.TestCase):
@@ -199,7 +200,6 @@ import random
 import sys
 import traceback
 import types
-# Imported above more portably (using unittest2 on Py2.6):
 import warnings
 from operator import neg
 try:

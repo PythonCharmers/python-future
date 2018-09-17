@@ -9,6 +9,7 @@ Based on lib2to3/tests/test_fixers.py
 import sys
 import os
 import os.path
+import unittest
 from itertools import chain
 from textwrap import dedent
 from operator import itemgetter
@@ -16,7 +17,6 @@ from lib2to3 import pygram, pytree, refactor, fixer_util
 from lib2to3.pgen2 import driver
 
 # Local imports
-from future.tests.base import unittest
 from future.builtins import str
 
 

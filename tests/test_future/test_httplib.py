@@ -9,7 +9,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
 from future import utils
-from future.tests.base import unittest, skip26
+from future.tests.base import skip26
 
 from future.backports.http import client
 from future.backports.test import support
@@ -18,6 +18,7 @@ import io
 import socket
 import errno
 import sys
+import unittest
 
 TestCase = unittest.TestCase
 HOST = support.HOST

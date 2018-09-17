@@ -4,10 +4,11 @@ Tests to make sure the newobject object (which defines Python 2-compatible
 """
 
 from __future__ import absolute_import, division
+import unittest
 from future import utils
 from future.builtins import object, str, next, int, super
 from future.utils import implements_iterator, python_2_unicode_compatible
-from future.tests.base import unittest, expectedFailurePY2
+from future.tests.base import expectedFailurePY2
 
 
 class TestNewObject(unittest.TestCase):

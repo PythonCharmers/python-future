@@ -4,10 +4,10 @@ python2_unicode_compatible) are working.
 """
 
 from __future__ import absolute_import, division
+import unittest
 from future import utils
 from future.builtins import *
 from future.utils import implements_iterator, python_2_unicode_compatible
-from future.tests.base import unittest
 
 
 class TestDecorators(unittest.TestCase):

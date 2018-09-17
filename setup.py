@@ -78,7 +78,6 @@ PACKAGE_DATA = {'': [
                      'LICENSE.txt',
                      'futurize.py',
                      'pasteurize.py',
-                     'discover_tests.py',
                      'check_rst.sh',
                      'TESTING.txt',
                     ],
@@ -175,6 +174,5 @@ setup(name=NAME,
       include_package_data=True,
       python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
       classifiers=CLASSIFIERS,
-      test_suite = "discover_tests",
       **setup_kwds
      )

@@ -5,12 +5,13 @@ int tests from Py3.3
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
-from future.tests.base import unittest, expectedFailurePY2
+from future.tests.base import expectedFailurePY2
 from future.utils import PY26, PY2, raise_from
 
 import sys
 import random
 import array
+import unittest
 
 try:
     import numpy as np

@@ -5,6 +5,7 @@ Tests for the various utility functions and classes in ``future.utils``
 
 from __future__ import absolute_import, unicode_literals, print_function
 import sys
+import unittest
 from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
                          native_str, raise_, as_native_str, ensure_new_type,
@@ -12,7 +13,7 @@ from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
 from future.tests.base import expectedFailurePY3
 
 from numbers import Integral
-from future.tests.base import unittest, skip26
+from future.tests.base import skip26
 
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'

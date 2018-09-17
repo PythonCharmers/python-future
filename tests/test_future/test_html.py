@@ -5,12 +5,12 @@ Adapted for the python-future module from the Python 3.3 standard library tests.
 """
 
 from __future__ import unicode_literals
+import unittest
+
 from future import standard_library
 
 with standard_library.hooks():
     import html
-
-from future.tests.base import unittest
 
 
 class HtmlTests(unittest.TestCase):

@@ -4,11 +4,12 @@ Tests for the backported bytes object
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
+import unittest
 from future.builtins import *
 from future import utils
 
 from numbers import Integral
-from future.tests.base import unittest, expectedFailurePY2
+from future.tests.base import expectedFailurePY2
 
 
 TEST_UNICODE_STR = u'ℝεα∂@ßʟ℮ ☂ℯṧт υηḯ¢☺ḓ℮'

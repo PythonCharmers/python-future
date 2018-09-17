@@ -5,13 +5,14 @@ import pprint
 import tempfile
 from subprocess import Popen, PIPE
 import os
+import unittest
 
 from libfuturize.fixer_util import is_shebang_comment, is_encoding_comment
 from lib2to3.fixer_util import FromImport
 from lib2to3.pytree import Leaf, Node
 from lib2to3.pygram import token
 
-from future.tests.base import (CodeHandler, unittest, skip26, reformat_code,
+from future.tests.base import (CodeHandler, skip26, reformat_code,
                                order_future_lines, expectedFailurePY26)
 from future.utils import PY2
 

@@ -9,7 +9,8 @@ from future.builtins import open
 import os
 import re
 import time
-from future.tests.base import unittest, skip26, expectedFailurePY26
+import unittest
+from future.tests.base import skip26, expectedFailurePY26
 import future.backports.test.support as test_support
 import future.backports.urllib.request as urllib_request
 

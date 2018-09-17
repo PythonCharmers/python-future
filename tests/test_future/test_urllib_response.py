@@ -2,10 +2,11 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+import unittest
+
 from future.backports import urllib
 import future.backports.urllib.response as urllib_response
 from future.backports.test import support as test_support
-from future.tests.base import unittest
 
 
 class TestFile(object):

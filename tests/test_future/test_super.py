@@ -2,8 +2,9 @@
 
 from __future__ import absolute_import, division, unicode_literals
 import sys
+import unittest
 
-from future.tests.base import unittest, skip26, expectedFailurePY2
+from future.tests.base import skip26, expectedFailurePY2
 from future import utils
 from future.builtins import super
 

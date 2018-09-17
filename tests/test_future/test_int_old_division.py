@@ -10,11 +10,11 @@ from __future__ import (absolute_import,
                         print_function, unicode_literals)
 from future import standard_library
 from future.builtins import *
-from future.tests.base import unittest
 from future.utils import PY2
 
 import sys
 import random
+import unittest
 
 
 @unittest.skipIf(not PY2, 'old division tests only for Py2')

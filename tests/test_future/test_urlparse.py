@@ -7,10 +7,12 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
+
+import unittest
+
 from future import standard_library
 
 import future.backports.urllib.parse as urllib_parse
-from future.tests.base import unittest
 
 RFC1808_BASE = "http://a/b/c/d;p?q#f"
 RFC2396_BASE = "http://a/b/c/d;p?q"

@@ -17,10 +17,11 @@ import warnings
 import sys
 import io
 import random
+import unittest
 # import UserDict
 from os import unlink
 from operator import neg
-from future.tests.base import unittest, expectedFailurePY3, skip26
+from future.tests.base import expectedFailurePY3, skip26
 
 # count the number of test runs.
 # used to skip running test_execfile() multiple times

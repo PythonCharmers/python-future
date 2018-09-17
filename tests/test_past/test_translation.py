@@ -11,13 +11,14 @@ import pprint
 import tempfile
 import os
 import io
+import unittest
 from subprocess import Popen, PIPE
 
 from past import utils
 from past.builtins import basestring, str as oldstr, unicode
 
 from past.translation import install_hooks, remove_hooks, common_substring
-from future.tests.base import (unittest, CodeHandler, skip26,
+from future.tests.base import (CodeHandler, skip26,
                                expectedFailurePY3, expectedFailurePY26)
 
 

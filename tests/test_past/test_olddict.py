@@ -6,9 +6,10 @@ Tests for the resurrected Py2-like class:`dict` type.
 from __future__ import absolute_import, unicode_literals, print_function
 import os
 import sys
+import unittest
 
 from future.utils import implements_iterator, PY3
-from future.tests.base import unittest, skip26
+from future.tests.base import skip26
 from past.builtins import dict
 
 

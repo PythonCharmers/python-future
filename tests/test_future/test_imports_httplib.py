@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function
 import sys
+import unittest
 
 from future.utils import PY2
-from future.tests.base import unittest
 
 
 class ImportHttplibTest(unittest.TestCase):

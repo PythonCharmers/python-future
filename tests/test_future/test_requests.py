@@ -5,11 +5,12 @@ the ``requests`` package.
 
 from __future__ import absolute_import, unicode_literals, print_function
 from future import standard_library
-from future.tests.base import unittest, CodeHandler
+from future.tests.base import CodeHandler
 import textwrap
 import sys
 import os
 import io
+import unittest
 
 
 # Don't import requests first. This avoids the problem we want to expose:

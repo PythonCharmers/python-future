@@ -20,10 +20,6 @@ import platform
 import shutil
 import warnings
 import unittest
-# For Python 2.6 compatibility:
-if not hasattr(unittest, 'skip'):
-    import unittest2 as unittest
-
 import importlib
 # import collections.abc    # not present on Py2.7
 import re

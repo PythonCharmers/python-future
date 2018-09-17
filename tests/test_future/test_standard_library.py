@@ -5,13 +5,14 @@ Tests for the future.standard_library module
 from __future__ import absolute_import, print_function
 from future import standard_library
 from future import utils
-from future.tests.base import unittest, CodeHandler, expectedFailurePY2
+from future.tests.base import CodeHandler, expectedFailurePY2
 
 import sys
 import tempfile
 import os
 import copy
 import textwrap
+import unittest
 from subprocess import CalledProcessError
 
 

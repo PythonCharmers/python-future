@@ -4,11 +4,12 @@ Tests for the surrogateescape codec
 """
 
 from __future__ import absolute_import, division, unicode_literals
+import unittest
 from future.builtins import (bytes, dict, int, range, round, str, super,
                              ascii, chr, hex, input, next, oct, open, pow,
                              filter, map, zip)
 from future.utils.surrogateescape import register_surrogateescape
-from future.tests.base import unittest, expectedFailurePY26, expectedFailurePY2
+from future.tests.base import expectedFailurePY26, expectedFailurePY2
 
 
 class TestSurrogateEscape(unittest.TestCase):
