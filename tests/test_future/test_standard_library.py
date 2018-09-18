@@ -463,7 +463,6 @@ class TestStandardLibraryReorganization(CodeHandler):
 
         from itertools import filterfalse, zip_longest
 
-        from subprocess import check_output    # backported to Py2.6
         from subprocess import getoutput, getstatusoutput
 
         from sys import intern
@@ -539,7 +538,6 @@ class TestFutureMoves(CodeHandler):
 
         from future.moves import socketserver
 
-        from future.moves.subprocess import check_output              # even on Py2.6
         from future.moves.subprocess import getoutput, getstatusoutput
 
         from future.moves.sys import intern

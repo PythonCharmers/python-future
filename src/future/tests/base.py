@@ -7,9 +7,10 @@ import re
 import warnings
 import io
 from textwrap import dedent
+from subprocess import check_output
 
 from future.utils import bind_method, PY26, PY3, PY2, PY27
-from future.moves.subprocess import check_output, STDOUT, CalledProcessError
+from future.moves.subprocess import STDOUT, CalledProcessError
 
 if PY26:
     import unittest2 as unittest

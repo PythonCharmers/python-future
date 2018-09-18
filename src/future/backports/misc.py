@@ -7,14 +7,12 @@ for Python 2.6/2.7.
 - collections.Counter      (for Python 2.6)
 - collections.ChainMap     (for all versions prior to Python 3.3)
 - itertools.count          (for Python 2.6, with step parameter)
-- subprocess.check_output  (for Python 2.6)
 - reprlib.recursive_repr   (for Python 2.6+)
 - functools.cmp_to_key     (for Python 2.6)
 """
 
 from __future__ import absolute_import
 
-import subprocess
 from math import ceil as oldceil
 from collections import Mapping, MutableMapping
 
@@ -695,25 +693,6 @@ class Counter(dict):
         return self._keep_positive()
 
 
-def check_output(*popenargs, **kwargs):
-    """
-    For Python 2.6 compatibility: see
-    http://stackoverflow.com/questions/4814970/
-    """
-
-    if 'stdout' in kwargs:
-        raise ValueError('stdout argument not allowed, it will be overridden.')
-    process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
-    output, unused_err = process.communicate()
-    retcode = process.poll()
-    if retcode:
-        cmd = kwargs.get("args")
-        if cmd is None:
-            cmd = popenargs[0]
-        raise subprocess.CalledProcessError(retcode, cmd)
-    return output
-
-
 def count(start=0, step=1):
     """
     ``itertools.count`` in Py 2.6 doesn't accept a step
@@ -909,7 +888,6 @@ def cmp_to_key(mycmp):
 # Back up our definitions above in case they're useful
 _OrderedDict = OrderedDict
 _Counter = Counter
-_check_output = check_output
 _count = count
 _ceil = ceil
 __count_elements = _count_elements
@@ -924,11 +902,6 @@ if sys.version_info >= (2, 7):
     from collections import OrderedDict, Counter
     from itertools import count
     from functools import cmp_to_key
-    try:
-        from subprocess import check_output
-    except ImportError:
-        # Not available. This happens with Google App Engine: see issue #231
-        pass
     from socket import create_connection
 
 if sys.version_info >= (3, 0):
