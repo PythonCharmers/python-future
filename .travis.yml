@@ -5,15 +5,20 @@ cache: pip
 matrix:
   include:
     - python: 2.7
+      env: TOXENV=py27
     - python: 3.4
+      env: TOXENV=py34
     - python: 3.5
+      env: TOXENV=py35
     - python: 3.6
+      env: TOXENV=py36
     - python: 3.7
+      env: TOXENV=py37
       dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
       sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 install:
-  - python setup.py install
+  - pip install tox
 
 before_script:
   # Run flake8 tests only on Python 2.7 and 3.7...
@@ -28,7 +33,4 @@ before_script:
 # command to run tests, e.g. python setup.py test
 
 script:
-  # We might like to get out of the source directory before running tests to
-  # avoid PYTHONPATH confusion? As an example, see here:
-  #     https://github.com/tornadoweb/tornado/blob/master/.travis.yml
-  - python setup.py test
+  - tox
