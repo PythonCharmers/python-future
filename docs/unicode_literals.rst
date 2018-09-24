@@ -1,4 +1,3 @@
-
 .. _unicode-literals:
 
 Should I import unicode_literals?
@@ -28,7 +27,7 @@ Benefits
 1. String literals are unicode on Python 3. Making them unicode on Python 2
    leads to more consistency of your string types across the two
    runtimes. This can make it easier to understand and debug your code.
-   
+
 2. Code without ``u''`` prefixes is cleaner, one of the claimed advantages
    of Python 3. Even though some unicode strings would require a function
    call to invert them to native strings for some Python 2 APIs (see
@@ -57,7 +56,7 @@ Drawbacks
    of the Linux kernel.)
 
 .. This is a larger-scale change than adding explicit ``u''`` prefixes to
-..  all strings that should be Unicode. 
+..  all strings that should be Unicode.
 
 2. Changing to ``unicode_literals`` will likely introduce regressions on
    Python 2 that require an initial investment of time to find and fix. The
@@ -82,7 +81,7 @@ Drawbacks
    change the return type of the ``unix_style_path`` function from ``str`` to
    ``unicode`` in the user code, which is difficult to anticipate and probably
    unintended.
-   
+
    The counter-argument is that this code is broken, in a portability
    sense; we see this from Python 3 raising a ``TypeError`` upon passing the
    function a byte-string. The code needs to be changed to make explicit
@@ -122,16 +121,16 @@ Drawbacks
 
        >>> def f():
        ...     u"Author: Martin von Löwis"
-       
+
        >>> help(f)
-       
+
        /Users/schofield/Install/anaconda/python.app/Contents/lib/python2.7/pydoc.pyc in pipepager(text, cmd)
           1376     pipe = os.popen(cmd, 'w')
           1377     try:
        -> 1378         pipe.write(text)
           1379         pipe.close()
           1380     except IOError:
-       
+
        UnicodeEncodeError: 'ascii' codec can't encode character u'\xf6' in position 71: ordinal not in range(128)
 
 See `this Stack Overflow thread
@@ -156,18 +155,18 @@ codebase.:
     ``u''`` prefixes for unicode literals on Python 3.3+] is at odds with
     the porting philosophy I've applied to Django, and why I would have
     vetoed taking advantage of it.
-    
+
     "I believe that aiming for a Python 2 codebase with Python 3
     compatibility hacks is a counter-productive way to port a project. You
     end up with all the drawbacks of Python 2 (including the legacy `u`
     prefixes) and none of the advantages Python 3 (especially the sane
     string handling).
-    
+
     "Working to write Python 3 code, with legacy compatibility for Python
     2, is much more rewarding. Of course it takes more effort, but the
     results are much cleaner and much more maintainable. It's really about
     looking towards the future or towards the past.
-    
+
     "I understand the reasons why PEP 414 was proposed and why it was
     accepted. It makes sense for legacy software that is minimally
     maintained. I hope nobody puts Django in this category!"
@@ -182,19 +181,17 @@ Against ``unicode_literals``
     where there are unicode characters in the filesystem path."
 
     -- Armin Ronacher
-    
+
     "+1 from me for avoiding the unicode_literals future, as it can have
     very strange side effects in Python 2.... This is one of the key
     reasons I backed Armin's PEP 414."
 
     -- Nick Coghlan
-    
+
     "Yeah, one of the nuisances of the WSGI spec is that the header values
     IIRC are the str or StringType on both py2 and py3. With
     unicode_literals this causes hard-to-spot bugs, as some WSGI servers
     might be more tolerant than others, but usually using unicode in python
     2 for WSGI headers will cause the response to fail."
-    
+
     -- Antti Haapala
-
-

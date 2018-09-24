@@ -1,33 +1,36 @@
+sudo: false
 language: python
 cache: pip
-python:
-  - "3.6"
-  - "3.5"
-  - "3.4"
-  - "3.3"
-  - "2.7"
-  - "2.6"
 
 matrix:
   include:
+    - python: 2.7
+      env: TOXENV=py27
+    - python: 3.4
+      env: TOXENV=py34
+    - python: 3.5
+      env: TOXENV=py35
+    - python: 3.6
+      env: TOXENV=py36
     - python: 3.7
+      env: TOXENV=py37
       dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
       sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
-sudo: false
-
-# command to install dependencies, e.g. pip install -r requirements.txt
-# These packages only exist on Ubuntu 13.04 and newer:
-# No dependencies currently unless using Python 2.6.
-
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then pip install -r requirements_py26.txt; fi
-  - python setup.py install
+  - pip install tox
+
+before_script:
+  # Run flake8 tests only on Python 2.7 and 3.7...
+  # 1) stop the build if there are Python syntax errors or undefined names
+  # 2) exit-zero treats all errors as warnings.  The GitHub editor is 127 chars wide
+  - if [[ $TRAVIS_PYTHON_VERSION == *.7 ]]; then
+      pip install flake8;
+      flake8 . --count --exit-zero --select=E901,E999,F821,F822,F823 --show-source --statistics;
+      flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics; 
+    fi
 
 # command to run tests, e.g. python setup.py test
 
 script:
-  # We might like to get out of the source directory before running tests to
-  # avoid PYTHONPATH confusion? As an example, see here:
-  #     https://github.com/tornadoweb/tornado/blob/master/.travis.yml
-  - python setup.py test
+  - tox

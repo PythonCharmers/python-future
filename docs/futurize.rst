@@ -23,7 +23,7 @@ This applies fixes that modernize Python 2 code without changing the effect of
 the code. With luck, this will not introduce any bugs into the code, or will at
 least be trivial to fix. The changes are those that bring the Python code
 up-to-date without breaking Py2 compatibility. The resulting code will be
-modern Python 2.6-compatible code plus ``__future__`` imports from the
+modern Python 2.7-compatible code plus ``__future__`` imports from the
 following set:
 
 .. code-block:: python
@@ -151,7 +151,7 @@ method on exceptions.
 
     lib2to3.fixes.fix_set_literal
 
-This converts ``set([1, 2, 3]``) to ``{1, 2, 3}``, breaking Python 2.6 support.
+This converts ``set([1, 2, 3]``) to ``{1, 2, 3}``.
 
 .. code-block:: python
 
@@ -317,5 +317,3 @@ The next step would be manually tweaking the code to re-enable Python 2
 compatibility with the help of the ``future`` package. For example, you can add
 the ``@python_2_unicode_compatible`` decorator to any classes that define custom
 ``__str__`` methods. See :ref:`what-else` for more info.
-
-

@@ -10,7 +10,7 @@ What's new in version 0.16.0 (2016-09-22)
 
 This release removes the ``configparser`` package as an alias for
 ``ConfigParser`` on Py2 to improve compatibility with the backported
-`configparser package <https://pypi.python.org/pypi/configparser>`. Previously
+`configparser package <https://pypi.org/project/configparser/>`. Previously
 ``python-future`` and the PyPI ``configparser`` backport clashed, causing
 various compatibility issues. (Issues #118, #181)
 

@@ -779,7 +779,7 @@ class ChainMap(MutableMapping):
 
     # Py2 compatibility:
     __nonzero__ = __bool__
-        
+
     @recursive_repr()
     def __repr__(self):
         return '{0.__class__.__name__}({1})'.format(

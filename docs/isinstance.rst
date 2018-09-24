@@ -4,7 +4,7 @@ isinstance
 ----------
 
 The following tests all pass on Python 3::
-    
+
     >>> assert isinstance(2**62, int)
     >>> assert isinstance(2**63, int)
     >>> assert isinstance(b'my byte-string', bytes)
@@ -81,7 +81,7 @@ to use it. (The output showing is from Py2)::
     100000000000000000000L
     >>> type(native(a))
     long
-    
+
     >>> b = bytes(b'ABC')
     >>> type(b)
     future.types.newbytes.newbytes
@@ -89,7 +89,7 @@ to use it. (The output showing is from Py2)::
     'ABC'
     >>> type(native(b))
     str
-    
+
     >>> s = str(u'ABC')
     >>> type(s)
     future.types.newstr.newstr
@@ -115,4 +115,3 @@ The objects ``native_str`` and ``native_bytes`` are available in
 
 The functions ``native_str_to_bytes`` and ``bytes_to_native_str`` are also
 available for more explicit conversions.
-

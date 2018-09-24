@@ -23,7 +23,7 @@ http://lucumr.pocoo.org/2011/12/7/thoughts-on-python3/
 http://python3porting.com/fixers.html
 http://washort.twistedmatrix.com/2010/11/unicode-in-python-and-how-to-prevent-it.html
 http://docs.python.org/release/3.0.1/whatsnew/3.0.html
-https://pypi.python.org/pypi/unicode-nazi
+https://pypi.org/project/unicode-nazi/
 http://www.rmi.net/~lutz/strings30.html
 
 "Porting your code to Python 3": Alexandre Vassalotti: peadrop.com/slides/mp5.pdf
@@ -43,7 +43,7 @@ python-modernize: https://github.com/mitsuhiko/python-modernize
 
 2to3 docs describing the different fixers: http://docs.python.org/2/library/2to3.html
 
-Injecting code into running Python processes (hopefully not needed): https://pypi.python.org/pypi/pyrasite/2.0
+Injecting code into running Python processes (hopefully not needed): https://pypi.org/project/pyrasite/2.0/
 
 Withdrawn PEP to help with the Py3k standard library transition: http://www.peps.io/364/
 
@@ -52,7 +52,7 @@ Import hooks
 http://www.peps.io/302/
 "Hacking Python imports ... for fun and profit": blog post from 2012-05: http://xion.org.pl/2012/05/06/hacking-python-imports/
 
-Full importlib backport to Py2: https://pypi.python.org/pypi/backport_importlib/0...1
+Full importlib backport to Py2: https://pypi.org/project/backport_importlib/0...1/
 
 Python 2.7 importlib subset: http://docs.python.org/2/whatsnew/2.7.html#importlib-section
 
@@ -78,7 +78,7 @@ PEPs: 358, 3112, 3137, 3138
 http://python3porting.com/noconv.html#unicode-section
 Unicode literals u'...' back in Python 3.3: http://www.python.org/dev/peps/pep-0414/
 https://github.com/django/django/blob/master/django/utils/encoding.py
-https://pypi.python.org/pypi/unicode-nazi
+https://pypi.org/project/unicode-nazi/
 http://docs.python.org/3/library/stdtypes.html#bytes-methods
 http://wolfprojects.altervista.org/talks/unicode-and-python-3/
 Buffer protocol (which bytes and bytes-like objects obey): http://docs.python.org/3.3/c-api/buffer.html#bufferobjects
@@ -104,7 +104,7 @@ Also: typecheck module on PyPI
 To categorize
 -------------
 
-https://pypi.python.org/pypi/awkwardduet/1.1a4
+https://pypi.org/project/awkwardduet/1.1a4/
 https://github.com/campadrenalin/persei/blob/master/persei.py
 http://slideshare.net/dabeaz/mastering-python-3-io
 http://rmi.net/~lutz/strings30.html

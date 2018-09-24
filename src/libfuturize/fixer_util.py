@@ -62,7 +62,7 @@ def Minus(prefix=None):
 
 def commatize(leafs):
     """
-    Accepts/turns: (Name, Name, ..., Name, Name) 
+    Accepts/turns: (Name, Name, ..., Name, Name)
     Returns/into: (Name, Comma, Name, Comma, ..., Name, Comma, Name)
     """
     new_leafs = []
@@ -272,7 +272,7 @@ def future_import2(feature, node):
     An alternative to future_import() which might not work ...
     """
     root = find_root(node)
-    
+
     if does_tree_import(u"__future__", feature, node):
         return
 
@@ -304,7 +304,7 @@ def parse_args(arglist, scheme):
     Parse a list of arguments into a dict
     """
     arglist = [i for i in arglist if i.type != token.COMMA]
-    
+
     ret_mapping = dict([(k, None) for k in scheme])
 
     for i, arg in enumerate(arglist):
@@ -338,7 +338,7 @@ def touch_import_top(package, name_to_import, node):
     Based on lib2to3.fixer_util.touch_import()
 
     Calling this multiple times adds the imports in reverse order.
-        
+
     Also adds "standard_library.install_aliases()" after "from future import
     standard_library".  This should probably be factored into another function.
     """
@@ -415,7 +415,7 @@ def touch_import_top(package, name_to_import, node):
             children_hooks = [install_hooks, Newline()]
         else:
             children_hooks = []
-        
+
         # FromImport(package, [Leaf(token.NAME, name_to_import, prefix=u" ")])
 
     children_import = [import_, Newline()]
@@ -517,5 +517,3 @@ def wrap_in_fn_call(fn_name, args, prefix=None):
     else:
         assert NotImplementedError('write me')
     return Call(Name(fn_name), newargs, prefix=prefix)
-
-

@@ -258,7 +258,7 @@ class TestStr(unittest.TestCase):
         if utils.PY2:
             self.assertTrue(b'A' in s)
         with self.assertRaises(TypeError):
-            bytes(b'A') in s                  
+            bytes(b'A') in s
         with self.assertRaises(TypeError):
             65 in s                                 # unlike bytes
 

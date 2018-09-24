@@ -319,7 +319,7 @@ Py3-style ``__next__`` method.
 In this example, the code defines a Py3-style iterator with a ``__next__``
 method. The ``object`` class defines a ``next`` method for Python 2 that maps
 to ``__next__``::
-    
+
     from future.builtins import object
 
     class Upper(object):
@@ -451,7 +451,7 @@ Many small improvements and fixes have been made across the project. Some highli
 - Scrubbing of the ``sys.modules`` cache performed by ``remove_hooks()`` (also
   called by the ``suspend_hooks`` and ``hooks`` context managers) is now more
   conservative.
-  
+
 ..  Is this still true?
 ..  It now removes only modules with Py3 names (such as
 ..  ``urllib.parse``) and not the corresponding ``future.standard_library.*``
@@ -530,7 +530,7 @@ is now possible on Python 2 and 3::
 
 Previously, this required manually removing ``http`` and ``http.client`` from
 ``sys.modules`` before importing ``requests`` on Python 2.x. (Issue #19)
-   
+
 This change should also improve the compatibility of the standard library hooks
 with any other module that provides its own Python 2/3 compatibility code.
 
@@ -560,7 +560,7 @@ compatibility code.
 
 There is a new ``--unicode-literals`` flag to ``futurize`` that adds the
 import::
-    
+
     from __future__ import unicode_literals
 
 to the top of each converted module. Without this flag, ``futurize`` now no
@@ -575,7 +575,7 @@ The ``pasteurize`` script for converting from Py3 to Py2/3 still adds
 Changes in version 0.11 (2014-01-28)
 ====================================
 
-There are several major new features in version 0.11. 
+There are several major new features in version 0.11.
 
 
 ``past`` package
@@ -615,10 +615,10 @@ it like this::
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     $ python3
-    
+
 Then pass in a whitelist of module name prefixes to the ``past.autotranslate()``
 function. Example::
-    
+
     >>> from past import autotranslate
     >>> autotranslate(['plotrique'])
     >>> import plotrique
@@ -678,7 +678,7 @@ compatibility.
 As of v0.12, importing ``future.standard_library``
 will no longer install import hooks by default. Instead, please install the
 import hooks explicitly as follows::
-    
+
     from future import standard_library
     standard_library.install_hooks()
 
@@ -721,7 +721,7 @@ If not using this context manager, it is now encouraged to add an explicit call 
 
     from future import standard_library
     standard_library.install_hooks()
-    
+
     import queue
     import html
     import http.client
@@ -754,7 +754,7 @@ over large dictionaries. For example::
 
     from __future__ import print_function
     from future.builtins import dict, range
-    
+
     squares = dict({i: i**2 for i in range(10**7)})
 
     assert not isinstance(d.items(), list)
@@ -876,7 +876,7 @@ The unused ``hacks`` module has also been removed from the source tree.
 ``isinstance()`` added to :mod:`future.builtins` (v0.8.2)
 ---------------------------------------------------------
 
-It is now possible to use ``isinstance()`` calls normally after importing ``isinstance`` from 
+It is now possible to use ``isinstance()`` calls normally after importing ``isinstance`` from
 ``future.builtins``. On Python 2, this is specially defined to be compatible with
 ``future``'s backported ``int``, ``str``, and ``bytes`` types, as well as
 handling Python 2's ``int``/``long`` distinction.
@@ -992,7 +992,7 @@ v0.8.1:
   * Move a few more safe ``futurize`` fixes from stage2 to stage1
 
   * Bug fixes to :mod:`future.utils`
-  
+
 v0.8:
   * Added Python 2.6 support
 
@@ -1080,7 +1080,7 @@ v0.3.2:
   * Added ``UserList``, ``UserString``, ``UserDict`` classes to ``collections`` module
 
   * Removed ``int`` -> ``long`` mapping
-  
+
   * Added backported ``_markupbase.py`` etc. with new-style classes to fix travis-ci build problems
 
   * Added working ``html`` and ``http.client`` backported modules

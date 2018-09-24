@@ -14,7 +14,7 @@ would on Python 3. On Python 2, ``object`` then refers to the
 method that calls your ``__next__``. Use it as follows::
 
     from builtins import object
-    
+
     class Upper(object):
         def __init__(self, iterable):
             self._iter = iter(iterable)
@@ -92,4 +92,3 @@ the iterator as follows::
             return self
 
 On Python 3, as usual, this decorator does nothing.
-

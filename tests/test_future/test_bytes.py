@@ -160,7 +160,7 @@ class TestBytes(unittest.TestCase):
 
     def test_str(self):
         b = bytes(b'ABCD')
-        self.assertTrue(str(b), "b'ABCD'")
+        self.assertEqual(str(b), "b'ABCD'")
 
     def test_bytes_setitem(self):
         b = b'ABCD'
