@@ -70,7 +70,7 @@ import logging
 import optparse
 import os
 
-from lib2to3.main import main, warn, StdoutRefactoringTool
+from lib2to3.main import warn, StdoutRefactoringTool
 from lib2to3 import refactor
 
 from libfuturize.fixes import (lib2to3_fix_names_stage1,
