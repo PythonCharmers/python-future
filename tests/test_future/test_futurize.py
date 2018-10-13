@@ -1182,6 +1182,16 @@ class TestFuturizeStage1(CodeHandler):
         """
         before = """
         import random
+        class fraction(object):
+            numer = 0
+            denom = 0
+            def __init__(self, numer, denom):
+                self.numer = numer
+                self.denom = denom
+
+            def total_count(self):
+                return self.numer * 50
+
         x = 3 / 2
         y = 3. / 2
         foo = range(100)
@@ -1189,42 +1199,56 @@ class TestFuturizeStage1(CodeHandler):
         assert y == 1.5 and isinstance(y, float)
         a = 1 + foo[len(foo) / 2]
         b = 1 + foo[len(foo) * 3 / 4]
-        assert a == 50
-        assert b == 75
+        assert a == 51
+        assert b == 76
         r = random.randint(0, 1000) * 1.0 / 1000
         output = { "SUCCESS": 5, "TOTAL": 10 }
         output["SUCCESS"] * 100 / output["TOTAL"]
-        obj = foo
+        obj = fraction(1, 50)
         val = float(obj.numer) / obj.denom * 1e-9
-        mount.bytes_free * mount.free_size / bytes_in_gb
-        obj.total_count() * threshold / 100
-        100 * abs(obj.width - original_width) / float(max(obj.width, original_width))
-        100 * abs(obj.width - original_width) / max(obj.width, original_width)
-        float(target_width) * float(original_height) / float(original_width)
+        obj.numer * obj.denom / val
+        obj.total_count() * val / 100
+        original_numer = 1
+        original_denom = 50
+        100 * abs(obj.numer - original_numer) / float(max(obj.denom, original_denom))
+        100 * abs(obj.numer - original_numer) / max(obj.denom, original_denom)
+        float(original_numer) * float(original_denom) / float(obj.numer)
         """
         after = """
         from __future__ import division
         from past.utils import old_div
         import random
+        class fraction(object):
+            numer = 0
+            denom = 0
+            def __init__(self, numer, denom):
+                self.numer = numer
+                self.denom = denom
+
+            def total_count(self):
+                return self.numer * 50
+
         x = old_div(3, 2)
         y = 3. / 2
-        foo = range(100)
+        foo = list(range(100))
         assert x == 1 and isinstance(x, int)
         assert y == 1.5 and isinstance(y, float)
         a = 1 + foo[old_div(len(foo), 2)]
         b = 1 + foo[old_div(len(foo) * 3, 4)]
-        assert a == 50
-        assert b == 75
+        assert a == 51
+        assert b == 76
         r = old_div(random.randint(0, 1000) * 1.0, 1000)
         output = { "SUCCESS": 5, "TOTAL": 10 }
-        output["SUCCESS"] * 100 / output["TOTAL"]
-        obj = foo
+        old_div(output["SUCCESS"] * 100, output["TOTAL"])
+        obj = fraction(1, 50)
         val = float(obj.numer) / obj.denom * 1e-9
-        old_div(mount.bytes_free * mount.free_size, bytes_in_gb)
-        old_div(obj.total_count() * threshold, 100)
-        100 * abs(obj.width - original_width) / float(max(obj.width, original_width))
-        100 * abs(obj.width - original_width), max(obj.width, original_width))
-        float(target_width) * float(original_height) / float(original_width)
+        old_div(obj.numer * obj.denom, val)
+        old_div(obj.total_count() * val, 100)
+        original_numer = 1
+        original_denom = 50
+        100 * abs(obj.numer - original_numer) / float(max(obj.denom, original_denom))
+        old_div(100 * abs(obj.numer - original_numer), max(obj.denom, original_denom))
+        float(original_numer) * float(original_denom) / float(obj.numer)
         """
         self.convert_check(before, after)
 

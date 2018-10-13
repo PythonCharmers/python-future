@@ -84,7 +84,7 @@ class FixDivisionSafe(fixer_base.BaseFix):
         Skip this fixer if "__future__.division" is already imported.
         """
         super(FixDivisionSafe, self).start_tree(tree, name)
-        self.skip = "division" not in tree.future_features
+        self.skip = "division" in tree.future_features
 
     def match(self, node):
         u"""
