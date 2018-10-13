@@ -754,8 +754,6 @@ class TestFuturizeStage1(CodeHandler):
     the uncontroversial patches first.
     """
 
-    maxDiff = None
-
     def test_apply(self):
         """
         apply() should be changed by futurize --stage1
