@@ -109,7 +109,8 @@ class urlopenNetworkTests(unittest.TestCase):
 
     # On Windows, socket handles are not file descriptors; this
     # test can't pass on Windows.
-    @unittest.skipIf(sys.platform in ('win32',), 'not appropriate for Windows')
+    @unittest.skipIf(sys.platform in ('darwin', 'win32'),
+                     'not appropriate for macOS or Windows')
     @skip26
     def test_fileno(self):
         # Make sure fd returned by fileno is valid.
