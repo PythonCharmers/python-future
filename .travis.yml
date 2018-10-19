@@ -18,7 +18,7 @@ matrix:
       sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 install:
-  - pip install tox pytest
+  - pip install tox
 
 before_script:
   # Run flake8 tests only on Python 2.7 and 3.7...
