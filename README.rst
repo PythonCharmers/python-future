@@ -264,12 +264,14 @@ For more info, see :ref:`translation`.
 Licensing
 ---------
 
-:Author:  Ed Schofield
+:Author:  Ed Schofield, Jordan M. Adler, et al
 
 :Copyright: 2013-2016 Python Charmers Pty Ltd, Australia.
 
-:Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
-          Ltd, Singapore. http://pythoncharmers.com
+:Sponsors: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
+           Ltd, Singapore. http://pythoncharmers.com
+           
+           Pinterest https://opensource.pinterest.com/
 
 :Licence: MIT. See ``LICENSE.txt`` or `here <http://python-future.org/credits.html>`_.
 

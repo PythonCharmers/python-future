@@ -42,14 +42,14 @@ Pinterest https://opensource.pinterest.com/
 Authors
 -------
 
-Python-Future is written and maintained by Ed Schofield and Jordan Adler
+Python-Future is written and maintained by Ed Schofield and Jordan M. Adler
 with the help of various contributors:
 
 Development Leads
 ~~~~~~~~~~~~~~~~~
 
 - Ed Schofield <ed@pythoncharmers.com>
-- Jordan Adler <jordan.m.adler@gmail.com>
+- Jordan M. Adler <jordan.m.adler@gmail.com>
 
 Patches
 ~~~~~~~
