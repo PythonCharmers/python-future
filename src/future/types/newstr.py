@@ -302,24 +302,28 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
     unorderable_err = 'unorderable types: str() and {0}'
 
     def __lt__(self, other):
-        if not istext(other):
-            raise TypeError(self.unorderable_err.format(type(other)))
-        return super(newstr, self).__lt__(other)
+        if (isinstance(other, unicode) or
+            isinstance(other, bytes) and not isnewbytes(other)):
+            return super(newstr, self).__lt__(other)
+        raise TypeError(self.unorderable_err.format(type(other)))
 
     def __le__(self, other):
-        if not istext(other):
-            raise TypeError(self.unorderable_err.format(type(other)))
-        return super(newstr, self).__le__(other)
+        if (isinstance(other, unicode) or
+            isinstance(other, bytes) and not isnewbytes(other)):
+            return super(newstr, self).__le__(other)
+        raise TypeError(self.unorderable_err.format(type(other)))
 
     def __gt__(self, other):
-        if not istext(other):
-            raise TypeError(self.unorderable_err.format(type(other)))
-        return super(newstr, self).__gt__(other)
+        if (isinstance(other, unicode) or
+            isinstance(other, bytes) and not isnewbytes(other)):
+            return super(newstr, self).__gt__(other)
+        raise TypeError(self.unorderable_err.format(type(other)))
 
     def __ge__(self, other):
-        if not istext(other):
-            raise TypeError(self.unorderable_err.format(type(other)))
-        return super(newstr, self).__ge__(other)
+        if (isinstance(other, unicode) or
+            isinstance(other, bytes) and not isnewbytes(other)):
+            return super(newstr, self).__ge__(other)
+        raise TypeError(self.unorderable_err.format(type(other)))
 
     def __getattribute__(self, name):
         """
