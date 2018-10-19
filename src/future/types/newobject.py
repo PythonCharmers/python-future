@@ -37,24 +37,6 @@ Another example::
 
 """
 
-import sys
-
-from future.utils import with_metaclass
-
-
-_builtin_object = object
-ver = sys.version_info[:2]
-
-
-# We no longer define a metaclass for newobject because this breaks multiple
-# inheritance and custom metaclass use with this exception:
-
-# TypeError: Error when calling the metaclass bases
-#     metaclass conflict: the metaclass of a derived class must be a
-#     (non-strict) subclass of the metaclasses of all its bases
-
-# See issues #91 and #96.
-
 
 class newobject(object):
     """
