@@ -30,7 +30,5 @@ before_script:
       flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics; 
     fi
 
-# command to run tests, e.g. python setup.py test
-
 script:
   - tox
