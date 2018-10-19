@@ -373,24 +373,24 @@ class newbytes(with_metaclass(BaseNewBytes, _builtin_bytes)):
     unorderable_err = 'unorderable types: bytes() and {0}'
 
     def __lt__(self, other):
-        if not isbytes(other):
-            raise TypeError(self.unorderable_err.format(type(other)))
-        return super(newbytes, self).__lt__(other)
+        if isinstance(other, _builtin_bytes):
+            return super(newbytes, self).__lt__(other)
+        raise TypeError(self.unorderable_err.format(type(other)))
 
     def __le__(self, other):
-        if not isbytes(other):
-            raise TypeError(self.unorderable_err.format(type(other)))
-        return super(newbytes, self).__le__(other)
+        if isinstance(other, _builtin_bytes):
+            return super(newbytes, self).__le__(other)
+        raise TypeError(self.unorderable_err.format(type(other)))
 
     def __gt__(self, other):
-        if not isbytes(other):
-            raise TypeError(self.unorderable_err.format(type(other)))
-        return super(newbytes, self).__gt__(other)
+        if isinstance(other, _builtin_bytes):
+            return super(newbytes, self).__gt__(other)
+        raise TypeError(self.unorderable_err.format(type(other)))
 
     def __ge__(self, other):
-        if not isbytes(other):
-            raise TypeError(self.unorderable_err.format(type(other)))
-        return super(newbytes, self).__ge__(other)
+        if isinstance(other, _builtin_bytes):
+            return super(newbytes, self).__ge__(other)
+        raise TypeError(self.unorderable_err.format(type(other)))
 
     def __native__(self):
         # We can't just feed a newbytes object into str(), because

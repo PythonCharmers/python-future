@@ -383,10 +383,6 @@ class TestStr(unittest.TestCase):
         with self.assertRaises(TypeError):
             s < 1000
         with self.assertRaises(TypeError):
-            s > b'XYZ'
-        with self.assertRaises(TypeError):
-            s < b'XYZ'
-        with self.assertRaises(TypeError):
             s <= 3
         with self.assertRaises(TypeError):
             s >= int(3)
