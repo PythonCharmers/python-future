@@ -566,7 +566,7 @@ class TestBytes(unittest.TestCase):
 
         self.assertEqual(bytes(b'%(foo)s') % d, b'bar')
 
-    @unittest.skipUnless(utils.PY35 or utils.PY2,
+    @unittest.skipUnless(utils.PY35_PLUS or utils.PY2,
                          'test requires Python 2 or 3.5+')
     def test_mod_more(self):
         self.assertEqual(b'%s' % b'aaa', b'aaa')
@@ -577,10 +577,10 @@ class TestBytes(unittest.TestCase):
         self.assertEqual(bytes(b'%s') % (b'aaa',), b'aaa')
         self.assertEqual(bytes(b'%s') % (bytes(b'aaa'),), b'aaa')
 
-        self.assertEqual(bytes(b'%(x)s') % {'x': b'aaa'}, b'aaa')
-        self.assertEqual(bytes(b'%(x)s') % {'x': bytes(b'aaa')}, b'aaa')
+        self.assertEqual(bytes(b'%(x)s') % {b'x': b'aaa'}, b'aaa')
+        self.assertEqual(bytes(b'%(x)s') % {b'x': bytes(b'aaa')}, b'aaa')
 
-    @unittest.skipUnless(utils.PY35 or utils.PY2,
+    @unittest.skipUnless(utils.PY35_PLUS or utils.PY2,
                          'test requires Python 2 or 3.5+')
     def test_mod(self):
         """
@@ -606,7 +606,7 @@ class TestBytes(unittest.TestCase):
         a = b % (bytes(b'seventy-nine'), 79)
         self.assertEqual(a, b'seventy-nine / 100 = 79%')
 
-    @unittest.skipUnless(utils.PY35 or utils.PY2,
+    @unittest.skipUnless(utils.PY35_PLUS or utils.PY2,
                          'test requires Python 2 or 3.5+')
     def test_imod(self):
         """
