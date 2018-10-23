@@ -23,11 +23,6 @@ This is a major bug-fix release, including:
 As well as a number of corrections to a variety of documentation, and updates to
 test infrastructure.
 
-In this release, we also drop official support for Py2.6 and Py3.3. They should
-still work, but support is no longer guaranteed, and breaking changes will be
-introduced in subsequent versions.
-
-
 What's new in version 0.16.0 (2016-10-27)
 ==========================================
 

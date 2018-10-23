@@ -8,7 +8,7 @@ Licence
 The software is distributed under an MIT licence. The text is as follows
 (from ``LICENSE.txt``)::
 
-    Copyright (c) 2013-2016 Python Charmers Pty Ltd, Australia
+    Copyright (c) 2013-2018 Python Charmers Pty Ltd, Australia
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -39,20 +39,13 @@ Pinterest https://opensource.pinterest.com/
 
 .. _authors:
 
+Maintainer
+----------
+Python-Future is currently maintained by Jordan M. Adler <jordan.m.adler@gmail.com>.
+
 Authors
 -------
-
-Python-Future is written and maintained by Ed Schofield and Jordan M. Adler
-with the help of various contributors:
-
-Development Leads
-~~~~~~~~~~~~~~~~~
-
-- Ed Schofield <ed@pythoncharmers.com>
-- Jordan M. Adler <jordan.m.adler@gmail.com>
-
-Patches
-~~~~~~~
+Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with the help of various contributors:
 
 - Grant Bakker
 - Jacob Beck
