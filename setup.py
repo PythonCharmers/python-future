@@ -96,8 +96,10 @@ KEYWORDS = "future past python3 migration futurize backport six 2to3 modernize p
 CLASSIFIERS = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.6",
     "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.3",
     "Programming Language :: Python :: 3.4",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
@@ -174,7 +176,7 @@ setup(name=NAME,
       packages=PACKAGES,
       package_data=PACKAGE_DATA,
       include_package_data=True,
-      python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
+      python_requires=">=2.6, !=3.0.*, !=3.1.*, !=3.2.*",
       classifiers=CLASSIFIERS,
       **setup_kwds
      )

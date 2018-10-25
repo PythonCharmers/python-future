@@ -3,15 +3,25 @@
 What's New
 **********
 
-.. _whats-new-0.16.x:
-
-What's new in version 0.16.1 (unreleased)
+What's new in version 0.17 (2018-10-19)
 =========================================
 
-This is a minor bug-fix release:
+This is a major bug-fix release, including:
 
-- Fix `from collections import ChainMap` after install_aliases() (issue #226)
+- Fix ``from collections import ChainMap`` after install_aliases() (issue #226)
+- Fix multiple import from ``__future__`` bug in futurize (issue #113)
+- Add support for proper %s formatting of newbytes
+- Properly implement iterator protocol for newrange object
+- Fix ``past.translation`` on read-only file systems
+- Fix Tkinter import bug introduced in Python 2.7.4 (issue #262)
+- Correct TypeError to ValueError in a specific edge case for newrange
+- Support inequality tests betwen newstrs and newbytes
+- Add type check to __get__ in newsuper
+- Fix fix_divsion_safe to support better conversion of complex expressions, and
+  skip obvious float division.
 
+As well as a number of corrections to a variety of documentation, and updates to
+test infrastructure.
 
 What's new in version 0.16.0 (2016-10-27)
 ==========================================

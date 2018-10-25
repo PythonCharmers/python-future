@@ -4,8 +4,12 @@ cache: pip
 
 matrix:
   include:
+    - python: 2.6
+      env: TOXENV=py26
     - python: 2.7
       env: TOXENV=py27
+    - python: 3.3
+      env: TOXENV=py33
     - python: 3.4
       env: TOXENV=py34
     - python: 3.5
@@ -18,7 +22,10 @@ matrix:
       sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 install:
-  - pip install tox
+  - pip install tox==2.9.1
+  - pip install virtualenv==15.2.0
+  - pip install py==1.4.30
+  - pip install pluggy==0.5.2
 
 before_script:
   # Run flake8 tests only on Python 2.7 and 3.7...

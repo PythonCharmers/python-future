@@ -8,7 +8,7 @@ Licence
 The software is distributed under an MIT licence. The text is as follows
 (from ``LICENSE.txt``)::
 
-    Copyright (c) 2013-2016 Python Charmers Pty Ltd, Australia
+    Copyright (c) 2013-2018 Python Charmers Pty Ltd, Australia
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -30,33 +30,33 @@ The software is distributed under an MIT licence. The text is as follows
 
 .. _sponsor:
 
-Sponsor
--------
+Sponsors
+--------
 Python Charmers Pty Ltd, Australia, and Python Charmers Pte Ltd, Singapore.
 http://pythoncharmers.com
 
+Pinterest https://opensource.pinterest.com/
 
 .. _authors:
 
+Maintainer
+----------
+Python-Future is currently maintained by Jordan M. Adler <jordan.m.adler@gmail.com>.
+
 Authors
 -------
+Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with the help of various contributors:
 
-Python-Future is written and maintained by Ed Schofield with the help of
-various contributors:
-
-Development Lead
-~~~~~~~~~~~~~~~~
-
-- Ed Schofield <ed@pythoncharmers.com>
-
-Patches
-~~~~~~~
-
+- Grant Bakker
 - Jacob Beck
+- Nate Bogdanowicz
 - Denis Cornehl
 - Nicolas Delaby
+- Jon Dufresne
 - Corey Farwell
 - Eric Firing
+- Maximilian Hils
+- Martijn Jacobs
 - Michael Joseph
 - Waldemar Kornewald
 - Alexey Kotlyarov
@@ -65,26 +65,37 @@ Patches
 - Joshua Landau
 - German Larrain
 - Chris Lasher
+- Calum Lind
+- Jon Parise
+- Matthew Parnell
+- Miga Purg
+- Éloi Rivard
 - Elliott Sales de Andrade
+- Yury Selivanov
 - Tim Shaffer
+- Louis Sautier
 - Daniel Szoska
+- Flaviu Tamas
 - Jeff Tratner
 - Tim Tröndle
 - Brad Walker
-- Mystic-Mirage (GitHub)
-- str4d (GitHub)
-- 9seconds (GitHub)
-- Varriount (GitHub)
+- cclaus (GiHub user)
+- lsm (GiHub user)
+- Mystic-Mirage (GitHub user)
+- str4d (GitHub user)
+- 9seconds (GitHub user)
+- Varriount (GitHub user)
 
 Suggestions and Feedback
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Chris Adams
 - Martijn Faassen
+- Joe Gordon
 - Lion Krischer
 - Danielle Madeley
 - Val Markovic
-- wluebbe (GitHub)
+- wluebbe (GitHub user)
 
 
 Other Credits
