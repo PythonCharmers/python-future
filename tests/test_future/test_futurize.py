@@ -1194,7 +1194,7 @@ class TestFuturizeStage1(CodeHandler):
 
         x = 3 / 2
         y = 3. / 2
-        foo = range(100)
+        foo = list(range(100))
         assert x == 1 and isinstance(x, int)
         assert y == 1.5 and isinstance(y, float)
         a = 1 + foo[len(foo) / 2]
