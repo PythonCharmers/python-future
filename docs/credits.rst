@@ -50,6 +50,7 @@ Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with th
 - Grant Bakker
 - Jacob Beck
 - Nate Bogdanowicz
+- Christian Clauss
 - Denis Cornehl
 - Nicolas Delaby
 - Jon Dufresne
@@ -79,7 +80,6 @@ Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with th
 - Jeff Tratner
 - Tim Tröndle
 - Brad Walker
-- cclaus (GiHub user)
 - lsm (GiHub user)
 - Mystic-Mirage (GitHub user)
 - str4d (GitHub user)
