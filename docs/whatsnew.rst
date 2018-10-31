@@ -3,7 +3,12 @@
 What's New
 **********
 
-What's new in version 0.17 (2018-10-19)
+What's new in version 0.17.1 (2019-10-30)
+=========================================
+This release address a packaging error because of an erroneous declaration that
+any built wheels are universal.
+
+What's new in version 0.17.0 (2018-10-19)
 =========================================
 
 This is a major bug-fix release, including:
