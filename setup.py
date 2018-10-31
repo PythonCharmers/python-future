@@ -12,10 +12,6 @@ try:
 except ImportError:
     from distutils.core import setup
 
-if sys.argv[-1] == 'sdist' and sys.version_info[0] >= 3:
-    print('ERROR: You must build python-future with Python 2', file=sys.stderr)
-    sys.exit(1)
-
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
