@@ -18,7 +18,6 @@ This module exports useful functions for 2/3 compatible code:
     * types:
 
         * text_type: unicode in Python 2, str in Python 3
-        * binary_type: str in Python 2, bytes in Python 3
         * string_types: basestring in Python 2, str in Python 3
 
     * bchr(c):
@@ -156,7 +155,6 @@ if PY3:
     integer_types = int,
     class_types = type,
     text_type = str
-    binary_type = bytes
 
 else:
     # Python 2
@@ -171,7 +169,6 @@ else:
     integer_types = (int, long)
     class_types = (type, types.ClassType)
     text_type = unicode
-    binary_type = str
 
 ###
 
