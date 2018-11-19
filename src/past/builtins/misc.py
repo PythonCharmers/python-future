@@ -1,9 +1,13 @@
 from __future__ import unicode_literals
 import sys
 import inspect
-from collections import Mapping
 
-from future.utils import PY3, exec_
+from future.utils import PY2, PY3, exec_
+
+if PY2:
+    from collections import Mapping
+else:
+    from collections.abc import Mapping
 
 
 if PY3:
@@ -76,7 +80,7 @@ if PY3:
             raise TypeError('globals must be a mapping')
         if not isinstance(mylocals, Mapping):
             raise TypeError('locals must be a mapping')
-        with open(filename, "rbU") as fin:
+        with open(filename, "rb") as fin:
              source = fin.read()
         code = compile(source, filename, "exec")
         exec_(code, myglobals, mylocals)
