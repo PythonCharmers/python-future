@@ -43,7 +43,7 @@ representations of your objects portably across Py3 and Py2, use the
 from collections import Iterable
 from numbers import Number
 
-from future.utils import PY3, istext, with_metaclass, isnewbytes
+from future.utils import PY2, PY3, istext, with_metaclass, isnewbytes
 from future.types import no, issubset
 from future.types.newobject import newobject
 
@@ -409,8 +409,49 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
     def isidentifier(self):
         raise NotImplementedError('fixme')
 
-    def format_map(self):
-        raise NotImplementedError('fixme')
+    if PY2:
+        # Hack for PY2 only.
+        def format_map(self, *args, **kwargs):
+            """
+            A simple format_map Implementation for Python2.x
 
+            S.format_map(mapping) -> str
+
+            Return a formatted version of S, using substitutions from mapping.
+            The substitutions are identified by braces ('{' and '}').
+            """
+
+            if len(args) < 1:
+                map = kwargs
+            else:
+                map = args[0]
+
+            i = 0
+            buf = []
+            while i < len(self):
+                if (self[i] == "{"):
+                    j = i + 1  # len("{") -> 1
+                    k = self.find("}", j)
+                    if (k == -1):
+                        raise SyntaxError("Missing '}'!")
+                    token = self[j:k]
+                    if token == "":
+                        raise SyntaxError("Empty token!")
+                    try:
+                        l = token.find(":")
+                        if l != -1:
+                            _token = token[0:l]
+                            _format = token[l + 1:-1]
+                            _format = "{{0:{0}}}".format(_format)
+                            buf.append(_format.format(map[_token]))
+                        else:
+                            buf.append("{0}".format(map[token]))
+                    except KeyError:
+                        pass
+                    i = k + 1
+                    continue
+                buf.append(self[i])
+                i += 1
+            return "".join(buf)
 
 __all__ = ['newstr']
