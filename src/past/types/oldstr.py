@@ -2,11 +2,9 @@
 Pure-Python implementation of a Python 2-like str object for Python 3.
 """
 
-from collections import Iterable
 from numbers import Integral
 
-from past.utils import PY2, with_metaclass
-
+from past.utils import with_metaclass
 
 _builtin_bytes = bytes
 

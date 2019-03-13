@@ -1,13 +1,12 @@
 from __future__ import unicode_literals
-import sys
+
 import inspect
-from collections import Mapping
 
 from future.utils import PY3, exec_
 
-
 if PY3:
     import builtins
+    from collections.abc import Mapping
 
     def apply(f, *args, **kw):
         return f(*args, **kw)
@@ -44,6 +43,7 @@ if PY3:
     xrange = range
 else:
     import __builtin__
+    from collections import Mapping
     apply = __builtin__.apply
     chr = __builtin__.chr
     cmp = __builtin__.cmp
