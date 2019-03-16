@@ -1208,6 +1208,10 @@ class TestFuturizeStage1(CodeHandler):
         val = float(obj.numer) / obj.denom * 1e-9
         obj.numer * obj.denom / val
         obj.total_count() * val / 100
+        obj.numer / obj.denom * 1e-9
+        obj.numer / (obj.denom * 1e-9)
+        obj.numer / obj.denom / 1e-9
+        obj.numer / (obj.denom / 1e-9)
         original_numer = 1
         original_denom = 50
         100 * abs(obj.numer - original_numer) / float(max(obj.denom, original_denom))
@@ -1237,13 +1241,17 @@ class TestFuturizeStage1(CodeHandler):
         b = 1 + foo[old_div(len(foo) * 3, 4)]
         assert a == 51
         assert b == 76
-        r = old_div(random.randint(0, 1000) * 1.0, 1000)
+        r = random.randint(0, 1000) * 1.0 / 1000
         output = { "SUCCESS": 5, "TOTAL": 10 }
         old_div(output["SUCCESS"] * 100, output["TOTAL"])
         obj = fraction(1, 50)
         val = float(obj.numer) / obj.denom * 1e-9
         old_div(obj.numer * obj.denom, val)
         old_div(obj.total_count() * val, 100)
+        old_div(obj.numer, obj.denom) * 1e-9
+        old_div(obj.numer, (obj.denom * 1e-9))
+        old_div(old_div(obj.numer, obj.denom), 1e-9)
+        old_div(obj.numer, (old_div(obj.denom, 1e-9)))
         original_numer = 1
         original_denom = 50
         100 * abs(obj.numer - original_numer) / float(max(obj.denom, original_denom))
