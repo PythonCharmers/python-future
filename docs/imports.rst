@@ -24,7 +24,7 @@ standard feature of Python, see the following docs:
 - print_function: `PEP 3105: Make print a function <http://www.python.org/dev/peps/pep-3105>`_
 - unicode_literals: `PEP 3112: Bytes literals in Python 3000 <http://www.python.org/dev/peps/pep-3112>`_
 
-These are all available in Python 2.6 and up, and enabled by default in Python 3.x.
+These are all available in Python 2.7 and up, and enabled by default in Python 3.x.
 
 
 .. _builtins-imports:
@@ -44,7 +44,7 @@ at the top of every module::
     from builtins import *
 
 On Python 3, this has no effect. (It shadows builtins with globals of the same
-names.) 
+names.)
 
 On Python 2, this import line shadows 18 builtins (listed below) to
 provide their Python 3 semantics.
@@ -59,7 +59,7 @@ Explicit forms of the imports are often preferred and are necessary for using
 certain automated code-analysis tools.
 
 The complete set of imports of builtins from ``future`` is::
-    
+
     from builtins import (ascii, bytes, chr, dict, filter, hex, input,
                           int, map, next, oct, open, pow, range, round,
                           str, super, zip)
@@ -84,7 +84,7 @@ The internal API is currently as follows::
 
 Please note that this internal API is evolving and may not be stable between
 different versions of ``future``. To understand the details of the backported
-builtins on Python 2, see the docs for these modules. 
+builtins on Python 2, see the docs for these modules.
 
 For more information on what the backported types provide, see :ref:`what-else`.
 

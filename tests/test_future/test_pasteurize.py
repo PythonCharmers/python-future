@@ -96,7 +96,7 @@ class TestPasteurize(CodeHandler):
     def test_urllib_request(self):
         """
         Example Python 3 code using the new urllib.request module.
-        
+
         Does the ``pasteurize`` script handle this?
         """
         before = """
@@ -105,7 +105,7 @@ class TestPasteurize(CodeHandler):
 
             URL = 'http://pypi.python.org/pypi/{}/json'
             package = 'future'
-            
+
             r = urllib.request.urlopen(URL.format(package))
             pprint.pprint(r.read())
         """
@@ -115,7 +115,7 @@ class TestPasteurize(CodeHandler):
 
             URL = 'http://pypi.python.org/pypi/{}/json'
             package = 'future'
-            
+
             r = urllib_request.urlopen(URL.format(package))
             pprint.pprint(r.read())
         """
@@ -150,7 +150,7 @@ class TestPasteurize(CodeHandler):
         retcode = main([self.textfilename])
         self.assertTrue(isinstance(retcode, int))   # i.e. Py2 builtin int
 
- 
+
 class TestFuturizeAnnotations(CodeHandler):
     @unittest.expectedFailure
     def test_return_annotations_alone(self):
@@ -250,7 +250,7 @@ class TestFuturizeAnnotations(CodeHandler):
             pass
         """
         self.unchanged(s, from3=True)
-        
+
 
 if __name__ == '__main__':
     unittest.main()

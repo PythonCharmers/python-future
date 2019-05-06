@@ -26,6 +26,12 @@ class RangeTests(unittest.TestCase):
         self.assertEqual(range(0), range(1, 1))
         self.assertEqual(range(0, 10, 3), range(0, 11, 3))
 
+    def test_contains(self):
+        self.assertIn(1, range(2))
+        self.assertNotIn(10, range(2))
+        self.assertNotIn(None, range(2))
+        self.assertNotIn("", range(2))
+
     # Use strict equality of attributes when slicing to catch subtle differences
     def assertRangesEqual(self, r1, r2):
         by_attrs = attrgetter('start', 'stop', 'step')

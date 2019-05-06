@@ -1768,12 +1768,12 @@ class TestSorted(unittest.TestCase):
 #     #         ("classic int division", DeprecationWarning)):
 #     if True:
 #         run_unittest(*args)
-# 
+#
 # def test_main(verbose=None):
 #     test_classes = (BuiltinTest, TestSorted)
-# 
+#
 #     _run_unittest(*test_classes)
-# 
+#
 #     # verify reference counting
 #     if verbose and hasattr(sys, "gettotalrefcount"):
 #         import gc

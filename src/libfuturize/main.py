@@ -70,7 +70,7 @@ import logging
 import optparse
 import os
 
-from lib2to3.main import main, warn, StdoutRefactoringTool
+from lib2to3.main import warn, StdoutRefactoringTool
 from lib2to3 import refactor
 
 from libfuturize.fixes import (lib2to3_fix_names_stage1,
@@ -91,7 +91,7 @@ def main(args=None):
 
     Returns a suggested exit status (0, 1, 2).
     """
-    
+
     # Set up option parser
     parser = optparse.OptionParser(usage="futurize [options] file|dir ...")
     parser.add_option("-V", "--version", action="store_true",

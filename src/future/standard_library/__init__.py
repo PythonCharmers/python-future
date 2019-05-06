@@ -180,6 +180,7 @@ assert len(set(RENAMES.values()) & set(REPLACED_MODULES)) == 0
 MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('collections', 'UserDict', 'UserDict', 'UserDict'),
          ('collections', 'UserString','UserString', 'UserString'),
+         ('collections', 'ChainMap', 'future.backports.misc', 'ChainMap'),
          ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
          ('itertools', 'zip_longest','itertools', 'izip_longest'),
          ('sys', 'intern','__builtin__', 'intern'),
@@ -397,7 +398,7 @@ def scrub_future_sys_modules():
     """
     Deprecated.
     """
-    return {}    
+    return {}
 
 class suspend_hooks(object):
     """

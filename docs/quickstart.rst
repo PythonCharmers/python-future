@@ -19,16 +19,6 @@ To install the latest stable version, type::
 If you would prefer the latest development version, it is available `here
 <https://github.com/PythonCharmers/python-future>`_.
 
-On Python 2.6, three packages containing backports of standard library modules
-in Python 2.7+ are needed for small parts of the code::
-
-    pip install importlib       # for future.standard_library.import_ function only
-    pip install unittest2       # to run the test suite
-    pip install argparse        # for the backported http.server module from Py3.3
-
-Unless these features are used on Python 2.6 (only), ``future`` has no
-dependencies.
-
 
 If you are writing code from scratch
 ------------------------------------
@@ -40,7 +30,7 @@ The easiest way is to start each new module with these lines::
     from builtins import *
 
 Then write standard Python 3 code. The :mod:`future` package will
-provide support for running your code on Python 2.6, 2.7, and 3.3+ mostly
+provide support for running your code on Python 2.7, and 3.4+ mostly
 unchanged.
 
 - For explicit import forms, see :ref:`explicit-imports`.
@@ -66,7 +56,7 @@ module::
 
     from future import standard_library
     standard_library.install_aliases()
-    
+
 and converts several Python 3-only constructs (like keyword-only arguments) to a
 form compatible with both Py3 and Py2. Most remaining Python 3 code should
 simply work on Python 2.
@@ -93,7 +83,7 @@ Standard library reorganization
 :mod:`future` supports the standard library reorganization (PEP 3108) via
 one of several mechanisms, allowing most moved standard library modules
 to be accessed under their Python 3 names and locations in Python 2::
-    
+
     from future import standard_library
     standard_library.install_aliases()
 
@@ -101,7 +91,7 @@ to be accessed under their Python 3 names and locations in Python 2::
     import socketserver
     import queue
     from collections import UserDict, UserList, UserString
-    from collections import Counter, OrderedDict, ChainMap   # even on Py2.6
+    from collections import ChainMap  # even on Py2.7
     from itertools import filterfalse, zip_longest
 
     import html
@@ -136,7 +126,7 @@ upon import. First, install the Python 2-only package into your Python 3
 environment::
 
     $ pip3 install mypackagename --no-compile   # to ignore SyntaxErrors
-    
+
 (or use ``pip`` if this points to your Py3 environment.)
 
 Then add the following code at the top of your (Py3 or Py2/3-compatible)

@@ -196,5 +196,3 @@ if __name__ == '__main__':
     # c = encodefilename(b)
     # assert c == fn, '%r != %r' % (c, fn)
     # # print("ok")
-
-

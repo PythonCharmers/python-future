@@ -3,14 +3,37 @@
 What's New
 **********
 
-.. _whats-new-0.16.x:
+What's new in version 0.17.1 (2019-10-30)
+=========================================
+This release address a packaging error because of an erroneous declaration that
+any built wheels are universal.
 
-What's new in version 0.16.0 (2016-09-22)
+What's new in version 0.17.0 (2018-10-19)
+=========================================
+
+This is a major bug-fix release, including:
+
+- Fix ``from collections import ChainMap`` after install_aliases() (issue #226)
+- Fix multiple import from ``__future__`` bug in futurize (issue #113)
+- Add support for proper %s formatting of newbytes
+- Properly implement iterator protocol for newrange object
+- Fix ``past.translation`` on read-only file systems
+- Fix Tkinter import bug introduced in Python 2.7.4 (issue #262)
+- Correct TypeError to ValueError in a specific edge case for newrange
+- Support inequality tests betwen newstrs and newbytes
+- Add type check to __get__ in newsuper
+- Fix fix_divsion_safe to support better conversion of complex expressions, and
+  skip obvious float division.
+
+As well as a number of corrections to a variety of documentation, and updates to
+test infrastructure.
+
+What's new in version 0.16.0 (2016-10-27)
 ==========================================
 
 This release removes the ``configparser`` package as an alias for
 ``ConfigParser`` on Py2 to improve compatibility with the backported
-`configparser package <https://pypi.python.org/pypi/configparser>`. Previously
+`configparser package <https://pypi.org/project/configparser/>`. Previously
 ``python-future`` and the PyPI ``configparser`` backport clashed, causing
 various compatibility issues. (Issues #118, #181)
 
@@ -26,18 +49,18 @@ effect on your system.
 This releases also fixes these bugs:
 
 - Fix ``newbytes`` constructor bug. (Issue #163)
-- Fix semantics of `bool()` with `newobject`. (Issue #211)
-- Fix `standard_library.install_aliases()` on PyPy. (Issue #205)
-- Fix assertRaises for `pow` and `compile` on Python 3.5. (Issue #183)
-- Fix return argument of `future.utils.ensure_new_type` if conversion to
+- Fix semantics of ``bool()`` with ``newobject``. (Issue #211)
+- Fix ``standard_library.install_aliases()`` on PyPy. (Issue #205)
+- Fix assertRaises for ``pow`` and ``compile``` on Python 3.5. (Issue #183)
+- Fix return argument of ``future.utils.ensure_new_type`` if conversion to
   new type does not exist. (Issue #185)
-- Add missing `cmp_to_key` for Py2.6. (Issue #189)
-- Allow the `old_div` fixer to be disabled. (Issue #190)
+- Add missing ``cmp_to_key`` for Py2.6. (Issue #189)
+- Allow the ``old_div`` fixer to be disabled. (Issue #190)
 - Improve compatibility with Google App Engine. (Issue #231)
-- Add some missing imports to the `tkinter` and `tkinter.filedialog`
+- Add some missing imports to the ``tkinter`` and ``tkinter.filedialog``
   package namespaces. (Issues #212 and #233)
-- Fix ``raise_from`` on PY3 when the exception cannot be recreated from
-  its repr. (Issues #213 and #235, fix provided by Varriount)
+- More complete implementation of ``raise_from`` on PY3. (Issues #141,
+  #213 and #235, fix provided by Varriount)
 
 
 What's new in version 0.15.2 (2015-09-11)
