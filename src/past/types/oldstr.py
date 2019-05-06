@@ -4,7 +4,12 @@ Pure-Python implementation of a Python 2-like str object for Python 3.
 
 from numbers import Integral
 
-from past.utils import with_metaclass
+from past.utils import PY2, with_metaclass
+
+if PY2:
+    from collections import Iterable
+else:
+    from collections.abc import Iterable
 
 _builtin_bytes = bytes
 

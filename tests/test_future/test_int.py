@@ -344,7 +344,7 @@ class IntTestCases(unittest.TestCase):
 
         class Foo3(int):
             def __int__(self):
-                return self
+                return self.real
 
         class Foo4(int):
             def __int__(self):
@@ -1069,12 +1069,12 @@ class IntTestCases(unittest.TestCase):
         """
         Issue #96 (for newint instead of newobject)
         """
-        import collections
+        import collections.abc
 
         class Base(int):
             pass
 
-        class Foo(Base, collections.Container):
+        class Foo(Base, collections.abc.Container):
             def __add__(self, other):
                 return 0
 
