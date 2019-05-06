@@ -1361,6 +1361,7 @@ class TestConservativeFuturize(CodeHandler):
         """
         self.convert_check(before, after, conservative=True)
 
+
 class TestFuturizeAllImports(CodeHandler):
     """
     Tests "futurize --all-imports".
@@ -1378,14 +1379,14 @@ class TestFuturizeAllImports(CodeHandler):
         print('Hello')
         """
         after = """
-        from __future__ import unicode_literals
-        from __future__ import print_function
-        from __future__ import division
         from __future__ import absolute_import
+        from __future__ import division
+        from __future__ import print_function
+        from __future__ import unicode_literals
         from future import standard_library
         standard_library.install_aliases()
-        from builtins import range
         from builtins import *
+        from builtins import range
         import math
         import os
         l = list(range(10))
@@ -1395,7 +1396,7 @@ class TestFuturizeAllImports(CodeHandler):
             pass
         print('Hello')
         """
-        self.convert_check(before, after, all_imports=True)
+        self.convert_check(before, after, all_imports=True, ignore_imports=False)
 
 
 if __name__ == '__main__':

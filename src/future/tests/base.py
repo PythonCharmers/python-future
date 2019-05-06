@@ -272,7 +272,11 @@ class CodeHandler(unittest.TestCase):
         else:
             headers = ''
 
-        self.compare(output, headers + reformat_code(expected),
+        reformatted = reformat_code(expected)
+        if headers in reformatted:
+            headers = ''
+
+        self.compare(output, headers + reformatted,
                      ignore_imports=ignore_imports)
 
     def unchanged(self, code, **kwargs):
