@@ -274,6 +274,16 @@ class TestNewObject(unittest.TestCase):
 
         self.assertFalse(bool(FalseThing()))
 
+    def test_cannot_assign_new_attributes_to_object(self):
+        """
+        New attributes cannot be assigned to object() instances in Python.
+        The same should apply to newobject.
+        """
+        from builtins import object
+
+        with self.assertRaises(AttributeError):
+          object().arbitrary_attribute_name = True
+
 
 if __name__ == '__main__':
     unittest.main()
