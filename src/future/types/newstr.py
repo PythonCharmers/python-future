@@ -105,6 +105,7 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
         """
         Without the u prefix
         """
+
         value = super(newstr, self).__repr__()
         # assert value[0] == u'u'
         return value[1:]
@@ -291,6 +292,13 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
             return super(newstr, self).__eq__(other)
         else:
             return False
+
+    def __hash__(self):
+        if (isinstance(self, unicode) or
+            isinstance(self, bytes) and not isnewbytes(self)):
+            return super(newstr, self).__hash__()
+        else:
+            raise NotImplementedError()
 
     def __ne__(self, other):
         if (isinstance(other, unicode) or
