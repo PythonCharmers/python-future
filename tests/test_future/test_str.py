@@ -363,6 +363,10 @@ class TestStr(unittest.TestCase):
             self.assertFalse(b'ABCD' == s)
         self.assertFalse(bytes(b'ABCD') == s)
 
+    def test_hash(self):
+        s = str('ABCD')
+        self.assertIsInstance(hash(s),int)
+
     def test_ne(self):
         s = str('ABCD')
         self.assertNotEqual('A', s)
