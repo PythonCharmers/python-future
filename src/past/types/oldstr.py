@@ -11,7 +11,6 @@ if PY2:
 else:
     from collections.abc import Iterable
 
-
 _builtin_bytes = bytes
 
 

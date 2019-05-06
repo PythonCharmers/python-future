@@ -1270,7 +1270,7 @@ urllib module
 ~~~~~~~~~~~~~
 
 ``urllib`` is the hardest module to use from Python 2/3 compatible code.
-You may like to use Requests (http://python-requests.org) instead.
+You might want to switch to Requests (http://python-requests.org) instead.
 
 .. code:: python
 

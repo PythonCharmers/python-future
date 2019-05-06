@@ -55,7 +55,7 @@ import copy
 import inspect
 
 
-PY3 = sys.version_info[0] == 3
+PY3 = sys.version_info[0] >= 3
 PY35_PLUS = sys.version_info[0:2] >= (3, 5)
 PY36_PLUS = sys.version_info[0:2] >= (3, 6)
 PY2 = sys.version_info[0] == 2
@@ -443,12 +443,14 @@ else:
         e.__suppress_context__ = False
         if isinstance(cause, type) and issubclass(cause, Exception):
             e.__cause__ = cause()
+            e.__cause__.__traceback__ = sys.exc_info()[2]
             e.__suppress_context__ = True
         elif cause is None:
             e.__cause__ = None
             e.__suppress_context__ = True
         elif isinstance(cause, BaseException):
             e.__cause__ = cause
+            e.__cause__.__traceback__ = sys.exc_info()[2]
             e.__suppress_context__ = True
         else:
             raise TypeError("exception causes must derive from BaseException")

@@ -432,7 +432,7 @@ def install_hooks(include_paths=(), exclude_paths=()):
     _hook.include(include_paths)
     _hook.exclude(exclude_paths)
     # _hook.debug = debug
-    enable = sys.version_info[0] >= 3   # enabled for all 3.x
+    enable = sys.version_info[0] >= 3   # enabled for all 3.x+
     if enable and _hook not in sys.meta_path:
         sys.meta_path.insert(0, _hook)  # insert at beginning. This could be made a parameter
 

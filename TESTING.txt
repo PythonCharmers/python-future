@@ -4,4 +4,10 @@ The test suite can be run with:
 
     $ tox
 
-which tests the module under a number of different python versions, where available.
+which tests the module under a number of different python versions, where available, or with:
+
+    $ py.test
+
+To execute a single test:
+
+    $ pytest -k test_chained_exceptions_stacktrace
