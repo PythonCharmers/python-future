@@ -363,6 +363,19 @@ class TestStr(unittest.TestCase):
             self.assertFalse(b'ABCD' == s)
         self.assertFalse(bytes(b'ABCD') == s)
 
+        class OurCustomString(object):
+            def __init__(self, string):
+                self.string = string
+
+            def __str__(self):
+                return self.string
+
+        our_str = OurCustomString("foobar")
+        new_str = str("foobar")
+
+        self.assertFalse(our_str == new_str)
+        self.assertFalse(new_str == our_str)
+
     def test_hash(self):
         s = str('ABCD')
         self.assertIsInstance(hash(s),int)
