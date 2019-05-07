@@ -13,6 +13,8 @@ The builtin functions are:
 - ``open`` (equivalent to io.open on Py2)
 - ``super`` (backport of Py3's magic zero-argument super() function
 - ``round`` (new "Banker's Rounding" behaviour from Py3)
+- ``max`` (new max behaviour from Py3)
+- ``min`` (new min behaviour from Py3)
 
 ``isinstance`` is also currently exported for backwards compatibility
 with v0.8.2, although this has been deprecated since v0.9.
@@ -59,6 +61,8 @@ if utils.PY2:
     from future.builtins.newnext import newnext as next
     from future.builtins.newround import newround as round
     from future.builtins.newsuper import newsuper as super
+    from future.builtins.new_min_max import newmax as max
+    from future.builtins.new_min_max import newmin as min
     from future.types.newint import newint
 
     _SENTINEL = object()
@@ -89,11 +93,12 @@ if utils.PY2:
             else:
                 return _builtin_pow(x+0j, y, z)
 
+
     # ``future`` doesn't support Py3.0/3.1. If we ever did, we'd add this:
     #     callable = __builtin__.callable
 
     __all__ = ['ascii', 'chr', 'hex', 'input', 'isinstance', 'next', 'oct',
-               'open', 'pow', 'round', 'super']
+               'open', 'pow', 'round', 'super', 'max', 'min']
 
 else:
     import builtins
@@ -109,6 +114,8 @@ else:
     pow = builtins.pow
     round = builtins.round
     super = builtins.super
+    max = builtins.max
+    min = builtins.min
 
     __all__ = []
 
