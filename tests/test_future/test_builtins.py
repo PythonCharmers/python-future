@@ -138,7 +138,6 @@ class TestBuiltins(unittest.TestCase):
         self.assertEqual(round(0.125000001, 2), 0.13)
         self.assertEqual(round(123.5, 0), 124.0)
         self.assertEqual(round(123.5), 124)
-        self.assertEqual(round(123.5), 124)
         self.assertEqual(round(12.35, 2), 12.35)
         self.assertEqual(round(12.35, 1), 12.3)
         self.assertEqual(round(12.35, 0), 12.0)

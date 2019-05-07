@@ -13,8 +13,8 @@ The builtin functions are:
 - ``open`` (equivalent to io.open on Py2)
 - ``super`` (backport of Py3's magic zero-argument super() function
 - ``round`` (new "Banker's Rounding" behaviour from Py3)
-- ``max`` (new max behaviour from Py3)
-- ``min`` (new min behaviour from Py3)
+- ``max`` (new default option from Py3)
+- ``min`` (new default option from Py3)
 
 ``isinstance`` is also currently exported for backwards compatibility
 with v0.8.2, although this has been deprecated since v0.9.
