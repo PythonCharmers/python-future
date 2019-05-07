@@ -13,8 +13,8 @@ The builtin functions are:
 - ``open`` (equivalent to io.open on Py2)
 - ``super`` (backport of Py3's magic zero-argument super() function
 - ``round`` (new "Banker's Rounding" behaviour from Py3)
-- ``max`` (new default option from Py3)
-- ``min`` (new default option from Py3)
+- ``max`` (new default option from Py3.4)
+- ``min`` (new default option from Py3.4)
 
 ``isinstance`` is also currently exported for backwards compatibility
 with v0.8.2, although this has been deprecated since v0.9.
@@ -99,6 +99,11 @@ if utils.PY2:
 
     __all__ = ['ascii', 'chr', 'hex', 'input', 'isinstance', 'next', 'oct',
                'open', 'pow', 'round', 'super', 'max', 'min']
+
+elif not utils.PY34_PLUS:
+    from future.builtins.new_min_max import newmax as max
+    from future.builtins.new_min_max import newmin as min
+    __all__ = ['min', 'max']
 
 else:
     import builtins
