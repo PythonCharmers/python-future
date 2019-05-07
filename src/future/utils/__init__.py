@@ -56,6 +56,7 @@ import inspect
 
 
 PY3 = sys.version_info[0] >= 3
+PY34_PLUS = sys.version_info[0:2] >= (3, 4)
 PY35_PLUS = sys.version_info[0:2] >= (3, 5)
 PY36_PLUS = sys.version_info[0:2] >= (3, 6)
 PY2 = sys.version_info[0] == 2
