@@ -100,11 +100,6 @@ if utils.PY2:
     __all__ = ['ascii', 'chr', 'hex', 'input', 'isinstance', 'next', 'oct',
                'open', 'pow', 'round', 'super', 'max', 'min']
 
-elif not utils.PY34_PLUS:
-    from future.builtins.new_min_max import newmax as max
-    from future.builtins.new_min_max import newmin as min
-    __all__ = ['min', 'max']
-
 else:
     import builtins
     ascii = builtins.ascii
@@ -119,10 +114,14 @@ else:
     pow = builtins.pow
     round = builtins.round
     super = builtins.super
-    max = builtins.max
-    min = builtins.min
-
-    __all__ = []
+    if utils.PY34_PLUS:
+        max = builtins.max
+        min = builtins.min
+        __all__ = []
+    else:
+        from future.builtins.new_min_max import newmax as max
+        from future.builtins.new_min_max import newmin as min
+        __all__ = ['min', 'max']
 
     # The callable() function was removed from Py3.0 and 3.1 and
     # reintroduced into Py3.2+. ``future`` doesn't support Py3.0/3.1. If we ever
