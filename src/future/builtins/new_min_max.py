@@ -1,4 +1,8 @@
-from __builtin__ import max as _builtin_max, min as _builtin_min
+from future import utils
+if utils.PY2:
+    from __builtin__ import max as _builtin_max, min as _builtin_min
+else:
+    from builtins import max as _builtin_max, min as _builtin_min
 
 
 def newmin(*args, **kwargs):
