@@ -6,7 +6,7 @@ Tests to make sure the behaviour of the builtins is sensible and correct.
 from __future__ import absolute_import, division, print_function, unicode_literals
 from future.builtins import (bytes, dict, int, range, round, str, super,
                              ascii, chr, hex, input, next, oct, open, pow,
-                             filter, map, zip)
+                             filter, map, zip, min, max)
 
 from future.utils import PY3, exec_, native_str, implements_iterator
 from future.tests.base import (unittest, skip26, expectedFailurePY2,
@@ -137,6 +137,7 @@ class TestBuiltins(unittest.TestCase):
         self.assertEqual(round(0.1251, 2), 0.13)
         self.assertEqual(round(0.125000001, 2), 0.13)
         self.assertEqual(round(123.5, 0), 124.0)
+        self.assertEqual(round(123.5), 124)
         self.assertEqual(round(123.5), 124)
         self.assertEqual(round(12.35, 2), 12.35)
         self.assertEqual(round(12.35, 1), 12.3)
@@ -1099,6 +1100,13 @@ class BuiltinTest(unittest.TestCase):
         self.assertEqual(max(data, key=f),
                          sorted(reversed(data), key=f)[-1])
 
+        self.assertEqual(max([], default=5), 5)
+        with self.assertRaises(TypeError):
+            max(None, default=5)
+        with self.assertRaises(TypeError):
+            max(1, 2, default=0)
+        self.assertEqual(max([], default=0), 0)
+
     def test_min(self):
         self.assertEqual(min('123123'), '1')
         self.assertEqual(min(1, 2, 3), 1)
@@ -1140,6 +1148,12 @@ class BuiltinTest(unittest.TestCase):
         f = keys.__getitem__
         self.assertEqual(min(data, key=f),
                          sorted(data, key=f)[0])
+        self.assertEqual(min([], default=5), 5)
+        self.assertEqual(min([], default=0), 0)
+        with self.assertRaises(TypeError):
+            max(None, default=5)
+        with self.assertRaises(TypeError):
+            max(1, 2, default=0)
 
     def test_next(self):
         it = iter(range(2))

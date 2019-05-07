@@ -19,14 +19,19 @@ def new_min_max(_builtin_func, *args, **kwargs):
     """
 
     for key, _ in kwargs.items():
-        if key not in set(['key', 'default']):
+        if key not in {'key', 'default'}:
             raise TypeError('Illegal argument %s', key)
+
+    if len(args) == 0:
+        raise TypeError
 
     if len(args) != 1 and kwargs.get('default') is not None:
         raise TypeError
 
     if len(args) == 1:
-        if len(args[0]) == 0:
+        try:
+            next(iter(args[0]))
+        except StopIteration:
             if kwargs.get('default') is not None:
                 return kwargs.get('default')
             else:
