@@ -237,7 +237,7 @@ The complete list of fixers applied in Stage 2 is::
     lib2to3.fixes.fix_operator
     lib2to3.fixes.fix_raw_input
     lib2to3.fixes.fix_zip
-    
+
     libfuturize.fixes.fix_basestring
     libfuturize.fixes.fix_cmp
     libfuturize.fixes.fix_division_safe
@@ -267,6 +267,7 @@ Not applied::
                                 # unicode/byte strings.
     lib2to3.fixes.fix_urllib    # Included in libfuturize.fix_future_standard_library_urllib
     lib2to3.fixes.fix_xrange    # Custom one because of a bug with Py3.3's lib2to3
+
 
 
 .. Ideally the output of this stage should not be a ``SyntaxError`` on either

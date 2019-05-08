@@ -209,12 +209,15 @@ class TestNewObject(unittest.TestCase):
         """
         Issue #96
         """
-        import collections
+        if utils.PY2:
+            from collections import Container
+        else:
+            from collections.abc import Container
 
         class Base(object):
             pass
 
-        class Foo(Base, collections.Container):
+        class Foo(Base, Container):
             def __contains__(self, item):
                 return False
 
@@ -270,6 +273,16 @@ class TestNewObject(unittest.TestCase):
                 raise RuntimeError('__len__ should not be called')
 
         self.assertFalse(bool(FalseThing()))
+
+    def test_cannot_assign_new_attributes_to_object(self):
+        """
+        New attributes cannot be assigned to object() instances in Python.
+        The same should apply to newobject.
+        """
+        from builtins import object
+
+        with self.assertRaises(AttributeError):
+          object().arbitrary_attribute_name = True
 
 
 if __name__ == '__main__':

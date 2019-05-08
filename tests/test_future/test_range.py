@@ -6,8 +6,14 @@ Tests for the backported class:`range` class.
 from future.builtins import range
 from future.tests.base import unittest
 
-from collections import Iterator, Sequence
 from operator import attrgetter
+
+from future.utils import PY2
+
+if PY2:
+    from collections import Iterator, Sequence
+else:
+    from collections.abc import Iterator, Sequence
 
 
 class RangeTests(unittest.TestCase):
@@ -192,7 +198,7 @@ class RangeTests(unittest.TestCase):
 
     def test_slice_zero_step(self):
         msg = '^slice step cannot be zero$'
-        with self.assertRaisesRegexp(ValueError, msg):
+        with self.assertRaisesRegex(ValueError, msg):
             range(8)[::0]
 
     def test_properties(self):
