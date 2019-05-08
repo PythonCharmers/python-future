@@ -31,10 +31,10 @@ The goal for this step is to modernize the Python 2 code without introducing any
           pip install future
 
 **1b**. Run ``futurize --stage1 -w *.py subdir1/*.py subdir2/*.py``. Note that with
-recursive globbing in ``bash`` or ``zsh``, you can apply stage 1 to all Python
-source files recursively with::
+recursive globbing in ``bash`` or ``zsh``, you can apply stage 1 to all source files
+recursively with::
 
-        futurize --stage1 -w **/*.py
+        futurize --stage1 -w .
 
 **1c**. Commit all changes
 
@@ -79,10 +79,9 @@ again with the help of the ``future`` package.
 
         futurize --stage2 myfolder1/*.py myfolder2/*.py
 
-Or, using recursive globbing with ``bash`` or ``zsh``, you can view the stage 2
-changes to all Python source files recursively with::
+You can view the stage 2 changes to all Python source files recursively with::
 
-    futurize --stage2 **/*.py
+    futurize --stage2 .
 
 To apply the changes, add the ``-w`` argument.
 
