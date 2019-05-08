@@ -48,7 +48,7 @@ effect on your system.
 
 This releases also fixes these bugs:
 
-- Fix ``newbytes`` constructor bug. (Issue #163)
+- Fix ``newbytes`` constructor bug. (Issue #171)
 - Fix semantics of ``bool()`` with ``newobject``. (Issue #211)
 - Fix ``standard_library.install_aliases()`` on PyPy. (Issue #205)
 - Fix assertRaises for ``pow`` and ``compile``` on Python 3.5. (Issue #183)
