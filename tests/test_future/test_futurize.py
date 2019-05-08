@@ -453,6 +453,81 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after, ignore_imports=False)
 
+    def test_filter(self):
+        """
+        Tests correct handling of itertools.ifilter
+        """
+        before = """
+        import itertools
+        itertools.ifilter(lambda x: x%2, [1, 2, 3, 4])
+        """
+        after = """
+        from builtins import filter
+        import itertools
+        filter(lambda x: x%2, [1, 2, 3, 4])
+        """
+        self.convert_check(before, after, ignore_imports=False)
+        before = """
+        from itertools import ifilter
+        ifilter(lambda x: x%2, [1, 2, 3, 4])
+        """
+        after = """
+        from builtins import filter
+
+        filter(lambda x: x%2, [1, 2, 3, 4])
+        """
+        self.convert_check(before, after, ignore_imports=False)
+
+    def test_map(self):
+        """
+        Tests correct handling of itertools.imap
+        """
+        before = """
+        import itertools
+        itertools.imap(pow, (2,3,10), (5,2,3))
+        """
+        after = """
+        from builtins import map
+        import itertools
+        map(pow, (2,3,10), (5,2,3))
+        """
+        self.convert_check(before, after, ignore_imports=False)
+        before = """
+        from itertools import imap
+        imap(pow, (2,3,10), (5,2,3))
+        """
+        after = """
+        from builtins import map
+
+        map(pow, (2,3,10), (5,2,3))
+        """
+        self.convert_check(before, after, ignore_imports=False)
+
+    def test_zip(self):
+        """
+        Tests correct handling of itertools.izip
+        """
+        before = """
+        import itertools
+        itertools.izip('ABCD', 'xy')
+        """
+        after = """
+        from builtins import zip
+        import itertools
+        zip('ABCD', 'xy')
+        """
+        self.convert_check(before, after, ignore_imports=False)
+        before = """
+        from itertools import izip
+        izip('ABCD', 'xy')
+        """
+        after = """
+        from builtins import zip
+
+        zip('ABCD', 'xy')
+        """
+        self.convert_check(before, after, ignore_imports=False)
+
     def test_source_coding_utf8(self):
         """
         Tests to ensure that the source coding line is not corrupted or

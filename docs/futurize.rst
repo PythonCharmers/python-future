@@ -103,6 +103,7 @@ The complete set of fixers applied by ``futurize --stage1`` is:
     lib2to3.fixes.fix_ws_comma
     lib2to3.fixes.fix_xreadlines
     libfuturize.fixes.fix_absolute_import
+    libfuturize.fixes.fix_itertools
     libfuturize.fixes.fix_next_call
     libfuturize.fixes.fix_print_with_import
     libfuturize.fixes.fix_raise
