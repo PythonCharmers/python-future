@@ -363,18 +363,24 @@ class TestStr(unittest.TestCase):
             self.assertFalse(b'ABCD' == s)
         self.assertFalse(bytes(b'ABCD') == s)
 
+        # We want to ensure comparison against unknown types return
+        # NotImplemented so that the interpreter can rerun the test with the
+        # other class.  We expect the operator to return False if both return
+        # NotImplemented.
         class OurCustomString(object):
             def __init__(self, string):
                 self.string = string
 
-            def __str__(self):
-                return self.string
+            def __eq__(self, other):
+                return NotImplemented
 
         our_str = OurCustomString("foobar")
         new_str = str("foobar")
 
         self.assertFalse(our_str == new_str)
         self.assertFalse(new_str == our_str)
+        self.assertIs(new_str.__eq__(our_str), NotImplemented)
+        self.assertIs(our_str.__eq__(new_str), NotImplemented)
 
     def test_hash(self):
         s = str('ABCD')

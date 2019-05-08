@@ -291,7 +291,7 @@ class newstr(with_metaclass(BaseNewStr, unicode)):
             isinstance(other, bytes) and not isnewbytes(other)):
             return super(newstr, self).__eq__(other)
         else:
-            return False
+            return NotImplemented
 
     def __hash__(self):
         if (isinstance(self, unicode) or
