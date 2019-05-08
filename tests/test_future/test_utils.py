@@ -110,11 +110,7 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(isbytes(self.s))
         self.assertFalse(isbytes(self.s2))
 
-    @unittest.skipIf(PY3, 'test_raise_ currently fails on Py3')
     def test_raise_(self):
-        """
-        The with_value() test currently fails on Py3
-        """
         def valerror():
             try:
                 raise ValueError("Apples!")
@@ -172,6 +168,23 @@ class TestUtils(unittest.TestCase):
         except ValueError as e:
             pass
         # incorrectly raises a TypeError on Py3 as of v0.15.2.
+
+    def test_raise_custom_exception(self):
+        """
+        Test issue #387.
+        """
+        class CustomException(Exception):
+            def __init__(self, severity, message):
+                super().__init__("custom message of severity %d: %s" % (
+                    severity, message))
+
+        def raise_custom_exception():
+            try:
+                raise CustomException(1, "hello")
+            except CustomException:
+                raise_(*sys.exc_info())
+
+        self.assertRaises(CustomException, raise_custom_exception)
 
     @skip26
     def test_as_native_str(self):
