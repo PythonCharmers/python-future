@@ -107,7 +107,6 @@ The complete set of fixers applied by ``futurize --stage1`` is:
     libfuturize.fixes.fix_print_with_import
     libfuturize.fixes.fix_raise
 
-
 The following fixers from ``lib2to3`` are not applied:
 
 .. code-block:: python
@@ -226,13 +225,14 @@ becomes::
 The complete list of fixers applied in Stage 2 is::
 
     lib2to3.fixes.fix_dict
+    lib2to3.fixes.fix_filter
     lib2to3.fixes.fix_getcwdu
     lib2to3.fixes.fix_input
     lib2to3.fixes.fix_itertools
     lib2to3.fixes.fix_itertools_imports
-    lib2to3.fixes.fix_filter
     lib2to3.fixes.fix_long
     lib2to3.fixes.fix_map
+    lib2to3.fixes.fix_next
     lib2to3.fixes.fix_nonzero
     lib2to3.fixes.fix_operator
     lib2to3.fixes.fix_raw_input
