@@ -406,12 +406,34 @@ if PY3:
         allows re-raising exceptions with the cls value and traceback on
         Python 2 and 3.
         """
-        if value is not None and isinstance(tp, Exception):
-            raise TypeError("instance exception may not have a separate value")
-        if value is not None:
-            exc = tp(value)
-        else:
+        if isinstance(tp, Exception):
+            # If the first object is an instance, the type of the exception
+            # is the class of the instance, the instance itself is the value,
+            # and the second object must be None.
+            if value is not None:
+                raise TypeError("instance exception may not have a separate value")
             exc = tp
+        elif not issubclass(tp, Exception):
+            # If the first object is a class, it becomes the type of the
+            # exception.
+            raise TypeError("class must derive from Exception")
+        else:
+            # The second object is used to determine the exception value: If it
+            # is an instance of the class, the instance becomes the exception
+            # value. If the second object is a tuple, it is used as the argument
+            # list for the class constructor; if it is None, an empty argument
+            # list is used, and any other object is treated as a single argument
+            # to the constructor. The instance so created by calling the
+            # constructor is used as the exception value.
+            if isinstance(value, tp):
+                exc = value
+            elif isinstance(value, tuple):
+                exc = tp(*value)
+            elif value is None:
+                exc = tp()
+            else:
+                exc = tp(value)
+
         if exc.__traceback__ is not tb:
             raise exc.with_traceback(tb)
         raise exc
