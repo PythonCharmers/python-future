@@ -696,9 +696,19 @@ class HTTPResponse(io.RawIOBase):
         while total_bytes < len(b):
             if MAXAMOUNT < len(mvb):
                 temp_mvb = mvb[0:MAXAMOUNT]
-                n = self.fp.readinto(temp_mvb)
+                if PY2:
+                    data = self.fp.read(len(temp_mvb))
+                    n = len(data)
+                    temp_mvb[:n] = data
+                else:
+                    n = self.fp.readinto(temp_mvb)
             else:
-                n = self.fp.readinto(mvb)
+                if PY2:
+                    data = self.fp.read(len(mvb))
+                    n = len(data)
+                    mvb[:n] = data
+                else:
+                    n = self.fp.readinto(mvb)
             if not n:
                 raise IncompleteRead(bytes(mvb[0:total_bytes]), len(b))
             mvb = mvb[n:]
