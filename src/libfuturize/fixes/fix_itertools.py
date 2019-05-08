@@ -37,7 +37,7 @@ class FixMap(fixer_base.BaseFix):
               power<
                  ({0}) trailer< '(' args=[any] ')' >
               rest=any* >
-              """.format(map_rexpression)
+              """.format(map_expression)
 
     def transform(self, node, results):
         touch_import_top(u'builtins', 'map', node)
