@@ -18,14 +18,11 @@ if PY3:
     import builtins
     bytes = builtins.bytes
     dict = builtins.dict
-    filter = builtins.filter
     int = builtins.int
     list = builtins.list
-    map = builtins.map
     object = builtins.object
     range = builtins.range
     str = builtins.str
-    zip = builtins.zip
     __all__ = []
 else:
     from future.types import (newbytes as bytes,
@@ -35,9 +32,6 @@ else:
                               newobject as object,
                               newrange as range,
                               newstr as str)
-    from itertools import (ifilter as filter,
-                           imap as map,
-                           izip as zip)
 from future import utils
 
 

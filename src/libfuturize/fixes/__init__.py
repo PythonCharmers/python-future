@@ -69,7 +69,6 @@ lib2to3_fix_names_stage2 = set([
 
 libfuturize_fix_names_stage1 = set([
     'libfuturize.fixes.fix_absolute_import',
-    'libfuturize.fixes.fix_itertools',
     'libfuturize.fixes.fix_next_call',  # obj.next() -> next(obj). Unlike
                                         # lib2to3.fixes.fix_next, doesn't change
                                         # the ``next`` method to ``__next__``.
