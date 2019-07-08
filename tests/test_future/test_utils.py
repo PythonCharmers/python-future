@@ -368,7 +368,8 @@ ValueError: Wooops
                 except ValueError as val_err:
                     raise_from(CustomException('ERROR'), val_err)
             except Exception as err:
-                self.assertEqual(expected.splitlines(), traceback.format_exc().splitlines())
+                ret = re.sub(r'"[^"]*tests/test_future', '"/opt/python-future/tests/test_future', traceback.format_exc())
+                self.assertEqual(expected.splitlines(), ret.splitlines())
             else:
                 self.fail('No exception raised')
 
