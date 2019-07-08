@@ -4,7 +4,7 @@ Tests for the various utility functions and classes in ``future.utils``
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
-import sys, traceback
+import re, sys, traceback
 from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
                          native_str, raise_, as_native_str, ensure_new_type,
@@ -335,12 +335,14 @@ class TestCause(unittest.TestCase):
         if PY2:
             expected += 'CustomException: ERROR\n'
         else:
-            expected += 'tests.test_future.test_utils.CustomException: ERROR\n'
+            expected += 'test_future.test_utils.CustomException: ERROR\n'
 
         try:
             raise CustomException('ERROR')
         except:
-            self.assertEqual(expected, traceback.format_exc())
+            ret = re.sub(r'"[^"]*tests/test_future', '"/opt/python-future/tests/test_future', traceback.format_exc())
+            ret = re.sub(r', line \d+,', ', line 328,', ret)
+            self.assertEqual(expected, ret)
         else:
             self.fail('No exception raised')
 
