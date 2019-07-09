@@ -349,15 +349,15 @@ class TestCause(unittest.TestCase):
     if PY2:
         def test_chained_exceptions_stacktrace(self):
             expected = '''Traceback (most recent call last):
-  File "/opt/python-future/tests/test_future/test_utils.py", line 354, in test_chained_exceptions_stacktrace
+  File "/opt/python-future/tests/test_future/test_utils.py", line 1, in test_chained_exceptions_stacktrace
     raise_from(CustomException('ERROR'), val_err)
-  File "/opt/python-future/src/future/utils/__init__.py", line 456, in raise_from
+  File "/opt/python-future/src/future/utils/__init__.py", line 1, in raise_from
     raise e
 CustomException: ERROR
 
 The above exception was the direct cause of the following exception:
 
-  File "/opt/python-future/tests/test_future/test_utils.py", line 352, in test_chained_exceptions_stacktrace
+  File "/opt/python-future/tests/test_future/test_utils.py", line 1, in test_chained_exceptions_stacktrace
     raise ValueError('Wooops')
 ValueError: Wooops
 '''
@@ -368,7 +368,10 @@ ValueError: Wooops
                 except ValueError as val_err:
                     raise_from(CustomException('ERROR'), val_err)
             except Exception as err:
-                self.assertEqual(expected.splitlines(), traceback.format_exc().splitlines())
+                ret = re.sub(r'"[^"]*tests/test_future', '"/opt/python-future/tests/test_future', traceback.format_exc())
+                ret = re.sub(r'"[^"]*future/utils/__init__.py', '"/opt/python-future/src/future/utils/__init__.py', ret)
+                ret = re.sub(r', line \d+,', ', line 1,', ret)
+                self.assertEqual(expected.splitlines(), ret.splitlines())
             else:
                 self.fail('No exception raised')
 
