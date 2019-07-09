@@ -369,6 +369,7 @@ ValueError: Wooops
                     raise_from(CustomException('ERROR'), val_err)
             except Exception as err:
                 ret = re.sub(r'"[^"]*tests/test_future', '"/opt/python-future/tests/test_future', traceback.format_exc())
+                ret = re.sub(r'"[^"]*src/future', '"/opt/python-future/src/future', traceback.format_exc())
                 ret = re.sub(r', line \d+,', ', line 1,', ret)
                 self.assertEqual(expected.splitlines(), ret.splitlines())
             else:
