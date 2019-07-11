@@ -25,4 +25,3 @@ recursive-include tests *.au
 recursive-include tests *.gif
 recursive-include tests *.py
 recursive-include tests *.txt
-

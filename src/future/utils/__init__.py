@@ -18,7 +18,7 @@ This module exports useful functions for 2/3 compatible code:
     * types:
 
         * text_type: unicode in Python 2, str in Python 3
-        * binary_type: str in Python 2, bythes in Python 3
+        * binary_type: str in Python 2, bytes in Python 3
         * string_types: basestring in Python 2, str in Python 3
 
     * bchr(c):
@@ -55,7 +55,10 @@ import copy
 import inspect
 
 
-PY3 = sys.version_info[0] == 3
+PY3 = sys.version_info[0] >= 3
+PY34_PLUS = sys.version_info[0:2] >= (3, 4)
+PY35_PLUS = sys.version_info[0:2] >= (3, 5)
+PY36_PLUS = sys.version_info[0:2] >= (3, 6)
 PY2 = sys.version_info[0] == 2
 PY26 = sys.version_info[0:2] == (2, 6)
 PY27 = sys.version_info[0:2] == (2, 7)
@@ -403,12 +406,34 @@ if PY3:
         allows re-raising exceptions with the cls value and traceback on
         Python 2 and 3.
         """
-        if value is not None and isinstance(tp, Exception):
-            raise TypeError("instance exception may not have a separate value")
-        if value is not None:
-            exc = tp(value)
-        else:
+        if isinstance(tp, Exception):
+            # If the first object is an instance, the type of the exception
+            # is the class of the instance, the instance itself is the value,
+            # and the second object must be None.
+            if value is not None:
+                raise TypeError("instance exception may not have a separate value")
             exc = tp
+        elif not issubclass(tp, Exception):
+            # If the first object is a class, it becomes the type of the
+            # exception.
+            raise TypeError("class must derive from Exception")
+        else:
+            # The second object is used to determine the exception value: If it
+            # is an instance of the class, the instance becomes the exception
+            # value. If the second object is a tuple, it is used as the argument
+            # list for the class constructor; if it is None, an empty argument
+            # list is used, and any other object is treated as a single argument
+            # to the constructor. The instance so created by calling the
+            # constructor is used as the exception value.
+            if isinstance(value, tp):
+                exc = value
+            elif isinstance(value, tuple):
+                exc = tp(*value)
+            elif value is None:
+                exc = tp()
+            else:
+                exc = tp(value)
+
         if exc.__traceback__ is not tb:
             raise exc.with_traceback(tb)
         raise exc
@@ -441,12 +466,14 @@ else:
         e.__suppress_context__ = False
         if isinstance(cause, type) and issubclass(cause, Exception):
             e.__cause__ = cause()
+            e.__cause__.__traceback__ = sys.exc_info()[2]
             e.__suppress_context__ = True
         elif cause is None:
             e.__cause__ = None
             e.__suppress_context__ = True
         elif isinstance(cause, BaseException):
             e.__cause__ = cause
+            e.__cause__.__traceback__ = sys.exc_info()[2]
             e.__suppress_context__ = True
         else:
             raise TypeError("exception causes must derive from BaseException")

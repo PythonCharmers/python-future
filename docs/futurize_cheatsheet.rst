@@ -13,11 +13,11 @@ Step 0: setup
 Step 0 goal: set up and see the tests passing on Python 2 and failing on Python 3.
 
 a. Clone the package from github/bitbucket. Optionally rename your repo to ``package-future``. Examples: ``reportlab-future``, ``paramiko-future``, ``mezzanine-future``.
-b. Create and activate a Python 2 conda environment or virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 or Py2.6 (e.g. ``python setup.py test`` or ``py.test`` or ``nosetests``)
-c. Optionally: if there is a ``.travis.yml`` file, add Python version 3.3 and remove any versions < 2.6.
-d. Install Python 3.3 with e.g. ``sudo apt-get install python3``. On other platforms, an easy way is to use `Miniconda <http://repo.continuum.io/miniconda/index.html>`_. Then e.g.::
-    
-    conda create -n py33 python=3.3 pip
+b. Create and activate a Python 2 conda environment or virtualenv. Install the package with ``python setup.py install`` and run its test suite on Py2.7 (e.g. ``python setup.py test`` or ``py.test``)
+c. Optionally: if there is a ``.travis.yml`` file, add Python version 3.6 and remove any versions < 2.6.
+d. Install Python 3 with e.g. ``sudo apt-get install python3``. On other platforms, an easy way is to use `Miniconda <http://repo.continuum.io/miniconda/index.html>`_. Then e.g.::
+
+    conda create -n py36 python=3.6 pip
 
 .. _porting-step1:
 
@@ -27,14 +27,14 @@ Step 1: modern Py2 code
 The goal for this step is to modernize the Python 2 code without introducing any dependencies (on ``future`` or e.g. ``six``) at this stage.
 
 **1a**. Install ``future`` into the virtualenv using::
-      
-          pip install future
-  
-**1b**. Run ``futurize --stage1 -w *.py subdir1/*.py subdir2/*.py``. Note that with
-recursive globbing in ``bash`` or ``zsh``, you can apply stage 1 to all Python
-source files recursively with::
 
-        futurize --stage1 -w **/*.py
+          pip install future
+
+**1b**. Run ``futurize --stage1 -w *.py subdir1/*.py subdir2/*.py``. Note that with
+recursive globbing in ``bash`` or ``zsh``, you can apply stage 1 to all source files
+recursively with::
+
+        futurize --stage1 -w .
 
 **1c**. Commit all changes
 
@@ -49,7 +49,7 @@ Example error
 One relatively common error after conversion is::
 
     Traceback (most recent call last):
-      ... 
+      ...
       File "/home/user/Install/BleedingEdge/reportlab/tests/test_encrypt.py", line 19, in <module>
         from .test_pdfencryption import parsedoc
     ValueError: Attempted relative import in non-package
@@ -79,10 +79,9 @@ again with the help of the ``future`` package.
 
         futurize --stage2 myfolder1/*.py myfolder2/*.py
 
-Or, using recursive globbing with ``bash`` or ``zsh``, you can view the stage 2
-changes to all Python source files recursively with::
+You can view the stage 2 changes to all Python source files recursively with::
 
-    futurize --stage2 **/*.py
+    futurize --stage2 .
 
 To apply the changes, add the ``-w`` argument.
 
@@ -110,7 +109,7 @@ Python 3 semantics on Python 2, invoke it like this::
 
     futurize --stage2 --all-imports myfolder/*.py
 
-   
+
 **2b**. Re-run your tests on Py3 now. Make changes until your tests pass on Python 3.
 
 **2c**. Commit your changes! :)

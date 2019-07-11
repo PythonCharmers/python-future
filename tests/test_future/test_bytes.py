@@ -160,7 +160,7 @@ class TestBytes(unittest.TestCase):
 
     def test_str(self):
         b = bytes(b'ABCD')
-        self.assertTrue(str(b), "b'ABCD'")
+        self.assertEqual(str(b), "b'ABCD'")
 
     def test_bytes_setitem(self):
         b = b'ABCD'
@@ -552,37 +552,83 @@ class TestBytes(unittest.TestCase):
         self.assertRaises(ValueError, bytes.maketrans, b'abc', b'xyzq')
         self.assertRaises(TypeError, bytes.maketrans, 'abc', 'def')
 
-    # def test_mod(self):
-    #     """
-    #     From Py3.5 test suite (post-PEP 461).
-    #
-    #     The bytes mod code is in _PyBytes_Format() in bytesobject.c in Py3.5.
-    #     """
-    #     b = b'hello, %b!'
-    #     orig = b
-    #     b = b % b'world'
-    #     self.assertEqual(b, b'hello, world!')
-    #     self.assertEqual(orig, b'hello, %b!')
-    #     self.assertFalse(b is orig)
-    #     b = b'%s / 100 = %d%%'
-    #     a = b % (b'seventy-nine', 79)
-    #     self.assertEqual(a, b'seventy-nine / 100 = 79%')
+    @unittest.skipUnless(utils.PY2, 'test requires Python 2')
+    def test_mod_custom_dict(self):
+        import UserDict
 
-    # def test_imod(self):
-    #     """
-    #     From Py3.5 test suite (post-PEP 461)
-    #     """
-    #     # if (3, 0) <= sys.version_info[:2] < (3, 5):
-    #     #     raise unittest.SkipTest('bytes % not yet implemented on Py3.0-3.4')
-    #     b = bytes(b'hello, %b!')
-    #     orig = b
-    #     b %= b'world'
-    #     self.assertEqual(b, b'hello, world!')
-    #     self.assertEqual(orig, b'hello, %b!')
-    #     self.assertFalse(b is orig)
-    #     b = bytes(b'%s / 100 = %d%%')
-    #     b %= (b'seventy-nine', 79)
-    #     self.assertEqual(b, b'seventy-nine / 100 = 79%')
+        class MyDict(UserDict.UserDict):
+            pass
+
+        d = MyDict()
+        d['foo'] = bytes(b'bar')
+        self.assertFalse(isinstance(d, dict))
+        self.assertTrue(isinstance(d, UserDict.UserDict))
+
+        self.assertEqual(bytes(b'%(foo)s') % d, b'bar')
+
+    @unittest.skipUnless(utils.PY35_PLUS or utils.PY2,
+                         'test requires Python 2 or 3.5+')
+    def test_mod_more(self):
+        self.assertEqual(b'%s' % b'aaa', b'aaa')
+        self.assertEqual(bytes(b'%s') % b'aaa', b'aaa')
+        self.assertEqual(bytes(b'%s') % bytes(b'aaa'), b'aaa')
+
+        self.assertEqual(b'%s' % (b'aaa',), b'aaa')
+        self.assertEqual(bytes(b'%s') % (b'aaa',), b'aaa')
+        self.assertEqual(bytes(b'%s') % (bytes(b'aaa'),), b'aaa')
+
+        self.assertEqual(bytes(b'%(x)s') % {b'x': b'aaa'}, b'aaa')
+        self.assertEqual(bytes(b'%(x)s') % {b'x': bytes(b'aaa')}, b'aaa')
+
+    @unittest.skipUnless(utils.PY35_PLUS or utils.PY2,
+                         'test requires Python 2 or 3.5+')
+    def test_mod(self):
+        """
+        From Py3.5 test suite (post-PEP 461).
+
+        The bytes mod code is in _PyBytes_Format() in bytesobject.c in Py3.5.
+        """
+
+        # XXX Add support for %b!
+        #
+        # b = bytes(b'hello, %b!')
+        # orig = b
+        # b = b % b'world'
+        # self.assertEqual(b, b'hello, world!')
+        # self.assertEqual(orig, b'hello, %b!')
+        # self.assertFalse(b is orig)
+
+        b = bytes(b'%s / 100 = %d%%')
+        a = b % (b'seventy-nine', 79)
+        self.assertEqual(a, b'seventy-nine / 100 = 79%')
+
+        b = bytes(b'%s / 100 = %d%%')
+        a = b % (bytes(b'seventy-nine'), 79)
+        self.assertEqual(a, b'seventy-nine / 100 = 79%')
+
+    @unittest.skipUnless(utils.PY35_PLUS or utils.PY2,
+                         'test requires Python 2 or 3.5+')
+    def test_imod(self):
+        """
+        From Py3.5 test suite (post-PEP 461)
+        """
+        # if (3, 0) <= sys.version_info[:2] < (3, 5):
+        #     raise unittest.SkipTest('bytes % not yet implemented on Py3.0-3.4')
+
+        # b = bytes(b'hello, %b!')
+        # orig = b
+        # b %= b'world'
+        # self.assertEqual(b, b'hello, world!')
+        # self.assertEqual(orig, b'hello, %b!')
+        # self.assertFalse(b is orig)
+
+        b = bytes(b'%s / 100 = %d%%')
+        b %= (b'seventy-nine', 79)
+        self.assertEqual(b, b'seventy-nine / 100 = 79%')
+
+        b = bytes(b'%s / 100 = %d%%')
+        b %= (bytes(b'seventy-nine'), 79)
+        self.assertEqual(b, b'seventy-nine / 100 = 79%')
 
     # def test_mod_pep_461(self):
     #     """
@@ -655,12 +701,15 @@ class TestBytes(unittest.TestCase):
         """
         Issue #96 (for newbytes instead of newobject)
         """
-        import collections
+        if utils.PY2:
+            from collections import Container
+        else:
+            from collections.abc import Container
 
         class Base(bytes):
             pass
 
-        class Foo(Base, collections.Container):
+        class Foo(Base, Container):
             def __contains__(self, item):
                 return False
 

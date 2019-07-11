@@ -6,8 +6,14 @@ Tests for the backported class:`range` class.
 from future.builtins import range
 from future.tests.base import unittest
 
-from collections import Iterator, Sequence
 from operator import attrgetter
+
+from future.utils import PY2
+
+if PY2:
+    from collections import Iterator, Sequence
+else:
+    from collections.abc import Iterator, Sequence
 
 
 class RangeTests(unittest.TestCase):
@@ -25,6 +31,12 @@ class RangeTests(unittest.TestCase):
         self.assertEqual(range(7), range(7))
         self.assertEqual(range(0), range(1, 1))
         self.assertEqual(range(0, 10, 3), range(0, 11, 3))
+
+    def test_contains(self):
+        self.assertIn(1, range(2))
+        self.assertNotIn(10, range(2))
+        self.assertNotIn(None, range(2))
+        self.assertNotIn("", range(2))
 
     # Use strict equality of attributes when slicing to catch subtle differences
     def assertRangesEqual(self, r1, r2):
@@ -186,7 +198,7 @@ class RangeTests(unittest.TestCase):
 
     def test_slice_zero_step(self):
         msg = '^slice step cannot be zero$'
-        with self.assertRaisesRegexp(ValueError, msg):
+        with self.assertRaisesRegex(ValueError, msg):
             range(8)[::0]
 
     def test_properties(self):

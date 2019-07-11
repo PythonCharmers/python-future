@@ -68,7 +68,7 @@ statements. For example, this code behaves identically on Python 2.6/2.7 after
 these imports as it does on Python 3.3+:
 
 .. code-block:: python
-    
+
     from __future__ import absolute_import, division, print_function
     from builtins import (bytes, str, open, super, range,
                           zip, round, input, int, pow, object)
@@ -93,7 +93,7 @@ these imports as it does on Python 3.3+:
 
     # Extra arguments for the open() function
     f = open('japanese.txt', encoding='utf-8', errors='replace')
-    
+
     # New zero-argument super() function:
     class VerboseList(list):
         def append(self, item):
@@ -103,15 +103,15 @@ these imports as it does on Python 3.3+:
     # New iterable range object with slicing support
     for i in range(10**15)[:10]:
         pass
-    
+
     # Other iterators: map, zip, filter
     my_iter = zip(range(3), ['a', 'b', 'c'])
     assert my_iter != list(my_iter)
-    
+
     # The round() function behaves as it does in Python 3, using
     # "Banker's Rounding" to the nearest even last digit:
     assert round(0.1250, 2) == 0.12
-    
+
     # input() replaces Py2's raw_input() (with no eval()):
     name = input('What is your name? ')
     print('Hello ' + name)
@@ -187,7 +187,7 @@ Futurize: 2 to both
 For example, running ``futurize -w mymodule.py`` turns this Python 2 code:
 
 .. code-block:: python
-    
+
     import Queue
     from urllib2 import urlopen
 
@@ -202,14 +202,14 @@ For example, running ``futurize -w mymodule.py`` turns this Python 2 code:
 into this code which runs on both Py2 and Py3:
 
 .. code-block:: python
-    
+
     from __future__ import print_function
     from future import standard_library
     standard_library.install_aliases()
     from builtins import input
     import queue
     from urllib.request import urlopen
-    
+
     def greet(name):
         print('Hello', end=' ')
         print(name)
@@ -233,14 +233,14 @@ Python 3. First install it:
 .. code-block:: bash
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
-    
+
 (or use ``pip`` if this points to your Py3 environment.)
 
 Then pass a whitelist of module name prefixes to the ``autotranslate()`` function.
 Example:
 
 .. code-block:: bash
-    
+
     $ python3
 
     >>> from past import autotranslate
@@ -264,12 +264,14 @@ For more info, see :ref:`translation`.
 Licensing
 ---------
 
-:Author:  Ed Schofield
+:Author:  Ed Schofield, Jordan M. Adler, et al
 
-:Copyright: 2013-2016 Python Charmers Pty Ltd, Australia.
+:Copyright: 2013-2018 Python Charmers Pty Ltd, Australia.
 
-:Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
-          Ltd, Singapore. http://pythoncharmers.com
+:Sponsors: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
+           Ltd, Singapore. http://pythoncharmers.com
+           
+           Pinterest https://opensource.pinterest.com/
 
 :Licence: MIT. See ``LICENSE.txt`` or `here <http://python-future.org/credits.html>`_.
 
@@ -284,4 +286,3 @@ If you are new to Python-Future, check out the `Quickstart Guide
 
 For an update on changes in the latest version, see the `What's New
 <http://python-future.org/whatsnew.html>`_ page.
-

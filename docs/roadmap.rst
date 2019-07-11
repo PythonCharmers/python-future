@@ -12,7 +12,7 @@ futurize script
 
       - Compatible metaclass syntax on Py3
       - Explicit inheritance from object on Py3
-    
+
    - Bold might make assumptions about which strings on Py2 should be
      unicode strings and which should be bytestrings.
 
@@ -44,4 +44,3 @@ Experimental:
   should import a custom str is a Py3 str-like object which inherits from unicode and
   removes the decode() method and has any other Py3-like behaviours
   (possibly stricter casting?)
-

@@ -30,7 +30,7 @@ Python 2:
 Python 3:
 	>>> array.array(b'b')
 	TypeError: must be a unicode character, not bytes
-	
+
 	>>> array.array(u'b')
 	array('b')
 
@@ -47,5 +47,3 @@ Running test_bytes.py from Py3 on Py2 (after fixing imports) gives this:
 Ran 203 tests in 0.209s
 
 FAILED (failures=31, errors=55, skipped=1)
-
-

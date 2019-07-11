@@ -22,7 +22,7 @@ robust, at the cost of less idiomatic code. Use it as follows::
 
 If you wish to achieve the effect of a two-level import such as this::
 
-    import http.client 
+    import http.client
 
 portably on both Python 2 and Python 3, note that Python currently does not
 support syntax like this::
@@ -61,7 +61,7 @@ The functional interface is to use the ``import_`` and ``from_import``
 functions from ``future.standard_library`` as follows::
 
     from future.standard_library import import_, from_import
-    
+
     http = import_('http.client')
     urllib = import_('urllib.request')
 
@@ -120,12 +120,12 @@ active for the life of a process unless removed.)
 .. importing the ``future.moves`` or ``future.backports`` modules unintentionally.
 .. Code such as this will then fall through to using the Py2 standard library
 .. modules on Py2::
-.. 
+..
 ..     try:
 ..         from http.client import HTTPConnection
 ..     except ImportError:
 ..         from httplib import HTTPConnection
-.. 
+..
 .. **Requests**: The above snippet is from the `requests
 .. <http://docs.python-requests.org>`_ library. As of v0.12, the
 .. ``future.standard_library`` import hooks are compatible with Requests.
@@ -133,11 +133,9 @@ active for the life of a process unless removed.)
 
 .. If you wish to avoid changing every reference of ``http.client`` to
 .. ``http_client`` in your code, an alternative is this::
-.. 
+..
 ..     from future.standard_library import http
 ..     from future.standard_library.http import client as _client
 ..     http.client = client
 
 .. but it has the advantage that it can be used by automatic translation scripts such as ``futurize`` and ``pasteurize``.
-
-
