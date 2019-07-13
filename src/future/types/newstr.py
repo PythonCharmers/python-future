@@ -39,7 +39,6 @@ representations of your objects portably across Py3 and Py2, use the
 :func:`python_2_unicode_compatible` decorator in  :mod:`future.utils`.
 
 """
-
 from collections import Iterable
 from numbers import Number
 
@@ -51,6 +50,9 @@ from future.types.newobject import newobject
 if PY3:
     # We'll probably never use newstr on Py3 anyway...
     unicode = str
+    from collections.abc import Iterable
+else:
+    from collections import Iterable
 
 
 class BaseNewStr(type):
