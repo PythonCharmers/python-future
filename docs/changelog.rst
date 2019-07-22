@@ -616,10 +616,10 @@ it like this::
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     $ python3
 
-Then pass in a whitelist of module name prefixes to the ``past.autotranslate()``
-function. Example::
+Then pass in a whitelist of module name prefixes to the
+``past.translation.autotranslate()`` function. Example::
 
-    >>> from past import autotranslate
+    >>> from past.translation import autotranslate
     >>> autotranslate(['plotrique'])
     >>> import plotrique
 
@@ -949,8 +949,8 @@ v0.11.3:
     objects as on Py3.
 
 v0.11.2:
-  * The ``past.autotranslate`` feature now finds modules to import more
-    robustly and works with Python eggs.
+  * The ``past.translation.autotranslate`` feature now finds modules to import
+    more robustly and works with Python eggs.
 
 v0.11.1:
   * Update to ``requirements_py26.txt`` for Python 2.6. Small updates to

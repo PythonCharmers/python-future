@@ -243,7 +243,7 @@ Example:
 
     $ python3
 
-    >>> from past import autotranslate
+    >>> from past.translation import autotranslate
     >>> autotranslate(['plotrique'])
     >>> import plotrique
 
@@ -270,7 +270,7 @@ Licensing
 
 :Sponsors: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
            Ltd, Singapore. http://pythoncharmers.com
-           
+
            Pinterest https://opensource.pinterest.com/
 
 :Licence: MIT. See ``LICENSE.txt`` or `here <http://python-future.org/credits.html>`_.

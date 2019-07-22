@@ -21,9 +21,9 @@ Here is how to use it::
     $ python3
 
 Then pass in a whitelist of module name prefixes to the
-``past.autotranslate()`` function. Example::
+``past.translation.autotranslate()`` function. Example::
 
-    >>> from past import autotranslate
+    >>> from past.translation import autotranslate
     >>> autotranslate(['plotrique'])
     >>> import plotrique
 
