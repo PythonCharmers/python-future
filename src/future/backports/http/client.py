@@ -79,10 +79,14 @@ from future.backports.misc import create_connection as socket_create_connection
 import io
 import os
 import socket
-import collections
 from future.backports.urllib.parse import urlsplit
 import warnings
 from array import array
+
+if PY2:
+    from collections import Iterable
+else:
+    from collections.abc import Iterable
 
 __all__ = ["HTTPResponse", "HTTPConnection",
            "HTTPException", "NotConnected", "UnknownProtocol",
@@ -902,7 +906,7 @@ class HTTPConnection(object):
         try:
             self.sock.sendall(data)
         except TypeError:
-            if isinstance(data, collections.Iterable):
+            if isinstance(data, Iterable):
                 for d in data:
                     self.sock.sendall(d)
             else:
