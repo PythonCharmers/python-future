@@ -2,6 +2,9 @@ sudo: false
 language: python
 cache: pip
 
+dist:
+  - trusty
+
 matrix:
   include:
     - python: 2.6
