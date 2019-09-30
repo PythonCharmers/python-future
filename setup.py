@@ -174,7 +174,7 @@ setup(name=NAME,
       packages=PACKAGES,
       package_data=PACKAGE_DATA,
       include_package_data=True,
-      python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*",
+      python_requires=">=2.6, !=3.0.*, !=3.1.*, !=3.2.*",
       classifiers=CLASSIFIERS,
       **setup_kwds
      )

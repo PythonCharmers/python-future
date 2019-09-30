@@ -342,6 +342,10 @@ class CodeHandler(unittest.TestCase):
                         '----\n%s\n----' % f.read(),
                     )
             ErrorClass = (FuturizeError if 'futurize' in script else PasteurizeError)
+
+            if not hasattr(e, 'output'):
+                # The attribute CalledProcessError.output doesn't exist on Py2.6
+                e.output = None
             raise ErrorClass(msg, e.returncode, e.cmd, output=e.output)
         return output
 
@@ -365,6 +369,9 @@ class CodeHandler(unittest.TestCase):
                         fn,
                         '----\n%s\n----' % f.read(),
                     )
+            if not hasattr(e, 'output'):
+                # The attribute CalledProcessError.output doesn't exist on Py2.6
+                e.output = None
             raise VerboseCalledProcessError(msg, e.returncode, e.cmd, output=e.output)
         return output
 
