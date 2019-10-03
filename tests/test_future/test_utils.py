@@ -383,7 +383,7 @@ class CustomException(Exception):
                 out = Exception.__str__(self)
                 if hasattr(self, '__cause__') and self.__cause__ and hasattr(self.__cause__, '__traceback__') and self.__cause__.__traceback__:
                     out += '\n\nThe above exception was the direct cause of the following exception:\n\n'
-                    out += ''.join(traceback.format_tb(self.__cause__.__traceback__) + ['{}: {}'.format(self.__cause__.__class__.__name__, self.__cause__)])
+                    out += ''.join(traceback.format_tb(self.__cause__.__traceback__) + ['{0}: {1}'.format(self.__cause__.__class__.__name__, self.__cause__)])
                 return out
             except Exception as e:
                 print(e)
