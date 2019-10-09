@@ -132,7 +132,7 @@ environment::
 Then add the following code at the top of your (Py3 or Py2/3-compatible)
 code::
 
-    from past import autotranslate
+    from past.translation import autotranslate
     autotranslate(['mypackagename'])
     import mypackagename
 

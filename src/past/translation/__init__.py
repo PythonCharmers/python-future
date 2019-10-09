@@ -16,7 +16,7 @@ Usage
 Once your Py2 package is installed in the usual module search path, the import
 hook is invoked as follows:
 
-    >>> from past import autotranslate
+    >>> from past.translation import autotranslate
     >>> autotranslate('mypackagename')
 
 Or:
@@ -479,3 +479,7 @@ class suspend_hooks(object):
     def __exit__(self, *args):
         if self.hooks_were_installed:
             install_hooks()
+
+
+# alias
+autotranslate = install_hooks
