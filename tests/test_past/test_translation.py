@@ -67,7 +67,7 @@ class TestTranslate(unittest.TestCase):
             # print('Hooks removed')
             sys.path.remove(self.tempdir)
         return module
- 
+
     def test_print_statement(self):
         code = """
             print 'Hello from a Python 2-style print statement!'
@@ -82,7 +82,7 @@ class TestTranslate(unittest.TestCase):
         """
         module = self.write_and_import(code, 'execer')
         self.assertEqual(module.x, 7)
-        
+
     def test_div(self):
         code = """
         x = 3 / 2
@@ -173,14 +173,14 @@ class TestTranslate(unittest.TestCase):
         module = self.write_and_import(code, 'py2_exceptions')
         self.assertEqual(module.value, 'string: success!')
 
- 
+
 # class TestFuturizeSimple(CodeHandler):
 #     """
 #     This class contains snippets of Python 2 code (invalid Python 3) and
 #     tests for whether they can be imported correctly from Python 3 with the
 #     import hooks.
 #     """
-# 
+#
 #     @unittest.expectedFailure
 #     def test_problematic_string(self):
 #         """ This string generates a SyntaxError on Python 3 unless it has
@@ -193,7 +193,7 @@ class TestTranslate(unittest.TestCase):
 #         s = r'The folder is "C:\Users"'.
 #         """
 #         self.convert_check(before, after)
-# 
+#
 #     def test_tobytes(self):
 #         """
 #         The --tobytes option converts all UNADORNED string literals 'abcd' to b'abcd'.
@@ -228,7 +228,7 @@ class TestTranslate(unittest.TestCase):
 #         s8 = b"pqrs"
 #         """
 #         self.convert_check(before, after, tobytes=True)
-# 
+#
 #     @unittest.expectedFailure
 #     def test_izip(self):
 #         before = """
@@ -243,7 +243,7 @@ class TestTranslate(unittest.TestCase):
 #             pass
 #         """
 #         self.convert_check(before, after, stages=(1, 2), ignore_imports=False)
-# 
+#
 #     @unittest.expectedFailure
 #     def test_no_unneeded_list_calls(self):
 #         """
@@ -254,14 +254,14 @@ class TestTranslate(unittest.TestCase):
 #             pass
 #         """
 #         self.unchanged(code)
-# 
+#
 #     def test_xrange(self):
 #         code = '''
 #         for i in xrange(10):
 #             pass
 #         '''
 #         self.convert(code)
-#     
+#
 #     @unittest.expectedFailure
 #     def test_source_coding_utf8(self):
 #         """
@@ -275,7 +275,7 @@ class TestTranslate(unittest.TestCase):
 #         icons = [u"◐", u"◓", u"◑", u"◒"]
 #         """
 #         self.unchanged(code)
-# 
+#
 #     def test_exception_syntax(self):
 #         """
 #         Test of whether futurize handles the old-style exception syntax
@@ -293,7 +293,7 @@ class TestTranslate(unittest.TestCase):
 #             val = e.errno
 #         """
 #         self.convert_check(before, after)
-# 
+#
 #     def test_super(self):
 #         """
 #         This tests whether futurize keeps the old two-argument super() calls the
@@ -306,7 +306,7 @@ class TestTranslate(unittest.TestCase):
 #                 super(VerboseList, self).append(item)
 #         '''
 #         self.unchanged(code)
-# 
+#
 #     @unittest.expectedFailure
 #     def test_file(self):
 #         """
@@ -323,41 +323,41 @@ class TestTranslate(unittest.TestCase):
 #         f.close()
 #         '''
 #         self.convert_check(before, after)
-# 
+#
 #     def test_apply(self):
 #         before = '''
 #         def addup(*x):
 #             return sum(x)
-#         
+#
 #         assert apply(addup, (10,20)) == 30
 #         '''
 #         after = """
 #         def addup(*x):
 #             return sum(x)
-#         
+#
 #         assert addup(*(10,20)) == 30
 #         """
 #         self.convert_check(before, after)
-#     
+#
 #     @unittest.skip('not implemented yet')
 #     def test_download_pypi_package_and_test(self, package_name='future'):
 #         URL = 'http://pypi.python.org/pypi/{0}/json'
-#         
+#
 #         import requests
 #         r = requests.get(URL.format(package_name))
 #         pprint.pprint(r.json())
-#         
+#
 #         download_url = r.json()['urls'][0]['url']
 #         filename = r.json()['urls'][0]['filename']
 #         # r2 = requests.get(download_url)
 #         # with open('/tmp/' + filename, 'w') as tarball:
 #         #     tarball.write(r2.content)
-# 
+#
 #     def test_raw_input(self):
 #         """
 #         Passes in a string to the waiting input() after futurize
 #         conversion.
-# 
+#
 #         The code is the first snippet from these docs:
 #             http://docs.python.org/2/library/2to3.html
 #         """
@@ -376,13 +376,13 @@ class TestTranslate(unittest.TestCase):
 #         greet(name)
 #         """
 #         self.convert_check(before, desired, run=False)
-# 
+#
 #         for interpreter in self.interpreters:
 #             p1 = Popen([interpreter, self.tempdir + 'mytestscript.py'],
 #                        stdout=PIPE, stdin=PIPE, stderr=PIPE)
 #             (stdout, stderr) = p1.communicate(b'Ed')
 #             self.assertEqual(stdout, b"What's your name?\nHello, Ed!\n")
-# 
+#
 #     def test_literal_prefixes_are_not_stripped(self):
 #         """
 #         Tests to ensure that the u'' and b'' prefixes on unicode strings and
@@ -397,7 +397,7 @@ class TestTranslate(unittest.TestCase):
 #         b = b'byte string'
 #         '''
 #         self.unchanged(code)
-# 
+#
 #     @unittest.expectedFailure
 #     def test_division(self):
 #         """
@@ -411,8 +411,8 @@ class TestTranslate(unittest.TestCase):
 #         x = old_div(1, 2)
 #         """
 #         self.convert_check(before, after, stages=[1])
-# 
-# 
+#
+#
 # class TestFuturizeRenamedStdlib(CodeHandler):
 #     def test_renamed_modules(self):
 #         before = """
@@ -420,7 +420,7 @@ class TestTranslate(unittest.TestCase):
 #         import copy_reg
 #         import cPickle
 #         import cStringIO
-# 
+#
 #         s = cStringIO.StringIO('blah')
 #         """
 #         after = """
@@ -428,18 +428,18 @@ class TestTranslate(unittest.TestCase):
 #         import copyreg
 #         import pickle
 #         import io
-# 
+#
 #         s = io.StringIO('blah')
 #         """
 #         self.convert_check(before, after)
-#     
+#
 #     @unittest.expectedFailure
 #     def test_urllib_refactor(self):
 #         # Code like this using urllib is refactored by futurize --stage2 to use
 #         # the new Py3 module names, but ``future`` doesn't support urllib yet.
 #         before = """
 #         import urllib
-# 
+#
 #         URL = 'http://pypi.python.org/pypi/future/json'
 #         package_name = 'future'
 #         r = urllib.urlopen(URL.format(package_name))
@@ -447,14 +447,14 @@ class TestTranslate(unittest.TestCase):
 #         """
 #         after = """
 #         import urllib.request
-#         
+#
 #         URL = 'http://pypi.python.org/pypi/future/json'
 #         package_name = 'future'
 #         r = urllib.request.urlopen(URL.format(package_name))
 #         data = r.read()
 #         """
 #         self.convert_check(before, after)
-# 
+#
 #     def test_renamed_copy_reg_and_cPickle_modules(self):
 #         """
 #         Example from docs.python.org/2/library/copy_reg.html
@@ -466,11 +466,11 @@ class TestTranslate(unittest.TestCase):
 #         class C(object):
 #             def __init__(self, a):
 #                 self.a = a
-# 
+#
 #         def pickle_c(c):
 #             print('pickling a C instance...')
 #             return C, (c.a,)
-# 
+#
 #         copy_reg.pickle(C, pickle_c)
 #         c = C(1)
 #         d = copy.copy(c)
@@ -483,23 +483,23 @@ class TestTranslate(unittest.TestCase):
 #         class C(object):
 #             def __init__(self, a):
 #                 self.a = a
-# 
+#
 #         def pickle_c(c):
 #             print('pickling a C instance...')
 #             return C, (c.a,)
-# 
+#
 #         copyreg.pickle(C, pickle_c)
 #         c = C(1)
 #         d = copy.copy(c)
 #         p = pickle.dumps(c)
 #         """
 #         self.convert_check(before, after)
-# 
+#
 #     @unittest.expectedFailure
 #     def test_Py2_StringIO_module(self):
 #         """
 #         Ideally, there would be a fixer for this. For now:
-# 
+#
 #         TODO: add the Py3 equivalent for this to the docs
 #         """
 #         before = """
@@ -515,19 +515,19 @@ class TestTranslate(unittest.TestCase):
 #         # instead?
 #         """
 #         self.convert_check(before, after)
-# 
-# 
+#
+#
 # class TestFuturizeStage1(CodeHandler):
 #     # """
 #     # Tests "stage 1": safe optimizations: modernizing Python 2 code so that it
 #     # uses print functions, new-style exception syntax, etc.
-# 
+#
 #     # The behaviour should not change and this should introduce no dependency on
 #     # the ``future`` package. It produces more modern Python 2-only code. The
 #     # goal is to reduce the size of the real porting patch-set by performing
 #     # the uncontroversial patches first.
 #     # """
-# 
+#
 #     def test_apply(self):
 #         """
 #         apply() should be changed by futurize --stage1
@@ -535,7 +535,7 @@ class TestTranslate(unittest.TestCase):
 #         before = '''
 #         def f(a, b):
 #             return a + b
-# 
+#
 #         args = (1, 2)
 #         assert apply(f, args) == 3
 #         assert apply(f, ('a', 'b')) == 'ab'
@@ -543,13 +543,13 @@ class TestTranslate(unittest.TestCase):
 #         after = '''
 #         def f(a, b):
 #             return a + b
-# 
+#
 #         args = (1, 2)
 #         assert f(*args) == 3
 #         assert f(*('a', 'b')) == 'ab'
 #         '''
 #         self.convert_check(before, after, stages=[1])
-# 
+#
 #     def test_xrange(self):
 #         """
 #         xrange should not be changed by futurize --stage1
@@ -559,18 +559,18 @@ class TestTranslate(unittest.TestCase):
 #             pass
 #         '''
 #         self.unchanged(code, stages=[1])
-# 
+#
 #     @unittest.expectedFailure
 #     def test_absolute_import_changes(self):
 #         """
 #         Implicit relative imports should be converted to absolute or explicit
 #         relative imports correctly.
-# 
+#
 #         Issue #16 (with porting bokeh/bbmodel.py)
 #         """
 #         with open('specialmodels.py', 'w') as f:
 #             f.write('pass')
-# 
+#
 #         before = """
 #         import specialmodels.pandasmodel
 #         specialmodels.pandasmodel.blah()
@@ -581,7 +581,7 @@ class TestTranslate(unittest.TestCase):
 #         pandasmodel.blah()
 #         """
 #         self.convert_check(before, after, stages=[1])
-# 
+#
 #     def test_safe_futurize_imports(self):
 #         """
 #         The standard library module names should not be changed until stage 2
@@ -590,13 +590,13 @@ class TestTranslate(unittest.TestCase):
 #         import ConfigParser
 #         import HTMLParser
 #         import collections
-# 
+#
 #         ConfigParser.ConfigParser
 #         HTMLParser.HTMLParser
 #         d = collections.OrderedDict()
 #         """
 #         self.unchanged(before, stages=[1])
-# 
+#
 #     def test_print(self):
 #         before = """
 #         print 'Hello'
@@ -605,7 +605,7 @@ class TestTranslate(unittest.TestCase):
 #         print('Hello')
 #         """
 #         self.convert_check(before, after, stages=[1])
-# 
+#
 #         before = """
 #         import sys
 #         print >> sys.stderr, 'Hello', 'world'
@@ -615,16 +615,16 @@ class TestTranslate(unittest.TestCase):
 #         print('Hello', 'world', file=sys.stderr)
 #         """
 #         self.convert_check(before, after, stages=[1])
-# 
+#
 #     def test_print_already_function(self):
 #         """
-#         Running futurize --stage1 should not add a second set of parentheses 
+#         Running futurize --stage1 should not add a second set of parentheses
 #         """
 #         before = """
 #         print('Hello')
 #         """
 #         self.unchanged(before, stages=[1])
-# 
+#
 #     @unittest.expectedFailure
 #     def test_print_already_function_complex(self):
 #         """
@@ -639,7 +639,7 @@ class TestTranslate(unittest.TestCase):
 #         print('Hello', 'world', file=sys.stderr)
 #         """
 #         self.unchanged(before, stages=[1])
-# 
+#
 #     def test_exceptions(self):
 #         before = """
 #         try:
@@ -654,7 +654,7 @@ class TestTranslate(unittest.TestCase):
 #             pass
 #         """
 #         self.convert_check(before, after, stages=[1])
-# 
+#
 #     @unittest.expectedFailure
 #     def test_string_exceptions(self):
 #         """
@@ -674,7 +674,7 @@ class TestTranslate(unittest.TestCase):
 #             pass
 #         """
 #         self.convert_check(before, after, stages=[1])
-# 
+#
 #     @unittest.expectedFailure
 #     def test_oldstyle_classes(self):
 #         """
@@ -689,8 +689,8 @@ class TestTranslate(unittest.TestCase):
 #             pass
 #         """
 #         self.convert_check(before, after, stages=[1])
-# 
-#         
+#
+#
 #     def test_octal_literals(self):
 #         before = """
 #         mode = 0644
@@ -699,7 +699,7 @@ class TestTranslate(unittest.TestCase):
 #         mode = 0o644
 #         """
 #         self.convert_check(before, after)
-# 
+#
 #     def test_long_int_literals(self):
 #         before = """
 #         bignumber = 12345678901234567890L
@@ -708,7 +708,7 @@ class TestTranslate(unittest.TestCase):
 #         bignumber = 12345678901234567890
 #         """
 #         self.convert_check(before, after)
-# 
+#
 #     def test___future___import_position(self):
 #         """
 #         Issue #4: __future__ imports inserted too low in file: SyntaxError
@@ -722,13 +722,13 @@ class TestTranslate(unittest.TestCase):
 #         #
 #         # another comment
 #         #
-#         
+#
 #         CONSTANTS = [ 0, 01, 011, 0111, 012, 02, 021, 0211, 02111, 013 ]
 #         _RN_LETTERS = "IVXLCDM"
-#         
+#
 #         def my_func(value):
 #             pass
-#         
+#
 #         ''' Docstring-like comment here '''
 #         """
 #         self.convert(code)
@@ -736,4 +736,3 @@ class TestTranslate(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

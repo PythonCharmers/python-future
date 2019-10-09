@@ -67,13 +67,13 @@ they are unicode. (See ``posixpath.py``.) Another example is the
 
 
 .. For example, this is permissible on Py2::
-.. 
+..
 ..     >>> u'u' > 10
 ..     True
-.. 
+..
 ..     >>> u'u' <= b'u'
 ..     True
-.. 
+..
 .. On Py3, these raise TypeErrors.
 
 In most other ways, these :class:`builtins.str` objects on Py2 have the
@@ -97,4 +97,3 @@ identically on Python 2.x and 3.x::
 This feature is in alpha. Please leave feedback `here
 <https://github.com/PythonCharmers/python-future/issues>`_ about whether this
 works for you.
-

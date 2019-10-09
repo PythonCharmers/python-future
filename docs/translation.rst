@@ -19,11 +19,11 @@ Here is how to use it::
 
     $ pip3 install plotrique==0.2.5-7 --no-compile   # to ignore SyntaxErrors
     $ python3
-    
+
 Then pass in a whitelist of module name prefixes to the
-``past.autotranslate()`` function. Example::
-    
-    >>> from past import autotranslate
+``past.translation.autotranslate()`` function. Example::
+
+    >>> from past.translation import autotranslate
     >>> autotranslate(['plotrique'])
     >>> import plotrique
 
@@ -40,19 +40,19 @@ This will translate, import and run Python 2 code such as the following::
 
     # Print statements are translated transparently to functions:
     print 'Hello from a print statement'
-     
+
     # xrange() is translated to Py3's range():
     total = 0
     for i in xrange(10):
         total += i
     print 'Total is: %d' % total
-    
+
     # Dictionary methods like .keys() and .items() are supported and
     # return lists as on Python 2:
     d = {'a': 1, 'b': 2}
     assert d.keys() == ['a', 'b']
     assert isinstance(d.items(), list)
-    
+
     # Functions like range, reduce, map, filter also return lists:
     assert isinstance(range(10), list)
 
@@ -72,7 +72,7 @@ This will translate, import and run Python 2 code such as the following::
 
 The attributes of the module are then accessible normally from Python 3.
 For example::
-    
+
     # This Python 3 code works
     >>> type(mypy2module.d)
     builtins.dict
@@ -110,5 +110,3 @@ Known limitations of ``past.translation``
 
 Please report any bugs you find on the ``python-future`` `bug tracker
 <https://github.com/PythonCharmers/python-future/>`_.
-
-

@@ -46,4 +46,3 @@ Examples::
     # prints ['H', 'E', 'L', 'L', 'O']
 
 On Python 3 these decorators are no-ops.
-

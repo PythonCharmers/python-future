@@ -4,7 +4,7 @@ Tests for the various utility functions and classes in ``future.utils``
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
-import sys
+import re, sys, traceback
 from future.builtins import *
 from future.utils import (old_div, istext, isbytes, native, PY2, PY3,
                          native_str, raise_, as_native_str, ensure_new_type,
@@ -110,11 +110,7 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(isbytes(self.s))
         self.assertFalse(isbytes(self.s2))
 
-    @unittest.skipIf(PY3, 'test_raise_ currently fails on Py3')
     def test_raise_(self):
-        """
-        The with_value() test currently fails on Py3
-        """
         def valerror():
             try:
                 raise ValueError("Apples!")
@@ -172,6 +168,23 @@ class TestUtils(unittest.TestCase):
         except ValueError as e:
             pass
         # incorrectly raises a TypeError on Py3 as of v0.15.2.
+
+    def test_raise_custom_exception(self):
+        """
+        Test issue #387.
+        """
+        class CustomException(Exception):
+            def __init__(self, severity, message):
+                super().__init__("custom message of severity %d: %s" % (
+                    severity, message))
+
+        def raise_custom_exception():
+            try:
+                raise CustomException(1, "hello")
+            except CustomException:
+                raise_(*sys.exc_info())
+
+        self.assertRaises(CustomException, raise_custom_exception)
 
     @skip26
     def test_as_native_str(self):
@@ -313,6 +326,69 @@ class TestCause(unittest.TestCase):
             pass
         else:
             self.fail("No exception raised")
+
+    def test_single_exception_stacktrace(self):
+        expected = '''Traceback (most recent call last):
+  File "/opt/python-future/tests/test_future/test_utils.py", line 328, in test_single_exception_stacktrace
+    raise CustomException('ERROR')
+'''
+        if PY2:
+            expected += 'CustomException: ERROR\n'
+        else:
+            expected += 'test_future.test_utils.CustomException: ERROR\n'
+
+        try:
+            raise CustomException('ERROR')
+        except:
+            ret = re.sub(r'"[^"]*tests/test_future', '"/opt/python-future/tests/test_future', traceback.format_exc())
+            ret = re.sub(r', line \d+,', ', line 328,', ret)
+            self.assertEqual(expected, ret)
+        else:
+            self.fail('No exception raised')
+
+    if PY2:
+        def test_chained_exceptions_stacktrace(self):
+            expected = '''Traceback (most recent call last):
+  File "/opt/python-future/tests/test_future/test_utils.py", line 1, in test_chained_exceptions_stacktrace
+    raise_from(CustomException('ERROR'), val_err)
+  File "/opt/python-future/src/future/utils/__init__.py", line 1, in raise_from
+    raise e
+CustomException: ERROR
+
+The above exception was the direct cause of the following exception:
+
+  File "/opt/python-future/tests/test_future/test_utils.py", line 1, in test_chained_exceptions_stacktrace
+    raise ValueError('Wooops')
+ValueError: Wooops
+'''
+
+            try:
+                try:
+                    raise ValueError('Wooops')
+                except ValueError as val_err:
+                    raise_from(CustomException('ERROR'), val_err)
+            except Exception as err:
+                ret = re.sub(r'"[^"]*tests/test_future', '"/opt/python-future/tests/test_future', traceback.format_exc())
+                ret = re.sub(r'"[^"]*future/utils/__init__.py', '"/opt/python-future/src/future/utils/__init__.py', ret)
+                ret = re.sub(r', line \d+,', ', line 1,', ret)
+                self.assertEqual(expected.splitlines(), ret.splitlines())
+            else:
+                self.fail('No exception raised')
+
+
+class CustomException(Exception):
+    if PY2:
+        def __str__(self):
+            try:
+                out = Exception.__str__(self)
+                if hasattr(self, '__cause__') and self.__cause__ and hasattr(self.__cause__, '__traceback__') and self.__cause__.__traceback__:
+                    out += '\n\nThe above exception was the direct cause of the following exception:\n\n'
+                    out += ''.join(traceback.format_tb(self.__cause__.__traceback__) + ['{0}: {1}'.format(self.__cause__.__class__.__name__, self.__cause__)])
+                return out
+            except Exception as e:
+                print(e)
+    else:
+        pass
 
 
 if __name__ == '__main__':

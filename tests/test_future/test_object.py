@@ -39,7 +39,7 @@ class TestNewObject(unittest.TestCase):
             assert str(a) == str(b)
 
     def test_implements_py2_iterator(self):
-        
+
         class Upper(object):
             def __init__(self, iterable):
                 self._iter = iter(iterable)
@@ -57,7 +57,7 @@ class TestNewObject(unittest.TestCase):
                 return 'Next!'
             def __iter__(self):
                 return self
-        
+
         itr = MyIter()
         self.assertEqual(next(itr), 'Next!')
 
@@ -68,7 +68,7 @@ class TestNewObject(unittest.TestCase):
             self.assertEqual(item, 'Next!')
 
     def test_implements_py2_nonzero(self):
-        
+
         class EvenIsTrue(object):
             """
             An integer that evaluates to True if even.
@@ -94,7 +94,7 @@ class TestNewObject(unittest.TestCase):
         maps to __bool__ in case the user redefines __bool__ in a subclass of
         newint.
         """
-        
+
         class EvenIsTrue(int):
             """
             An integer that evaluates to True if even.
@@ -137,7 +137,7 @@ class TestNewObject(unittest.TestCase):
 
     def test_isinstance_object_subclass(self):
         """
-        This was failing before 
+        This was failing before
         """
         class A(object):
             pass
@@ -209,12 +209,15 @@ class TestNewObject(unittest.TestCase):
         """
         Issue #96
         """
-        import collections
+        if utils.PY2:
+            from collections import Container
+        else:
+            from collections.abc import Container
 
         class Base(object):
             pass
 
-        class Foo(Base, collections.Container):
+        class Foo(Base, Container):
             def __contains__(self, item):
                 return False
 
@@ -270,6 +273,16 @@ class TestNewObject(unittest.TestCase):
                 raise RuntimeError('__len__ should not be called')
 
         self.assertFalse(bool(FalseThing()))
+
+    def test_cannot_assign_new_attributes_to_object(self):
+        """
+        New attributes cannot be assigned to object() instances in Python.
+        The same should apply to newobject.
+        """
+        from builtins import object
+
+        with self.assertRaises(AttributeError):
+          object().arbitrary_attribute_name = True
 
 
 if __name__ == '__main__':

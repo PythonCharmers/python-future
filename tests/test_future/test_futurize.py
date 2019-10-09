@@ -123,6 +123,17 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after)
 
+    def test_multiline_future_import(self):
+        """
+        Issue #113: don't crash if a future import has multiple lines
+        """
+        text = """
+        from __future__ import (
+            division
+        )
+        """
+        self.convert(text)
+
     def test_shebang_blank_with_future_division_import(self):
         """
         Issue #43: Is shebang line preserved as the first
@@ -441,7 +452,7 @@ class TestFuturizeSimple(CodeHandler):
             pass
         """
         self.convert_check(before, after, ignore_imports=False)
-    
+
     def test_source_coding_utf8(self):
         """
         Tests to ensure that the source coding line is not corrupted or
@@ -506,13 +517,13 @@ class TestFuturizeSimple(CodeHandler):
         before = '''
         def addup(*x):
             return sum(x)
-        
+
         assert apply(addup, (10,20)) == 30
         '''
         after = """
         def addup(*x):
             return sum(x)
-        
+
         assert addup(*(10,20)) == 30
         """
         self.convert_check(before, after)
@@ -651,7 +662,7 @@ class TestFuturizeRenamedStdlib(CodeHandler):
         from future import standard_library
         standard_library.install_aliases()
         import urllib.request
-        
+
         URL = 'http://pypi.python.org/pypi/future/json'
         package = 'future'
         r = urllib.request.urlopen(URL.format(package))
@@ -1034,13 +1045,13 @@ class TestFuturizeStage1(CodeHandler):
         #
         # another comment
         #
-        
+
         CONSTANTS = [ 0, 01, 011, 0111, 012, 02, 021, 0211, 02111, 013 ]
         _RN_LETTERS = "IVXLCDM"
-        
+
         def my_func(value):
             pass
-        
+
         ''' Docstring-like comment here '''
         """
         self.convert(code)
@@ -1170,18 +1181,82 @@ class TestFuturizeStage1(CodeHandler):
         after futurization.
         """
         before = """
+        import random
+        class fraction(object):
+            numer = 0
+            denom = 0
+            def __init__(self, numer, denom):
+                self.numer = numer
+                self.denom = denom
+
+            def total_count(self):
+                return self.numer * 50
+
         x = 3 / 2
         y = 3. / 2
+        foo = list(range(100))
         assert x == 1 and isinstance(x, int)
         assert y == 1.5 and isinstance(y, float)
+        a = 1 + foo[len(foo) / 2]
+        b = 1 + foo[len(foo) * 3 / 4]
+        assert a == 51
+        assert b == 76
+        r = random.randint(0, 1000) * 1.0 / 1000
+        output = { "SUCCESS": 5, "TOTAL": 10 }
+        output["SUCCESS"] * 100 / output["TOTAL"]
+        obj = fraction(1, 50)
+        val = float(obj.numer) / obj.denom * 1e-9
+        obj.numer * obj.denom / val
+        obj.total_count() * val / 100
+        obj.numer / obj.denom * 1e-9
+        obj.numer / (obj.denom * 1e-9)
+        obj.numer / obj.denom / 1e-9
+        obj.numer / (obj.denom / 1e-9)
+        original_numer = 1
+        original_denom = 50
+        100 * abs(obj.numer - original_numer) / float(max(obj.denom, original_denom))
+        100 * abs(obj.numer - original_numer) / max(obj.denom, original_denom)
+        float(original_numer) * float(original_denom) / float(obj.numer)
         """
         after = """
         from __future__ import division
         from past.utils import old_div
+        import random
+        class fraction(object):
+            numer = 0
+            denom = 0
+            def __init__(self, numer, denom):
+                self.numer = numer
+                self.denom = denom
+
+            def total_count(self):
+                return self.numer * 50
+
         x = old_div(3, 2)
-        y = old_div(3., 2)
+        y = 3. / 2
+        foo = list(range(100))
         assert x == 1 and isinstance(x, int)
         assert y == 1.5 and isinstance(y, float)
+        a = 1 + foo[old_div(len(foo), 2)]
+        b = 1 + foo[old_div(len(foo) * 3, 4)]
+        assert a == 51
+        assert b == 76
+        r = random.randint(0, 1000) * 1.0 / 1000
+        output = { "SUCCESS": 5, "TOTAL": 10 }
+        old_div(output["SUCCESS"] * 100, output["TOTAL"])
+        obj = fraction(1, 50)
+        val = float(obj.numer) / obj.denom * 1e-9
+        old_div(obj.numer * obj.denom, val)
+        old_div(obj.total_count() * val, 100)
+        old_div(obj.numer, obj.denom) * 1e-9
+        old_div(obj.numer, (obj.denom * 1e-9))
+        old_div(old_div(obj.numer, obj.denom), 1e-9)
+        old_div(obj.numer, (old_div(obj.denom, 1e-9)))
+        original_numer = 1
+        original_denom = 50
+        100 * abs(obj.numer - original_numer) / float(max(obj.denom, original_denom))
+        old_div(100 * abs(obj.numer - original_numer), max(obj.denom, original_denom))
+        float(original_numer) * float(original_denom) / float(obj.numer)
         """
         self.convert_check(before, after)
 
@@ -1294,6 +1369,7 @@ class TestConservativeFuturize(CodeHandler):
         """
         self.convert_check(before, after, conservative=True)
 
+
 class TestFuturizeAllImports(CodeHandler):
     """
     Tests "futurize --all-imports".
@@ -1311,14 +1387,14 @@ class TestFuturizeAllImports(CodeHandler):
         print('Hello')
         """
         after = """
-        from __future__ import unicode_literals
-        from __future__ import print_function
-        from __future__ import division
         from __future__ import absolute_import
+        from __future__ import division
+        from __future__ import print_function
+        from __future__ import unicode_literals
         from future import standard_library
         standard_library.install_aliases()
-        from builtins import range
         from builtins import *
+        from builtins import range
         import math
         import os
         l = list(range(10))
@@ -1328,7 +1404,7 @@ class TestFuturizeAllImports(CodeHandler):
             pass
         print('Hello')
         """
-        self.convert_check(before, after, all_imports=True)
+        self.convert_check(before, after, all_imports=True, ignore_imports=False)
 
 
 if __name__ == '__main__':

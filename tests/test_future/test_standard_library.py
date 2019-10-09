@@ -30,7 +30,7 @@ class TestStandardLibraryReorganization(CodeHandler):
         """
         This test failed in v0.12-pre if e.g.
         future/standard_library/email/header.py contained:
-        
+
             from future import standard_library
             standard_library.remove_hooks()
         """
@@ -247,6 +247,13 @@ class TestStandardLibraryReorganization(CodeHandler):
         self.assertEqual(list(zip_longest(a, b)),
                          [(1, 2), (2, 4), (None, 6)])
 
+    def test_ChainMap(self):
+        """
+        Tests whether collections.ChainMap is available.
+        """
+        from collections import ChainMap
+        cm = ChainMap()
+
     @unittest.expectedFailure
     @unittest.skipIf(utils.PY3, 'generic import tests are for Py2 only')
     def test_import_failure_from_module(self):
@@ -274,7 +281,7 @@ class TestStandardLibraryReorganization(CodeHandler):
     # Disabled since v0.16.0:
     # def test_configparser(self):
     #     import configparser
-    
+
     def test_copyreg(self):
         import copyreg
 
@@ -283,7 +290,7 @@ class TestStandardLibraryReorganization(CodeHandler):
 
     def test_profile(self):
         import profile
-    
+
     def test_stringio(self):
         from io import StringIO
         s = StringIO(u'test')
@@ -319,7 +326,7 @@ class TestStandardLibraryReorganization(CodeHandler):
         import builtins
         self.assertTrue(hasattr(builtins, 'tuple'))
 
-    # @unittest.skip("ssl support has been stripped out for now ...")
+    @unittest.skip("ssl redirect support on pypi isn't working as expected for now ...")
     def test_urllib_request_ssl_redirect(self):
         """
         This site redirects to https://...

@@ -1,9 +1,9 @@
 .. _compatible-idioms:
- 
+
 Cheat Sheet: Writing Python 2-3 compatible code
 ===============================================
 
--  **Copyright (c):** 2013-2016 Python Charmers Pty Ltd, Australia.
+-  **Copyright (c):** 2013-2018 Python Charmers Pty Ltd, Australia.
 -  **Author:** Ed Schofield.
 -  **Licence:** Creative Commons Attribution.
 
@@ -16,8 +16,8 @@ video is here: http://www.youtube.com/watch?v=KOqk8j11aAI&t=10m14s.)
 
 Minimum versions:
 
--  Python 2: 2.6+
--  Python 3: 3.3+
+-  Python 2: 2.7+
+-  Python 3: 3.4+
 
 Setup
 -----
@@ -66,7 +66,7 @@ interpreting it as a tuple:
 
     # Python 2 and 3:
     from __future__ import print_function    # (at top of module)
-    
+
     print('Hello', 'Guido')
 .. code:: python
 
@@ -76,7 +76,7 @@ interpreting it as a tuple:
 
     # Python 2 and 3:
     from __future__ import print_function
-    
+
     print('Hello', file=sys.stderr)
 .. code:: python
 
@@ -86,7 +86,7 @@ interpreting it as a tuple:
 
     # Python 2 and 3:
     from __future__ import print_function
-    
+
     print('Hello', end='')
 Raising exceptions
 ~~~~~~~~~~~~~~~~~~
@@ -116,14 +116,14 @@ Raising exceptions with a traceback:
     from six import reraise as raise_
     # or
     from future.utils import raise_
-    
+
     traceback = sys.exc_info()[2]
     raise_(ValueError, "dodgy value", traceback)
 .. code:: python
 
     # Python 2 and 3: option 2
     from future.utils import raise_with_traceback
-    
+
     raise_with_traceback(ValueError("dodgy value"))
 Exception chaining (PEP 3134):
 
@@ -145,7 +145,7 @@ Exception chaining (PEP 3134):
 
     # Python 2 and 3:
     from future.utils import raise_from
-    
+
     class FileDatabase:
         def __init__(self, filename):
             try:
@@ -199,7 +199,7 @@ Integer division (rounding down):
 
     # Python 2 and 3:
     from __future__ import division    # (at top of module)
-    
+
     assert 3 / 2 == 1.5
 "Old division" (i.e. compatible with Py2 behaviour):
 
@@ -211,7 +211,7 @@ Integer division (rounding down):
 
     # Python 2 and 3:
     from past.utils import old_div
-    
+
     a = old_div(b, c)    # always same as / on Py2
 Long integers
 ~~~~~~~~~~~~~
@@ -223,14 +223,14 @@ Short integers are gone in Python 3 and ``long`` has become ``int``
 
     # Python 2 only
     k = 9223372036854775808L
-    
+
     # Python 2 and 3:
     k = 9223372036854775808
 .. code:: python
 
     # Python 2 only
     bigint = 1L
-    
+
     # Python 2 and 3
     from builtins import int
     bigint = int(1)
@@ -241,20 +241,20 @@ To test whether a value is an integer (of any kind):
     # Python 2 only:
     if isinstance(x, (int, long)):
         ...
-    
+
     # Python 3 only:
     if isinstance(x, int):
         ...
-    
+
     # Python 2 and 3: option 1
     from builtins import int    # subclass of long on Py2
-    
+
     if isinstance(x, int):             # matches both int and long on Py2
         ...
-    
+
     # Python 2 and 3: option 2
     from past.builtins import long
-    
+
     if isinstance(x, (int, long)):
         ...
 Octal constants
@@ -282,7 +282,7 @@ Metaclasses
 
     class BaseForm(object):
         pass
-    
+
     class FormType(type):
         pass
 .. code:: python
@@ -302,7 +302,7 @@ Metaclasses
     from six import with_metaclass
     # or
     from future.utils import with_metaclass
-    
+
     class Form(with_metaclass(FormType, BaseForm)):
         pass
 Strings and bytes
@@ -320,7 +320,7 @@ prefixes:
     # Python 2 only
     s1 = 'The Zen of Python'
     s2 = u'きたないのよりきれいな方がいい\n'
-    
+
     # Python 2 and 3
     s1 = u'The Zen of Python'
     s2 = u'きたないのよりきれいな方がいい\n'
@@ -334,7 +334,7 @@ this idiom to make all string literals in a module unicode strings:
 
     # Python 2 and 3
     from __future__ import unicode_literals    # at top of module
-    
+
     s1 = 'The Zen of Python'
     s2 = 'きたないのよりきれいな方がいい\n'
 See http://python-future.org/unicode\_literals.html for more discussion
@@ -347,7 +347,7 @@ Byte-string literals
 
     # Python 2 only
     s = 'This must be a byte-string'
-    
+
     # Python 2 and 3
     s = b'This must be a byte-string'
 To loop over a byte-string with possible high-bit characters, obtaining
@@ -358,11 +358,11 @@ each character as a byte-string of length 1:
     # Python 2 only:
     for bytechar in 'byte-string with high-bit chars like \xf9':
         ...
-    
+
     # Python 3 only:
     for myint in b'byte-string with high-bit chars like \xf9':
         bytechar = bytes([myint])
-    
+
     # Python 2 and 3:
     from builtins import bytes
     for myint in bytes(b'byte-string with high-bit chars like \xf9'):
@@ -376,7 +376,7 @@ convert an int into a 1-char byte string:
     for myint in b'byte-string with high-bit chars like \xf9':
         char = chr(myint)    # returns a unicode string
         bytechar = char.encode('latin-1')
-    
+
     # Python 2 and 3:
     from builtins import bytes, chr
     for myint in bytes(b'byte-string with high-bit chars like \xf9'):
@@ -391,10 +391,10 @@ basestring
     a = u'abc'
     b = 'def'
     assert (isinstance(a, basestring) and isinstance(b, basestring))
-    
+
     # Python 2 and 3: alternative 1
     from past.builtins import basestring    # pip install future
-    
+
     a = u'abc'
     b = b'def'
     assert (isinstance(a, basestring) and isinstance(b, basestring))
@@ -402,7 +402,7 @@ basestring
 
     # Python 2 and 3: alternative 2: refactor the code to avoid considering
     # byte-strings as strings.
-    
+
     from builtins import str
     a = u'abc'
     b = b'def'
@@ -435,7 +435,7 @@ StringIO
     from StringIO import StringIO
     # or:
     from cStringIO import StringIO
-    
+
     # Python 2 and 3:
     from io import BytesIO     # for handling byte strings
     from io import StringIO    # for handling unicode strings
@@ -450,13 +450,13 @@ Suppose the package is:
         __init__.py
         submodule1.py
         submodule2.py
-        
+
 
 and the code below is in ``submodule1.py``:
 
 .. code:: python
 
-    # Python 2 only: 
+    # Python 2 only:
     import submodule2
 .. code:: python
 
@@ -505,17 +505,17 @@ Iterable dict values:
 
     # Python 2 and 3: option 1
     from builtins import dict
-    
+
     heights = dict(Fred=175, Anne=166, Joe=192)
     for key in heights.values():    # efficient on Py2 and Py3
         ...
 .. code:: python
 
     # Python 2 and 3: option 2
-    from builtins import itervalues
+    from future.utils import itervalues
     # or
     from six import itervalues
-    
+
     for key in itervalues(heights):
         ...
 Iterable dict items:
@@ -528,13 +528,13 @@ Iterable dict items:
 .. code:: python
 
     # Python 2 and 3: option 1
-    for (key, value) in heights.items():    # inefficient on Py2    
+    for (key, value) in heights.items():    # inefficient on Py2
         ...
 .. code:: python
 
     # Python 2 and 3: option 2
     from future.utils import viewitems
-    
+
     for (key, value) in viewitems(heights):   # also behaves like a set
         ...
 .. code:: python
@@ -543,7 +543,7 @@ Iterable dict items:
     from future.utils import iteritems
     # or
     from six import iteritems
-    
+
     for (key, value) in iteritems(heights):
         ...
 dict keys/values/items as a list
@@ -577,14 +577,14 @@ dict values as a list:
 
     # Python 2 and 3: option 2
     from builtins import dict
-    
+
     heights = dict(Fred=175, Anne=166, Joe=192)
     valuelist = list(heights.values())
 .. code:: python
 
     # Python 2 and 3: option 3
     from future.utils import listvalues
-    
+
     valuelist = listvalues(heights)
 .. code:: python
 
@@ -592,7 +592,7 @@ dict values as a list:
     from future.utils import itervalues
     # or
     from six import itervalues
-    
+
     valuelist = list(itervalues(heights))
 dict items as a list:
 
@@ -604,7 +604,7 @@ dict items as a list:
 
     # Python 2 and 3: option 2
     from future.utils import listitems
-    
+
     itemlist = listitems(heights)
 .. code:: python
 
@@ -612,7 +612,7 @@ dict items as a list:
     from future.utils import iteritems
     # or
     from six import iteritems
-    
+
     itemlist = list(iteritems(heights))
 Custom class behaviour
 ----------------------
@@ -630,7 +630,7 @@ Custom iterators
             return self._iter.next().upper()
         def __iter__(self):
             return self
-    
+
     itr = Upper('hello')
     assert itr.next() == 'H'     # Py2-style
     assert list(itr) == list('ELLO')
@@ -638,7 +638,7 @@ Custom iterators
 
     # Python 2 and 3: option 1
     from builtins import object
-    
+
     class Upper(object):
         def __init__(self, iterable):
             self._iter = iter(iterable)
@@ -646,7 +646,7 @@ Custom iterators
             return next(self._iter).upper()  # builtin next() function calls
         def __iter__(self):
             return self
-    
+
     itr = Upper('hello')
     assert next(itr) == 'H'      # compatible style
     assert list(itr) == list('ELLO')
@@ -654,7 +654,7 @@ Custom iterators
 
     # Python 2 and 3: option 2
     from future.utils import implements_iterator
-    
+
     @implements_iterator
     class Upper(object):
         def __init__(self, iterable):
@@ -663,7 +663,7 @@ Custom iterators
             return next(self._iter).upper()  # builtin next() function calls
         def __iter__(self):
             return self
-    
+
     itr = Upper('hello')
     assert next(itr) == 'H'
     assert list(itr) == list('ELLO')
@@ -678,19 +678,19 @@ Custom ``__str__`` methods
             return 'Unicode string: \u5b54\u5b50'
         def __str__(self):
             return unicode(self).encode('utf-8')
-    
+
     a = MyClass()
     print(a)    # prints encoded string
 .. code:: python
 
     # Python 2 and 3:
     from future.utils import python_2_unicode_compatible
-    
+
     @python_2_unicode_compatible
     class MyClass(object):
         def __str__(self):
             return u'Unicode string: \u5b54\u5b50'
-    
+
     a = MyClass()
     print(a)    # prints string encoded as utf-8 on Py2
 
@@ -710,20 +710,20 @@ Custom ``__nonzero__`` vs ``__bool__`` method:
             self.l = l
         def __nonzero__(self):
             return all(self.l)
-    
+
     container = AllOrNothing([0, 100, 200])
     assert not bool(container)
 .. code:: python
 
     # Python 2 and 3:
     from builtins import object
-    
+
     class AllOrNothing(object):
         def __init__(self, l):
             self.l = l
         def __bool__(self):
             return all(self.l)
-    
+
     container = AllOrNothing([0, 100, 200])
     assert not bool(container)
 Lists versus iterators
@@ -766,21 +766,21 @@ range
 
     # Python 2 and 3: forward-compatible: option 2
     from builtins import range
-    
+
     mylist = list(range(5))
     assert mylist == [0, 1, 2, 3, 4]
 .. code:: python
 
     # Python 2 and 3: option 3
     from future.utils import lrange
-    
+
     mylist = lrange(5)
     assert mylist == [0, 1, 2, 3, 4]
 .. code:: python
 
     # Python 2 and 3: backward compatible
     from past.builtins import range
-    
+
     mylist = range(5)
     assert mylist == [0, 1, 2, 3, 4]
 map
@@ -801,7 +801,7 @@ map
 
     # Python 2 and 3: option 2
     from builtins import map
-    
+
     mynewlist = list(map(f, myoldlist))
     assert mynewlist == [f(x) for x in myoldlist]
 .. code:: python
@@ -811,21 +811,21 @@ map
         import itertools.imap as map
     except ImportError:
         pass
-    
+
     mynewlist = list(map(f, myoldlist))    # inefficient on Py2
     assert mynewlist == [f(x) for x in myoldlist]
 .. code:: python
 
     # Python 2 and 3: option 4
     from future.utils import lmap
-    
+
     mynewlist = lmap(f, myoldlist)
     assert mynewlist == [f(x) for x in myoldlist]
 .. code:: python
 
     # Python 2 and 3: option 5
     from past.builtins import map
-    
+
     mynewlist = map(f, myoldlist)
     assert mynewlist == [f(x) for x in myoldlist]
 imap
@@ -835,7 +835,7 @@ imap
 
     # Python 2 only:
     from itertools import imap
-    
+
     myiter = imap(func, myoldlist)
     assert isinstance(myiter, iter)
 .. code:: python
@@ -847,7 +847,7 @@ imap
 
     # Python 2 and 3: option 1
     from builtins import map
-    
+
     myiter = map(func, myoldlist)
     assert isinstance(myiter, iter)
 .. code:: python
@@ -857,14 +857,14 @@ imap
         import itertools.imap as map
     except ImportError:
         pass
-    
+
     myiter = map(func, myoldlist)
     assert isinstance(myiter, iter)
 .. code:: python
 
     # Python 2 and 3: option 3
     from six.moves import map
-    
+
     myiter = map(func, myoldlist)
     assert isinstance(myiter, iter)
 
@@ -890,13 +890,13 @@ File IO with open()
     f = open('myfile.txt')
     data = f.read()              # as a byte string
     text = data.decode('utf-8')
-    
+
     # Python 2 and 3: alternative 1
     from io import open
     f = open('myfile.txt', 'rb')
     data = f.read()              # as bytes
     text = data.decode('utf-8')  # unicode, not bytes
-    
+
     # Python 2 and 3: alternative 2
     from io import open
     f = open('myfile.txt', encoding='utf-8')
@@ -912,7 +912,7 @@ reduce()
 
     # Python 2 and 3:
     from functools import reduce
-    
+
     assert reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) == 1+2+3+4+5
 raw\_input()
 ~~~~~~~~~~~~
@@ -926,7 +926,7 @@ raw\_input()
 
     # Python 2 and 3:
     from builtins import input
-    
+
     name = input('What is your name? ')
     assert isinstance(name, str)    # native str on Py2 and Py3
 input()
@@ -954,7 +954,7 @@ file()
 
     # Python 2 and 3:
     f = open(pathname)
-    
+
     # But preferably, use this:
     from io import open
     f = open(pathname, 'rb')   # if f.read() should return bytes
@@ -998,13 +998,13 @@ execfile()
 
     # Python 2 and 3: alternative 1
     from past.builtins import execfile
-    
+
     execfile('myfile.py')
 .. code:: python
 
     # Python 2 and 3: alternative 2
     exec(compile(open('myfile.py').read()))
-    
+
     # This can sometimes cause this:
     #     SyntaxError: function ... uses import * and bare exec ...
     # See https://github.com/PythonCharmers/python-future/issues/37
@@ -1098,7 +1098,7 @@ chr()
 
     # Python 2 and 3: option 1
     from builtins import chr
-    
+
     assert chr(64).encode('latin-1') == b'@'
     assert chr(0xc8).encode('latin-1') == b'\xc8'
 .. code:: python
@@ -1110,7 +1110,7 @@ chr()
 
     # Python 2 and 3: option 2
     from builtins import bytes
-    
+
     assert bytes([64]) == b'@'
     assert bytes([0xc8]) == b'\xc8'
 cmp()
@@ -1156,22 +1156,22 @@ dbm modules
     import dbm
     import dumbdbm
     import gdbm
-    
+
     # Python 2 and 3: alternative 1
     from future import standard_library
     standard_library.install_aliases()
-    
+
     import dbm
     import dbm.ndbm
     import dbm.dumb
     import dbm.gnu
-    
+
     # Python 2 and 3: alternative 2
     from future.moves import dbm
     from future.moves.dbm import dumb
     from future.moves.dbm import ndbm
     from future.moves.dbm import gnu
-    
+
     # Python 2 and 3: alternative 3
     from six.moves import dbm_gnu
     # (others not supported)
@@ -1182,44 +1182,12 @@ commands / subprocess modules
 
     # Python 2 only
     from commands import getoutput, getstatusoutput
-    
+
     # Python 2 and 3
     from future import standard_library
     standard_library.install_aliases()
-    
+
     from subprocess import getoutput, getstatusoutput
-subprocess.check\_output()
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    # Python 2.7 and above
-    from subprocess import check_output
-    
-    # Python 2.6 and above: alternative 1
-    from future.moves.subprocess import check_output
-    
-    # Python 2.6 and above: alternative 2
-    from future import standard_library
-    standard_library.install_aliases()
-    
-    from subprocess import check_output
-collections: Counter and OrderedDict
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    # Python 2.7 and above
-    from collections import Counter, OrderedDict
-    
-    # Python 2.6 and above: alternative 1
-    from future.moves.collections import Counter, OrderedDict
-    
-    # Python 2.6 and above: alternative 2
-    from future import standard_library
-    standard_library.install_aliases()
-    
-    from collections import Counter, OrderedDict
 StringIO module
 ~~~~~~~~~~~~~~~
 
@@ -1245,7 +1213,7 @@ http module
     import BaseHTTPServer
     import SimpleHTTPServer
     import CGIHttpServer
-    
+
     # Python 2 and 3 (after ``pip install future``):
     import http.client
     import http.cookies
@@ -1259,14 +1227,14 @@ xmlrpc module
     # Python 2 only:
     import DocXMLRPCServer
     import SimpleXMLRPCServer
-    
+
     # Python 2 and 3 (after ``pip install future``):
     import xmlrpc.server
 .. code:: python
 
     # Python 2 only:
     import xmlrpclib
-    
+
     # Python 2 and 3 (after ``pip install future``):
     import xmlrpc.client
 html escaping and entities
@@ -1276,13 +1244,13 @@ html escaping and entities
 
     # Python 2 and 3:
     from cgi import escape
-    
+
     # Safer (Python 2 and 3, after ``pip install future``):
     from html import escape
-    
+
     # Python 2 only:
     from htmlentitydefs import codepoint2name, entitydefs, name2codepoint
-    
+
     # Python 2 and 3 (after ``pip install future``):
     from html.entities import codepoint2name, entitydefs, name2codepoint
 html parsing
@@ -1292,17 +1260,17 @@ html parsing
 
     # Python 2 only:
     from HTMLParser import HTMLParser
-    
+
     # Python 2 and 3 (after ``pip install future``)
     from html.parser import HTMLParser
-    
+
     # Python 2 and 3 (alternative 2):
     from future.moves.html.parser import HTMLParser
 urllib module
 ~~~~~~~~~~~~~
 
 ``urllib`` is the hardest module to use from Python 2/3 compatible code.
-You may like to use Requests (http://python-requests.org) instead.
+You might want to switch to Requests (http://python-requests.org) instead.
 
 .. code:: python
 
@@ -1321,7 +1289,7 @@ You may like to use Requests (http://python-requests.org) instead.
     # Python 2 and 3: easiest option
     from future.standard_library import install_aliases
     install_aliases()
-    
+
     from urllib.parse import urlparse, urlencode
     from urllib.request import urlopen, Request
     from urllib.error import HTTPError
@@ -1329,7 +1297,7 @@ You may like to use Requests (http://python-requests.org) instead.
 
     # Python 2 and 3: alternative 2
     from future.standard_library import hooks
-    
+
     with hooks():
         from urllib.parse import urlparse, urlencode
         from urllib.request import urlopen, Request
@@ -1366,9 +1334,9 @@ Tkinter
     import FileDialog
     import ScrolledText
     import SimpleDialog
-    import Tix  
+    import Tix
     import Tkconstants
-    import Tkdnd   
+    import Tkdnd
     import tkColorChooser
     import tkCommonDialog
     import tkFileDialog
@@ -1376,7 +1344,7 @@ Tkinter
     import tkMessageBox
     import tkSimpleDialog
     import ttk
-    
+
     # Python 2 and 3 (after ``pip install future``):
     import tkinter
     import tkinter.dialog
@@ -1400,7 +1368,7 @@ socketserver
 
     # Python 2 only:
     import SocketServer
-    
+
     # Python 2 and 3 (after ``pip install future``):
     import socketserver
 copy\_reg, copyreg
@@ -1410,7 +1378,7 @@ copy\_reg, copyreg
 
     # Python 2 only:
     import copy_reg
-    
+
     # Python 2 and 3 (after ``pip install future``):
     import copyreg
 configparser
@@ -1420,7 +1388,7 @@ configparser
 
     # Python 2 only:
     from ConfigParser import ConfigParser
-    
+
     # Python 2 and 3 (after ``pip install configparser``):
     from configparser import ConfigParser
 queue
@@ -1430,7 +1398,7 @@ queue
 
     # Python 2 only:
     from Queue import Queue, heapq, deque
-    
+
     # Python 2 and 3 (after ``pip install future``):
     from queue import Queue, heapq, deque
 repr, reprlib
@@ -1440,7 +1408,7 @@ repr, reprlib
 
     # Python 2 only:
     from repr import aRepr, repr
-    
+
     # Python 2 and 3 (after ``pip install future``):
     from reprlib import aRepr, repr
 UserDict, UserList, UserString
@@ -1452,16 +1420,16 @@ UserDict, UserList, UserString
     from UserDict import UserDict
     from UserList import UserList
     from UserString import UserString
-    
+
     # Python 3 only:
     from collections import UserDict, UserList, UserString
-    
+
     # Python 2 and 3: alternative 1
     from future.moves.collections import UserDict, UserList, UserString
-    
+
     # Python 2 and 3: alternative 2
     from six.moves import UserDict, UserList, UserString
-    
+
     # Python 2 and 3: alternative 3
     from future.standard_library import install_aliases
     install_aliases()
@@ -1473,16 +1441,16 @@ itertools: filterfalse, zip\_longest
 
     # Python 2 only:
     from itertools import ifilterfalse, izip_longest
-    
+
     # Python 3 only:
     from itertools import filterfalse, zip_longest
-    
+
     # Python 2 and 3: alternative 1
     from future.moves.itertools import filterfalse, zip_longest
-    
+
     # Python 2 and 3: alternative 2
     from six.moves import filterfalse, zip_longest
-    
+
     # Python 2 and 3: alternative 3
     from future.standard_library import install_aliases
     install_aliases()

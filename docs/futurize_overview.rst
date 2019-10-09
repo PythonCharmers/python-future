@@ -51,5 +51,5 @@ use the ``-w`` flag.
 
 For complex projects, it is probably best to divide the porting into two stages.
 Stage 1 is for "safe" changes that modernize the code but do not break Python
-2.6 compatibility or introduce a depdendency on the ``future`` package. Stage 2
+2.7 compatibility or introduce a dependency on the ``future`` package. Stage 2
 is to complete the process.

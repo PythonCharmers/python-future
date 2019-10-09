@@ -258,7 +258,7 @@ class TestStr(unittest.TestCase):
         if utils.PY2:
             self.assertTrue(b'A' in s)
         with self.assertRaises(TypeError):
-            bytes(b'A') in s                  
+            bytes(b'A') in s
         with self.assertRaises(TypeError):
             65 in s                                 # unlike bytes
 
@@ -363,6 +363,29 @@ class TestStr(unittest.TestCase):
             self.assertFalse(b'ABCD' == s)
         self.assertFalse(bytes(b'ABCD') == s)
 
+        # We want to ensure comparison against unknown types return
+        # NotImplemented so that the interpreter can rerun the test with the
+        # other class.  We expect the operator to return False if both return
+        # NotImplemented.
+        class OurCustomString(object):
+            def __init__(self, string):
+                self.string = string
+
+            def __eq__(self, other):
+                return NotImplemented
+
+        our_str = OurCustomString("foobar")
+        new_str = str("foobar")
+
+        self.assertFalse(our_str == new_str)
+        self.assertFalse(new_str == our_str)
+        self.assertIs(new_str.__eq__(our_str), NotImplemented)
+        self.assertIs(our_str.__eq__(new_str), NotImplemented)
+
+    def test_hash(self):
+        s = str('ABCD')
+        self.assertIsInstance(hash(s),int)
+
     def test_ne(self):
         s = str('ABCD')
         self.assertNotEqual('A', s)
@@ -382,10 +405,6 @@ class TestStr(unittest.TestCase):
             s > 3
         with self.assertRaises(TypeError):
             s < 1000
-        with self.assertRaises(TypeError):
-            s > b'XYZ'
-        with self.assertRaises(TypeError):
-            s < b'XYZ'
         with self.assertRaises(TypeError):
             s <= 3
         with self.assertRaises(TypeError):
@@ -529,12 +548,15 @@ class TestStr(unittest.TestCase):
         """
         Issue #96 (for newstr instead of newobject)
         """
-        import collections
+        if utils.PY2:
+            from collections import Container
+        else:
+            from collections.abc import Container
 
         class Base(str):
             pass
 
-        class Foo(Base, collections.Container):
+        class Foo(Base, Container):
             def __contains__(self, item):
                 return False
 

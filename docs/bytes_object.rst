@@ -26,7 +26,7 @@ strict separation of unicode strings and byte strings as Python 3's
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     TypeError: argument can't be unicode string
-    
+
     >>> bytes(b',').join([u'Fred', u'Bill'])
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -52,9 +52,9 @@ behaviours to Python 3's :class:`bytes`::
 Currently the easiest way to ensure identical behaviour of byte-strings
 in a Py2/3 codebase is to wrap all byte-string literals ``b'...'`` in a
 :func:`~bytes` call as follows::
-    
+
     from builtins import bytes
-    
+
     # ...
 
     b = bytes(b'This is my bytestring')
@@ -78,4 +78,3 @@ identically on Python 2.x and 3.x::
 This feature is in alpha. Please leave feedback `here
 <https://github.com/PythonCharmers/python-future/issues>`_ about whether this
 works for you.
- 
