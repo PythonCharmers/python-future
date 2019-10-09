@@ -577,15 +577,14 @@ def isbytes(obj):
 
 def isnewbytes(obj):
     """
-    Equivalent to the result of ``isinstance(obj, newbytes)`` were
-    ``__instancecheck__`` not overridden on the newbytes subclass. In
-    other words, it is REALLY a newbytes instance, not a Py2 native str
+    Equivalent to the result of ``type(obj)  == type(newbytes)``
+    in other words, it is REALLY a newbytes instance, not a Py2 native str
     object?
+
+    Note that this does not cover subclasses of newbytes, and it is not
+    equivalent to ininstance(obj, newbytes)
     """
-    # TODO: generalize this so that it works with subclasses of newbytes
-    # Import is here to avoid circular imports:
-    from future.types.newbytes import newbytes
-    return type(obj) == newbytes
+    return type(obj).__name__ == 'newbytes'
 
 
 def isint(obj):
