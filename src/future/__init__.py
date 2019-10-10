@@ -68,7 +68,7 @@ See: http://python-future.org
 Credits
 -------
 
-:Author:  Ed Schofield
+:Author:  Ed Schofield, Jordan M. Adler, et al
 :Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
           Ltd, Singapore. http://pythoncharmers.com
 :Others:  See docs/credits.rst or http://python-future.org/credits.html
@@ -86,8 +86,8 @@ __author__ = 'Ed Schofield'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2013-2018 Python Charmers Pty Ltd'
 __ver_major__ = 0
-__ver_minor__ = 17
-__ver_patch__ = 1
+__ver_minor__ = 18
+__ver_patch__ = 0
 __ver_sub__ = ''
 __version__ = "%d.%d.%d%s" % (__ver_major__, __ver_minor__,
                               __ver_patch__, __ver_sub__)
