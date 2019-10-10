@@ -8,7 +8,7 @@ Licence
 The software is distributed under an MIT licence. The text is as follows
 (from ``LICENSE.txt``)::
 
-    Copyright (c) 2013-2018 Python Charmers Pty Ltd, Australia
+    Copyright (c) 2013-2019 Python Charmers Pty Ltd, Australia
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -47,16 +47,25 @@ Authors
 -------
 Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with the help of various contributors:
 
+- Jordan Adler
+- Kyle Altendorf
 - Grant Bakker
 - Jacob Beck
+- Fumihiro (Ben) Bessho
+- Shiva Bhusal
 - Nate Bogdanowicz
+- Tomer Chachamu
 - Christian Clauss
 - Denis Cornehl
 - Nicolas Delaby
+- Chad Dombrova
 - Jon Dufresne
 - Corey Farwell
 - Eric Firing
+- Joe Gordon
 - Maximilian Hils
+- Miro Hrončok
+- Mark Huang
 - Martijn Jacobs
 - Michael Joseph
 - Waldemar Kornewald
@@ -66,23 +75,36 @@ Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with th
 - Joshua Landau
 - German Larrain
 - Chris Lasher
+- ghanshyam lele
 - Calum Lind
+- Tobias Megies
+- Anika Mukherji
 - Jon Parise
 - Matthew Parnell
 - Miga Purg
 - Éloi Rivard
+- Sesh Sadasivam
 - Elliott Sales de Andrade
+- Aiden Scandella
 - Yury Selivanov
 - Tim Shaffer
+- Sameera Somisetty
 - Louis Sautier
+- Gregory P. Smith
 - Daniel Szoska
 - Flaviu Tamas
 - Jeff Tratner
 - Tim Tröndle
 - Brad Walker
+- Andrew Wason
+- Jeff Widman
+- Dan Yeaw
+- Hackalog (GitHub user)
 - lsm (GiHub user)
 - Mystic-Mirage (GitHub user)
 - str4d (GitHub user)
+- ucodery (GitHub user)
+- urain39 (GitHub user)
 - 9seconds (GitHub user)
 - Varriount (GitHub user)
 

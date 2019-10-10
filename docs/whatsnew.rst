@@ -3,7 +3,32 @@
 What's New
 **********
 
-What's new in version 0.17.1 (2019-10-30)
+What's new in version 0.18.0 (2019-10-09)
+=========================================
+This is a major bug-fix and feature release, including:
+
+- Fix collections.abc import for py38+
+- Remove import for isnewbytes() function, reducing CPU cost significantly
+- Fix bug with importing past.translation when importing past which breaks zipped python installations
+- Fix an issue with copyreg import under Py3 that results in unexposed stdlib functionality
+- Export and document types in future.utils
+- Update behavior of newstr.__eq__() to match str.__eq__() as per reference docs
+- Fix raising and the raising fixer to handle cases where the syntax is ambigious
+- Allow "default" parameter in min() and max() (Issue #334)
+- Implement __hash__() in newstr (Issue #454)
+- Future proof some version checks to handle the fact that Py4 won't be a major breaking release
+- Fix urllib.request imports for Python 3.8 compatibility (Issue #447)
+- Fix future import ordering (Issue #445)
+- Fixed bug in fix_division_safe fixture (Issue #434)
+- Do not globally destroy re.ASCII in PY3
+- Fix a bug in email.Message.set_boundary() (Issue #429)
+- Implement format_map() in str
+- Implement readinto() for socket.fp
+
+As well as a number of corrections to a variety of documentation, and updates to
+test infrastructure.
+
+What's new in version 0.17.1 (2018-10-30)
 =========================================
 This release address a packaging error because of an erroneous declaration that
 any built wheels are universal.

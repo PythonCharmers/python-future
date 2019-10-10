@@ -3,7 +3,7 @@
 Cheat Sheet: Writing Python 2-3 compatible code
 ===============================================
 
--  **Copyright (c):** 2013-2018 Python Charmers Pty Ltd, Australia.
+-  **Copyright (c):** 2013-2019 Python Charmers Pty Ltd, Australia.
 -  **Author:** Ed Schofield.
 -  **Licence:** Creative Commons Attribution.
 
