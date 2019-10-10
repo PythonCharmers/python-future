@@ -266,7 +266,7 @@ Licensing
 
 :Author:  Ed Schofield, Jordan M. Adler, et al
 
-:Copyright: 2013-2018 Python Charmers Pty Ltd, Australia.
+:Copyright: 2013-2019 Python Charmers Pty Ltd, Australia.
 
 :Sponsors: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
            Ltd, Singapore. http://pythoncharmers.com
