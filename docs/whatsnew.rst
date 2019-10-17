@@ -3,6 +3,12 @@
 What's New
 **********
 
+What's new in version 0.18.1 (2019-10-09)
+=========================================
+This is a minor bug-fix release containing a fix for raise_() 
+when passed an exception that's not an Exception (e.g. BaseException
+subclasses)
+
 What's new in version 0.18.0 (2019-10-09)
 =========================================
 This is a major bug-fix and feature release, including:
