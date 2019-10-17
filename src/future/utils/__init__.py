@@ -415,7 +415,7 @@ if PY3:
             if value is not None:
                 raise TypeError("instance exception may not have a separate value")
             exc = tp
-        elif not issubclass(tp, Exception):
+        elif isinstance(tp, type) and not issubclass(tp, Exception):
             # If the first object is a class, it becomes the type of the
             # exception.
             raise TypeError("class must derive from Exception")
