@@ -111,13 +111,13 @@ class TestUtils(unittest.TestCase):
         self.assertFalse(isbytes(self.s2))
 
     def test_raise_(self):
-        def valerror():
+        def valuerror():
             try:
                 raise ValueError("Apples!")
             except Exception as e:
                 raise_(e)
 
-        self.assertRaises(ValueError, valerror)
+        self.assertRaises(ValueError, valuerror)
 
         def with_value():
             raise_(IOError, "This is an error")
@@ -142,6 +142,17 @@ class TestUtils(unittest.TestCase):
             with_traceback()
         except IOError as e:
             self.assertEqual(str(e), "An error")
+
+        class Timeout(BaseException):
+            pass
+
+        self.assertRaises(Timeout, raise_, Timeout)
+        self.assertRaises(Timeout, raise_, Timeout())
+
+        if PY3:
+            self.assertRaisesRegexp(
+                TypeError, "class must derive from BaseException",
+                raise_, int)
 
     def test_raise_from_None(self):
         try:
