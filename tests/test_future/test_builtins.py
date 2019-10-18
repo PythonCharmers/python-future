@@ -1123,6 +1123,7 @@ class BuiltinTest(unittest.TestCase):
             def __getitem__(self, index):
                 raise ValueError
         self.assertRaises(ValueError, min, BadSeq())
+        self.assertEqual(max(x for x in [5, 4, 3]), 5)
 
         for stmt in (
             "min(key=int)",                 # no args
@@ -1156,7 +1157,6 @@ class BuiltinTest(unittest.TestCase):
 
         # Test iterables that can only be looped once #510
         self.assertEqual(min(x for x in [5]), 5)
-        self.assertEqual(max(x for x in [5, 4, 3]), 5)
 
     def test_next(self):
         it = iter(range(2))
