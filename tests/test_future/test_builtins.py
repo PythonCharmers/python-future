@@ -1105,6 +1105,7 @@ class BuiltinTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             max(1, 2, default=0)
         self.assertEqual(max([], default=0), 0)
+        self.assertIs(max([], default=None), None)
 
     def test_min(self):
         self.assertEqual(min('123123'), '1')
@@ -1150,6 +1151,7 @@ class BuiltinTest(unittest.TestCase):
                          sorted(data, key=f)[0])
         self.assertEqual(min([], default=5), 5)
         self.assertEqual(min([], default=0), 0)
+        self.assertIs(min([], default=None), None)
         with self.assertRaises(TypeError):
             max(None, default=5)
         with self.assertRaises(TypeError):

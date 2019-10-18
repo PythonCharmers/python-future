@@ -6,6 +6,8 @@ if utils.PY2:
 else:
     from builtins import max as _builtin_max, min as _builtin_min
 
+_SENTINEL = object()
+
 
 def newmin(*args, **kwargs):
     return new_min_max(_builtin_min, *args, **kwargs)
@@ -31,7 +33,7 @@ def new_min_max(_builtin_func, *args, **kwargs):
     if len(args) == 0:
         raise TypeError
 
-    if len(args) != 1 and kwargs.get('default') is not None:
+    if len(args) != 1 and kwargs.get('default', _SENTINEL) is not _SENTINEL:
         raise TypeError
 
     if len(args) == 1:
@@ -39,7 +41,7 @@ def new_min_max(_builtin_func, *args, **kwargs):
         try:
             first = next(iterator)
         except StopIteration:
-            if kwargs.get('default') is not None:
+            if kwargs.get('default', _SENTINEL) is not _SENTINEL:
                 return kwargs.get('default')
             else:
                 raise ValueError('iterable is an empty sequence')
