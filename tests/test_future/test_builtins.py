@@ -1154,6 +1154,10 @@ class BuiltinTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             max(1, 2, default=0)
 
+        # Test iterables that can only be looped once #510
+        self.assertEqual(min(x for x in [5]), 5)
+        self.assertEqual(max(x for x in [5, 4, 3]), 5)
+
     def test_next(self):
         it = iter(range(2))
         self.assertEqual(next(it), 0)
