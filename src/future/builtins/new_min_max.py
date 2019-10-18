@@ -1,3 +1,5 @@
+import itertools
+
 from future import utils
 if utils.PY2:
     from __builtin__ import max as _builtin_max, min as _builtin_min
@@ -33,17 +35,20 @@ def new_min_max(_builtin_func, *args, **kwargs):
         raise TypeError
 
     if len(args) == 1:
+        iterator = iter(args[0])
         try:
-            next(iter(args[0]))
+            first = next(iterator)
         except StopIteration:
             if kwargs.get('default') is not None:
                 return kwargs.get('default')
             else:
                 raise ValueError('iterable is an empty sequence')
-        if kwargs.get('key') is not None:
-            return _builtin_func(args[0], key=kwargs.get('key'))
         else:
-            return _builtin_func(args[0])
+            iterator = itertools.chain([first], iterator)
+        if kwargs.get('key') is not None:
+            return _builtin_func(iterator, key=kwargs.get('key'))
+        else:
+            return _builtin_func(iterator)
 
     if len(args) > 1:
         if kwargs.get('key') is not None:
