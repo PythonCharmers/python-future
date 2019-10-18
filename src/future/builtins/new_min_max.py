@@ -44,7 +44,7 @@ def new_min_max(_builtin_func, *args, **kwargs):
             if kwargs.get('default', _SENTINEL) is not _SENTINEL:
                 return kwargs.get('default')
             else:
-                raise ValueError('iterable is an empty sequence')
+                raise ValueError('{}() arg is an empty sequence'.format(_builtin_func.__name__))
         else:
             iterator = itertools.chain([first], iterator)
         if kwargs.get('key') is not None:
