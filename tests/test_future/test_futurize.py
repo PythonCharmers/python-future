@@ -436,6 +436,27 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after, ignore_imports=False, run=False)
 
+    def test_input_without_import(self):
+        before = """
+        a = input()
+        """
+        after = """
+        from builtins import input
+        a = eval(input())
+        """
+        self.convert_check(before, after, ignore_imports=False, run=False)
+
+    def test_input_with_import(self):
+        before = """
+        from builtins import input
+        a = input()
+        """
+        after = """
+        from builtins import input
+        a = input()
+        """
+        self.convert_check(before, after, ignore_imports=False, run=False)
+
     def test_xrange(self):
         """
         The ``from builtins import range`` line was being added to the
