@@ -38,7 +38,7 @@ def newround(number, ndigits=None):
         if 'numpy' in repr(type(number)):
             number = float(number)
 
-    if isinstance(d, Decimal):
+    if isinstance(number, Decimal):
         d = number
     else:
         if not PY26:
