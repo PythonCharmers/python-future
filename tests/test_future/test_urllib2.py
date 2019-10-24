@@ -691,6 +691,10 @@ class HandlerTests(unittest.TestCase):
         h = NullFTPHandler(data)
         h.parent = MockOpener()
 
+        # MIME guessing works in Python 3.8!
+        guessed_mime = None
+        if sys.hexversion >= 0x03080000:
+            guessed_mime = "image/gif"
         for url, host, port, user, passwd, type_, dirs, filename, mimetype in [
             ("ftp://localhost/foo/bar/baz.html",
              "localhost", ftplib.FTP_PORT, "", "", "I",
@@ -709,7 +713,7 @@ class HandlerTests(unittest.TestCase):
              ["foo", "bar"], "", None),
             ("ftp://localhost/baz.gif;type=a",
              "localhost", ftplib.FTP_PORT, "", "", "A",
-             [], "baz.gif", None),  # XXX really this should guess image/gif
+             [], "baz.gif", guessed_mime),
             ]:
             req = Request(url)
             req.timeout = None
