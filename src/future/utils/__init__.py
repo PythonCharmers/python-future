@@ -408,17 +408,17 @@ if PY3:
         allows re-raising exceptions with the cls value and traceback on
         Python 2 and 3.
         """
-        if isinstance(tp, Exception):
+        if isinstance(tp, BaseException):
             # If the first object is an instance, the type of the exception
             # is the class of the instance, the instance itself is the value,
             # and the second object must be None.
             if value is not None:
                 raise TypeError("instance exception may not have a separate value")
             exc = tp
-        elif isinstance(tp, type) and not issubclass(tp, Exception):
+        elif isinstance(tp, type) and not issubclass(tp, BaseException):
             # If the first object is a class, it becomes the type of the
             # exception.
-            raise TypeError("class must derive from Exception")
+            raise TypeError("class must derive from BaseException, not %s" % tp.__name__)
         else:
             # The second object is used to determine the exception value: If it
             # is an instance of the class, the instance becomes the exception
