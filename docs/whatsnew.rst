@@ -3,6 +3,19 @@
 What's New
 **********
 
+What's new in version 0.18.2 (2019-10-30)
+=========================================
+This is a minor bug-fix release containing a number of fixes:
+- Fix min/max functions with generators, and 'None' default (PR #514)
+- Use BaseException in raise_() (PR #515)
+- Fix builtins.round() for Decimals (Issue #501)
+- Fix raise_from() to prevent failures with immutable classes (PR #518)
+- Make FixInput idempotent (Issue #427)
+- Fix type in newround (PR #521)
+- Support mimetype guessing in urllib2 for Py3.8+ (Issue #508)
+
+Python 3.8 is not yet officially supported.
+
 What's new in version 0.18.1 (2019-10-09)
 =========================================
 This is a minor bug-fix release containing a fix for raise_() 
