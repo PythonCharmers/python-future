@@ -48,6 +48,7 @@ Authors
 Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with the help of various contributors:
 
 - Jordan Adler
+- Jeroen Akkerman
 - Kyle Altendorf
 - Grant Bakker
 - Jacob Beck
@@ -70,6 +71,7 @@ Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with th
 - Michael Joseph
 - Waldemar Kornewald
 - Alexey Kotlyarov
+- Steve Kowalik
 - Lion Krischer
 - Marcin Kuzminski
 - Joshua Landau
@@ -81,6 +83,7 @@ Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with th
 - Anika Mukherji
 - Jon Parise
 - Matthew Parnell
+- Tom Picton
 - Miga Purg
 - Éloi Rivard
 - Sesh Sadasivam
@@ -91,6 +94,7 @@ Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with th
 - Sameera Somisetty
 - Louis Sautier
 - Gregory P. Smith
+- Chase Sterling
 - Daniel Szoska
 - Flaviu Tamas
 - Jeff Tratner
