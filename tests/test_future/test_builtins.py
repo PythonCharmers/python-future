@@ -146,7 +146,6 @@ class TestBuiltins(unittest.TestCase):
         self.assertTrue(isinstance(round(123.5, 0), float))
         self.assertTrue(isinstance(round(123.5), Integral))
 
-    @unittest.skip('negative ndigits not implemented yet')
     def test_round_negative_ndigits(self):
         self.assertEqual(round(10.1350, 0), 10.0)
         self.assertEqual(round(10.1350, -1), 10.0)
