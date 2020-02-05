@@ -2,6 +2,7 @@
 ``python-future``: pure Python implementation of Python 3 round().
 """
 
+from __future__ import division
 from future.utils import PYPY, PY26, bind_method
 
 # Use the decimal module for simplicity of implementation (and
@@ -29,8 +30,6 @@ def newround(number, ndigits=None):
     if hasattr(number, '__round__'):
         return number.__round__(ndigits)
 
-    if ndigits < 0:
-        raise NotImplementedError('negative ndigits not supported yet')
     exponent = Decimal('10') ** (-ndigits)
 
     if PYPY:
@@ -42,15 +41,19 @@ def newround(number, ndigits=None):
         d = number
     else:
         if not PY26:
-            d = Decimal.from_float(number).quantize(exponent,
-                                                rounding=ROUND_HALF_EVEN)
+            d = Decimal.from_float(number)
         else:
-            d = from_float_26(number).quantize(exponent, rounding=ROUND_HALF_EVEN)
+            d = from_float_26(number)
+
+    if ndigits < 0:
+        result = newround(d / exponent) * exponent
+    else:
+        result = d.quantize(exponent, rounding=ROUND_HALF_EVEN)
 
     if return_int:
-        return int(d)
+        return int(result)
     else:
-        return float(d)
+        return float(result)
 
 
 ### From Python 2.7's decimal.py. Only needed to support Py2.6:
