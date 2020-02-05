@@ -527,9 +527,9 @@ def implements_iterator(cls):
         return cls
 
 if PY3:
-    get_next = lambda x: x.next
-else:
     get_next = lambda x: x.__next__
+else:
+    get_next = lambda x: x.next
 
 
 def encode_filename(filename):
