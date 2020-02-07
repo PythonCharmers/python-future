@@ -10,5 +10,6 @@
   name: pasteurize
   description: Pasteurize your Py3 code to ensure it is runnable on Py2.
   language: python
+  language_version: python3
   types: [python]
   entry: pasteurize -w -n --no-diffs
