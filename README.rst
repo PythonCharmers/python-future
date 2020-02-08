@@ -289,7 +289,7 @@ Next, you need to add this entry to your ``.pre-commit-config.yaml``
 .. code-block:: yaml
 
     -   repo: https://github.com/PythonCharmers/python-future
-        rev: feature/pre-commit
+        rev: master
         hooks:
             - id: futurize
               args: [--both-stages]
