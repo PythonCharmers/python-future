@@ -19,6 +19,25 @@ class TestBaseString(unittest.TestCase):
         s2 = oldstr(b'abc')
         self.assertTrue(isinstance(s2, basestring))
 
+    def test_issubclass(self):
+        self.assertTrue(issubclass(str, basestring))
+        self.assertTrue(issubclass(bytes, basestring))
+        self.assertTrue(issubclass(basestring, basestring))
+        self.assertFalse(issubclass(int, basestring))
+        self.assertFalse(issubclass(list, basestring))
+        self.assertTrue(issubclass(basestring, object))
+
+        class CustomString(basestring):
+            pass
+        class NotString(object):
+            pass
+        class OldStyleClass:
+            pass
+        self.assertTrue(issubclass(CustomString, basestring))
+        self.assertFalse(issubclass(NotString, basestring))
+        self.assertFalse(issubclass(OldStyleClass, basestring))
+
+
 
 if __name__ == '__main__':
     unittest.main()
