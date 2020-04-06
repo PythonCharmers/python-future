@@ -32,10 +32,10 @@ def newround(number, ndigits=None):
 
     exponent = Decimal('10') ** (-ndigits)
 
-    if PYPY:
-        # Work around issue #24: round() breaks on PyPy with NumPy's types
-        if 'numpy' in repr(type(number)):
-            number = float(number)
+    # Work around issue #24: round() breaks on PyPy with NumPy's types
+    # Also breaks on CPython with NumPy's specialized int types like uint64
+    if 'numpy' in repr(type(number)):
+        number = float(number)
 
     if isinstance(number, Decimal):
         d = number
