@@ -1,0 +1,15 @@
+- id: futurize
+  name: futurize
+  description: Futurize your Py2 code to ensure it is runnable on Py3.
+  language: python
+  types: [python]
+  entry: futurize -w -n --no-diffs
+  args: [--stage1]
+
+- id: pasteurize
+  name: pasteurize
+  description: Pasteurize your Py3 code to ensure it is runnable on Py2.
+  language: python
+  language_version: python3
+  types: [python]
+  entry: pasteurize -w -n --no-diffs

@@ -57,6 +57,8 @@ Features
     decoding the backported ``str`` and ``bytes`` objects. [This feature is
     currently in alpha.]
 
+-   support for pre-commit hooks
+
 .. _code-examples:
 
 Code examples
@@ -260,6 +262,39 @@ Note: the auto-translation feature is still in alpha; it needs more testing and
 development, and will likely never be perfect.
 
 For more info, see :ref:`translation`.
+
+Pre-commit hooks
+----------------
+
+`Pre-commit <https://pre-commit.com/>`_ is a framework for managing and maintaining
+multi-language pre-commit hooks.
+
+In case you need to port your project from Python 2 to Python 3, you might consider
+using such hook during the transition period.
+
+First:
+
+.. code-block:: bash
+
+    $ pip install pre-commit
+
+and then in your project's directory:
+
+.. code-block:: bash
+
+    $ pre-commit install
+
+Next, you need to add this entry to your ``.pre-commit-config.yaml``
+
+.. code-block:: yaml
+
+    -   repo: https://github.com/PythonCharmers/python-future
+        rev: master
+        hooks:
+            - id: futurize
+              args: [--both-stages]
+
+The ``args`` part is optional, by default only stage1 is applied.
 
 Licensing
 ---------
