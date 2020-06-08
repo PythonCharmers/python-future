@@ -6,6 +6,7 @@ What's New
 What's new in version 0.18.2 (2019-10-30)
 =========================================
 This is a minor bug-fix release containing a number of fixes:
+
 - Fix min/max functions with generators, and 'None' default (PR #514)
 - Use BaseException in raise_() (PR #515)
 - Fix builtins.round() for Decimals (Issue #501)
