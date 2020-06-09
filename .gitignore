@@ -21,6 +21,8 @@ develop-eggs
 .installed.cfg
 lib
 lib64
+MANIFEST
+MANIFEST.in
 
 # Backup files
 *.bak
