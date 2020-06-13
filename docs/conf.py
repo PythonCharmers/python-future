@@ -13,7 +13,6 @@
 
 from __future__ import absolute_import, print_function
 import sys, os
-from future import __version__
 import sphinx_bootstrap_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
