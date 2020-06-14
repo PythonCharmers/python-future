@@ -44,3 +44,6 @@ nosetests.xml
 
 # PyCharm
 .idea
+
+# Generated test file
+mytempfile.py
