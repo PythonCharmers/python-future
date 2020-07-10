@@ -436,6 +436,7 @@ class TestFuturizeSimple(CodeHandler):
         """
         self.convert_check(before, after, ignore_imports=False, run=False)
 
+    @expectedFailurePY26
     def test_input_without_import(self):
         before = """
         a = input()
