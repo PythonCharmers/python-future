@@ -1,3 +1,4 @@
+language: generic
 before_script:
   # Run flake8 tests only on Python 2.7 and 3.7...
   # 1) stop the build if there are Python syntax errors or undefined names
@@ -7,6 +8,9 @@ before_script:
       flake8 . --count --exit-zero --select=E901,E999,F821,F822,F823 --show-source --statistics;
       flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics; 
     fi
+
+services:
+    - docker
 
 script:
   - ./buildtest.sh
