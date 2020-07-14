@@ -26,6 +26,7 @@ matrix:
       sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 install:
+  - pip install typing==3.7.4.1  # required for Python 3.3
   - pip install tox==2.9.1
   - pip install virtualenv==15.2.0
   - pip install py==1.4.30
