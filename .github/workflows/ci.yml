@@ -1,0 +1,23 @@
+name: CI
+on:
+  push:
+    branches: master
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: test (Python ${{ matrix.python-version }})
+    strategy:
+      matrix:
+        python-version: [2.6, 2.6, 3.3, 3.4, 3.5, 3.6, 3.7]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: Install dependencies
+        run: |
+          pip install -r test-requirements.txt
+      - name: Run tests
+        run: tox
