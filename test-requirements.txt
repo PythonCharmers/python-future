@@ -3,4 +3,4 @@ tox
 tox-gh-actions
 virtualenv==15.2.0
 py==1.4.30
-pluggy==0.5.2
+pluggy==0.12.0
