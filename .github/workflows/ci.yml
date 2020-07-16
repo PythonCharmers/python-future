@@ -20,7 +20,7 @@ jobs:
       - name: Install setuptools
         if: matrix.python-version == 2.6
         run: |
-          - pip install 'setuptools<34'
+          pip install 'setuptools<34'
       - name: Install dependencies
         run: |
           pip --version
