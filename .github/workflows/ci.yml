@@ -15,8 +15,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
+        if: !contains([2.6, 3.3, 3.4], matrix.python-version)
         with:
           python-version: "${{ matrix.python-version }}"
+      - name: Set up Python with deadsnakes
+      - uses: deadsnakes/action@v1.0.0
+        if: contains([2.6, 3.3, 3.4], matrix.python-version)
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Install wheel actually
         if: matrix.python-version == 2.6
         run: |
