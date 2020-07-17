@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: "${{ matrix.python-version }}"
       - name: Set up Python with deadsnakes
-      - uses: deadsnakes/action@v1.0.0
+        uses: deadsnakes/action@v1.0.0
         if: contains([2.6, 3.3, 3.4], matrix.python-version)
         with:
           python-version: ${{ matrix.python-version }}
