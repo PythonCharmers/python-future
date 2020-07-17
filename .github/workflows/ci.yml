@@ -10,17 +10,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [2.6, 2.7, 3.3, 3.4, 3.5, 3.6, 3.7]
+        python-version: [2.6-dev, 2.7, 3.3-dev, 3.4-dev, 3.5, 3.6, 3.7]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
-        if: matrix.python-version != 2.6
+        if: "!endsWith(matrix.python-version, '-dev')"
         with:
           python-version: "${{ matrix.python-version }}"
       - name: Set up Python with deadsnakes
         uses: deadsnakes/action@v1.0.0
-        if: matrix.python-version == 2.6
+        if: endsWith(matrix.python-version, '-dev')
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install wheel actually
