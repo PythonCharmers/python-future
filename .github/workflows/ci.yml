@@ -37,11 +37,11 @@ jobs:
 #        if: matrix.python-version == 2.6
 #        with:
 #          python-version: ${{ matrix.python-version }}
-      - name: Install wheel actually
+      - name: Install pip
         if: matrix.python-version == 2.6 || matrix.python-version == 3.3 || matrix.python-version == 3.4
         run: |
-          python -m pip install -U 'pip<10'
-          pip install wheel
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python get-pip.py
       - name: Install dependencies
         run: |
           pip --version
