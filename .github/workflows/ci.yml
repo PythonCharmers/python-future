@@ -44,6 +44,7 @@ jobs:
         if: matrix.python-version == 2.6 || matrix.python-version == 3.3 || matrix.python-version == 3.4
         run: |
           python --version
+          python -c "import ssl"
           curl https://bootstrap.pypa.io/${{ matrix.python-version }}/get-pip.py | python - 'pip==9.0.3'
       - name: Install dependencies
         run: |
