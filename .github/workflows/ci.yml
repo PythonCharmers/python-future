@@ -44,8 +44,7 @@ jobs:
         if: matrix.python-version == 2.6 || matrix.python-version == 3.3 || matrix.python-version == 3.4
         run: |
           python --version
-          curl https://bootstrap.pypa.io/${{ matrix.python-version }}/get-pip.py | python${{ matrix.python-version }}
-          python get-pip.py
+          curl https://bootstrap.pypa.io/${{ matrix.python-version }}/get-pip.py | python
       - name: Install dependencies
         run: |
           pip --version
