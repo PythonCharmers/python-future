@@ -5,26 +5,27 @@ on:
   pull_request:
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+#    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     name: test (Python ${{ matrix.python-version }})
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-16.04
-            python-version: 2.6
-          - os: ubuntu-latest
-            python-version: 2.7
-          - os: ubuntu-16.04
-            python-version: 3.3
-          - os: ubuntu-16.04
-            python-version: 3.4
-          - os: ubuntu-latest
-            python-version: 3.5
-          - os: ubuntu-latest
-            python-version: 3.6
-          - os: ubuntu-latest
-            python-version: 3.7
+#      matrix:
+#        include:
+#          - os: ubuntu-16.04
+#            python-version: 2.6
+#          - os: ubuntu-latest
+#            python-version: 2.7
+#          - os: ubuntu-16.04
+#            python-version: 3.3
+#          - os: ubuntu-16.04
+#            python-version: 3.4
+#          - os: ubuntu-latest
+#            python-version: 3.5
+#          - os: ubuntu-latest
+#            python-version: 3.6
+#          - os: ubuntu-latest
+#            python-version: 3.7
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -40,7 +41,8 @@ jobs:
       - name: Install pip
         if: matrix.python-version == 2.6 || matrix.python-version == 3.3 || matrix.python-version == 3.4
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python --version
+          curl https://bootstrap.pypa.io/${{ matrix.python-version }}/get-pip.py | python${{ matrix.python-version }}
           python get-pip.py
       - name: Install dependencies
         run: |
