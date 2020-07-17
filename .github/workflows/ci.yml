@@ -34,11 +34,11 @@ jobs:
           python-version: "${{ matrix.python-version }}"
       - name: Set up Python with deadsnakes
         uses: deadsnakes/action@v1.0.0
-        if: matrix.python-version == 2.6 || matrix.python-version == 3.3 || matrix.python-version == 3.4
+        if: matrix.python-version == 2.6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install wheel actually
-        if: startsWith(matrix.python-version, '2.6')
+        if: matrix.python-version == 2.6 || matrix.python-version == 3.3 || matrix.python-version == 3.4
         run: |
           pip install wheel
       - name: Install dependencies
