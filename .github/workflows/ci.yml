@@ -49,6 +49,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip --version
-          pip install -r test-requirements.txt
+          pip install tox tox-gh-actions
       - name: Run tests
         run: tox
