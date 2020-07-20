@@ -49,4 +49,4 @@ jobs:
           pip --version
           pip install -r test-requirements-${{ matrix.python-version }}.txt
       - name: Run tests
-        run: tox
+        run: tox -e py
