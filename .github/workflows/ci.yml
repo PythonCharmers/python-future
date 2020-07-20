@@ -41,7 +41,7 @@ jobs:
 #        with:
 #          python-version: ${{ matrix.python-version }}
       - name: Install pip
-        if: matrix.python-version == 2.6 || matrix.python-version == 3.3 || matrix.python-version == 3.4
+        if: matrix.python-version == 2.6
         run: |
           python --version
           python -c "import ssl"
