@@ -45,9 +45,9 @@ jobs:
         run: |
           curl https://bootstrap.pypa.io/${{ matrix.python-version }}/get-pip.py | python - 'pip==9.0.3'
       - name: Install setuptools
-          if: matrix.python-version == 3.3
-          run: |
-            pip install setuptools
+        if: matrix.python-version == 3.3
+        run: |
+          pip install setuptools
       - name: Install dependencies
         run: |
           pip --version
