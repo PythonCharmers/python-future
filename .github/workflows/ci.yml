@@ -43,12 +43,10 @@ jobs:
       - name: Install pip
         if: matrix.python-version == 2.6
         run: |
-          python --version
-          python -c "import ssl"
           curl https://bootstrap.pypa.io/${{ matrix.python-version }}/get-pip.py | python - 'pip==9.0.3'
       - name: Install dependencies
         run: |
           pip --version
-          pip install -r test-requirements.txt
+          pip install -r test-requirements-${{ matrix.python-version }}.txt
       - name: Run tests
         run: tox
