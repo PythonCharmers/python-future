@@ -30,7 +30,7 @@ class TestCmp(unittest.TestCase):
     def test_cmp(self):
         for x, y, cmp_python2_value in test_values.cmp_python2_value:
             if PY26:
-                # set comparison works a bit differently in 2.6
+                # set cmp works a bit differently in 2.6, we try to emulate 2.7 behavior, so skip set cmp tests
                 if isinstance(x, set) or isinstance(y, set):
                     continue
             # to get this to run on python <3.4 which lacks subTest
