@@ -11,7 +11,10 @@ import traceback
 from contextlib import contextmanager
 
 from future.tests.base import unittest
-from past.builtins import cmp
+from future.utils import PY3
+
+if PY3:
+    from past.builtins import cmp
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(_dir)
@@ -20,7 +23,7 @@ import test_values
 
 @contextmanager
 def empty_context_manager(*args, **kwargs):
-    return dict(args=args, kwargs=kwargs)
+    yield dict(args=args, kwargs=kwargs)
 
 
 class TestCmp(unittest.TestCase):
