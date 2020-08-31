@@ -8,6 +8,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import os.path
 import sys
 import traceback
+from contextlib import contextmanager
 
 from future.tests.base import unittest
 from past.builtins import cmp
@@ -17,10 +18,16 @@ sys.path.append(_dir)
 import test_values
 
 
+@contextmanager
+def empty_context_manager(*args, **kwargs):
+    return dict(args=args, kwargs=kwargs)
+
+
 class TestCmp(unittest.TestCase):
     def test_cmp(self):
         for x, y, cmp_python2_value in test_values.cmp_python2_value:
-            with self.subTest(x=x, y=y):
+            # to get this to run on python <3.4 which lacks subTest
+            with getattr(self, 'subTest', empty_context_manager)(x=x, y=y):
                 try:
                     past_cmp_value = cmp(x, y)
                 except Exception:
