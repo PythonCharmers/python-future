@@ -103,7 +103,7 @@ if PY3:
         return '0' + builtins.oct(number)[2:]
 
     raw_input = input
-    from imp import reload
+    from importlib import reload
     unicode = str
     unichr = chr
     xrange = range
@@ -143,7 +143,7 @@ if PY3:
         if not isinstance(mylocals, Mapping):
             raise TypeError('locals must be a mapping')
         with open(filename, "rb") as fin:
-             source = fin.read()
+            source = fin.read()
         code = compile(source, filename, "exec")
         exec_(code, myglobals, mylocals)
 

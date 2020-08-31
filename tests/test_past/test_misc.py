@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tests for the resurrected Py2-like cmp funtion
+Tests for the resurrected Py2-like cmp function
 """
 
 from __future__ import absolute_import, unicode_literals, print_function
@@ -23,7 +23,7 @@ class TestCmp(unittest.TestCase):
             with self.subTest(x=x, y=y):
                 try:
                     past_cmp_value = cmp(x, y)
-                except Exception as ex:
+                except Exception:
                     past_cmp_value = traceback.format_exc().strip().split('\n')[-1]
 
                 self.assertEqual(cmp_python2_value, past_cmp_value,
