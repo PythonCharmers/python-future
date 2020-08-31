@@ -39,14 +39,14 @@ if PY3:
         try:
             if isinstance(x, numbers.Number) and math.isnan(x):
                 if not isinstance(y, numbers.Number):
-                    raise TypeError(f'cannot compare float("nan"), {type(y)} with cmp')
+                    raise TypeError('cannot compare float("nan"), {type_y} with cmp'.format(type_y=type(y)))
                 if isinstance(y, int):
                     return 1
                 else:
                     return -1
             if isinstance(y, numbers.Number) and math.isnan(y):
                 if not isinstance(x, numbers.Number):
-                    raise TypeError(f'cannot compare {type(x)}, float("nan") with cmp')
+                    raise TypeError('cannot compare {type_x}, float("nan") with cmp'.format(type_x=type(x)))
                 if isinstance(x, int):
                     return -1
                 else:
