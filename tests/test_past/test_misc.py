@@ -11,7 +11,7 @@ import traceback
 from contextlib import contextmanager
 
 from future.tests.base import unittest
-from future.utils import PY3
+from future.utils import PY3, PY26
 
 if PY3:
     from past.builtins import cmp
@@ -29,6 +29,10 @@ def empty_context_manager(*args, **kwargs):
 class TestCmp(unittest.TestCase):
     def test_cmp(self):
         for x, y, cmp_python2_value in test_values.cmp_python2_value:
+            if PY26:
+                # set comparison works a bit differently in 2.6
+                if isinstance(x, set) or isinstance(y, set):
+                    continue
             # to get this to run on python <3.4 which lacks subTest
             with getattr(self, 'subTest', empty_context_manager)(x=x, y=y):
                 try:
