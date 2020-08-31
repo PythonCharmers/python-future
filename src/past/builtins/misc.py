@@ -103,7 +103,13 @@ if PY3:
         return '0' + builtins.oct(number)[2:]
 
     raw_input = input
-    from importlib import reload
+
+    try:
+        from importlib import reload
+    except ImportError:
+        # for python2, python3 <= 3.4
+        from imp import reload
+
     unicode = str
     unichr = chr
     xrange = range
