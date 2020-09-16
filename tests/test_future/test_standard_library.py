@@ -447,7 +447,11 @@ class TestStandardLibraryReorganization(CodeHandler):
         """
         reload has been moved to the imp module
         """
-        import imp
+        # imp was deprecated in python 3.6
+        if sys.version_info >= (3, 6):
+            import importlib as imp
+        else:
+            import imp
         imp.reload(imp)
         self.assertTrue(True)
 

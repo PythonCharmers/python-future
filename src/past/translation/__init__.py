@@ -32,11 +32,15 @@ Author: Ed Schofield.
 Inspired by and based on ``uprefix`` by Vinay M. Sajip.
 """
 
-import imp
+import sys
+# imp was deprecated in python 3.6
+if sys.version_info >= (3, 6):
+    import importlib as imp
+else:
+    import imp
 import logging
 import marshal
 import os
-import sys
 import copy
 from lib2to3.pgen2.parse import ParseError
 from lib2to3.refactor import RefactoringTool

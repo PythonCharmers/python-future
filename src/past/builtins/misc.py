@@ -42,7 +42,8 @@ if PY3:
         return '0' + builtins.oct(number)[2:]
 
     raw_input = input
-    from imp import reload
+    # imp was deprecated in python 3.6
+    from importlib import reload
     unicode = str
     unichr = chr
     xrange = range

@@ -62,7 +62,11 @@ from __future__ import absolute_import, division, print_function
 
 import sys
 import logging
-import imp
+# imp was deprecated in python 3.6
+if sys.version_info >= (3, 6):
+    import importlib as imp
+else:
+    import imp
 import contextlib
 import types
 import copy

@@ -28,7 +28,11 @@ import importlib
 # import collections.abc    # not present on Py2.7
 import re
 import subprocess
-import imp
+# imp was deprecated in python 3.6
+if sys.version_info >= (3, 6):
+    import importlib as imp
+else:
+    import imp
 import time
 try:
     import sysconfig
