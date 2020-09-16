@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import inspect
+import sys
 
 from future.utils import PY2, PY3, exec_
 
@@ -43,7 +44,10 @@ if PY3:
 
     raw_input = input
     # imp was deprecated in python 3.6
-    from importlib import reload
+    if sys.version_info >= (3, 6):
+        from importlib import reload
+    else:
+        from imp import reload
     unicode = str
     unichr = chr
     xrange = range
