@@ -22,8 +22,13 @@ matrix:
       env: TOXENV=py36
     - python: 3.7
       env: TOXENV=py37
-      dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
-      sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
+      dist: xenial
+    - python: 3.8
+      env: TOXENV=py38
+      dist: xenial
+    - python: 3.9
+      env: TOXENV=py39
+      dist: bionic
 
 install:
   - pip install typing==3.7.4.1  # required for Python 3.3
