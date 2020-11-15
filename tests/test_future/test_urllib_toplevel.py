@@ -781,8 +781,9 @@ class UnquotingTests(unittest.TestCase):
                          "%s" % result)
         self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, None)
         self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, ())
-        with support.check_warnings(('', BytesWarning), quiet=True):
-            self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, bytes(b''))
+        if sys.version_info < (3, 9):
+            with support.check_warnings(('', BytesWarning), quiet=True):
+                self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, bytes(b''))
 
     def test_unquoting_badpercent(self):
         # Test unquoting on bad percent-escapes
