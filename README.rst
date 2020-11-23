@@ -3,6 +3,12 @@
 Overview: Easy, clean, reliable Python 2/3 compatibility
 ========================================================
 
+.. image:: https://travis-ci.org/PythonCharmers/python-future.svg?branch=master
+    :target: https://travis-ci.org/PythonCharmers/python-future
+
+.. image:: https://readthedocs.org/projects/python-future/badge/?version=latest
+    :target: https://python-future.readthedocs.io/en/latest/?badge=latest
+
 ``python-future`` is the missing compatibility layer between Python 2 and
 Python 3. It allows you to use a single, clean Python 3.x-compatible
 codebase to support both Python 2 and Python 3 with minimal overhead.
@@ -21,9 +27,6 @@ are `Mezzanine <http://mezzanine.jupo.org/>`_ and `ObsPy
 
 Features
 --------
-
-.. image:: https://travis-ci.org/PythonCharmers/python-future.svg?branch=master
-       :target: https://travis-ci.org/PythonCharmers/python-future
 
 -   ``future.builtins`` package (also available as ``builtins`` on Py2) provides
     backports and remappings for 20 builtins with different semantics on Py3
