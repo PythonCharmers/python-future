@@ -2,6 +2,7 @@
 set -xuo pipefail
 
 docker build . -t jmadler/python-future-builder
+docker push jmadler/python-future-builder:latest
 
 version=0.18.2
 
