@@ -77,7 +77,7 @@ _handler.setFormatter(_formatter)
 flog.addHandler(_handler)
 flog.setLevel(logging.WARN)
 
-from future.utils import PY2, PY3
+from future.utils import PY2, PY27, PY3
 
 # The modules that are defined under the same names on Py3 but with
 # different contents in a significant way (e.g. submodules) are:
@@ -190,8 +190,6 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('re', 'ASCII','stat', 'ST_MODE'),
          ('base64', 'encodebytes','base64', 'encodestring'),
          ('base64', 'decodebytes','base64', 'decodestring'),
-         ('subprocess', 'getoutput', 'commands', 'getoutput'),
-         ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
          ('subprocess', 'check_output', 'future.backports.misc', 'check_output'),
          ('math', 'ceil', 'future.backports.misc', 'ceil'),
          ('collections', 'OrderedDict', 'future.backports.misc', 'OrderedDict'),
@@ -208,6 +206,12 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
 #          ('urllib', 'response', 'future.moves.urllib', 'response'),
 #          ('urllib', 'robotparser', 'future.moves.urllib', 'robotparser'),
         ]
+
+if PY2 and not PY27:
+    MOVES += [
+        ('subprocess', 'getoutput', 'commands', 'getoutput'),
+        ('subprocess', 'getstatusoutput', 'commands', 'getstatusoutput'),
+    ]
 
 
 # A minimal example of an import hook:
