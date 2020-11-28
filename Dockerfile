@@ -31,6 +31,8 @@ RUN PATH=/opt/pyenv/bin:$PATH pyenv install 3.8.3
 RUN virtualenv /root/py38 --python /opt/pyenv/versions/3.8.3/bin/python
 RUN PATH=/opt/pyenv/bin:$PATH pyenv install 3.9.0
 RUN virtualenv /root/py39 --python /opt/pyenv/versions/3.9.0/bin/python
+# Lint tools
+RUN pip3 install flake8
 RUN ln -s /usr/bin/python3 /usr/bin/python
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
