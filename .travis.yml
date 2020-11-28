@@ -7,5 +7,5 @@ before_script:
     - docker pull jmadler/python-future-builder:latest
 
 script:
-  - ./lint.sh
   - ./build.sh
+  - ./lint.sh
