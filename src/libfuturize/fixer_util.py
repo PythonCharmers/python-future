@@ -236,68 +236,29 @@ def future_import(feature, node):
     if does_tree_import(u"__future__", feature, node):
         return
 
-    # Look for a shebang or encoding line
-    shebang_encoding_idx = None
-
     for idx, node in enumerate(root.children):
-        # Is it a shebang or encoding line?
-        if is_shebang_comment(node) or is_encoding_comment(node):
-            shebang_encoding_idx = idx
-        if is_docstring(node):
-            # skip over docstring
+        if is_docstring(node) or is_comment(node):
+            # skip over docstring and comments
             continue
+
         names = check_future_import(node)
+
         if not names:
             # not a future statement; need to insert before this
             break
+
         if feature in names:
             # already imported
             return
 
     import_ = FromImport(u'__future__', [Leaf(token.NAME, feature, prefix=" ")])
-    if shebang_encoding_idx == 0 and idx == 0:
-        # If this __future__ import would go on the first line,
-        # detach the shebang / encoding prefix from the current first line.
-        # and attach it to our new __future__ import node.
-        import_.prefix = root.children[0].prefix
-        root.children[0].prefix = u''
-        # End the __future__ import line with a newline and add a blank line
-        # afterwards:
+
+    if idx > 0:
+        idx -= 1
+
     children = [import_ , Newline()]
     root.insert_child(idx, Node(syms.simple_stmt, children))
 
-
-def future_import2(feature, node):
-    """
-    An alternative to future_import() which might not work ...
-    """
-    root = find_root(node)
-
-    if does_tree_import(u"__future__", feature, node):
-        return
-
-    insert_pos = 0
-    for idx, node in enumerate(root.children):
-        if node.type == syms.simple_stmt and node.children and \
-           node.children[0].type == token.STRING:
-            insert_pos = idx + 1
-            break
-
-    for thing_after in root.children[insert_pos:]:
-        if thing_after.type == token.NEWLINE:
-            insert_pos += 1
-            continue
-
-        prefix = thing_after.prefix
-        thing_after.prefix = u""
-        break
-    else:
-        prefix = u""
-
-    import_ = FromImport(u"__future__", [Leaf(token.NAME, feature, prefix=u" ")])
-
-    children = [import_, Newline()]
-    root.insert_child(insert_pos, Node(syms.simple_stmt, children, prefix=prefix))
 
 def parse_args(arglist, scheme):
     u"""
@@ -471,32 +432,20 @@ def check_future_import(node):
         assert False, "strange import: %s" % savenode
 
 
-SHEBANG_REGEX = r'^#!.*python'
-ENCODING_REGEX = r"^#.*coding[:=]\s*([-\w.]+)"
+COMMENT_REGEX = r"^#.*"
 
 
-def is_shebang_comment(node):
+def is_comment(node):
     """
     Comments are prefixes for Leaf nodes. Returns whether the given node has a
-    prefix that looks like a shebang line or an encoding line:
+    prefix that looks like a comment:
 
-        #!/usr/bin/env python
-        #!/usr/bin/python3
-    """
-    return bool(re.match(SHEBANG_REGEX, node.prefix))
-
-
-def is_encoding_comment(node):
-    """
-    Comments are prefixes for Leaf nodes. Returns whether the given node has a
-    prefix that looks like an encoding line:
-
-        # coding: utf-8
-        # encoding: utf-8
+        # this is a comment
+        # pylint: disable
         # -*- coding: <encoding name> -*-
         # vim: set fileencoding=<encoding name> :
     """
-    return bool(re.match(ENCODING_REGEX, node.prefix))
+    return bool(re.match(COMMENT_REGEX, node.prefix))
 
 
 def wrap_in_fn_call(fn_name, args, prefix=None):

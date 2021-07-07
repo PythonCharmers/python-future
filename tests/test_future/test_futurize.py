@@ -6,7 +6,6 @@ import tempfile
 from subprocess import Popen, PIPE
 import os
 
-from libfuturize.fixer_util import is_shebang_comment, is_encoding_comment
 from lib2to3.fixer_util import FromImport
 from lib2to3.pytree import Leaf, Node
 from lib2to3.pygram import token
@@ -37,51 +36,6 @@ class TestLibFuturize(unittest.TestCase):
         retcode = main([self.textfilename])
         self.assertTrue(isinstance(retcode, int))   # i.e. Py2 builtin int
 
-    def test_is_shebang_comment(self):
-        """
-        Tests whether the fixer_util.is_encoding_comment() function is working.
-        """
-        shebang_comments = [u'#!/usr/bin/env python\n'
-                             u"#!/usr/bin/python2\n",
-                             u"#! /usr/bin/python3\n",
-                            ]
-        not_shebang_comments = [u"# I saw a giant python\n",
-                                 u"# I have never seen a python2\n",
-                               ]
-        for comment in shebang_comments:
-            node = FromImport(u'math', [Leaf(token.NAME, u'cos', prefix=" ")])
-            node.prefix = comment
-            self.assertTrue(is_shebang_comment(node))
-
-        for comment in not_shebang_comments:
-            node = FromImport(u'math', [Leaf(token.NAME, u'cos', prefix=" ")])
-            node.prefix = comment
-            self.assertFalse(is_shebang_comment(node))
-
-
-    def test_is_encoding_comment(self):
-        """
-        Tests whether the fixer_util.is_encoding_comment() function is working.
-        """
-        encoding_comments = [u"# coding: utf-8",
-                             u"# encoding: utf-8",
-                             u"# -*- coding: latin-1 -*-",
-                             u"# vim: set fileencoding=iso-8859-15 :",
-                            ]
-        not_encoding_comments = [u"# We use the file encoding utf-8",
-                                 u"coding = 'utf-8'",
-                                 u"encoding = 'utf-8'",
-                                ]
-        for comment in encoding_comments:
-            node = FromImport(u'math', [Leaf(token.NAME, u'cos', prefix=" ")])
-            node.prefix = comment
-            self.assertTrue(is_encoding_comment(node))
-
-        for comment in not_encoding_comments:
-            node = FromImport(u'math', [Leaf(token.NAME, u'cos', prefix=" ")])
-            node.prefix = comment
-            self.assertFalse(is_encoding_comment(node))
-
 
 class TestFuturizeSimple(CodeHandler):
     """
@@ -90,18 +44,20 @@ class TestFuturizeSimple(CodeHandler):
     run under both Python 2 again and Python 3.
     """
 
-    def test_encoding_comments_kept_at_top(self):
+    def test_comments_kept_at_top(self):
         """
         Issues #10 and #97: If there is a source encoding comment line
         (PEP 263), is it kept at the top of a module by ``futurize``?
         """
         before = """
         # coding=utf-8
+        # other comment
 
         print 'Hello'
         """
         after = """
         # coding=utf-8
+        # other comment
 
         from __future__ import print_function
         print('Hello')
@@ -111,12 +67,14 @@ class TestFuturizeSimple(CodeHandler):
         before = """
         #!/usr/bin/env python
         # -*- coding: latin-1 -*-"
+        # other comment
 
         print 'Hello'
         """
         after = """
         #!/usr/bin/env python
         # -*- coding: latin-1 -*-"
+        # other comment
 
         from __future__ import print_function
         print('Hello')
