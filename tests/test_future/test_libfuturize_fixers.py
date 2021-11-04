@@ -767,6 +767,20 @@ class Test_raise(FixerTestCase):
         raise_(E, Func(arg1, arg2, arg3), tb) # foo"""
         self.check(b, a)
 
+    def test_unknown_value_with_indent(self):
+        b = """
+        while True:
+            print()  # another expression in the same block triggers different parsing
+            raise E, V
+        """
+        a = """
+        from future.utils import raise_
+        while True:
+            print()  # another expression in the same block triggers different parsing
+            raise_(E, V)
+        """
+        self.check(b, a)
+
     # These should produce a warning
 
     def test_string_exc(self):
