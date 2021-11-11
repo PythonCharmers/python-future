@@ -170,6 +170,18 @@ class TestSuper(unittest.TestCase):
 
         self.assertEqual(Elite().walk(), 'Defused')
 
+    def test_metaclass(self):
+        class Meta(type):
+            def __init__(cls, name, bases, clsdict):
+                super().__init__(name, bases, clsdict)
+
+        try:
+            class Base(object):
+                __metaclass__ = Meta
+        except Exception as e:
+            self.fail('raised %s with a custom metaclass'
+                      % type(e).__name__)
+
 
 class TestSuperFromTestDescrDotPy(unittest.TestCase):
     """
