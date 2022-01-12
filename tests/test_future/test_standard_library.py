@@ -591,7 +591,7 @@ class TestFutureMoves(CodeHandler):
         from future.moves.dbm import ndbm
 
 
-# Running the following tkinter test causes the following bizzare test failure:
+# Running the following tkinter test causes the following bizarre test failure:
 #
 # ======================================================================
 # FAIL: test_open_default_encoding (future.tests.test_builtins.BuiltinTest)

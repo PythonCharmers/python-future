@@ -17,7 +17,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import socketserver
     import winreg    # on Windows only
     import test.support
-    import html, html.parser, html.entites
+    import html, html.parser, html.entities
     import http, http.client, http.server
     import http.cookies, http.cookiejar
     import urllib.parse, urllib.request, urllib.response, urllib.error, urllib.robotparser
