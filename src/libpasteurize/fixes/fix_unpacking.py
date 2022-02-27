@@ -20,11 +20,9 @@ def assignment_source(num_pre, num_post, LISTNAME, ITERNAME):
     children = []
     try:
         pre = unicode(num_pre)
-    except NameError:
-        pre = str(num_pre)
-    try:
         post = unicode(num_post)
     except NameError:
+        pre = str(num_pre)
         post = str(num_post)
     # This code builds the assignment source from lib2to3 tree primitives.
     # It's not very readable, but it seems like the most correct way to do it.
