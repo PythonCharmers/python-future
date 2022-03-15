@@ -1,7 +1,4 @@
 ARG DEBIAN_VERSION
-ARG PYTHON_VERSION
-ARG VIRTUALENV_VERSION
-
 FROM debian:${DEBIAN_VERSION}
 
 RUN apt-get update && \
@@ -31,9 +28,10 @@ RUN echo export PATH="/opt/pyenv/bin:$PATH" >> ~/.bashrc
 RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 
-ENV VIRTUALENV_VERSION $VIRTUALENV_VERSION
+ARG VIRTUALENV_VERSION
 RUN pip3 install virtualenv==${VIRTUALENV_VERSION}
 
+ARG PYTHON_VERSION
 RUN PATH=/opt/pyenv/bin:$PATH pyenv install ${PYTHON_VERSION}
 RUN virtualenv /root/venv --python /opt/pyenv/versions/${PYTHON_VERSION}/bin/python
 
