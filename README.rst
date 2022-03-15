@@ -3,8 +3,8 @@
 Overview: Easy, clean, reliable Python 2/3 compatibility
 ========================================================
 
-.. image:: https://travis-ci.org/PythonCharmers/python-future.svg?branch=master
-    :target: https://travis-ci.org/PythonCharmers/python-future
+.. image:: https://github.com/PythonCharmers/python-future/actions/workflows/ci.yml/badge.svg?branch=master
+    :target: https://github.com/PythonCharmers/python-future/actions/workflows/ci.yml?query=branch%3Amaster
 
 .. image:: https://readthedocs.org/projects/python-future/badge/?version=latest
     :target: https://python-future.readthedocs.io/en/latest/?badge=latest
