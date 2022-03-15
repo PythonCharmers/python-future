@@ -10,9 +10,32 @@ concurrency:
 
 jobs:
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        versions:
+          - debian: 9
+            python: 2.6.9
+            virtalenv: 15.2.0
+            pytag: py26
+          - debian: 9
+            python: 3.7.7
+            virtalenv: 20.0.21
+            pytag: py37
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: docker pull jmadler/python-future-builder:latest
-      - run: ./build.sh
-      - run: ./lint.sh
+      - run: |
+          docker build \
+          . \
+          --build-arg DEBIAN_VERSION=${{ matrix.versions.debian }} \
+          --build-arg PYTHON_VERSION=${{ matrix.versions.python }} \
+          --build-arg VIRTUALENV_VERSION=${{ matrix.versions.virtalenv }} \
+          -t jmadler/python-future-builder:debian-${{ matrix.versions.debian }}-${{ matrix.versions.python }}
+      - run: |
+          docker run \
+          -it \
+          -v $(realpath dist):/root/python-future/dist \
+          jmadler/python-future-builder:debian-${{ matrix.versions.debian }}-${{ matrix.versions.python }}
+          /root/python-future/setup.sh 0.18.2 ${{ matrix.versions.pytag }}

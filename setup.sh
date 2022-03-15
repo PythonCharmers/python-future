@@ -9,7 +9,7 @@ if [ $pytag = 'py33' ]; then
     pip3 install virtualenv==16.2.0
 fi
 
-source /root/$pytag/bin/activate
+source /root/venv/bin/activate
 
 if [ $pytag = 'py26' ]; then
     pip install importlib
