@@ -1,6 +1,5 @@
 ARG DEBIAN_VERSION
 ARG PYTHON_VERSION
-# Note: venv 15.2.0 is the last to support Python 2.6.
 ARG VIRTUALENV_VERSION
 
 FROM debian:${DEBIAN_VERSION}
@@ -32,6 +31,7 @@ RUN echo export PATH="/opt/pyenv/bin:$PATH" >> ~/.bashrc
 RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 
+ENV VIRTUALENV_VERSION $VIRTUALENV_VERSION
 RUN pip3 install virtualenv==${VIRTUALENV_VERSION}
 
 RUN PATH=/opt/pyenv/bin:$PATH pyenv install ${PYTHON_VERSION}
