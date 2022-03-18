@@ -2,11 +2,6 @@
 
 set -exo pipefail
 
-source /root/venv/bin/activate
-
-if [ $pytag = 'py26' ]; then
-    pip install importlib
-fi
 pip install pytest unittest2
 
 python setup.py bdist_wheel
