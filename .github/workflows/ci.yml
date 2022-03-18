@@ -35,5 +35,5 @@ jobs:
       - run: |
           docker run \
           -v $(realpath dist):/root/python-future/dist \
-          jmadler/python-future-builder:debian-9-${{ matrix.versions.python }}
+          jmadler/python-future-builder:debian-9-${{ matrix.versions.python }} \
           /root/python-future/test.sh
