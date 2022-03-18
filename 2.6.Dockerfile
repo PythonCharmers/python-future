@@ -18,10 +18,7 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		tk-dev \
 		zlib1g-dev \
-	&& rm -rf /var/lib/apt/lists/* \
-    && export LDFLAGS="${LDFLAGS} -L/usr/local/opt/zlib/lib" \
-    && export CPPFLAGS="${CPPFLAGS} -I/usr/local/opt/zlib/include" \
-    && export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/local/opt/zlib/lib/pkgconfig"
+	&& rm -rf /var/lib/apt/lists/*
 
 ENV PYTHON_VERSION 2.6.9
 
@@ -33,12 +30,14 @@ RUN set -ex \
 	&& rm python.tar.xz \
 	\
 	&& cd /usr/src/python \
+    && export LDFLAGS="${LDFLAGS} -L/usr/lib/x86_64-linux-gnu" \
+    && export CPPFLAGS="${CPPFLAGS} -I/usr/include" \
+    && export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/lib/x86_64-linux-gnu/pkgconfig" \
 	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
 	&& ./configure \
 		--build="$gnuArch" \
 		--enable-shared \
 		--enable-unicode=ucs4 \
-        --with-zlib-dir=/usr/local/lib \
 	&& make -j "$(nproc)" \
 	&& make install \
 	&& ldconfig \
