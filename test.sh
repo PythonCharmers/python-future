@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ -e "${HOME}/.bashrc" ]
-then
-  source "${HOME}/.bashrc"
-fi
-
 set -exo pipefail
 
 python --version
