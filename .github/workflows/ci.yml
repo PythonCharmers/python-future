@@ -41,5 +41,6 @@ jobs:
           -t jmadler/python-future-builder:${{ matrix.versions.python }}
       - run: |
           docker run \
+          -e PYTHON_VERSION=${{ matrix.versions.python }} \
           jmadler/python-future-builder:${{ matrix.versions.python }} \
           /root/python-future/test.sh

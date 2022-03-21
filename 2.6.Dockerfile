@@ -1,85 +1,23 @@
-#
-# Image forked from the offical Python 2.7 image
-#
+FROM jmadler/python-future-builder:latest
 
-FROM buildpack-deps:stretch
+RUN echo 'pyenv global 2.6.9' >> ~/.bashrc
 
-# ensure local python is preferred over distribution python
-ENV PATH /usr/local/bin:$PATH
+RUN mkdir -p ~/.pip/ && echo '[global] \n\
+trusted-host = pypi.python.org\n\
+               pypi.org\n\
+               files.pythonhosted.org\n\
+' >> ~/.pip/pip.conf
 
-# http://bugs.python.org/issue19846
-# > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
-ENV LANG C.UTF-8
-# https://github.com/docker-library/python/issues/147
-ENV PYTHONIOENCODING UTF-8
-
-# extra dependencies (over what buildpack-deps already includes)
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
-		tk-dev \
-		zlib1g-dev \
-	&& rm -rf /var/lib/apt/lists/*
-
-ENV PYTHON_VERSION 2.6.9
-
-RUN set -ex \
-	\
-	&& wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
-	&& mkdir -p /usr/src/python \
-	&& tar -xJC /usr/src/python --strip-components=1 -f python.tar.xz \
-	&& rm python.tar.xz \
-	\
-	&& cd /usr/src/python \
-    && export LDFLAGS="${LDFLAGS} -L/usr/lib/x86_64-linux-gnu" \
-    && export CPPFLAGS="${CPPFLAGS} -I/usr/include" \
-    && export PKG_CONFIG_PATH="${PKG_CONFIG_PATH} /usr/lib/x86_64-linux-gnu/pkgconfig" \
-	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
-	&& ./configure \
-		--build="$gnuArch" \
-		--enable-shared \
-		--enable-unicode=ucs4 \
-	&& make -j "$(nproc)" \
-	&& make install \
-	&& ldconfig \
-	\
-	&& find /usr/local -depth \
-		\( \
-			\( -type d -a \( -name test -o -name tests \) \) \
-			-o \
-			\( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
-		\) -exec rm -rf '{}' + \
-	&& rm -rf /usr/src/python \
-	\
-	&& python2 --version
-
-# if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
-ENV PYTHON_PIP_VERSION 10.0.1
-
-RUN set -ex; \
-	\
-	wget -O get-pip.py 'https://bootstrap.pypa.io/pip/2.6/get-pip.py'; \
-	\
-	python get-pip.py \
-		--disable-pip-version-check \
-		--no-cache-dir \
-		"pip==$PYTHON_PIP_VERSION" \
-	; \
-	pip --version; \
-	\
-	find /usr/local -depth \
-		\( \
-			\( -type d -a \( -name test -o -name tests \) \) \
-			-o \
-			\( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
-		\) -exec rm -rf '{}' +; \
-	rm -f get-pip.py
-
-# install "virtualenv", since the vast majority of users of this image will want it
-RUN pip install --no-cache-dir virtualenv
-
-## END official Docker image, below is our stuff
-
-RUN pip install importlib
+RUN mkdir -p /root/pip && \
+    cd /root/pip && \
+    curl -O https://files.pythonhosted.org/packages/31/77/3781f65cafe55480b56914def99022a5d2965a4bb269655c89ef2f1de3cd/importlib-1.0.4.zip && \
+    curl -O https://files.pythonhosted.org/packages/ef/41/d8a61f1b2ba308e96b36106e95024977e30129355fd12087f23e4b9852a1/pytest-3.2.5-py2.py3-none-any.whl && \
+    curl -O https://files.pythonhosted.org/packages/72/20/7f0f433060a962200b7272b8c12ba90ef5b903e218174301d0abfd523813/unittest2-1.1.0-py2.py3-none-any.whl && \
+    curl -O https://files.pythonhosted.org/packages/53/67/9620edf7803ab867b175e4fd23c7b8bd8eba11cb761514dcd2e726ef07da/py-1.4.34-py2.py3-none-any.whl && \
+    curl -O https://files.pythonhosted.org/packages/53/25/ef88e8e45db141faa9598fbf7ad0062df8f50f881a36ed6a0073e1572126/ordereddict-1.1.tar.gz && \
+    curl -O https://files.pythonhosted.org/packages/17/0a/6ac05a3723017a967193456a2efa0aa9ac4b51456891af1e2353bb9de21e/traceback2-1.4.0-py2.py3-none-any.whl && \
+    curl -O https://files.pythonhosted.org/packages/65/26/32b8464df2a97e6dd1b656ed26b2c194606c16fe163c695a992b36c11cdf/six-1.13.0-py2.py3-none-any.whl && \
+    curl -O https://files.pythonhosted.org/packages/c7/a3/c5da2a44c85bfbb6eebcfc1dde24933f8704441b98fdde6528f4831757a6/linecache2-1.0.0-py2.py3-none-any.whl
 
 WORKDIR /root/python-future
 ADD . /root/python-future
