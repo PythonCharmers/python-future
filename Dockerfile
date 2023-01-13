@@ -11,8 +11,9 @@ RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 # venv 15.2.0 is the last to support Python 2.6. 
 RUN pip3 install virtualenv==15.2.0
-RUN PATH=/opt/pyenv/bin:$PATH pyenv install 2.6.9
-RUN virtualenv /root/py26 --python /opt/pyenv/versions/2.6.9/bin/python
+# Can't get python 2.6 to build anymore
+# RUN PATH=/opt/pyenv/bin:$PATH pyenv install 2.6.9
+# RUN virtualenv /root/py26 --python /opt/pyenv/versions/2.6.9/bin/python
 RUN PATH=/opt/pyenv/bin:$PATH pyenv install 3.3.7
 RUN virtualenv /root/py33 --python /opt/pyenv/versions/3.3.7/bin/python
 RUN pip3 install virtualenv==20.0.21
