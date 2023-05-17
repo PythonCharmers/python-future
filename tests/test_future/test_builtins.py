@@ -523,8 +523,8 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, compile)
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'badmode')
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'single', 0xff)
-        # Raises TypeError in Python < v3.5, ValueError in v3.5:
-        self.assertRaises((TypeError, ValueError), compile, chr(0), 'f', 'exec')
+        # Raises TypeError in Python < v3.5, ValueError in v3.5, SyntaxError in >= 3.12:
+        self.assertRaises((TypeError, ValueError, SyntaxError), compile, chr(0), 'f', 'exec')
         self.assertRaises(TypeError, compile, 'pass', '?', 'exec',
                           mode='eval', source='0', filename='tmp')
         compile('print("\xe5")\n', '', 'exec')
