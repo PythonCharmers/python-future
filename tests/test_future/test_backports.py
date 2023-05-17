@@ -599,8 +599,12 @@ class TestOrderedDict(unittest.TestCase):
 
     def test_repr(self):
         od = OrderedDict([('c', 1), ('b', 2), ('a', 3), ('d', 4), ('e', 5), ('f', 6)])
-        self.assertEqual(repr(od),
-            "OrderedDict([('c', 1), ('b', 2), ('a', 3), ('d', 4), ('e', 5), ('f', 6)])")
+        if sys.version_info[0] == 3 and sys.version_info[1] >= 12:
+            self.assertEqual(repr(od),
+                "OrderedDict({'c': 1, 'b': 2, 'a': 3, 'd': 4, 'e': 5, 'f': 6})")
+        else:
+            self.assertEqual(repr(od),
+                "OrderedDict([('c', 1), ('b', 2), ('a', 3), ('d', 4), ('e', 5), ('f', 6)])")
         self.assertEqual(eval(repr(od)), od)
         self.assertEqual(repr(OrderedDict()), "OrderedDict()")
 
@@ -608,8 +612,12 @@ class TestOrderedDict(unittest.TestCase):
         # See issue #9826
         od = OrderedDict.fromkeys('abc')
         od['x'] = od
-        self.assertEqual(repr(od),
-            "OrderedDict([('a', None), ('b', None), ('c', None), ('x', ...)])")
+        if sys.version_info[0] == 3 and sys.version_info[1] >= 12:
+            self.assertEqual(repr(od),
+                "OrderedDict({'a': None, 'b': None, 'c': None, 'x': ...})")
+        else:
+            self.assertEqual(repr(od),
+                "OrderedDict([('a', None), ('b', None), ('c', None), ('x', ...)])")
 
     def test_setdefault(self):
         pairs = [('c', 1), ('b', 2), ('a', 3), ('d', 4), ('e', 5), ('f', 6)]
