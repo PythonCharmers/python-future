@@ -447,9 +447,14 @@ class TestStandardLibraryReorganization(CodeHandler):
         """
         reload has been moved to the imp module
         """
-        import imp
-        imp.reload(imp)
-        self.assertTrue(True)
+        try:
+            import imp
+            imp.reload(imp)
+            self.assertTrue(True)
+        except ImportError:
+            import importlib
+            importlib.reload(importlib)
+            self.assertTrue(True)
 
     def test_install_aliases(self):
         """
