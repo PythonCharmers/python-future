@@ -62,12 +62,7 @@ from __future__ import absolute_import, division, print_function
 
 import sys
 import logging
-try:
-    import importlib
-except ImportError:
-    import imp
 import contextlib
-import types
 import copy
 import os
 
@@ -81,6 +76,9 @@ flog.addHandler(_handler)
 flog.setLevel(logging.WARN)
 
 from future.utils import PY2, PY3
+
+if PY2:
+    import imp
 
 # The modules that are defined under the same names on Py3 but with
 # different contents in a significant way (e.g. submodules) are:
@@ -300,11 +298,8 @@ class RenameImport(object):
                 flog.debug('What to do here?')
 
         name = bits[0]
-        try:
-            module_info = imp.find_module(name, path)
-            return imp.load_module(name, *module_info)
-        except AttributeError:
-            return importlib.import_module(name, path)
+        module_info = imp.find_module(name, path)
+        return imp.load_module(name, *module_info)
 
 
 class hooks(object):
