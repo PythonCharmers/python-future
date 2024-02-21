@@ -1307,6 +1307,9 @@ class BuiltinTest(unittest.TestCase):
         if sys.version_info[:2] < (3, 8):
             self.assertRaises((TypeError, ValueError), pow, -1, -2, 3)
         else:
+            # Changed in version 3.8: For int operands, the three-argument form
+            # of pow now allows the second argument to be negative, permitting
+            # computation of modular inverses.
             self.assertEqual(pow(-1, -2, 3), 1)
         self.assertRaises(ValueError, pow, 1, 2, 0)
 
