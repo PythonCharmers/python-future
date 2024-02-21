@@ -116,7 +116,7 @@ def suitify(parent):
     """
     for node in parent.children:
         if node.type == syms.suite:
-            # already in the prefered format, do nothing
+            # already in the preferred format, do nothing
             return
 
     # One-liners have no suite node, we have to fake one up

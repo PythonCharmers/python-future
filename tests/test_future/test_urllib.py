@@ -1,4 +1,4 @@
-"""Regresssion tests for urllib"""
+"""Regression tests for urllib"""
 from __future__ import absolute_import, division, unicode_literals
 
 import io
@@ -1229,7 +1229,7 @@ class URLopener_Tests(unittest.TestCase):
 # Everywhere else they work ok, but on those machines, sometimes
 # fail in one of the tests, sometimes in other. I have a linux, and
 # the tests go ok.
-# If anybody has one of the problematic enviroments, please help!
+# If anybody has one of the problematic environments, please help!
 # .   Facundo
 #
 # def server(evt):

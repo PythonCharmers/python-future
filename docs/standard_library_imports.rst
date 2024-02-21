@@ -15,7 +15,7 @@ As of version 0.14, the ``future`` package comes with top-level packages for
 Python 2.x that provide access to the reorganized standard library modules
 under their Python 3.x names.
 
-Direct imports are the preferred mechanism for accesing the renamed standard
+Direct imports are the preferred mechanism for accessing the renamed standard
 library modules in Python 2/3 compatible code. For example, the following clean
 Python 3 code runs unchanged on Python 2 after installing ``future``::
 
