@@ -96,7 +96,7 @@ This is a major bug-fix and feature release, including:
 - Fix an issue with copyreg import under Py3 that results in unexposed stdlib functionality
 - Export and document types in future.utils
 - Update behavior of newstr.__eq__() to match str.__eq__() as per reference docs
-- Fix raising and the raising fixer to handle cases where the syntax is ambigious
+- Fix raising and the raising fixer to handle cases where the syntax is ambiguous
 - Allow "default" parameter in min() and max() (Issue #334)
 - Implement __hash__() in newstr (Issue #454)
 - Future proof some version checks to handle the fact that Py4 won't be a major breaking release
@@ -128,7 +128,7 @@ This is a major bug-fix release, including:
 - Fix ``past.translation`` on read-only file systems
 - Fix Tkinter import bug introduced in Python 2.7.4 (issue #262)
 - Correct TypeError to ValueError in a specific edge case for newrange
-- Support inequality tests betwen newstrs and newbytes
+- Support inequality tests between newstrs and newbytes
 - Add type check to __get__ in newsuper
 - Fix fix_divsion_safe to support better conversion of complex expressions, and
   skip obvious float division.
