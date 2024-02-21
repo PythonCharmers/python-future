@@ -120,7 +120,7 @@ class urlopen_FileTests(unittest.TestCase):
         finally:
             f.close()
         self.pathname = support.TESTFN
-        self.returned_obj = urlopen("file:%s" % self.pathname)
+        self.returned_obj = urlopen("file:%s" % urllib_parse.quote(self.pathname))
 
     def tearDown(self):
         """Shut down the open object"""
@@ -167,7 +167,7 @@ class urlopen_FileTests(unittest.TestCase):
         self.assertIsInstance(self.returned_obj.info(), email_message.Message)
 
     def test_geturl(self):
-        self.assertEqual(self.returned_obj.geturl(), self.pathname)
+        self.assertEqual(self.returned_obj.geturl(), urllib_parse.quote(self.pathname))
 
     def test_getcode(self):
         self.assertIsNone(self.returned_obj.getcode())

@@ -710,6 +710,9 @@ class HandlerTests(unittest.TestCase):
             ("ftp://localhost/baz.gif;type=a",
              "localhost", ftplib.FTP_PORT, "", "", "A",
              [], "baz.gif", None),
+            ("ftp://localhost/baz.gif",
+             "localhost", ftplib.FTP_PORT, "", "", "I",
+             [], "baz.gif", "image/gif"),
             ]:
             req = Request(url)
             req.timeout = None

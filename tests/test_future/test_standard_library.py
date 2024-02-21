@@ -421,7 +421,8 @@ class TestStandardLibraryReorganization(CodeHandler):
 
     def test_underscore_prefixed_modules(self):
         import _thread
-        import _dummy_thread
+        if sys.version_info < (3, 9):
+            import _dummy_thread
         import _markupbase
         self.assertTrue(True)
 

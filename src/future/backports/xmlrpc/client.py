@@ -134,10 +134,11 @@ from __future__ import (absolute_import, division, print_function,
 from future.builtins import bytes, dict, int, range, str
 
 import base64
-# Py2.7 compatibility hack
-base64.encodebytes = base64.encodestring
-base64.decodebytes = base64.decodestring
 import sys
+if sys.version_info < (3, 9):
+    # Py2.7 compatibility hack
+    base64.encodebytes = base64.encodestring
+    base64.decodebytes = base64.decodestring
 import time
 from datetime import datetime
 from future.backports.http import client as http_client
