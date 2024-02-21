@@ -239,7 +239,7 @@ See :ref:`forwards-conversion` and :ref:`backwards-conversion` for more details.
 
 
 Automatic translation
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 The ``past`` package can automatically translate some simple Python 2
 modules to Python 3 upon import. The goal is to support the "long tail" of
@@ -278,7 +278,7 @@ development, and will likely never be perfect.
 
 
 Pre-commit hooks
-----------------
+~~~~~~~~~~~~~~~~
 
 `Pre-commit <https://pre-commit.com/>`_ is a framework for managing and maintaining
 multi-language pre-commit hooks.
