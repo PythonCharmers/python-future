@@ -3,7 +3,7 @@ set -xuo pipefail
 
 DOCKER_IMAGE=jmadler/python-future-builder
 # XXX: TODO: Perhaps this version shouldn't be hardcoded
-version=0.18.3
+version=0.18.4
 
 docker build . -t $DOCKER_IMAGE
 docker push $DOCKER_IMAGE:latest

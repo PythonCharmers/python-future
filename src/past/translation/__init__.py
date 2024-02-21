@@ -32,7 +32,10 @@ Author: Ed Schofield.
 Inspired by and based on ``uprefix`` by Vinay M. Sajip.
 """
 
-import imp
+try:
+    import imp
+except ImportError:
+    import importlib
 import logging
 import marshal
 import os

@@ -28,7 +28,10 @@ import importlib
 # import collections.abc    # not present on Py2.7
 import re
 import subprocess
-import imp
+try:
+    from imp import cache_from_source
+except ImportError:
+    from importlib.util import cache_from_source
 import time
 try:
     import sysconfig
@@ -351,7 +354,7 @@ def make_legacy_pyc(source):
         does not need to exist, however the PEP 3147 pyc file must exist.
     :return: The file system path to the legacy pyc file.
     """
-    pyc_file = imp.cache_from_source(source)
+    pyc_file = cache_from_source(source)
     up_one = os.path.dirname(os.path.abspath(source))
     legacy_pyc = os.path.join(up_one, source + ('c' if __debug__ else 'o'))
     os.rename(pyc_file, legacy_pyc)
@@ -370,8 +373,8 @@ def forget(modname):
         # combinations of PEP 3147 and legacy pyc and pyo files.
         unlink(source + 'c')
         unlink(source + 'o')
-        unlink(imp.cache_from_source(source, debug_override=True))
-        unlink(imp.cache_from_source(source, debug_override=False))
+        unlink(cache_from_source(source, debug_override=True))
+        unlink(cache_from_source(source, debug_override=False))
 
 # On some platforms, should not run gui test even if it is allowed
 # in `use_resources'.
