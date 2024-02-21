@@ -4,13 +4,13 @@ set -xu
 
 DOCKER_IMAGE=jmadler/python-future-builder
 # XXX: TODO: Perhaps this version shouldn't be hardcoded
-version=0.18.3
+version=0.18.4
 
 docker build . -t "$DOCKER_IMAGE"
-docker push "$DOCKER_IMAGE:latest"
+#docker push "$DOCKER_IMAGE:latest"
 
-for i in py26 py27 py33 py34 py35 py36 py37 py38 py39; do
-    docker run -ti -v "$(realpath dist)":/root/python-future/dist "$DOCKER_IMAGE" /root/python-future/setup.sh "$version" "$i"
+for i in cp27-cp27m cp35-cp35m cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39; do
+    docker run -ti -v "$(realpath dist)":/root/python-future/dist "$DOCKER_IMAGE" /root/python-future/setup.sh "$version" $(basename $i)
 done
 
 python setup.py sdist

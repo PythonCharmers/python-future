@@ -150,7 +150,7 @@ class TestUtils(unittest.TestCase):
         self.assertRaises(Timeout, raise_, Timeout())
 
         if PY3:
-            self.assertRaisesRegexp(
+            self.assertRaisesRegex(
                 TypeError, "class must derive from BaseException",
                 raise_, int)
 
