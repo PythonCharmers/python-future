@@ -33,6 +33,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
     from collections import OrderedDict, Counter, ChainMap     # even on Py2.6
     from subprocess import getoutput, getstatusoutput
     from subprocess import check_output              # even on Py2.6
+    from multiprocessing import SimpleQueue
 
 (The renamed modules and functions are still available under their old
 names on Python 2.)
@@ -111,6 +112,7 @@ RENAMES = {
            'future.moves.socketserver': 'socketserver',
            'ConfigParser': 'configparser',
            'repr': 'reprlib',
+           'multiprocessing.queues': 'multiprocessing',
            # 'FileDialog': 'tkinter.filedialog',
            # 'tkFileDialog': 'tkinter.filedialog',
            # 'SimpleDialog': 'tkinter.simpledialog',
@@ -187,6 +189,7 @@ MOVES = [('collections', 'UserList', 'UserList', 'UserList'),
          ('itertools', 'filterfalse','itertools', 'ifilterfalse'),
          ('itertools', 'zip_longest','itertools', 'izip_longest'),
          ('sys', 'intern','__builtin__', 'intern'),
+         ('multiprocessing', 'SimpleQueue', 'multiprocessing.queues', 'SimpleQueue'),
          # The re module has no ASCII flag in Py2, but this is the default.
          # Set re.ASCII to a zero constant. stat.ST_MODE just happens to be one
          # (and it exists on Py2.6+).

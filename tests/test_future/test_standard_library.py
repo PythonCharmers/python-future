@@ -302,6 +302,15 @@ class TestStandardLibraryReorganization(CodeHandler):
         for method in ['tell', 'read', 'seek', 'close', 'flush', 'getvalue']:
             self.assertTrue(hasattr(s, method))
 
+    def test_SimpleQueue(self):
+        from multiprocessing import SimpleQueue
+        sq = SimpleQueue()
+        self.assertTrue(sq.empty())
+        sq.put('thing')
+        self.assertFalse(sq.empty())
+        self.assertEqual(sq.get(), 'thing')
+        self.assertTrue(sq.empty())
+
     def test_queue(self):
         import queue
         q = queue.Queue()
