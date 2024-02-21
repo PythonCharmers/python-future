@@ -523,8 +523,8 @@ class BuiltinTest(unittest.TestCase):
         self.assertRaises(TypeError, compile)
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'badmode')
         self.assertRaises(ValueError, compile, 'print(42)\n', '<string>', 'single', 0xff)
-        # Raises TypeError in Python < v3.5, ValueError in v3.5:
-        self.assertRaises((TypeError, ValueError), compile, chr(0), 'f', 'exec')
+        # Raises TypeError in Python < v3.5, ValueError in v3.5, SyntaxError in >= 3.12:
+        self.assertRaises((TypeError, ValueError, SyntaxError), compile, chr(0), 'f', 'exec')
         self.assertRaises(TypeError, compile, 'pass', '?', 'exec',
                           mode='eval', source='0', filename='tmp')
         compile('print("\xe5")\n', '', 'exec')
@@ -1303,8 +1303,14 @@ class BuiltinTest(unittest.TestCase):
         self.assertAlmostEqual(pow(-1, 0.5), 1j)
         self.assertAlmostEqual(pow(-1, 1/3), 0.5 + 0.8660254037844386j)
 
-        # Raises TypeError in Python < v3.5, ValueError in v3.5:
-        self.assertRaises((TypeError, ValueError), pow, -1, -2, 3)
+        # Raises TypeError in Python < v3.5, ValueError in v3.5-v3.7:
+        if sys.version_info[:2] < (3, 8):
+            self.assertRaises((TypeError, ValueError), pow, -1, -2, 3)
+        else:
+            # Changed in version 3.8: For int operands, the three-argument form
+            # of pow now allows the second argument to be negative, permitting
+            # computation of modular inverses.
+            self.assertEqual(pow(-1, -2, 3), 1)
         self.assertRaises(ValueError, pow, 1, 2, 0)
 
         self.assertRaises(TypeError, pow)

@@ -9,7 +9,6 @@ from future.tests.base import unittest, CodeHandler, expectedFailurePY2
 
 import sys
 import tempfile
-import os
 import copy
 import textwrap
 from subprocess import CalledProcessError
@@ -422,7 +421,8 @@ class TestStandardLibraryReorganization(CodeHandler):
 
     def test_underscore_prefixed_modules(self):
         import _thread
-        import _dummy_thread
+        if sys.version_info < (3, 9):
+            import _dummy_thread
         import _markupbase
         self.assertTrue(True)
 
@@ -452,7 +452,7 @@ class TestStandardLibraryReorganization(CodeHandler):
             import importlib as imp
         else:
             import imp
-        imp.reload(imp)
+        imp.reload(sys)
         self.assertTrue(True)
 
     def test_install_aliases(self):
@@ -595,7 +595,7 @@ class TestFutureMoves(CodeHandler):
         from future.moves.dbm import ndbm
 
 
-# Running the following tkinter test causes the following bizzare test failure:
+# Running the following tkinter test causes the following bizarre test failure:
 #
 # ======================================================================
 # FAIL: test_open_default_encoding (future.tests.test_builtins.BuiltinTest)

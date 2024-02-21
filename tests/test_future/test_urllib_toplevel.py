@@ -1,4 +1,4 @@
-"""Regresssion tests for urllib"""
+"""Regression tests for urllib"""
 from __future__ import absolute_import, division, unicode_literals
 
 import io
@@ -120,7 +120,7 @@ class urlopen_FileTests(unittest.TestCase):
         finally:
             f.close()
         self.pathname = support.TESTFN
-        self.returned_obj = urlopen("file:%s" % self.pathname)
+        self.returned_obj = urlopen("file:%s" % urllib_parse.quote(self.pathname))
 
     def tearDown(self):
         """Shut down the open object"""
@@ -167,7 +167,7 @@ class urlopen_FileTests(unittest.TestCase):
         self.assertIsInstance(self.returned_obj.info(), email_message.Message)
 
     def test_geturl(self):
-        self.assertEqual(self.returned_obj.geturl(), self.pathname)
+        self.assertEqual(self.returned_obj.geturl(), urllib_parse.quote(self.pathname))
 
     def test_getcode(self):
         self.assertIsNone(self.returned_obj.getcode())
@@ -781,8 +781,11 @@ class UnquotingTests(unittest.TestCase):
                          "%s" % result)
         self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, None)
         self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, ())
-        with support.check_warnings(('', BytesWarning), quiet=True):
-            self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, bytes(b''))
+        if sys.version_info[:2] < (3, 9):
+            with support.check_warnings(('', BytesWarning), quiet=True):
+                self.assertRaises((TypeError, AttributeError), urllib_parse.unquote, bytes(b''))
+        else:
+            self.assertEqual(urllib_parse.unquote(bytes(b"")), "")
 
     def test_unquoting_badpercent(self):
         # Test unquoting on bad percent-escapes
@@ -1244,7 +1247,7 @@ class URLopener_Tests(unittest.TestCase):
 # Everywhere else they work ok, but on those machines, sometimes
 # fail in one of the tests, sometimes in other. I have a linux, and
 # the tests go ok.
-# If anybody has one of the problematic enviroments, please help!
+# If anybody has one of the problematic environments, please help!
 # .   Facundo
 #
 # def server(evt):

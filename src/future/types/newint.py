@@ -284,6 +284,9 @@ class newint(with_metaclass(BaseNewInt, long)):
         """
         So subclasses can override this, Py3-style
         """
+        if PY3:
+            return super(newint, self).__bool__()
+
         return super(newint, self).__nonzero__()
 
     def __native__(self):
@@ -315,7 +318,7 @@ class newint(with_metaclass(BaseNewInt, long)):
             bits = length * 8
             num = (2**bits) + self
             if num <= 0:
-                raise OverflowError("int too smal to convert")
+                raise OverflowError("int too small to convert")
         else:
             if self < 0:
                 raise OverflowError("can't convert negative int to unsigned")

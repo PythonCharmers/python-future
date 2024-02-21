@@ -6,7 +6,6 @@ from past.builtins import basestring, dict, str, long   #, unicode
 from past.builtins import apply, cmp, execfile, intern, raw_input
 from past.builtins import reduce, reload, unichr, unicode, xrange
 
-from future import standard_library
 from future.backports.test.support import TESTFN     #, run_unittest
 import tempfile
 import os

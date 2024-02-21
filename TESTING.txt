@@ -1,8 +1,6 @@
-Currently the tests are passing on OS X and Linux on Python 2.7 and 3.4.
+A docker image, python-future-builder, is used to do testing and building.  The test suite can be run with: 
 
-The test suite can be run with:
-
-    $ tox
+    $ bash build.sh
 
 which tests the module under a number of different python versions, where available, or with:
 

@@ -17,7 +17,7 @@ And then these normal Py3 imports work on both Py3 and Py2::
     import socketserver
     import winreg    # on Windows only
     import test.support
-    import html, html.parser, html.entites
+    import html, html.parser, html.entities
     import http, http.client, http.server
     import http.cookies, http.cookiejar
     import urllib.parse, urllib.request, urllib.response, urllib.error, urllib.robotparser
@@ -68,7 +68,6 @@ if sys.version_info >= (3, 6):
 else:
     import imp
 import contextlib
-import types
 import copy
 import os
 
@@ -129,7 +128,7 @@ RENAMES = {
            # 'Tkinter': 'tkinter',
            '_winreg': 'winreg',
            'thread': '_thread',
-           'dummy_thread': '_dummy_thread',
+           'dummy_thread': '_dummy_thread' if sys.version_info < (3, 9) else '_thread',
            # 'anydbm': 'dbm',   # causes infinite import loop
            # 'whichdb': 'dbm',  # causes infinite import loop
            # anydbm and whichdb are handled by fix_imports2

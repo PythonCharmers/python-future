@@ -307,6 +307,37 @@ class Test_print(FixerTestCase):
         a = """print(1, end=' ')"""
         self.check(b, a)
 
+    def test_trailing_comma_4(self):
+        b = """print "a ","""
+        a = """print("a ", end=' ')"""
+        self.check(b, a)
+
+    def test_trailing_comma_5(self):
+        b = r"""print "b\t","""
+        a = r"""print("b\t", end='')"""
+        self.check(b, a)
+
+    def test_trailing_comma_6(self):
+        b = r"""print "c\n","""
+        a = r"""print("c\n", end='')"""
+        self.check(b, a)
+
+    def test_trailing_comma_7(self):
+        b = r"""print "d\r","""
+        a = r"""print("d\r", end='')"""
+        self.check(b, a)
+
+    def test_trailing_comma_8(self):
+        b = r"""print "%s\n" % (1,),"""
+        a = r"""print("%s\n" % (1,), end='')"""
+        self.check(b, a)
+
+
+    def test_trailing_comma_9(self):
+        b = r"""print r"e\n","""
+        a = r"""print(r"e\n", end=' ')"""
+        self.check(b, a)
+
     # >> stuff
 
     def test_vargs_without_trailing_comma(self):
@@ -765,6 +796,20 @@ class Test_raise(FixerTestCase):
         a = """
         from future.utils import raise_
         raise_(E, Func(arg1, arg2, arg3), tb) # foo"""
+        self.check(b, a)
+
+    def test_unknown_value_with_indent(self):
+        b = """
+        while True:
+            print()  # another expression in the same block triggers different parsing
+            raise E, V
+        """
+        a = """
+        from future.utils import raise_
+        while True:
+            print()  # another expression in the same block triggers different parsing
+            raise_(E, V)
+        """
         self.check(b, a)
 
     # These should produce a warning

@@ -116,7 +116,7 @@ def suitify(parent):
     """
     for node in parent.children:
         if node.type == syms.suite:
-            # already in the prefered format, do nothing
+            # already in the preferred format, do nothing
             return
 
     # One-liners have no suite node, we have to fake one up
@@ -390,6 +390,7 @@ def touch_import_top(package, name_to_import, node):
                 break
         insert_pos = idx
 
+    children_hooks = []
     if package is None:
         import_ = Node(syms.import_name, [
             Leaf(token.NAME, u"import"),
@@ -413,8 +414,6 @@ def touch_import_top(package, name_to_import, node):
                                  ]
                                 )
             children_hooks = [install_hooks, Newline()]
-        else:
-            children_hooks = []
 
         # FromImport(package, [Leaf(token.NAME, name_to_import, prefix=u" ")])
 
