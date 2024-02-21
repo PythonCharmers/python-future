@@ -8,7 +8,7 @@ Who is this for?
 ongoing Python 2.7 support easily and with little maintenance burden.
 
 2. People who wish to ease and accelerate migration of their Python 2 codebases
-to Python 3.4+, module by module, without giving up Python 2 compatibility.
+to Python 3.3+, module by module, without giving up Python 2 compatibility.
 
 
 Why upgrade to Python 3?
@@ -92,7 +92,7 @@ What inspired this project?
 ---------------------------
 
 In our Python training courses, we at `Python Charmers
-<http://pythoncharmers.com>`_ faced a dilemma: teach people Python 3, which was
+<https://pythoncharmers.com>`_ faced a dilemma: teach people Python 3, which was
 future-proof but not as useful to them today because of weaker 3rd-party
 package support, or teach people Python 2, which was more useful today but
 would require them to change their code and unlearn various habits soon. We

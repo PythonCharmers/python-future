@@ -6,9 +6,6 @@ Overview: Easy, clean, reliable Python 2/3 compatibility
 .. image:: https://github.com/PythonCharmers/python-future/actions/workflows/ci.yml/badge.svg?branch=master
     :target: https://github.com/PythonCharmers/python-future/actions/workflows/ci.yml?query=branch%3Amaster
 
-.. image:: https://readthedocs.org/projects/python-future/badge/?version=latest
-    :target: https://python-future.readthedocs.io/en/latest/?badge=latest
-
 ``python-future`` is the missing compatibility layer between Python 2 and
 Python 3. It allows you to use a single, clean Python 3.x-compatible
 codebase to support both Python 2 and Python 3 with minimal overhead.
@@ -325,16 +322,19 @@ Licensing
 
            Pinterest https://opensource.pinterest.com
 
-:Licence: MIT. See ``LICENSE.txt`` or `here <http://python-future.org/credits.html>`_.
+:Licence: MIT. See ``LICENSE.txt`` or `here <https://python-future.org/credits.html>`_.
 
-:Other credits:  See `here <http://python-future.org/credits.html>`_.
+:Other credits:  See `here <https://python-future.org/credits.html>`_.
 
+Docs
+----
+See the docs `here <https://python-future.org>`.
 
 Next steps
 ----------
 
 If you are new to Python-Future, check out the `Quickstart Guide
-<http://python-future.org/quickstart.html>`_.
+<https://python-future.org/quickstart.html>`_.
 
 For an update on changes in the latest version, see the `What's New
-<http://python-future.org/whatsnew.html>`_ page.
+<https://python-future.org/whatsnew.html>`_ page.

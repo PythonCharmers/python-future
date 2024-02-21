@@ -7,12 +7,12 @@ Cheat Sheet: Writing Python 2-3 compatible code
 -  **Author:** Ed Schofield.
 -  **Licence:** Creative Commons Attribution.
 
-A PDF version is here: http://python-future.org/compatible\_idioms.pdf
+A PDF version is here: https://python-future.org/compatible\_idioms.pdf
 
 This notebook shows you idioms for writing future-proof code that is
 compatible with both versions of Python: 2 and 3. It accompanies Ed
 Schofield's talk at PyCon AU 2014, "Writing 2/3 compatible code". (The
-video is here: http://www.youtube.com/watch?v=KOqk8j11aAI&t=10m14s.)
+video is here: https://www.youtube.com/watch?v=KOqk8j11aAI&t=10m14s.)
 
 Minimum versions:
 
@@ -38,7 +38,7 @@ The following scripts are also ``pip``-installable:
     futurize             # pip install future
     pasteurize           # pip install future
 
-See http://python-future.org and https://pythonhosted.org/six/ for more
+See https://python-future.org and https://pythonhosted.org/six/ for more
 information.
 
 Essential syntax differences
@@ -337,7 +337,7 @@ this idiom to make all string literals in a module unicode strings:
 
     s1 = 'The Zen of Python'
     s2 = 'きたないのよりきれいな方がいい\n'
-See http://python-future.org/unicode\_literals.html for more discussion
+See https://python-future.org/unicode\_literals.html for more discussion
 on which style to use.
 
 Byte-string literals

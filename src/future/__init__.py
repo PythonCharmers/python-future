@@ -52,7 +52,7 @@ Automatic conversion
 --------------------
 
 An included script called `futurize
-<http://python-future.org/automatic_conversion.html>`_ aids in converting
+<https://python-future.org/automatic_conversion.html>`_ aids in converting
 code (from either Python 2 or Python 3) to code compatible with both
 platforms. It is similar to ``python-modernize`` but goes further in
 providing Python 3 compatibility through the use of the backported types
@@ -62,7 +62,7 @@ and builtin functions in ``future``.
 Documentation
 -------------
 
-See: http://python-future.org
+See: https://python-future.org
 
 
 Credits
@@ -70,7 +70,7 @@ Credits
 
 :Author:  Ed Schofield, Jordan M. Adler, et al
 :Sponsor: Python Charmers: https://pythoncharmers.com
-:Others:  See docs/credits.rst or http://python-future.org/credits.html
+:Others:  See docs/credits.rst or https://python-future.org/credits.html
 
 
 Licensing
