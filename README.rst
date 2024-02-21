@@ -328,7 +328,7 @@ Licensing
 
 Docs
 ----
-See the docs `here <https://python-future.org>`.
+See the docs `here <https://python-future.org>`_.
 
 Next steps
 ----------

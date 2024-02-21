@@ -257,13 +257,14 @@ Platform and version support
 Which versions of Python does ``python-future`` support?
 --------------------------------------------------------
 
-Python 2.7, and 3.4+ only.
+Python 2.6 and 3.3+ only. Python 2.7 and Python 3.4+ are preferred.
 
-Python 2.7 introduced many important forward-compatibility
-features (such as import hooks, ``b'...'`` literals and ``__future__``
-definitions) that greatly reduce the maintenance burden for single-source
-Py2/3 compatible code. ``future`` leverages these features and aims to
-close the remaining gap between Python 3 and 2.7.
+You may be able to use Python 2.6 but writing Py2/3 compatible code is not as
+easy. Python 2.7 introduced many important forward-compatibility features (such
+as import hooks, ``b'...'`` literals and ``__future__`` definitions) that
+greatly reduce the maintenance burden for single-source Py2/3 compatible code.
+``future`` leverages these features and aims to close the remaining gap between
+Python 3 and 2.7.
 
 
 Do you support Pypy?
@@ -299,8 +300,10 @@ Can I help?
 -----------
 
 Yes please :) We welcome bug reports, additional tests, pull requests,
-and stories of either success or failure with using it. Help with the fixers
-for the ``futurize`` script is particularly welcome.
+and stories of either success or failure with using it.
+
+However, please note that the project is not very actively maintained. It
+should be considered done, like Python 2.
 
 
 Where is the repo?
