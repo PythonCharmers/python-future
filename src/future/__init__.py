@@ -69,14 +69,13 @@ Credits
 -------
 
 :Author:  Ed Schofield, Jordan M. Adler, et al
-:Sponsor: Python Charmers Pty Ltd, Australia, and Python Charmers Pte
-          Ltd, Singapore. http://pythoncharmers.com
+:Sponsor: Python Charmers: https://pythoncharmers.com
 :Others:  See docs/credits.rst or http://python-future.org/credits.html
 
 
 Licensing
 ---------
-Copyright 2013-2019 Python Charmers Pty Ltd, Australia.
+Copyright 2013-2024 Python Charmers, Australia.
 The software is distributed under an MIT licence. See LICENSE.txt.
 
 """
@@ -84,7 +83,7 @@ The software is distributed under an MIT licence. See LICENSE.txt.
 __title__ = 'future'
 __author__ = 'Ed Schofield'
 __license__ = 'MIT'
-__copyright__ = 'Copyright 2013-2019 Python Charmers Pty Ltd'
+__copyright__ = 'Copyright 2013-2024 Python Charmers (https://pythoncharmers.com)'
 __ver_major__ = 0
 __ver_minor__ = 18
 __ver_patch__ = 4

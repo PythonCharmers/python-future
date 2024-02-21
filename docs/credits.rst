@@ -8,7 +8,7 @@ Licence
 The software is distributed under an MIT licence. The text is as follows
 (from ``LICENSE.txt``)::
 
-    Copyright (c) 2013-2019 Python Charmers Pty Ltd, Australia
+    Copyright (c) 2013-2024 Python Charmers, Australia
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -32,39 +32,59 @@ The software is distributed under an MIT licence. The text is as follows
 
 Sponsors
 --------
-Python Charmers Pty Ltd, Australia, and Python Charmers Pte Ltd, Singapore.
-http://pythoncharmers.com
 
-Pinterest https://opensource.pinterest.com/
+Python Charmers: https://pythoncharmers.com
 
 .. _authors:
 
-Maintainer
-----------
-Python-Future is currently maintained by Jordan M. Adler <jordan.m.adler@gmail.com>.
-
-Authors
+Author
 -------
-Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with the help of various contributors:
+
+Python-Future was largely written by Ed Schofield <ed@pythoncharmers.com>.
+
+Maintainers
+-----------
+
+The project is no longer being actively maintained. Like Python 2, it should be
+considered end-of-life.
+
+Past maintainers include:
+
+- Jordan M. Adler
+- Liuyang Wan
+- Ed Schofield
+
+Contributors
+------------
+
+Thanks to the following people for helping to improve the package:
 
 - Jordan Adler
 - Jeroen Akkerman
+- Bruno Alla
 - Kyle Altendorf
+- Nuno André
+- Kian-Meng Ang
 - Grant Bakker
 - Jacob Beck
+- David Bern
 - Fumihiro (Ben) Bessho
 - Shiva Bhusal
+- Andrew Bjonnes
 - Nate Bogdanowicz
 - Tomer Chachamu
 - Christian Clauss
 - Denis Cornehl
+- Joseph Curtis
 - Nicolas Delaby
 - Chad Dombrova
 - Jon Dufresne
 - Corey Farwell
 - Eric Firing
 - Joe Gordon
+- Gabriela Gutierrez
 - Maximilian Hils
+- Tomáš Hrnčiar
 - Miro Hrončok
 - Mark Huang
 - Martijn Jacobs
@@ -84,22 +104,31 @@ Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with th
 - Jon Parise
 - Matthew Parnell
 - Tom Picton
+- Sebastian Potasiak
 - Miga Purg
 - Éloi Rivard
+- Greg Roodt
 - Sesh Sadasivam
 - Elliott Sales de Andrade
 - Aiden Scandella
 - Yury Selivanov
+- Alexander Shadchin
 - Tim Shaffer
+- Christopher Slycord
 - Sameera Somisetty
+- Nicola Soranzo
 - Louis Sautier
+- Will Shanks
 - Gregory P. Smith
 - Chase Sterling
+- Matthew Stidham
 - Daniel Szoska
 - Flaviu Tamas
+- Roman A. Taycher
 - Jeff Tratner
 - Tim Tröndle
 - Brad Walker
+- Liuyang Wan
 - Andrew Wason
 - Jeff Widman
 - Dan Yeaw
@@ -111,6 +140,7 @@ Python-Future is largely written by Ed Schofield <ed@pythoncharmers.com> with th
 - urain39 (GitHub user)
 - 9seconds (GitHub user)
 - Varriount (GitHub user)
+- zihzihtw (GitHub user)
 
 Suggestions and Feedback
 ~~~~~~~~~~~~~~~~~~~~~~~~

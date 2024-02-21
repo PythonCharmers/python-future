@@ -12,7 +12,7 @@ also compatible with Py2 when using the ``future`` package.
 
 Licensing
 ---------
-Copyright 2013-2019 Python Charmers Pty Ltd, Australia.
+Copyright 2013-2024 Python Charmers, Australia.
 The software is distributed under an MIT licence. See LICENSE.txt.
 """
 

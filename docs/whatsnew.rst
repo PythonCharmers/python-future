@@ -3,12 +3,14 @@
 What's New
 **********
 
-What's new in version 0.18.4 (2024-02-21)
-=========================================
-This is a minor bug-fix release containing a number of fixes:
+What's new in version 0.8.4 (2024-02-21)
+========================================
+This is a minor bug-fix release containing a small number of fixes:
 
 - Fix for Python 3.12's removal of the imp module
 - Small updates to the docs
+- Add a note to the docs that the package, like Python 2, is done.
+- Fix pasteurize: NameError: name 'unicode' is not defined (de68c10)
 
 What's new in version 0.18.3 (2023-01-13)
 =========================================
