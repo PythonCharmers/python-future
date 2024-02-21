@@ -27,4 +27,4 @@ This release also includes these fixes:
 Previous versions
 =================
 
-See :ref:`whats-old` for versions prior to v0.15.
+See :ref:`whats-old`.
