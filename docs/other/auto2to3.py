@@ -19,7 +19,11 @@ http://dev.pocoo.org/hg/sandbox/file/tip/auto2to3.py
 import argparse
 import os
 import sys
-import imp
+# imp was deprecated in python 3.6
+if sys.version_info >= (3, 6):
+    import importlib as imp
+else:
+    import imp
 import runpy
 from io import StringIO
 from pkgutil import ImpImporter, ImpLoader

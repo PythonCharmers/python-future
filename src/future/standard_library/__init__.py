@@ -62,6 +62,11 @@ from __future__ import absolute_import, division, print_function
 
 import sys
 import logging
+# imp was deprecated in python 3.6
+if sys.version_info >= (3, 6):
+    import importlib as imp
+else:
+    import imp
 import contextlib
 import copy
 import os
@@ -76,9 +81,6 @@ flog.addHandler(_handler)
 flog.setLevel(logging.WARN)
 
 from future.utils import PY2, PY3
-
-if PY2:
-    import imp
 
 # The modules that are defined under the same names on Py3 but with
 # different contents in a significant way (e.g. submodules) are:

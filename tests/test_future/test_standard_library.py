@@ -447,11 +447,12 @@ class TestStandardLibraryReorganization(CodeHandler):
         """
         reload has been moved to the imp module
         """
-        try:
-            from importlib import reload
-        except ImportError:
-            from imp import reload
-        reload(sys)
+        # imp was deprecated in python 3.6
+        if sys.version_info >= (3, 6):
+            import importlib as imp
+        else:
+            import imp
+        imp.reload(sys)
         self.assertTrue(True)
 
     def test_install_aliases(self):
