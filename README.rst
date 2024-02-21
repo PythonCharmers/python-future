@@ -276,7 +276,6 @@ properly to a Python 2/3 compatible codebase using a tool like
 Note: the auto-translation feature is still in alpha; it needs more testing and
 development, and will likely never be perfect.
 
-For more info, see :ref:`translation`.
 
 Pre-commit hooks
 ----------------
