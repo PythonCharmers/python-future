@@ -287,8 +287,7 @@ Support
 Is there a mailing list?
 ------------------------
 
-Yes, please ask any questions on the `python-porting
-<https://mail.python.org/mailman/listinfo/python-porting>`_ mailing list.
+There was (`python-porting`), but it's now dead.
 
 
 .. _contributing:

@@ -138,9 +138,7 @@ code::
 
 This feature is experimental, and we would appreciate your feedback on
 how well this works or doesn't work for you. Please file an issue `here
-<https://github.com/PythonCharmers/python-future>`_ or post to the
-`python-porting <https://mail.python.org/mailman/listinfo/python-porting>`_
-mailing list.
+<https://github.com/PythonCharmers/python-future>`_.
 
 For more information on the automatic translation feature, see :ref:`translation`.
 

@@ -18,8 +18,7 @@ Here we will attempt to document these, together with known workarounds:
    ``base64``, ``decodebytes()`` function, :ref:`stdlib-base64-decodebytes`
    ``re``, ``ASCII`` mode, :ref:`stdlib-re-ASCII`
 
-To contribute to this, please email the python-porting list or send a
-pull request. See :ref:`contributing`.
+To contribute to this list, please send a pull request. See :ref:`contributing`.
 
 
 .. _stdlib-array-constructor:
