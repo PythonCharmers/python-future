@@ -1303,8 +1303,11 @@ class BuiltinTest(unittest.TestCase):
         self.assertAlmostEqual(pow(-1, 0.5), 1j)
         self.assertAlmostEqual(pow(-1, 1/3), 0.5 + 0.8660254037844386j)
 
-        # Raises TypeError in Python < v3.5, ValueError in v3.5:
-        self.assertRaises((TypeError, ValueError), pow, -1, -2, 3)
+        # Raises TypeError in Python < v3.5, ValueError in v3.5-v3.7:
+        if sys.version_info[:2] < (3, 8):
+            self.assertRaises((TypeError, ValueError), pow, -1, -2, 3)
+        else:
+            self.assertEqual(pow(-1, -2, 3), 1)
         self.assertRaises(ValueError, pow, 1, 2, 0)
 
         self.assertRaises(TypeError, pow)

@@ -9,7 +9,6 @@ from future.tests.base import unittest, CodeHandler, expectedFailurePY2
 
 import sys
 import tempfile
-import os
 import copy
 import textwrap
 from subprocess import CalledProcessError
@@ -447,8 +446,11 @@ class TestStandardLibraryReorganization(CodeHandler):
         """
         reload has been moved to the imp module
         """
-        import imp
-        imp.reload(imp)
+        try:
+            from importlib import reload
+        except ImportError:
+            from imp import reload
+        reload(sys)
         self.assertTrue(True)
 
     def test_install_aliases(self):

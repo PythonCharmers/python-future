@@ -7,18 +7,18 @@ from __future__ import absolute_import, division, print_function
 import os
 import textwrap
 import sys
-import pprint
 import tempfile
-import os
 import io
-from subprocess import Popen, PIPE
 
-from past import utils
-from past.builtins import basestring, str as oldstr, unicode
-
+from future.tests.base import (
+    expectedFailurePY3,
+    unittest,
+)
+from past.builtins import (
+    str as oldstr,
+    unicode,
+)
 from past.translation import install_hooks, remove_hooks, common_substring
-from future.tests.base import (unittest, CodeHandler, skip26,
-                               expectedFailurePY3, expectedFailurePY26)
 
 
 class TestTranslate(unittest.TestCase):
@@ -58,8 +58,8 @@ class TestTranslate(unittest.TestCase):
         sys.path.insert(0, self.tempdir)
         try:
             module = __import__(modulename)
-        except SyntaxError:
-            print('Bombed!')
+        except SyntaxError as e:
+            print('Import failed: %s' % e)
         else:
             print('Succeeded!')
         finally:
