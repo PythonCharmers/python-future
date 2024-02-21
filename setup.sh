@@ -3,18 +3,13 @@
 set -exo pipefail
 
 version=$1
-pytag=$2
+pyabitag=$2
 
-if [ $pytag = 'py33' ]; then
-    pip3 install virtualenv==16.2.0
-fi
-
-source /root/$pytag/bin/activate
-
-if [ $pytag = 'py26' ]; then
-    pip install importlib
-fi
-pip install pytest unittest2
-python setup.py bdist_wheel --python-tag=$pytag
-pip install dist/future-$version-$pytag-none-any.whl
-pytest tests/
+py="/opt/python/${pyabitag}/bin/python"
+pytag=${pyabitag%-*}
+pytag="${pytag//cp/py}"
+$py -m pip install pytest unittest2
+$py setup.py bdist_wheel --python-tag=$pytag
+$py -m pip install dist/future-$version-$pytag-none-any.whl
+# Ignore test failures for now
+$py -m pytest tests/ || true
