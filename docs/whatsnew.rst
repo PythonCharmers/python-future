@@ -3,8 +3,8 @@
 What's New
 **********
 
-What's new in version 0.8.4 (2024-02-21)
-========================================
+What's new in version 1.0.0 (2024-02-21)
+=========================================
 This is a minor bug-fix release containing a small number of fixes:
 
 - Fix for Python 3.12's removal of the imp module
