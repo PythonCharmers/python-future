@@ -1,8 +1,8 @@
-Contents:
----------
+Contents
+========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    whatsnew
    overview
@@ -19,7 +19,7 @@ Contents:
    reference
 
 Indices and tables
-------------------
+******************
 
 * :ref:`genindex`
 * :ref:`modindex`

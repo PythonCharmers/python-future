@@ -9,9 +9,9 @@ touch ~/shared/python-future-html-docs.zip
 rm ~/shared/python-future-html-docs.zip
 zip -r ~/shared/python-future-html-docs.zip *
 
-scp ~/shared/python-future-html-docs.zip python-future.org:
-scp ~/shared/cheatsheet.pdf python-future.org:
-ssh python-future.org
+scp ~/shared/python-future-html-docs.zip ubuntu@python-future.org:
+scp ~/shared/cheatsheet.pdf ubuntu@python-future.org:
+ssh ubuntu@python-future.org
 
 
 # On the remote machine:

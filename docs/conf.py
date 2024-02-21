@@ -13,7 +13,7 @@
 
 from __future__ import absolute_import, print_function
 import sys, os
-import sphinx_bootstrap_theme
+# import sphinx_bootstrap_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -32,6 +32,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
               'sphinx.ext.ifconfig',
               'sphinx.ext.viewcode',
+              'pallets_sphinx_themes',
               # 'sphinxcontrib.napoleon'    # see https://sphinxcontrib-napoleon.readthedocs.io/
               # 'sphinx.ext.napoleon'       # use this in Sphinx 1.3+
              ]
@@ -100,8 +101,8 @@ pygments_style = 'sphinx'  # 'futureext.FutureStyle'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'bootstrap'
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme = 'jinja'
+# html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

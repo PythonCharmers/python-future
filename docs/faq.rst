@@ -118,10 +118,7 @@ Maturity
 How well has it been tested?
 ----------------------------
 
-``future`` is used by several major projects, including `mezzanine
-<http://mezzanine.jupo.org>`_ and `ObsPy <http://www.obspy.org>`_. It is also
-currently being used to help with porting 800,000 lines of Python 2 code in
-`Sage <http://sagemath.org>`_ to Python 2/3.
+``future`` is used by thousands of projects and has been downloaded over 1.7 billion times. Some projects like Sage have used it to port 800,000+ lines of Python 2 code to Python 2/3.
 
 Currently ``python-future`` has over 1000 unit tests. Many of these are straight
 from the Python 3.3 and 3.4 test suites.
@@ -135,10 +132,8 @@ expanded.
 Is the API stable?
 ------------------
 
-Not yet; ``future`` is still in beta. Where possible, we will try not to break
-anything which was documented and used to work.  After version 1.0 is released,
-the API will not change in backward-incompatible ways until a hypothetical
-version 2.0.
+Yes; ``future`` is mature. We'll make very few changes from here, trying not to
+break anything which was documented and used to work.
 
 ..
     Are there any example of Python 2 packages ported to Python 3 using ``future`` and ``futurize``?
@@ -288,7 +283,7 @@ Support
 Is there a mailing list?
 ------------------------
 
-There was (`python-porting`), but it's now dead.
+There was a `python-porting` mailing list, but it's now dead.
 
 
 .. _contributing:
