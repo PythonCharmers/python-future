@@ -23,6 +23,9 @@ jobs:
           - python: "3.7"
           - python: "3.8"
           - python: "3.9"
+          - python: "3.10"
+          - python: "3.11"
+          - python: "3.12"
 
     runs-on: ubuntu-latest
     steps:
