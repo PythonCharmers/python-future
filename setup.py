@@ -78,6 +78,11 @@ PACKAGE_DATA = {'': [
                 'tests': ['*.py'],
                 }
 
+# Python 3.11 onwards have a PYTHONSAFEPATH option that does not prepend the 
+# current directory sys.path; so ensure that it is there.
+root_dir = os.path.abspath(os.path.dirname(__file__))
+sys.path.insert(0, root_dir)
+
 import src.future
 VERSION = src.future.__version__
 DESCRIPTION = "Clean single-source support for Python 3 and 2"
