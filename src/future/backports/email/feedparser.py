@@ -34,7 +34,7 @@ from future.backports.email._policybase import compat32
 
 NLCRE = re.compile('\r\n|\r|\n')
 NLCRE_bol = re.compile('(\r\n|\r|\n)')
-NLCRE_eol = re.compile('(\r\n|\r|\n)\Z')
+NLCRE_eol = re.compile(r'(\r\n|\r|\n)\Z')
 NLCRE_crack = re.compile('(\r\n|\r|\n)')
 # RFC 2822 $3.6.8 Optional fields.  ftext is %d33-57 / %d59-126, Any character
 # except controls, SP, and ":".
