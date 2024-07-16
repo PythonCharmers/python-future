@@ -1,4 +1,4 @@
-"""HTTP/1.1 client library
+r"""HTTP/1.1 client library
 
 A backport of the Python 3.3 http/client.py module for python-future.
 

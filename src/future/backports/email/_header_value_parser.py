@@ -659,8 +659,8 @@ class Comment(WhiteSpaceTokenList):
         if value.token_type == 'comment':
             return str(value)
         return str(value).replace('\\', '\\\\').replace(
-                                  '(', '\(').replace(
-                                  ')', '\)')
+                                  '(', '\\(').replace(
+                                  ')', '\\)')
 
     @property
     def content(self):
@@ -1346,15 +1346,15 @@ characters left in the string after the phrase is removed.
 
 _wsp_splitter = re.compile(r'([{}]+)'.format(''.join(WSP))).split
 _non_atom_end_matcher = re.compile(r"[^{}]+".format(
-    ''.join(ATOM_ENDS).replace('\\','\\\\').replace(']','\]'))).match
+    ''.join(ATOM_ENDS).replace('\\','\\\\').replace(']','\\]'))).match
 _non_printable_finder = re.compile(r"[\x00-\x20\x7F]").findall
 _non_token_end_matcher = re.compile(r"[^{}]+".format(
-    ''.join(TOKEN_ENDS).replace('\\','\\\\').replace(']','\]'))).match
+    ''.join(TOKEN_ENDS).replace('\\','\\\\').replace(']','\\]'))).match
 _non_attribute_end_matcher = re.compile(r"[^{}]+".format(
-    ''.join(ATTRIBUTE_ENDS).replace('\\','\\\\').replace(']','\]'))).match
+    ''.join(ATTRIBUTE_ENDS).replace('\\','\\\\').replace(']','\\]'))).match
 _non_extended_attribute_end_matcher = re.compile(r"[^{}]+".format(
     ''.join(EXTENDED_ATTRIBUTE_ENDS).replace(
-                                    '\\','\\\\').replace(']','\]'))).match
+                                    '\\','\\\\').replace(']','\\]'))).match
 
 def _validate_xtext(xtext):
     """If input token contains ASCII non-printables, register a defect."""
@@ -1538,7 +1538,7 @@ def get_unstructured(value):
     return unstructured
 
 def get_qp_ctext(value):
-    """ctext = <printable ascii except \ ( )>
+    """ctext = <printable ascii except \\ ( )>
 
     This is not the RFC ctext, since we are handling nested comments in comment
     and unquoting quoted-pairs here.  We allow anything except the '()'
@@ -1873,7 +1873,7 @@ def get_obs_local_part(value):
     return obs_local_part, value
 
 def get_dtext(value):
-    """ dtext = <printable ascii except \ [ ]> / obs-dtext
+    """ dtext = <printable ascii except \\ [ ]> / obs-dtext
         obs-dtext = obs-NO-WS-CTL / quoted-pair
 
     We allow anything except the excluded characters, but if we find any

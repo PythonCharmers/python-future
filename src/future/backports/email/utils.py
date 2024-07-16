@@ -65,7 +65,7 @@ escapesre = re.compile(r'[\\"]')
 # How to figure out if we are processing strings that come from a byte
 # source with undecodable characters.
 _has_surrogates = re.compile(
-    '([^\ud800-\udbff]|\A)[\udc00-\udfff]([^\udc00-\udfff]|\Z)').search
+    r'([^\ud800-\udbff]|\A)[\udc00-\udfff]([^\udc00-\udfff]|\Z)').search
 
 # How to deal with a string containing bytes before handing it to the
 # application through the 'normal' interface.
