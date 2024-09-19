@@ -33,13 +33,10 @@ import re
 if utils.PY2:
     re.ASCII = 0
 import time
-import base64
 import random
 import socket
 from future.backports import datetime
 from future.backports.urllib.parse import quote as url_quote, unquote as url_unquote
-import warnings
-from io import StringIO
 
 from future.backports.email._parseaddr import quote
 from future.backports.email._parseaddr import AddressList as _AddressList
@@ -47,10 +44,7 @@ from future.backports.email._parseaddr import mktime_tz
 
 from future.backports.email._parseaddr import parsedate, parsedate_tz, _parsedate_tz
 
-from quopri import decodestring as _qdecode
-
 # Intrapackage imports
-from future.backports.email.encoders import _bencode, _qencode
 from future.backports.email.charset import Charset
 
 COMMASPACE = ', '
@@ -66,6 +60,7 @@ escapesre = re.compile(r'[\\"]')
 # source with undecodable characters.
 _has_surrogates = re.compile(
     '([^\ud800-\udbff]|\A)[\udc00-\udfff]([^\udc00-\udfff]|\Z)').search
+
 
 # How to deal with a string containing bytes before handing it to the
 # application through the 'normal' interface.
@@ -85,13 +80,13 @@ def formataddr(pair, charset='utf-8'):
     If the first element of pair is false, then the second element is
     returned unmodified.
 
-    Optional charset if given is the character set that is used to encode
+    The optional charset is the character set that is used to encode
     realname in case realname is not ASCII safe.  Can be an instance of str or
     a Charset-like object which has a header_encode method.  Default is
     'utf-8'.
     """
     name, address = pair
-    # The address MUST (per RFC) be ascii, so raise an UnicodeError if it isn't.
+    # The address MUST (per RFC) be ascii, so raise a UnicodeError if it isn't.
     address.encode('ascii')
     if name:
         try:
@@ -110,13 +105,11 @@ def formataddr(pair, charset='utf-8'):
     return address
 
 
-
 def getaddresses(fieldvalues):
     """Return a list of (REALNAME, EMAIL) for each fieldvalue."""
     all = COMMASPACE.join(fieldvalues)
     a = _AddressList(all)
     return a.addresslist
-
 
 
 ecre = re.compile(r'''
@@ -139,12 +132,13 @@ def _format_timetuple_and_zone(timetuple, zone):
         timetuple[0], timetuple[3], timetuple[4], timetuple[5],
         zone)
 
+
 def formatdate(timeval=None, localtime=False, usegmt=False):
     """Returns a date string as specified by RFC 2822, e.g.:
 
     Fri, 09 Nov 2001 01:08:47 -0000
 
-    Optional timeval if given is a floating point time value as accepted by
+    Optional timeval if given is a floating-point time value as accepted by
     gmtime() and localtime(), otherwise the current time is used.
 
     Optional localtime is a flag that when True, interprets timeval, and
@@ -183,6 +177,7 @@ def formatdate(timeval=None, localtime=False, usegmt=False):
         else:
             zone = '-0000'
     return _format_timetuple_and_zone(now, zone)
+
 
 def format_datetime(dt, usegmt=False):
     """Turn a datetime into a date string as specified in RFC 2822.
@@ -254,7 +249,6 @@ def unquote(str):
     return str
 
 
-
 # RFC2231-related functions - parameter encoding and decoding
 def decode_rfc2231(s):
     """Decode string according to RFC 2231"""
@@ -281,6 +275,7 @@ def encode_rfc2231(s, charset=None, language=None):
 
 rfc2231_continuation = re.compile(r'^(?P<name>\w+)\*((?P<num>[0-9]+)\*?)?$',
     re.ASCII)
+
 
 def decode_params(params):
     """Decode parameters list according to RFC 2231.
@@ -337,6 +332,7 @@ def decode_params(params):
             else:
                 new_params.append((name, '"%s"' % value))
     return new_params
+
 
 def collapse_rfc2231_value(value, errors='replace',
                            fallback_charset='us-ascii'):
